@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application   xmlns:mx="http://www.adobe.com/2006/mxml"  layout="vertical" width="100%" height="100%">
+
+    <mx:RemoteObject destination="qa.http.secured.PCA.echoservice.Echo" id="amfRemote" >
+        <mx:method name="echoBoolean" result="echoBooleanResultHandler(event)" fault="echoBooleanFaultHandler(event)">
+            <mx:arguments>
+                <param>true</param>
+            </mx:arguments>
+        </mx:method>
+        <mx:method name="logout" result="logoutResultHandler(event)" fault="logoutFaultHandler(event)"/>        
+    </mx:RemoteObject>
+    
+    <mx:Label text="Make sure using the Firefox browser for the following test since IE doesn't share session across browsers." />
+    <mx:HBox>
+    	<mx:Button id="loginBtn" label="login" click="login(uname.text, pass.text);"/>
+    	<mx:TextInput id="uname" width="116" displayAsPassword="false" editable="true" text="sampleuser"/>
+    	<mx:TextInput id="pass"   width="123"  displayAsPassword="true" editable="true" text="samplepassword"/>       	
+    </mx:HBox>
+    <mx:HBox>
+    	<mx:Button id="logoutBtn" label="logout" enabled="false" click="logout();" />
+    	<mx:Button id="execMethodBtn" label="echoBoolean()" click="execMethod()" />
+    	<mx:Button id="clearBtn" label="clear log" click="log.text=''"/>       
+    </mx:HBox>
+    <mx:TextArea id="log" width="400" height="150" />
+   
+    <mx:Script>
+    <![CDATA[
+        import mx.utils.ObjectUtil;
+        import mx.rpc.events.*;
+        private var expectedValue:Boolean = true;
+		
+		// setCredential
+        private function login(u:String, p:String):void 
+        {
+            amfRemote.setCredentials(u,p);              
+            loginBtn.enabled = false;    
+            logoutBtn.enabled = true;
+            log.text += "credential has been set\n";                        
+        }
+        
+        private function logout():void 
+        {
+            amfRemote.logout();  
+            log.text += "logout\n";          
+            logoutBtn.enabled = false;
+            loginBtn.enabled = true;
+        }
+        
+        private function execMethod():void {
+            var call:Object = amfRemote.echoBoolean.send();
+            trace("Call " + ObjectUtil.toString(call));
+            call.expected = expectedValue;
+            call.testName = "echoBoolean";
+        }
+        private function echoBooleanResultHandler(e:ResultEvent):void {
+            trace("ResultEvent: " + ObjectUtil.toString(e.result));
+            log.text += String(e.token.testName) + "\n";
+            log.text += ObjectUtil.toString(e.result);
+            
+        }
+        private function echoBooleanFaultHandler(e:FaultEvent):void {
+            log.text += String(e.token.testName) + "\n";
+            log.text += "Test Failed \n";
+            log.text += "FaultString:" + ObjectUtil.toString(e.fault.faultString) + "\n";
+        }
+        private function logoutFaultHandler(e:FaultEvent):void {
+            log.text += String(e.token.testName) + "\n";
+            log.text += "logout Request Failed\n";
+        }
+        
+        private function logoutResultHandler(e:ResultEvent):void {
+            log.text += String(e.token.testName) + "\n";
+            log.text += "logout Request Passed\n";
+        }
+        
+        private function resultHandler(e:ResultEvent):void {
+            log.text += String(e.token.testName) + "\n";
+            log.text += "Remote Service Contact Success\n";
+            trace("ResultEvent: " + ObjectUtil.toString(e.result));
+        }
+        private function faultHandler(e:FaultEvent):void {
+            log.text += String(e.token.testName) + "\n";
+            log.text += "Failed\n";
+        }
+    ]]>
+    </mx:Script>
+</mx:Application>

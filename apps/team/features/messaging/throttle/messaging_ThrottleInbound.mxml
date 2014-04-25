@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%"
+    creationComplete="creationCompleteHandler();">
+
+    <!-- A sample that one can use to talk to messaging destinations with inbound
+         throttling and ERROR or IGNORE policies using different channels supported
+         by BlazeDS. Destinations have low inbound throttling limits and the sample
+         can be used to generate high number of message to see inbound throttling
+         handled according to the policy.
+     -->
+    <mx:Panel id="mainPanel" height="100%" width="100%">
+        <mx:HBox>
+            <mx:Label text="Destination to use "/>
+            <mx:ComboBox id="destinationsCB" dataProvider="{destinations}" selectedIndex="0" width="300"
+                change="setupChannelsCB();"/>
+        </mx:HBox>
+        <mx:HBox>
+            <mx:Label text="Channel to use "/>
+            <mx:ComboBox id="channelsCB" selectedIndex="0" width="200"
+                change="setupComponents()"/>
+        </mx:HBox>
+        <mx:HBox>
+            <mx:Label text="Producer"/>
+            <mx:Button label="Send 10 Foo{counter}" click="sendMessage(10)"/>
+            <mx:Button label="Disconnect" click="producer.disconnect();" enabled="{producer.connected}"/>
+            <mx:CheckBox label="Connected?" selected="{producer.connected}"/>
+        </mx:HBox>
+        <mx:HBox>
+            <mx:Label text="Consumer"/>
+            <mx:Button label="Subcribe" click="consumer.subscribe();" enabled="{!consumer.subscribed}"/>
+            <mx:Button label="Unsubscribe" click="consumer.unsubscribe();" enabled="{consumer.subscribed}"/>
+            <mx:Button label="Disconnect" click="consumer.disconnect();" enabled="{consumer.connected}"/>
+            <mx:CheckBox label="Connected?" selected="{consumer.connected}"/>
+            <mx:CheckBox label="Subscribed?" selected="{consumer.subscribed}"/>
+        </mx:HBox>
+        <mx:HBox width="100%">
+            <mx:Spacer width="100%"/>
+            <mx:CheckBox id="dmCB" label="Display received messages?" selected="{displayMessages}"/>
+            <mx:Button label="Clear" click='output.text = ""'/>
+        </mx:HBox>
+        <mx:TextArea id="output" width="100%" height="100%"/>
+    </mx:Panel>
+
+    <mx:Binding source="dmCB.selected" destination="displayMessages"/>
+
+    <mx:Producer id="producer"
+        fault="producerFaultHandler(event)"/>
+
+    <mx:Consumer id="consumer"
+        fault="consumerFaultHandler(event)"
+        message="consumerMessageHandler(event)"/>
+
+    <mx:Script>
+        <![CDATA[
+            import mx.collections.ArrayCollection;
+            import mx.messaging.ChannelSet;
+            import mx.messaging.config.ServerConfig;
+            import mx.messaging.events.MessageFaultEvent;
+            import mx.messaging.events.MessageEvent;
+            import mx.messaging.messages.AsyncMessage;
+
+            import mx.logging.Log;
+            import mx.logging.targets.TraceTarget;
+
+            [Bindable]
+            public var counter:int = 0;
+
+            [Bindable]
+            public var destinations:Array = ['messaging_ThrottleInbound_PolicyError',
+                                             'messaging_ThrottleInbound_PolicyIgnore'];
+            [Bindable]
+            public var destinationId:String;
+            [Bindable]
+            public var displayMessages:Boolean;
+
+
+            private function creationCompleteHandler():void
+            {
+                var target:TraceTarget = new TraceTarget();
+                target.includeLevel = true;
+                target.filters = ["mx.messaging.*", "mx.rpc.*"];
+                Log.addTarget(target);
+
+                displayMessages = true;
+                setupChannelsCB();
+                setupComponents();
+            }
+
+            private function setupChannelsCB():void
+            {
+                destinationId = destinationsCB.selectedLabel;
+                channelsCB.dataProvider = new ArrayCollection((ServerConfig.getChannelSet(destinationId) as ChannelSet).channelIds);
+            }
+
+            private function setupComponents():void
+            {
+                // Setup consumer.
+                consumer.unsubscribe();
+                consumer.destination = destinationId;
+                var cs:ChannelSet = new ChannelSet();
+                cs.addChannel(ServerConfig.getChannel(channelsCB.selectedItem.toString()));
+                consumer.channelSet = cs;
+
+                // Setup producer.
+                producer.destination = destinationId;
+                producer.channelSet = cs;
+            }
+
+            private function sendMessage(n:int=1):void
+            {
+                var msg:AsyncMessage = null;
+                for (var i:int = 0; i < n; i++)
+                {
+                    msg = new AsyncMessage();
+                    msg.body = "Foo" + counter++;
+                    producer.send(msg);
+                }
+            }
+
+            private function consumerMessageHandler(event:MessageEvent):void
+            {
+                if (displayMessages)
+                    output.text += "Consumer received message: "+ event.message.body + "\n";
+            }
+
+            private function consumerFaultHandler(event:MessageFaultEvent):void
+            {
+                output.text += "Consumer received fault: " + event.faultString + "\n";
+            }
+
+            private function producerFaultHandler(event:MessageFaultEvent):void
+            {
+                output.text += "Producer received fault: " + event.faultString + "\n";
+            }
+        ]]>
+    </mx:Script>
+</mx:Application>

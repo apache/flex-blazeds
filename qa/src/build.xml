@@ -1,0 +1,87 @@
+    <?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+
+<project name="BlazeDS QA Source" default="main" basedir="..">
+	<property environment="env"/>
+    <property name="qa.dir" value="${basedir}"/>
+    <property name="src.dir" value="${basedir}/src"/>
+    <property name="classes.dir" value="${basedir}/classes"/>
+
+	<property name="frameworks.filedrop" value="${qa.dir}/resources/frameworks"/>
+
+    <!-- qa_frameworks contained proprietary testing harness -->
+    <property name="no_framework" value="true" />
+    
+    <path id="classpath">
+        <fileset dir="${qa.dir}/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+	<target name="main" depends="clean,frameworks,tools"/>
+	
+	<target name="clean">
+		<echo message="Removing expanded framework files..."/>
+		<delete dir="${build.dir}"/>	
+		<delete dir="${classes.dir}"/>	
+		<delete failonerror="false" includeEmptyDirs="true">
+            <fileset dir="${framework.filedrop}/expanded">
+                <include name="**/*"/>
+            </fileset>
+        </delete>
+        <delete failonerror="false" includeEmptyDirs="true">
+            <fileset dir="${qa.dir}/frameworks/libs">
+                <include name="**/*.swc"/>
+            </fileset>
+        </delete>
+        <delete failonerror="false" includeEmptyDirs="true">
+            <fileset dir="${qa.dir}/lib">
+                <include name="qa-flexunit.jar"/>
+                <include name="qa-mxunit.jar"/>
+                <include name="qa-utils.jar"/>
+            </fileset>
+        </delete>
+	</target>
+	
+	<target name="frameworks" unless="no_framework">
+		<!--unzip qa-frameworks.zip -->
+		<unzip src="${frameworks.filedrop}/qa-frameworks.zip" dest="${frameworks.filedrop}/expanded"/>
+		
+		<!-- copy swcs to libs folder -->
+		<copy todir="${qa.dir}/frameworks/libs">
+			<fileset dir="${frameworks.filedrop}/expanded">
+				<include name="*.swc"/>
+			</fileset>
+		</copy>
+		<!-- copy jars to lib folder -->
+		<copy todir="${qa.dir}/lib">
+			<fileset dir="${frameworks.filedrop}/expanded">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>		
+	</target>
+
+	<target name="tools">
+        <mkdir dir="${classes.dir}" />
+        <javac source="1.5" deprecation="off" debug="true" nowarn="${nowarn}" destdir="${classes.dir}" srcdir="${src.dir}" classpathref="classpath" />
+	</target>
+
+</project>

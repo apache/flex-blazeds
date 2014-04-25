@@ -1,0 +1,1 @@
+Destination 'MyTopic' is configured to use an unsupported throttle policy, 'UNKNOWN'.

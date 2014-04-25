@@ -1,0 +1,1 @@
+Invalid Acknowledge Mode 'bogus_acknowledge_mode'. Valid values are AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE, and CLIENT_ACKNOWLEDGE.

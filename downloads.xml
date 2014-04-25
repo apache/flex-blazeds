@@ -1,0 +1,641 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<project name="downloads" default="main" basedir=".">
+
+	<!-- properties -->
+	<property file="${basedir}/build.properties"/>
+
+	<property name="download.dir" value="${basedir}/in"/>
+	<property name="lib.dir" value="${basedir}/lib"/>
+	<property name="qa.lib.dir" value="${basedir}/qa/lib"/>
+	<property name="modules.core.dir" value="${basedir}/modules/core"/>
+	<property name="modules.core.lib.dir" value="${basedir}/modules/core/lib"/>
+	<property name="modules.opt.lib.dir" value="${basedir}/modules/opt/lib"/>
+	<property name="tomcat.dir" value="${basedir}/servers/apache-tomcat-6.0.29"/>
+	<property name="tomcat.zip.file" value="${basedir}/in/apache-tomcat-6.0.29.zip"/>
+	<property name="activemq.dir" value="${tomcat.dir}/lib/activemq-5.3.1"/>
+	<property name="activemq.zip.file" value="${basedir}/in/apache-activemq-5.3.1-bin.zip"/>
+	<property name="codec.zip.file" value="${basedir}/in/apache-codec-3.1-bin.zip"/>
+	<property name="collection.zip.file" value="${basedir}/in/apache-collections-3.1.zip"/>
+	<property name="fileupload.zip.file" value="${basedir}/in/apache-fileupload-1.1.zip"/>
+	<property name="httpclient.zip.file" value="${basedir}/in/apache-httpclient-3.1.zip"/>
+	<property name="logging.zip.file" value="${basedir}/in/apache-logging-1.1.1-bin.zip"/>
+	<property name="hsqldb.zip.file" value="${basedir}/in/hsqldb_1_8_0_10.zip"/>
+	<property name="jms.zip.file" value="${basedir}/in/openjms-0.7.6.1.zip"/>
+	<property name="log4j.zip.file" value="${basedir}/in/logging-log4j-1.2.14.zip"/>
+	<property name="spring.zip.file" value="${basedir}/in/spring-framework-3.0.3.RELEASE.zip"/>
+	<property name="springsecurity.zip.file" value="${basedir}/in/spring-security-3.0.3.RELEASE.zip"/>
+	<property name="springflex.jar.file" value="${basedir}/lib/spring/spring-flex-core-1.5.2.RELEASE.jar"/>
+	<property name="taglibs.zip.file" value="${basedir}/in/jakarta-taglibs-standard-1.1.2.zip"/>
+	<property name="aopalliance.zip.file" value="${basedir}/in/aopalliance.zip"/>
+	<property name="backport.zip.file" value="${basedir}/in/backport-util-concurrent.zip"/>
+	<property name="cglib.jar.file" value="${basedir}/lib/spring/cglib-nodep-2.1_3.jar"/>
+	<property name="jackson.jar.file" value="${basedir}/lib/spring/jackson-core-asl-1.0.0.jar"/>
+	<property name="xalan.zip.file" value="${basedir}/in/xalan-j_2_6_0-bin-2jars.zip"/>
+	<property name="cat4150.zip.file" value="${basedir}/in/jakarta-tomcat-4150.zip"/>
+	<property name="axis.zip.file" value="${basedir}/in/axis.zip"/>
+	        
+    <!-- 
+       To clean these you must call thirdparty-clean or super-clean to clean everything.  
+       clean does not remove these since they don't change often and the downloads take time.
+    -->
+    <target name="main" 
+        depends="tomcat-download,activemq-download,codec-download,collection-download,fileupload-download,httpclient-download,logging-download,hsqldb-download,jms-download,log4j-download,spring-download,xalan-download,doclet-download,mx4j-download,cat708-download,cat4150-download,cat-download,axis-download,testng-download" 
+        description="Copies third-party software into place for build">
+        <echo message="Use thirdparty-clean or super-clean to remove these."/> 
+    </target>
+    
+    <target name="clean"
+        description="Cleans thirdparty downloaded files.">
+        <delete failonerror="false">
+            <fileset dir="${lib.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </delete>
+        <delete failonerror="false">
+            <fileset dir="${modules.core.lib.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </delete>
+        <delete failonerror="false">
+            <fileset dir="${modules.opt.lib.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </delete>
+        <delete failonerror="false">
+            <fileset dir="${qa.lib.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </delete>
+        <delete failonerror="false">
+            <fileset dir="${tomcat.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </delete>
+        <delete failonerror="false" dir="${tomcat.dir}/bin" />
+        <delete failonerror="false" dir="${tomcat.dir}/conf" />
+        <delete failonerror="false" dir="${tomcat.dir}/lib/activemq-5.3.1" />
+        <delete failonerror="false" dir="${tomcat.dir}/logs" />
+        <delete failonerror="false" dir="${tomcat.dir}/temp" />
+        <delete failonerror="false" dir="${tomcat.dir}/webapps" />
+        <delete failonerror="false" dir="${tomcat.dir}/work" />
+        <delete includeEmptyDirs="true" failonerror="false">
+            <fileset dir="${download.dir}">
+                <include name="${tomcat.zip.file}"/>
+            </fileset>
+        </delete>
+        <delete failonerror="false">
+            <fileset dir="${basedir}/apps/samples/WEB-INF/lib/">
+                <include name="**/*"/>
+            </fileset>
+        </delete>
+        <delete failonerror="false" dir="${lib.dir}/hsqldb" />
+        <delete failonerror="false" dir="${lib.dir}/spring" />
+        <delete failonerror="false" file="${modules.core.dir}/src/ExcludeDoclet.java" />
+     </target>
+           
+	<!--
+        apache-tomcat-6.0.29-bin.zip 
+    -->
+    <target name="tomcat-check" description="Checks if the Tomcat server has been downloaded.">
+        <available file="${tomcat.dir}/bin/catalina.bat" property="tomcat.present"/>
+    </target>
+   
+    <target name="tomcat-download" depends="tomcat-check" unless="tomcat.present">
+        <available file="${tomcat.zip.file}" type="file" property="tomcat.zip.exists"/>
+        <antcall target="download-tomcat-zip" />
+        
+        <unzip src="${tomcat.zip.file}" dest="${tomcat.dir}/..">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+    </target>
+
+    <target name="download-tomcat-zip" unless="tomcat.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://archive.apache.org/dist/tomcat/tomcat-6/v6.0.29/bin/apache-tomcat-6.0.29.zip" 
+            dest="${tomcat.zip.file}" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        activemq-5.3.1.zip 
+    -->
+    <target name="activemq-check" description="Checks if the ActiveMQ jars have been downloaded.">
+        <available file="${tomcat.dir}/lib/activemq-5.3.1/activemq-core-5.3.1.jar" property="activemq.present"/>
+    </target>
+   
+    <target name="activemq-download" depends="activemq-check" unless="activemq.present">
+        <available file="${activemq.zip.file}" type="file" property="activemq.zip.exists"/>
+        <antcall target="download-activemq-zip" />
+        
+        <unzip src="${activemq.zip.file}" dest="${download.dir}/activemq">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy toDir="${activemq.dir}">
+            <fileset dir="${download.dir}/activemq/apache-activemq-5.3.1/lib" />
+        </copy>
+    </target>
+
+    <target name="download-activemq-zip" unless="activemq.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://archive.apache.org/dist/activemq/apache-activemq/5.3.1/apache-activemq-5.3.1-bin.zip" 
+            dest="${activemq.zip.file}" 
+            verbose="false"/>
+    </target>
+
+	<!--
+        commons-codec-1.5.jar 
+    -->
+    <target name="codec-check" description="Checks if the commons-codec jar have been downloaded.">
+        <available file="${lib.dir}/commons-codec-1.5.jar" property="codec.present"/>
+    </target>
+   
+    <target name="codec-download" depends="codec-check" unless="codec.present">
+        <available file="${codec.zip.file}" type="file" property="codec.zip.exists"/>
+        <antcall target="download-codec-zip" />
+        
+        <unzip src="${codec.zip.file}" dest="${download.dir}/commons-codec">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy toDir="${lib.dir}"
+            file="${download.dir}/commons-codec/commons-codec-1.5/commons-codec-1.5.jar" />
+    </target>
+
+    <target name="download-codec-zip" unless="codec.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://archive.apache.org/dist/commons/codec/binaries/commons-codec-1.5-bin.zip" 
+            dest="${codec.zip.file}" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        commons-collection-3.1.jar 
+    -->
+    <target name="collection-check" description="Checks if the commons-collection jar have been downloaded.">
+        <available file="${lib.dir}/commons-collections-3.1.jar" property="collection.present"/>
+    </target>
+   
+    <target name="collection-download" depends="collection-check" unless="collection.present">
+        <available file="${collection.zip.file}" type="file" property="collection.zip.exists"/>
+        <antcall target="download-collection-zip" />
+        
+        <unzip src="${collection.zip.file}" dest="${download.dir}/commons-collections">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy toDir="${lib.dir}"
+            file="${download.dir}/commons-collections/commons-collections-3.1/commons-collections-3.1.jar" />
+    </target>
+
+    <target name="download-collection-zip" unless="collection.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://archive.apache.org/dist/commons/collections/binaries/commons-collections-3.1.zip" 
+            dest="${collection.zip.file}" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        commons-fileupload-1.1.jar 
+    -->
+    <target name="fileupload-check" description="Checks if the commons-fileupload jar have been downloaded.">
+        <available file="${lib.dir}/commons-fileupload-1.1.jar" property="fileupload.present"/>
+    </target>
+   
+    <target name="fileupload-download" depends="fileupload-check" unless="fileupload.present">
+        <available file="${fileupload.zip.file}" type="file" property="fileupload.zip.exists"/>
+        <antcall target="download-fileupload-zip" />
+        
+        <unzip src="${fileupload.zip.file}" dest="${download.dir}/commons-fileupload">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy toDir="${lib.dir}"
+            file="${download.dir}/commons-fileupload/commons-fileupload-1.1/commons-fileupload-1.1.jar" />
+    </target>
+
+    <target name="download-fileupload-zip" unless="fileupload.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://archive.apache.org/dist/commons/fileupload/binaries/commons-fileupload-1.1.zip" 
+            dest="${fileupload.zip.file}" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        commons-httpclient-3.1.jar 
+    -->
+    <target name="httpclient-check" description="Checks if the commons-httpclient jar have been downloaded.">
+        <available file="${lib.dir}/commons-httpclient-3.1.jar" property="httpclient.present"/>
+    </target>
+   
+    <target name="httpclient-download" depends="httpclient-check" unless="httpclient.present">
+        <available file="${httpclient.zip.file}" type="file" property="httpclient.zip.exists"/>
+        <antcall target="download-httpclient-zip" />
+        
+        <unzip src="${httpclient.zip.file}" dest="${download.dir}/commons-httpclient">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy toDir="${lib.dir}"
+            file="${download.dir}/commons-httpclient/commons-httpclient-3.1/commons-httpclient-3.1.jar" />
+    </target>
+
+    <target name="download-httpclient-zip" unless="httpclient.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://archive.apache.org/dist/httpcomponents/commons-httpclient/binary/commons-httpclient-3.1.zip" 
+            dest="${httpclient.zip.file}" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        commons-logging-1.1.1.jar 
+    -->
+    <target name="logging-check" description="Checks if the commons-logging jar have been downloaded.">
+        <available file="${lib.dir}/commons-logging-1.1.1.jar" property="logging.present"/>
+    </target>
+   
+    <target name="logging-download" depends="logging-check" unless="logging.present">
+        <available file="${logging.zip.file}" type="file" property="logging.zip.exists"/>
+        <antcall target="download-logging-zip" />
+        
+        <unzip src="${logging.zip.file}" dest="${download.dir}/commons-logging">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy toDir="${lib.dir}"
+            file="${download.dir}/commons-logging/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
+    </target>
+
+    <target name="download-logging-zip" unless="logging.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://archive.apache.org/dist/commons/logging/binaries/commons-logging-1.1.1-bin.zip" 
+            dest="${logging.zip.file}" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        hsqldb.jar 
+    -->
+    <target name="hsqldb-check" description="Checks if the hsqldb jar have been downloaded.">
+        <available file="${lib.dir}/hsqldb/hsqldb.jar" property="hsqldb.present"/>
+    </target>
+   
+    <target name="hsqldb-download" depends="hsqldb-check" unless="hsqldb.present">
+        <available file="${hsqldb.zip.file}" type="file" property="hsqldb.zip.exists"/>
+        <antcall target="download-hsqldb-zip" />
+        
+        <unzip src="${hsqldb.zip.file}" dest="${download.dir}/hsqldb">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy toDir="${lib.dir}/hsqldb">
+            <fileset dir="${download.dir}/hsqldb/hsqldb/lib" includes="hsqldb.jar"/>
+        </copy>
+        <copy toDir="${lib.dir}/hsqldb">
+            <fileset dir="${download.dir}/hsqldb/hsqldb/doc" includes="hsqldb_lic.txt"/>
+        </copy>
+    </target>
+
+    <target name="download-hsqldb-zip" unless="hsqldb.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://downloads.sourceforge.net/project/hsqldb/hsqldb/hsqldb_1_8_0/hsqldb_1_8_0_10.zip?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fhsqldb%2Ffiles%2Fhsqldb%2Fhsqldb_1_8_0%2F&amp;ts=1378509998&amp;use_mirror=softlayer-dal" 
+            dest="${hsqldb.zip.file}" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        jms.jar 
+    -->
+    <target name="jms-check" description="Checks if the jms jar have been downloaded.">
+        <available file="${lib.dir}/jms.jar" property="jms.present"/>
+    </target>
+   
+    <target name="jms-download" depends="jms-check" unless="jms.present">
+        <available file="${jms.zip.file}" type="file" property="jms.zip.exists"/>
+        <antcall target="download-jms-zip" />
+        
+        <unzip src="${jms.zip.file}" dest="${download.dir}/jms">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy file="${download.dir}/jms/openjms-0.7.6.1/lib/jms-1.0.2a.jar" toFile="${lib.dir}/jms.jar"/>
+        <copy file="${download.dir}/jms/openjms-0.7.6.1/LICENSE.txt" toFile="${lib.dir}/jms-LICENSE.txt"/>
+    </target>
+
+    <target name="download-jms-zip" unless="jms.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://downloads.sourceforge.net/project/openjms/openjms/openjms-0.7.6.1/openjms-0.7.6.1.zip?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fopenjms%2Ffiles%2Fopenjms%2Fopenjms-0.7.6.1%2F&amp;ts=1378512874&amp;use_mirror=hivelocity" 
+            dest="${jms.zip.file}" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        log4j.jar 
+    -->
+    <target name="log4j-check" description="Checks if the log4j jar have been downloaded.">
+        <available file="${lib.dir}/log4j.jar" property="log4j.present"/>
+    </target>
+   
+    <target name="log4j-download" depends="log4j-check" unless="log4j.present">
+        <available file="${log4j.zip.file}" type="file" property="log4j.zip.exists"/>
+        <antcall target="download-log4j-zip" />
+        
+        <unzip src="${log4j.zip.file}" dest="${download.dir}/log4j">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy file="${download.dir}/log4j/logging-log4j-1.2.14/dist/lib/log4j-1.2.14.jar" toFile="${lib.dir}/log4j.jar"/>
+    </target>
+
+    <target name="download-log4j-zip" unless="log4j.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://archive.apache.org/dist/logging/log4j/1.2.14/logging-log4j-1.2.14.zip" 
+            dest="${log4j.zip.file}" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        spring 
+    -->
+    <target name="spring-check" description="Checks if the spring jars have been downloaded.">
+        <available file="${lib.dir}/spring/spring-security-core-3.0.3.RELEASE.jar" property="spring.present"/>
+    </target>
+   
+    <target name="spring-download" depends="spring-check" unless="spring.present">
+        <available file="${spring.zip.file}" type="file" property="spring.zip.exists"/>
+        <antcall target="download-spring-zip" />
+        
+        <unzip src="${spring.zip.file}" dest="${download.dir}/spring">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy toDir="${lib.dir}/spring">
+            <fileset dir="${download.dir}/spring/spring-framework-3.0.3.RELEASE/dist" />
+        </copy>
+        <unzip src="${springsecurity.zip.file}" dest="${download.dir}/springsecurity">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy file="${download.dir}/springsecurity/spring-security-3.0.3.RELEASE/dist/spring-security-config-3.0.3.RELEASE.jar" toDir="${lib.dir}/spring"/>
+        <copy file="${download.dir}/springsecurity/spring-security-3.0.3.RELEASE/dist/spring-security-core-3.0.3.RELEASE.jar" toDir="${lib.dir}/spring"/>
+        <copy file="${download.dir}/springsecurity/spring-security-3.0.3.RELEASE/dist/spring-security-web-3.0.3.RELEASE.jar" toDir="${lib.dir}/spring"/>
+        <unzip src="${taglibs.zip.file}" dest="${download.dir}/taglibs">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy file="${download.dir}/taglibs/jakarta-taglibs-standard-1.1.2/lib/jstl.jar" toFile="${lib.dir}/spring/jstl-1.1.2.jar"/>
+        <copy file="${download.dir}/taglibs/jakarta-taglibs-standard-1.1.2/lib/standard.jar" toFile="${lib.dir}/spring/standard-1.1.2.jar"/>
+        <unzip src="${aopalliance.zip.file}" dest="${download.dir}/aopalliance">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy file="${download.dir}/aopalliance/aopalliance.jar" toFile="${lib.dir}/spring/aopalliance-1.0.jar"/>
+        <unzip src="${backport.zip.file}" dest="${download.dir}/backport">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy file="${download.dir}/backport/backport-util-concurrent-2.2/backport-util-concurrent.jar" toFile="${lib.dir}/spring/backport-util-concurrent-2.2.jar"/>
+    </target>
+
+    <target name="download-spring-zip" unless="spring.zip.exists">
+        <mkdir dir="${lib.dir}/spring"/>
+        <mkdir dir="${download.dir}"/>
+        <get src="http://s3.amazonaws.com/dist.springframework.org/release/SPR/spring-framework-3.0.3.RELEASE.zip" 
+            dest="${spring.zip.file}" 
+            verbose="false"/>
+        <get src="http://s3.amazonaws.com/dist.springframework.org/release/SEC/spring-security-3.0.3.RELEASE.zip" 
+            dest="${springsecurity.zip.file}" 
+            verbose="false"/>
+        <get src="http://repo1.maven.org/maven2/org/springframework/flex/spring-flex-core/1.5.2.RELEASE/spring-flex-core-1.5.2.RELEASE.jar" 
+            dest="${springflex.jar.file}" 
+            verbose="false"/>
+        <get src="http://archive.apache.org/dist/jakarta/taglibs/standard/binaries/jakarta-taglibs-standard-1.1.2.zip" 
+            dest="${taglibs.zip.file}" 
+            verbose="false"/>
+        <get src="http://downloads.sourceforge.net/project/aopalliance/aopalliance/1.0/aopalliance.zip?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Faopalliance%2Ffiles%2Faopalliance%2F1.0%2F&amp;ts=1378515484&amp;use_mirror=softlayer-dal" 
+            dest="${aopalliance.zip.file}" 
+            verbose="false"/>
+        <get src="http://downloads.sourceforge.net/project/backport-jsr166/backport-jsr166/2.2/backport-util-concurrent-2.2.zip?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fbackport-jsr166%2Ffiles%2Fbackport-jsr166%2F2.2%2F&amp;ts=1378515970&amp;use_mirror=heanet" 
+            dest="${backport.zip.file}" 
+            verbose="false"/>
+        <get src="http://downloads.sourceforge.net/project/cglib/cglib2/cglib%202.1_03/cglib-nodep-2.1_3.jar?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fcglib%2Ffiles%2Fcglib2%2Fcglib%25202.1_03%2F&amp;ts=1378516297&amp;use_mirror=hivelocity" 
+            dest="${cglib.jar.file}" 
+            verbose="false"/>
+        <get src="http://repository.codehaus.org/org/codehaus/jackson/jackson-core-asl/1.0.0/jackson-core-asl-1.0.0.jar" 
+            dest="${jackson.jar.file}" 
+            verbose="false"/>
+    </target>
+
+	<!--
+        xalan.jar 
+    -->
+    <target name="xalan-check" description="Checks if the xalan jar have been downloaded.">
+        <available file="${lib.dir}/xalan.jar" property="xalan.present"/>
+    </target>
+   
+    <target name="xalan-download" depends="xalan-check" unless="xalan.present">
+        <available file="${xalan.zip.file}" type="file" property="xalan.zip.exists"/>
+        <antcall target="download-xalan-zip" />
+        
+        <unzip src="${xalan.zip.file}" dest="${download.dir}/xalan">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy file="${download.dir}/xalan/xalan-j_2_6_0/bin/xalan.jar" toFile="${lib.dir}/xalan.jar"/>
+    </target>
+    
+    <target name="download-xalan-zip" unless="xalan.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://archive.apache.org/dist/xml/xalan-j/xalan-j_2_6_0-bin-2jars.zip" 
+            dest="${xalan.zip.file}" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        ExcludeDoclet.java 
+    -->
+    <target name="doclet-check" description="Checks if the excludedoclet.java has been downloaded.">
+        <available file="${modules.core.dir}/src/ExcludeDoclet.java" property="doclet.present"/>
+    </target>
+   
+    <target name="doclet-download" depends="doclet-check" unless="doclet.present">
+        <available file="${doclet.zip.file}" type="file" property="doclet.zip.exists"/>
+        <antcall target="download-doclet-java" />
+        
+    </target>
+    
+    <target name="download-doclet-java" unless="doclet.zip.exists">
+        <get src="http://sixlegs.com/misc/ExcludeDoclet.java" 
+            dest="${modules.core.dir}/src/ExcludeDoclet.java" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        mx4j-jmx.jar 
+    -->
+    <target name="mx4j-check" description="Checks if the mx4j jar has been downloaded.">
+        <available file="${modules.opt.lib.dir}/mx4j-jmx.jar" property="mx4j.present"/>
+    </target>
+   
+    <target name="mx4j-download" depends="mx4j-check" unless="mx4j.present">
+        <available file="${mx4j.zip.file}" type="file" property="mx4j.zip.exists"/>
+        <antcall target="download-mx4j-java" />
+        
+    </target>
+    
+    <target name="download-mx4j-java" unless="mx4j.zip.exists">
+        <get src="http://repo1.maven.org/maven2/mx4j/mx4j-jmx/1.1.1/mx4j-jmx-1.1.1.jar" 
+            dest="${modules.opt.lib.dir}/mx4j-jmx.jar" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        catalina-708.jar 
+    -->
+    <target name="cat708-check" description="Checks if the catalina-708 jar has been downloaded.">
+        <available file="${modules.opt.lib.dir}/catalina-708.jar" property="cat708.present"/>
+    </target>
+   
+    <target name="cat708-download" depends="cat708-check" unless="cat708.present">
+        <available file="${cat708.zip.file}" type="file" property="cat708.zip.exists"/>
+        <antcall target="download-cat708-java" />
+        
+    </target>
+    
+    <target name="download-cat708-java" unless="cat708.zip.exists">
+        <get src="http://repo1.maven.org/maven2/org/apache/tomcat/tomcat-catalina/7.0.8/tomcat-catalina-7.0.8.jar" 
+            dest="${modules.opt.lib.dir}/catalina-708.jar" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        catalina-4150.jar 
+    -->
+    <target name="cat4150-check" description="Checks if the catalina-4150 jar have been downloaded.">
+        <available file="${modules.opt.lib.dir}/catalina-4150.jar" property="cat4150.present"/>
+    </target>
+   
+    <target name="cat4150-download" depends="cat4150-check" unless="cat4150.present">
+        <available file="${cat4150.zip.file}" type="file" property="cat4150.zip.exists"/>
+        <antcall target="download-cat4150-zip" />
+        
+        <unzip src="${cat4150.zip.file}" dest="${download.dir}/cat4150">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy file="${download.dir}/cat4150/jakarta-tomcat-4.0.6/server/lib/catalina.jar" toFile="${modules.opt.lib.dir}/catalina-4150.jar"/>
+    </target>
+    
+    <target name="download-cat4150-zip" unless="cat4150.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://archive.apache.org/dist/tomcat/tomcat-4/archive/v4.0.6/bin/jakarta-tomcat-4.0.6.zip" 
+            dest="${cat4150.zip.file}" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        catalina.jar 
+    -->
+    <target name="cat-check" description="Checks if the catalina jar has been downloaded.">
+        <available file="${modules.opt.lib.dir}/catalina.jar" property="cat.present"/>
+    </target>
+   
+    <target name="cat-download" depends="cat-check" unless="cat.present">
+        <available file="${cat.zip.file}" type="file" property="cat.zip.exists"/>
+        <antcall target="download-cat-java" />
+        
+    </target>
+    
+    <target name="download-cat-java" unless="cat.zip.exists">
+        <get src="http://repo1.maven.org/maven2/org/apache/tomcat/catalina/6.0.26/catalina-6.0.26.jar" 
+            dest="${modules.opt.lib.dir}/catalina.jar" 
+            verbose="false"/>
+    </target>
+    
+	<!--
+        axis.jar 
+    -->
+    <target name="axis-check" description="Checks if the axis jar have been downloaded.">
+        <available file="${qa.lib.dir}/axis.jar" property="axis.present"/>
+    </target>
+   
+    <target name="axis-download" depends="axis-check" unless="axis.present">
+        <available file="${axis.zip.file}" type="file" property="axis.zip.exists"/>
+        <antcall target="download-axis-zip" />
+        <unzip src="${axis.zip.file}" dest="${download.dir}/axis">
+            <patternset>
+                <include name="**/*"/>
+            </patternset>
+        </unzip>
+        <copy file="${download.dir}/axis/axis-1_4/lib/axis.jar" toFile="${qa.lib.dir}/axis.jar"/>
+        <copy file="${download.dir}/axis/axis-1_4/lib/jaxrpc.jar" toFile="${qa.lib.dir}/jaxrpc.jar"/>
+        <copy file="${download.dir}/axis/axis-1_4/lib/saaj.jar" toFile="${qa.lib.dir}/saaj.jar"/>
+        <copy file="${download.dir}/axis/axis-1_4/lib/commons-discovery-0.2.jar" toFile="${qa.lib.dir}/commons-discovery-0.2.jar"/>
+        <copy file="${download.dir}/axis/axis-1_4/lib/wsdl4j-1.5.1.jar" toFile="${qa.lib.dir}/wsdl4j-1.5.1.jar"/>
+    </target>
+    
+    <target name="download-axis-zip" unless="axis.zip.exists">
+        <mkdir dir="${download.dir}"/>
+        <get src="http://archive.apache.org/dist/axis/axis/java/1.4/axis-bin-1_4.zip" 
+            dest="${axis.zip.file}" 
+            verbose="false"/>
+    </target>
+    
+
+	<!--
+        testng.jar 
+    -->
+    <target name="testng-check" description="Checks if the testng jar has been downloaded.">
+        <available file="${qa.lib.dir}/testng-5.8-jdk15.jar" property="testng.present"/>
+    </target>
+   
+    <target name="testng-download" depends="testng-check" unless="testng.present">
+        <available file="${testng.zip.file}" type="file" property="testng.zip.exists"/>
+        <antcall target="download-testng-java" />
+        
+    </target>
+    
+    <target name="download-testng-java" unless="testng.zip.exists">
+        <get src="http://mirrors.ibiblio.org/pub/mirrors/maven2/org/testng/testng/5.8/testng-5.8-jdk15.jar" 
+            dest="${qa.lib.dir}/testng-5.8-jdk15.jar" 
+            verbose="false"/>
+    </target>
+    
+</project>

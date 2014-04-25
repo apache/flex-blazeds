@@ -1,0 +1,557 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<title>BlazeDS Turnkey Readme</title>
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Verdana;
+	panose-1:2 11 6 4 3 5 4 4 2 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	color:windowtext;}
+h3
+	{mso-style-link:"Heading 3 Char";
+	margin-right:0in;
+	margin-left:0in;
+	font-size:13.5pt;
+	font-family:"Times New Roman","serif";
+	color:black;
+	font-weight:bold;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;}
+p
+	{margin-right:2.6pt;
+	margin-left:2.6pt;
+	font-size:12.0pt;
+	font-family:"Verdana","sans-serif";
+	color:black;}
+pre
+	{mso-style-link:"HTML Preformatted Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	color:windowtext;}
+span.Heading3Char
+	{mso-style-name:"Heading 3 Char";
+	mso-style-link:"Heading 3";
+	font-family:"Cambria","serif";
+	color:#4F81BD;
+	font-weight:bold;}
+span.HTMLPreformattedChar
+	{mso-style-name:"HTML Preformatted Char";
+	mso-style-link:"HTML Preformatted";
+	font-family:"Courier New";}
+.MsoChpDefault
+	{font-size:10.0pt;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+
+</head>
+
+<body lang=EN-US link=blue vlink=purple>
+
+<div class=Section1>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>BlazeDS Turnkey</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>This BlazeDS Turnkey<span style='font-size:10.0pt'> </span>includes
+the Adobe BlazeDS and Adobe Flex SDK, which are each licensed under separate
+licenses as described below:</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><u><span style='font-size:14.0pt'>Adobe BlazeDS License
+Information</span></u><span style='font-size:14.0pt'>:</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>©
+2004-2008 Adobe Systems Incorporated. All rights reserved.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>This
+program is free software: you can redistribute it and/or modify it under the
+terms of the GNU Lesser General Public License, Version 3, as published by the
+Free Software Foundation.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>This
+program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+details.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>You
+should have received a copy of the GNU Lesser General Public License along with
+this program.  If not, see http://www.gnu.org/licenses/.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>You
+shall not disclaim warranty or limit liability differently from the terms of
+Sections 15 and 16 of the GNU General Public License, Version 3, which is
+incorporated into the GNU Lesser General Public License.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>You
+shall preserve all legal notices or author attributions in the program.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>You
+shall not misrepresent the original version of the program, and you shall mark
+all modified versions of the program in reasonable ways to show the differences
+from the original version of the program.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'> </span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>In
+accordance with Section 7(f) of the GNU General Public License, Version 3,
+which is incorporated into the GNU Lesser General Public License, certain
+portions of this program are licensed under Apache 2.0 which requires the
+indemnification of the author or licensors of the software licensed under
+Apache 2.0 license by those who convey the program.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>If
+you have any questions regarding this agreement or if you wish to request any
+information from Adobe please use the address and contact information included
+with this program to contact the Adobe office serving your jurisdiction.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>By
+downloading, using, modifying, distributing and/or accessing the program, you
+agree to the GNU Lesser General Public License, Version 3.</span></p>
+<p class=MsoNormal style='margin-left:.5in'>&nbsp;</p>
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>The name &ldquo;BlazeDS&rdquo; and the BlazeDS logo must not be  used to endorse or promote products derived from this software without prior  written permission from Adobe. &nbsp;Similarly, products derived from this open  source software may not be called &quot;BlazeDS&quot;, nor may  &quot;BlazeDS&quot; appear in their name or the BlazeDS logo appear with such  products, without prior written permission of Adobe.</span></p>
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><b><span style='font-size:10.0pt'>&nbsp;</span></b></p>
+
+<p class=MsoNormal style='margin-left:.5in'><b><span style='font-size:10.0pt'>NOTICES
+RELATED TO CERTAIN THIRD PARTY MATERIALS:</span></b></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><u><span style='font-size:10.0pt'>Apache
+1.1 Licensed Products</span></u><span style='font-size:10.0pt'>:  </span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>This
+product includes software listed below that were developed by the Apache
+Software Foundation (http://www.apache.org/).  Such software is licensed under
+the Apache Software License, Version 1.1; you may obtain a copy of such license
+at  http://apache.org/licenses/LICENSE-1.1.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>-
+Apache Commons</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>  
+-- commons-codec-1.3.jar</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>  
+-- commons-fileupload-1.1.jar</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>  
+-- commons-httpclient-3.0.1.jar</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>  
+-- commons-io-1.1.jar</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>- Apache
+Velocity</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>  
+-- mm-velocity-1.4.jar</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>-
+Apache XML</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>  
+-- xalan.jar (version 2.5.2)</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><u><span style='font-size:10.0pt'>Apache
+2.0 Licensed Products</span></u><span style='font-size:10.0pt'>:  </span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>This
+product includes software listed below that were licensed under the Apache
+License, Version 2.0 (the &quot;License&quot;); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0. Unless required by applicable law
+or agreed to in writing, software distributed under the License is distributed
+on an &quot;AS IS&quot; BASIS,   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing
+permissions and limitations under the License.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>-
+Apache Tomcat</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>  
+-- Apache Tomcat 6.0.29</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><u><span style='font-size:10.0pt'>Creative
+Commons Licensed Products</span></u><span style='font-size:10.0pt'>: </span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>This
+software uses the java.util.concurrent (concurrent.jar version 1.3.3) API and
+the backport of java.util.concurrent API. Both packages are public-domain
+sources from the JSR 166 CVS repository, the dl.util.concurrent package, and
+the Doug Lea's collections package.backport-util-concurrent.jar (version 2.2)
+The license terms of these packages can be found here
+(http://creativecommons.org:81/licenses/publicdomain/). </span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><u><span style='font-size:10.0pt'>GNU
+LGPLv.2.1 Licensed Products</span></u><span style='font-size:10.0pt'>: </span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>This
+software uses the JGroups toolkit library for reliable multicast communication
+(jgroups.jar).  Such JGroups library is licensed under  the GNU Lesser General
+Public License, Version 2.1, a copy of which is included with such library. 
+You may also obtain a copy of such license at <a
+href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.   </span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><u><span style='font-size:10.0pt'>Hypersonic
+Licensed Products</span></u><span style='font-size:10.0pt'>:  </span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>This
+software uses the Hypersonic Java SQL database engine (hsqldb.jar version
+1.8.0) which is licensed under the Hypersonic license (<a
+href="http://hsqldb.org/web/hsqlLicense.html">http://hsqldb.org/web/hsqlLicense.html</a>),
+the text of which is provided below:</span></p>
+
+<p style='margin-left:1.0in'><b><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>For
+content, code, and products originally developed by Thomas Mueller and the
+Hypersonic SQL Group:</span></b><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'><br>
+<br>
+Copyright (c) 1995-2000 by the Hypersonic SQL Group.<br>
+All rights reserved. </span></p>
+
+<p style='margin-left:1.0in'><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>Redistribution
+and use in source and binary forms, with or without<br>
+modification, are permitted provided that the following conditions are met:<br>
+<br>
+Redistributions of source code must retain the above copyright notice, this<br>
+list of conditions and the following disclaimer.<br>
+<br>
+Redistributions in binary form must reproduce the above copyright notice,<br>
+this list of conditions and the following disclaimer in the documentation<br>
+and/or other materials provided with the distribution.<br>
+<br>
+Neither the name of the Hypersonic SQL Group nor the names of its<br>
+contributors may be used to endorse or promote products derived from this<br>
+software without specific prior written permission.<br>
+<br>
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS
+IS&quot;AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THEIMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE HYPERSONIC SQL GROUP,  OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span></p>
+
+<p style='margin-left:1.0in'><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>This
+software consists of voluntary contributions made by many individuals on behalf
+of the<br>
+Hypersonic SQL Group.</span></p>
+
+<h3 style='margin-left:69.4pt'><span style='font-size:10.0pt'>For work added by
+the HSQL Development Group (a.k.a. hsqldb_lic.txt):</span></h3>
+
+<p style='margin-left:1.0in'><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>Copyright
+(c) 2001-2005, The HSQL Development Group<br>
+All rights reserved.<br>
+<br>
+Redistribution and use in source and binary forms, with or without<br>
+modification, are permitted provided that the following conditions are met:<br>
+<br>
+Redistributions of source code must retain the above copyright notice, this<br>
+list of conditions and the following disclaimer.<br>
+<br>
+Redistributions in binary form must reproduce the above copyright notice,<br>
+this list of conditions and the following disclaimer in the documentation<br>
+and/or other materials provided with the distribution.<br>
+<br>
+Neither the name of the HSQL Development Group nor the names of its<br>
+contributors may be used to endorse or promote products derived from this<br>
+software without specific prior written permission.<br>
+<br>
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS
+IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL HSQL DEVELOPMENT GROUP, HSQLDB.ORG,  OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+OF SUCH DAMAGE.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'> </span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><u><span style='font-size:14.0pt'>Adobe Flex SDK License
+Information</span></u><span style='font-size:14.0pt'>:</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.5in'><u><span style='font-size:10.0pt'>Adobe
+Flex SDK License Agreement:</span></u><span style='font-size:10.0pt'>  </span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>All
+files contained in the Adobe Flex SDK are subject to and governed by the Adobe
+Flex SDK License Agreement specified here: <a href="licenses\license-adobesdk.htm">Adobe
+Flex SDK License Agreement</a>, <u>EXCEPT</u> those files specifically
+identified below as “Mozilla Public License Files”.  </span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>By downloading,
+modifying, distributing, using and/or accessing any files in this directory,
+you agree to the terms and conditions of the applicable end user license
+agreement. </span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>In
+addition to the Adobe license terms, you also agree to be bound by the third-party
+terms specified here: <a href="http://www.adobe.com/go/thirdparty">Third Party
+Software Notices</a>. Adobe recommends that you review these third-party terms.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><u><span style='font-size:10.0pt'><span
+ style='text-decoration:none'>&nbsp;</span></span></u></p>
+
+<p class=MsoNormal style='margin-left:.5in'><u><span style='font-size:10.0pt'>Mozilla
+Public License Files:</span></u><span style='font-size:10.0pt'>  </span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>The
+files located in the following directory locations of the Adobe Flex SDK are
+governed by the “Mozilla Public License Version 1.1” found below.  </span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>ant<br>
+asdoc<br>
+frameworks/javascript<br>
+frameworks/locale<br>
+frameworks/projects<br>
+frameworks/themes</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>The
+contents of such above files are subject to the Mozilla Public License Version
+1.1 (the &quot;License&quot;); you may not use these files except in compliance
+with the License. You may obtain a copy of the License here: <a
+href="licenses\license-mpl.htm">Mozilla Public License Version 1.1</a> or <a
+href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</a>.</span></p>
+
+<pre style='margin-left:1.0in'><span style='font-family:"Times New Roman","serif"'>Software distributed under the License is distributed on an &quot;AS IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the specific language governing rights and limitations under the License.</span></pre><pre
+style='margin-left:1.0in'><span style='font-family:"Times New Roman","serif"'>&nbsp;</span></pre><pre
+style='margin-left:1.0in'><span style='font-family:"Times New Roman","serif"'>The Original Code consists of the files listed above.</span></pre><pre
+style='margin-left:1.0in'><span style='font-family:"Times New Roman","serif"'>&nbsp;</span></pre>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>The
+Initial Developer of the Original Code is Adobe Systems Incorporated.</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>By
+downloading, modifying, distributing, using and/or accessing any files in this
+directory, you agree to the terms and conditions of the applicable end user
+license agreement.</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><b><span style='font-size:10.0pt'>NOTICES
+RELATED TO CERTAIN THIRD PARTY MATERIALS:</span></b></p>
+
+<p class=MsoNormal style='margin-left:.5in'><u><span style='font-size:10.0pt'>Apache
+1.1 Licensed Products</span></u><span style='font-size:10.0pt'>:  </span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt'>&nbsp;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>This
+product includes software listed below that were developed by the Apache
+Software Foundation (<a href="http://www.apache.org/">http://www.apache.org</a>/). 
+Such software is licensed under the Apache Software License, Version 1.1; you
+may obtain a copy of such license at <a
+href="http://apache.org/licenses/LICENSE-1.1">http://apache.org/licenses/LICENSE-1.1</a>.</span></p>
+
+<p class=MsoNormal style='margin-left:1.5in'><span style='font-size:10.0pt'>Apache
+Commons Collections 2.1<br>
+Apache Commons Discovery 0.2<br>
+Apache Xerces 2.4</span></p>
+
+<p style='margin-left:38.6pt'><u><span style='font-size:10.0pt;font-family:
+"Times New Roman","serif"'>Apache 2.0 Licensed Products</span></u><span
+style='font-size:10.0pt;font-family:"Times New Roman","serif"'>:  </span></p>
+
+<p style='margin-left:1.0in'><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>This
+product includes software listed below that were licensed under the Apache
+License, Version 2.0 (the &quot;License&quot;); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at <a
+href="http://www.apache.org/licenses/LICENSE-2.0"
+title="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>.
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an &quot;AS IS&quot; BASIS,&nbsp;&nbsp;
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+the License for the specific language governing permissions and limitations
+under the License.</span></p>
+
+<p style='margin-left:1.5in'><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>Apache
+Axis 1.1, © 2001-2004, Apache Software Foundation<br>
+Apache Batik SVG Toolkit 1.6, © 2005, Apache Software Foundation<br>
+Apache Commons Logging 1.0.4, © 2004, Apache Software Foundation<br>
+Apache Velocity 1.4, © 2004, Apache Software Foundation<br>
+Apache Xalan 2.6.0, © 2004, Apache Software Foundation</span></p>
+
+<p class=MsoNormal style='margin-left:.5in'><u><span style='font-size:10.0pt'>BSD
+Licensed Products</span></u><span style='font-size:10.0pt'>:</span></p>
+
+<p style='margin-left:1.0in'><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>Easing
+Equations Copyright (c) 2001-2003, Robert Penner</span></p>
+
+<p style='margin-left:1.0in'><span style='font-size:10.0pt;font-family:"Times New Roman","serif"'>All
+rights reserved.</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>Redistribution
+and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:</span></p>
+
+<p class=MsoNormal style='margin-left:1.5in;text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:10.0pt'>Redistributions of source code
+must retain the above copyright notice, this list of conditions and the
+following disclaimer. </span></p>
+
+<p class=MsoNormal style='margin-left:1.5in;text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:10.0pt'>Redistributions in binary form
+must reproduce the above copyright notice, this list of conditions and the
+following disclaimer in the documentation and/or other materials provided with
+the distribution. </span></p>
+
+<p class=MsoNormal style='margin-left:1.5in;text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:10.0pt'>Neither the name of the
+&lt;ORGANIZATION&gt; nor the names of its contributors may be used to endorse
+or promote products derived from this software without specific prior written
+permission. </span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt'>THIS
+SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS
+IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE<span
+style='color:blue'>.</span></span></p>
+
+<p class=MsoNormal style='margin-left:1.0in'><span style='font-size:10.0pt;
+color:blue'>&nbsp;</span></p>
+
+</div>
+
+</body>
+
+</html>

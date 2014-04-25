@@ -1,0 +1,535 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application  width='800' height='800' xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="setUp()">
+
+    <mx:RemoteObject destination="qa.echoservice.Echo" id="ro" invoke="addAsync()"/>
+
+    <mx:TraceTarget id="tt"/>
+    <mx:Script>
+    <![CDATA[
+        import qa.mxunit.*;
+        import mx.core.mx_internal;
+        import mx.messaging.ChannelSet;
+        import mx.messaging.channels.*;
+        import mx.messaging.config.ServerConfig;
+        import mx.collections.*;
+        import mx.rpc.events.*;
+
+
+         ////////////////////////////////////////////////////////////////////////////
+        //
+        // Variables
+        //
+        ////////////////////////////////////////////////////////////////////////////        
+        [Bindable]
+        public var dotNet:String;
+        /**
+        *  Variable to hold singleton instance of the MXUnitManager.  
+        */
+        private var manager:MXUnitManager;
+
+        //amf channel which legacy-collection is true
+        private var amfChannel:ChannelSet;
+        //http channel which legacy-collection is true
+        private var httpChannel:ChannelSet;
+        //amf channel which legacy-collection is false
+        private var amfChannelac:ChannelSet;
+        //amf channel which legacy-collection is false
+        private var httpChannelac:ChannelSet;
+      
+
+        private var expectedValue:Number = 3;
+        private var expectedArray:Array = [int.MIN_VALUE,0, int.MAX_VALUE];
+        
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Setup method.
+        //
+        //////////////////////////////////////////////////////////////////////////// 
+        
+        public function addAsync():void
+        {
+	    //Get runDotNet parameter from FlashVars or swf URL
+	    var paramObj:Object = LoaderInfo(this.root.loaderInfo).parameters;
+	    dotNet = paramObj["runDotNet"];
+
+            manager.currentTest.chain(ro, ["result", "fault"], testHandler);    
+        }
+
+        /**
+        *  This setup method dynamically creates a series of tests, and 
+        *  creates different channelsets. Same data is going to test under different
+        *  channelSets
+        */
+        private function setUp():void
+        {
+            amfChannel = new ChannelSet();
+            amfChannel.addChannel(ServerConfig.getChannel("qa-amf"));
+            httpChannel = new ChannelSet();
+            httpChannel.addChannel(ServerConfig.getChannel("qa-http"));
+      
+            amfChannelac = new ChannelSet();
+            amfChannelac.addChannel(ServerConfig.getChannel("qa-amf-ac"));
+            httpChannelac = new ChannelSet();
+            httpChannelac.addChannel(ServerConfig.getChannel("qa-http-ac"));
+      
+
+            //configure the MXUnitManager           
+            manager = MXUnitManager.getInstance();                                                                 
+
+            MXUnitManager.detectTests(this,20000);
+
+            //MXUnitManager.addTests(this,["testArrayCollectionEchoIntClassesAMF"],10000);
+        }
+        /**
+        *    Test java int through amf channel
+        **/
+        public function testEchoIntAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoInt(expectedValue);
+            call.expected = expectedValue;
+        }
+        /**
+        *    Test java int through http channel
+        **/
+        public function testEchoIntHttp():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoInt(expectedValue);
+            call.expected = expectedValue;
+        }
+      
+        //int class
+        /**
+        *    Test java Integer through amf channel
+        **/
+        public function testEchoIntClassAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoIntClass(expectedValue);
+            call.expected = expectedValue;
+        }
+        /**
+        *    Test java Integer through http channel
+        **/
+        public function testEchoIntClassHttp():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoIntClass(expectedValue);
+            call.expected = expectedValue;
+        }
+      
+
+
+        /**
+        *    Test sending and recieving an Integer with null as parameter through amf channel
+        **/
+        public function testEchoIntClassNullAMF():void
+        {
+            ro.channelSet = amfChannel;
+	    if (dotNet == "true")
+	    {
+            	var call:Object = ro.echoIntClass(null);
+            	call.expected = 0;
+	    }
+	    else
+	    {
+            	var call:Object = ro.echoIntClass(null);
+            	call.expected = null;
+	    }
+        }
+         /**
+        *    Test sending and recieving an Integer with null as parameter through http channel
+        **/
+        public function testEchoIntClassNullHttp():void
+        {
+            ro.channelSet = httpChannel;
+	    if (dotNet == "true")
+	    {
+            	var call:Object = ro.echoIntClass(null);
+            	call.expected = 0;
+	    }
+	    else
+	    {
+            	var call:Object = ro.echoIntClass(null);
+            	call.expected = null;
+	    }
+        }
+      
+
+        /**
+        *    Test sending and recieving an int[] through amf channel
+        **/
+        public function testEchoIntsAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoInts(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        /**
+        *    Test sending and recieving an int[] through http channel
+        **/
+        public function testEchoIntsHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoInts(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        /**
+        *    Test sending and recieving an int[] through amf channel
+        **/
+        public function testEchoIntsAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoInts(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        /**
+        *    Test sending and recieving an int[] through http channel
+        **/
+        public function testEchoIntsHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoInts(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        
+        //int[] using empty []
+        /**
+        *    Test sending and recieving an int[] with no element through amf channel
+        **/
+        public function testEchoIntsEmptyAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoInts([]);
+            call.expected = [];
+
+        }
+        /**
+        *    Test sending and recieving an int[] with no element through http channel
+        **/
+        public function testEchoIntsEmptyHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoInts([]);
+            call.expected = [];
+
+        }
+        /**
+        *    Test sending and recieving an int[] with no element through amf channel
+        **/
+        public function testEchoIntsEmptyAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoInts([]);
+            call.expected = [];
+
+        }
+        /**
+        *    Test sending and recieving an int[] with no element through http channel
+        **/
+        public function testEchoIntsEmptyHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoInts([]);
+            call.expected = [];
+
+        }
+
+        //int[] -paremter null
+        /**
+        *    Test sending and recieving an int[] as null through amf channel
+        **/
+        public function testEchoIntsNullAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoInts(null);
+            call.expected = null;
+
+        }
+        /**
+        *    Test sending and recieving an int[] as null through http channel
+        **/
+        public function testEchoIntsNullHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoInts(null);
+            call.expected = null;
+
+        }
+        /**
+        *    Test sending and recieving an int[] as null through amf channel
+        **/
+        public function testEchoIntsNullAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoInts(null);
+            call.expected = null;
+
+        }
+        /**
+        *    Test sending and recieving an int[] as null through http channel
+        **/
+        public function testEchoIntsNullHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoInts(null);
+            call.expected = null;
+
+        }
+
+        //Int[]
+        /**
+        *    Test sending and recieving an Integer[]  through amf channel
+        **/
+        public function testEchoIntClassesAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoIntClasses(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        /**
+        *    Test sending and recieving an Integer[]  through http channel
+        **/
+        public function testEchoIntClassesHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoIntClasses(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        /**
+        *    Test sending and recieving an Integer[]through amf channel
+        **/
+        public function testEchoIntClassesAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoIntClasses(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        /**
+        *    Test sending and recieving an Integer[] through http channel
+        **/
+        public function testEchoIntClassesHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoIntClasses(expectedArray);
+            call.expected = expectedArray;
+
+        }
+
+      
+
+  
+        //Int[] - using []
+        /**
+        *    Test sending and recieving an Integer[] with no element through amf channel
+        **/
+        public function testEchoIntClassesEmptyAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoIntClasses([]);
+            call.expected = [];
+
+        }
+        /**
+        *    Test sending and recieving an Integer[] with no element through http channel
+        **/
+        public function testEchoIntClassesEmptyHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoIntClasses([]);
+            call.expected = [];
+
+        }
+        /**
+        *    Test sending and recieving an Integer[] with no element through amf channel
+        **/
+        public function testEchoIntClassesEmptyAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoIntClasses([]);
+            call.expected = [];
+
+        }
+        /**
+        *    Test sending and recieving an Integer[] with no element through http channel
+        **/
+        public function testEchoIntClassesEmptyHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoIntClasses([]);
+            call.expected = [];
+
+        }
+
+        //Int[] - using ArrayCollection()
+        /**
+        *    Test sending and recieving an Integer[] with no element through amf channel
+        *    use ArrayCollection as parameter
+        **/
+        public function testACEchoIntClassesEmptyAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoIntClasses(new ArrayCollection([]));
+            call.expected = [];
+
+        }
+        /**
+        *    Test sending and recieving an Integer[] with no element through http channel
+        *    use ArrayCollection as parameter
+        **/
+        public function testACEchoIntClassesEmptyHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoIntClasses(new ArrayCollection([]));
+            call.expected = [];
+
+        }
+        /**
+        *    Test sending and recieving an Integer[] with no element through amf channel
+        *    use ArrayCollection as parameter
+        **/
+        public function testACEchoIntClassesEmptyAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoIntClasses(new ArrayCollection([]));
+            call.expected = [];
+
+        }
+        /**
+        *    Test sending and recieving an Integer[] with no element through http channel
+        *    use ArrayCollection as parameter
+        **/
+        public function testACEchoIntClassesEmptyHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoIntClasses(new ArrayCollection([]));
+            call.expected = [];
+
+        }
+
+        //Int Classes - [null,null,3,999,null]
+        /**
+        *    Test sending and recieving an Integer[] with some nulls through amf channel
+        * 
+        **/
+        public function testEchoIntClassesNullsAMF():void
+        {
+            ro.channelSet = amfChannel;
+	    if (dotNet == "true")
+	    {
+            	var call:Object = ro.echoIntClasses([null,null,3,999,null]);
+            	call.expected = [0,0,3,999,0];
+	    }
+	    else
+	    {
+            	var call:Object = ro.echoIntClasses([null,null,3,999,null]);
+            	call.expected = [null,null,3,999,null];
+	    }
+
+        }
+        /**
+        *    Test sending and recieving an Integer[] with some nulls through http channel
+        * 
+        **/
+        public function testEchoIntClassesNullsHTTP():void
+        {
+            ro.channelSet = httpChannel;
+	    if (dotNet == "true")
+	    {
+            	var call:Object = ro.echoIntClasses([null,null,3,999,null]);
+            	call.expected = [0,0,3,999,0];
+	    }
+	    else
+	    {
+            	var call:Object = ro.echoIntClasses([null,null,3,999,null]);
+            	call.expected = [null,null,3,999,null];
+	    }
+
+        }
+        /**
+        *    Test sending and recieving an Integer[] with some nulls through amf channel
+        * 
+        **/
+        public function testEchoIntClassesNullsAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+	    if (dotNet == "true")
+	    {
+            	var call:Object = ro.echoIntClasses([null,null,3,999,null]);
+            	call.expected = [0,0,3,999,0];
+	    }
+	    else
+	    {
+            	var call:Object = ro.echoIntClasses([null,null,3,999,null]);
+            	call.expected = [null,null,3,999,null];
+	    }
+
+        }
+        /**
+        *    Test sending and recieving an Integer[] with some nulls through http channel
+        * 
+        **/
+        public function testEchoIntClassesNullsHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+	    if (dotNet == "true")
+	    {
+            	var call:Object = ro.echoIntClasses([null,null,3,999,null]);
+            	call.expected = [0,0,3,999,0];
+	    }
+	    else
+	    {
+            	var call:Object = ro.echoIntClasses([null,null,3,999,null]);
+            	call.expected = [null,null,3,999,null];
+	    }
+        }
+
+
+        private function testHandler(e:Object):void
+        {
+            if (e is FaultEvent)
+            {
+                if ((e.token.expectFault))
+                {
+                    Assert.pass();    
+                }
+                else
+                {
+                    Assert.fail(e.faultEvent.faultString);
+                }
+            }
+            else
+            {
+                Assert.currentTest.doAssertEquals(e.result,e.token.expected);
+            }
+        }
+    ]]>
+    </mx:Script>
+
+</mx:Application>

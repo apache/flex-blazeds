@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<actionScriptProperties mainApplicationPath="rpc.as" version="3">
+  <compiler additionalCompilerArguments="-locale=en_US,ja_JP" copyDependentFiles="false" enableModuleDebug="false" generateAccessible="true" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="false" htmlPlayerVersion="9.0.0" htmlPlayerVersionCheck="true" outputFolderPath="libs" strict="true" useApolloConfig="false" verifyDigests="true" warn="true">
+    <compilerSourcePath>
+      <compilerSourcePathEntry kind="1" linkType="1" path="${FLEX_SDK}/frameworks/projects/rpc/src"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="${FLEX_SDK}/frameworks/projects/rpc/bundles/en_US"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="${FLEX_SDK}/frameworks/projects/rpc/bundles/ja_JP"/>
+    </compilerSourcePath>
+    <libraryPath defaultLinkType="1">
+      <libraryPathEntry kind="3" linkType="2" path="${FLEX_SDK}/frameworks/libs/player/10/playerglobal.swc" useDefaultLinkType="false"/>
+      <libraryPathEntry kind="3" linkType="2" path="${FLEX_SDK}/frameworks/libs/framework.swc" sourcepath="${FLEX_SDK}/frameworks/projects/framework/src" useDefaultLinkType="false"/>
+    </libraryPath>
+    <sourceAttachmentPath>
+      <sourceAttachmentPathEntry kind="3" linkType="2" path="${FLEX_SDK}/frameworks/libs/framework.swc" sourcepath="${FLEX_SDK}/frameworks/projects/framework/src" useDefaultLinkType="false"/>
+    </sourceAttachmentPath>
+  </compiler>
+  <applications/>
+  <modules/>
+  <buildCSSFiles/>
+</actionScriptProperties>

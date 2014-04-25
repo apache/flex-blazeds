@@ -1,0 +1,1 @@
+Invalid <timeout-minutes> value 'foo' in the <flex-client> configuration section. Please specify a positive value or leave the element undefined in which case flex client instances on the server will be timed out when all associated sessions/connections have shut down.

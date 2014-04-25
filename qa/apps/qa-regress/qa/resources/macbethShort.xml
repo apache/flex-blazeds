@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<!--
+
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-->
+
+
+<PLAY>
+    <TITLE>The Tragedy of Macbeth</TITLE>
+
+    <fm>
+        <p>Text placed in the public domain by Moby Lexical Tools, 1992.</p>
+        <p>SGML markup by Jon Bosak, 1992-1994.</p>
+        <p>XML version by Jon Bosak, 1996-1997.</p>
+        <p>This work may be freely copied and distributed worldwide.</p>
+    </fm>
+
+
+    <PERSONAE>
+        <TITLE>Dramatis Personae</TITLE>
+
+        <PERSONA>DUNCAN, king of Scotland.</PERSONA>
+
+        <PGROUP>
+            <PERSONA>MALCOLM</PERSONA>
+            <PERSONA>DONALBAIN</PERSONA>
+            <GRPDESCR>his sons.</GRPDESCR>
+        </PGROUP>
+
+
+        <PGROUP>
+            <PERSONA>MACBETH</PERSONA>
+            <PERSONA>BANQUO</PERSONA>
+            <GRPDESCR>generals of the king's army.</GRPDESCR>
+        </PGROUP>
+
+
+        <PGROUP>
+            <PERSONA>MACDUFF</PERSONA>
+            <PERSONA>LENNOX</PERSONA>
+            <PERSONA>ROSS</PERSONA>
+            <PERSONA>MENTEITH</PERSONA>
+            <PERSONA>ANGUS</PERSONA>
+            <PERSONA>CAITHNESS</PERSONA>
+            <GRPDESCR>noblemen of Scotland.</GRPDESCR>
+        </PGROUP>
+
+        <PERSONA>FLEANCE, son to Banquo.</PERSONA>
+        <PERSONA>SIWARD, Earl of Northumberland, general of the English forces.</PERSONA>
+        <PERSONA>YOUNG SIWARD, his son.</PERSONA>
+        <PERSONA>SEYTON, an officer attending on Macbeth.</PERSONA>
+        <PERSONA>Boy, son to Macduff. </PERSONA>
+        <PERSONA>An English Doctor. </PERSONA>
+        <PERSONA>A Scotch Doctor. </PERSONA>
+        <PERSONA>A Soldier.</PERSONA>
+        <PERSONA>A Porter.</PERSONA>
+        <PERSONA>An Old Man.</PERSONA>
+        <PERSONA>LADY MACBETH</PERSONA>
+        <PERSONA>LADY MACDUFF</PERSONA>
+        <PERSONA>Gentlewoman attending on Lady Macbeth. </PERSONA>
+        <PERSONA>HECATE</PERSONA>
+        <PERSONA>Three Witches.</PERSONA>
+        <PERSONA>Apparitions.</PERSONA>
+        <PERSONA>Lords, Gentlemen, Officers, Soldiers, Murderers, Attendants, and Messengers. </PERSONA>
+    </PERSONAE>
+
+    <SCNDESCR>SCENE  Scotland: England.</SCNDESCR>
+
+    <PLAYSUBT>MACBETH</PLAYSUBT>
+
+
+    <ACT>
+        <TITLE>ACT IV</TITLE>
+
+        <SCENE>
+            <TITLE>SCENE I.  A cavern. In the middle, a boiling cauldron.</TITLE>
+            <STAGEDIR>Thunder. Enter the three Witches</STAGEDIR>
+
+            <SPEECH>
+                <SPEAKER>First Witch</SPEAKER>
+                <LINE>Thrice the brinded cat hath mew'd.</LINE>
+            </SPEECH>
+
+            <SPEECH>
+                <SPEAKER>Second Witch</SPEAKER>
+                <LINE>Thrice and once the hedge-pig whined.</LINE>
+            </SPEECH>
+
+            <SPEECH>
+                <SPEAKER>Third Witch</SPEAKER>
+                <LINE>Harpier cries 'Tis time, 'tis time.</LINE>
+            </SPEECH>
+
+            <SPEECH>
+                <SPEAKER>First Witch</SPEAKER>
+                <LINE>Round about the cauldron go;</LINE>
+                <LINE>In the poison'd entrails throw.</LINE>
+                <LINE>Toad, that under cold stone</LINE>
+                <LINE>Days and nights has thirty-one</LINE>
+                <LINE>Swelter'd venom sleeping got,</LINE>
+                <LINE>Boil thou first i' the charmed pot.</LINE>
+            </SPEECH>
+
+            <SPEECH>
+                <SPEAKER>ALL</SPEAKER>
+                <LINE>Double, double toil and trouble;</LINE>
+                <LINE>Fire burn, and cauldron bubble.</LINE>
+            </SPEECH>
+
+            <SPEECH>
+                <SPEAKER>Second Witch</SPEAKER>
+                <LINE>Fillet of a fenny snake,</LINE>
+                <LINE>In the cauldron boil and bake;</LINE>
+                <LINE>Eye of newt and toe of frog,</LINE>
+                <LINE>Wool of bat and tongue of dog,</LINE>
+                <LINE>Adder's fork and blind-worm's sting,</LINE>
+                <LINE>Lizard's leg and owlet's wing,</LINE>
+                <LINE>For a charm of powerful trouble,</LINE>
+                <LINE>Like a hell-broth boil and bubble.</LINE>
+            </SPEECH>
+
+            <SPEECH>
+                <SPEAKER>ALL</SPEAKER>
+                <LINE>Double, double toil and trouble;</LINE>
+                <LINE>Fire burn and cauldron bubble.</LINE>
+            </SPEECH>
+
+            <SPEECH>
+                <SPEAKER>Third Witch</SPEAKER>
+                <LINE>Scale of dragon, tooth of wolf,</LINE>
+                <LINE>Witches' mummy, maw and gulf</LINE>
+                <LINE>Of the ravin'd salt-sea shark,</LINE>
+                <LINE>Root of hemlock digg'd i' the dark,</LINE>
+                <LINE>Liver of blaspheming Jew,</LINE>
+                <LINE>Gall of goat, and slips of yew</LINE>
+                <LINE>Silver'd in the moon's eclipse,</LINE>
+                <LINE>Nose of Turk and Tartar's lips,</LINE>
+                <LINE>Finger of birth-strangled babe</LINE>
+                <LINE>Ditch-deliver'd by a drab,</LINE>
+                <LINE>Make the gruel thick and slab:</LINE>
+                <LINE>Add thereto a tiger's chaudron,</LINE>
+                <LINE>For the ingredients of our cauldron.</LINE>
+            </SPEECH>
+
+            <SPEECH>
+                <SPEAKER>ALL</SPEAKER>
+                <LINE>Double, double toil and trouble;</LINE>
+                <LINE>Fire burn and cauldron bubble.</LINE>
+            </SPEECH>
+
+            <SPEECH>
+                <SPEAKER>Second Witch</SPEAKER>
+                <LINE>Cool it with a baboon's blood,</LINE>
+                <LINE>Then the charm is firm and good.</LINE>
+            </SPEECH>
+
+            <STAGEDIR>Flourish. Exeunt</STAGEDIR>
+        </SCENE>
+    </ACT>
+</PLAY>

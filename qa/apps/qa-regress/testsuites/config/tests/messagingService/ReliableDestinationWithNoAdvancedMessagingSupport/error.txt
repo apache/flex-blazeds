@@ -1,0 +1,1 @@
+javax.servlet.UnavailableException: The configuration is attempting to use functionality that requires the flex.messaging.services.AdvancedMessagingSupport service to be registered. This includes reliable network settings for destinations, as well as adaptive server-to-client message frequency settings.

@@ -1,0 +1,1 @@
+The configuration is attempting to use functionality that requires the flex.messaging.services.AdvancedMessagingSupport service to be registered. This includes reliable network settings for destinations, buffer/conflate throttling policies, and adaptive server-to-client message frequency settings.

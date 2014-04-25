@@ -1,0 +1,1 @@
+Unsupported JMS Message Type 'javax.jms.BadMessageType'. Valid values are javax.jms.TextMessage, javax.jms.ObjectMessage, and javax.jms.MapMessage.

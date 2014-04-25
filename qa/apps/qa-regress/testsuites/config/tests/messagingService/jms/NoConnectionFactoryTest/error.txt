@@ -1,0 +1,1 @@
+JMS connection factory of message destinations with JMS Adapters must be specified.

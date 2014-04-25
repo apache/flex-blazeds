@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" width="1000" height="900" creationComplete="initTest()">
+    <mx:Script>
+        <![CDATA[
+			import qa.utils.TestTaskEvent;
+			import qa.utils.TestTask;
+			import qa.mxunit.Assert;
+			import qa.mxunit.MXUnitManager;
+			import mx.controls.Alert;
+            import flash.net.NetConnection;
+			import flash.net.Responder; 
+			import qa.CustomNetConnection;
+			
+			/**
+			 * Error message expected by the test. 
+			 */
+			private var expected:String = "Destination 'qa.ssl.echoservice.Echo' not accessible over channel 'qa-amf-ac'."
+			/**
+			 *  Variable to hold singleton instance of the MXUnitManager.  
+			 */
+			private var manager:MXUnitManager;
+			
+			/**
+			 *  TestTask object to listen for test task events. 
+			 */ 
+			private var t:TestTask = new TestTask();
+			
+            public function initTest():void 
+			{
+				//configure the MXUnitManager           
+				manager = MXUnitManager.getInstance();                                                             
+				//Call addTests giving it the object that contains all our test functions and an array of test names
+				MXUnitManager.addTests(this,["testRemoteObject"], 5000); 
+				
+			}
+			
+			public function testTaskEventHandler(e:TestTaskEvent):void 
+			{   						
+				/*
+				* If we are here because of a problem fail the test 
+				* otherwise do nothing             
+				*/
+				if (e.type == TestTaskEvent.FAILED) {
+					Assert.fail(e.message.faultString + ": " + e.message.faultDetail);     
+				} else {
+					//noop    
+				}                                          
+			}
+			
+			public function testRemoteObject():void 
+			{
+				manager.currentTest.chain(t,[TestTaskEvent.COMPLETED, TestTaskEvent.FAILED],testTaskEventHandler);
+				var gateway:NetConnection = new CustomNetConnection();
+				gateway.connect("http://localhost:8400/qa-regress/messagebroker/amfac");
+				var resp:Responder = new Responder(show_results, on_fault);
+				gateway.call("qa.ssl.echoservice.Echo.echoString", resp,"Hello");
+				
+				
+			}
+			public function show_results(o:Object):void 
+			{
+				Assert.fail("Shouldn't have been able to call the destination over the endpoint.");  
+			}
+			public function on_fault(o:Object):void 
+			{
+				Assert.assertEquals(expected,o.message); 
+				t.taskCompleted();
+			}
+			public function AppendToGatewayUrl(value:String):void
+			{
+			
+			}
+        ]]>
+    </mx:Script>
+    <mx:Label text="RemoteObject NetConnection Test" fontSize="16"/>
+    	
+    <mx:TraceTarget level="0"/>
+</mx:Application>

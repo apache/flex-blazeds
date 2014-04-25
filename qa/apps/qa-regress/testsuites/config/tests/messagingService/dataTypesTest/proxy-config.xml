@@ -1,0 +1,433 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<service class="flex.messaging.services.HTTPProxyService" id="proxy-service">
+
+    <properties>
+        <connection-manager>
+            <max-total-connections>100</max-total-connections>
+            <default-max-connections-per-host>2</default-max-connections-per-host>
+        </connection-manager>
+        <allow-lax-ssl>true</allow-lax-ssl>
+    </properties>
+
+    <adapters>
+        <adapter-definition class="flex.messaging.services.http.HTTPProxyAdapter" default="true" id="http-proxy"></adapter-definition>
+        <adapter-definition class="flex.messaging.services.http.SOAPProxyAdapter" id="soap-proxy"></adapter-definition>
+    <adapter-definition class="flex.messaging.services.http.HTTPProxyAdapter" id="codecoverage-proxy">
+			<properties>
+				<connection-manager>
+					<max-total-connections>100</max-total-connections>
+					<default-max-connections-per-host>2</default-max-connections-per-host>
+					<connection-timeout>12000</connection-timeout>
+					<socket-timeout>12000</socket-timeout>
+					<stale-checking-enabled>true</stale-checking-enabled>
+					<send-buffer-size>4096</send-buffer-size>
+					<receive-buffer-size>4096</receive-buffer-size>
+					<tcp-no-delay>true</tcp-no-delay>
+					<linger>-1</linger>
+					<max-per-host>
+						<max-connections>10</max-connections>
+						<host>feeds.adobe.com</host>
+						<port>80</port>
+						<protocol>http</protocol>
+						<!-- 
+							<protocol-factory>
+								<class>flex.messaging.services.http.ProtocolFactory</class>							
+								<properties />
+							</protocol-factory>
+						-->
+						<local-address>127.0.0.1</local-address>
+						<virtual-host>127.0.0.1</virtual-host>
+					</max-per-host>					
+					<max-per-host>
+						<host>feeds.adobe.com</host>
+						<max-connections>2</max-connections>
+						<proxy>
+							<host>feeds.adobe.com</host>
+							<port>80</port>
+						</proxy>
+					</max-per-host>
+				</connection-manager>
+				<cookie-limit>100</cookie-limit>
+				<allow-lax-ssl>true</allow-lax-ssl>
+				<content-chunked>false</content-chunked>
+				<external-proxy>
+					<server>http://10.10.10.10/</server>
+					<port>3128</port>
+					<nt-domain>mycompany</nt-domain>
+					<username>flex</username>
+					<password>flex</password>
+				</external-proxy>
+			</properties>
+		</adapter-definition>
+</adapters>
+
+    
+
+    
+
+    
+
+<default-channels>
+       <channel ref="qa-http"></channel>
+       <channel ref="qa-amf"></channel>
+       <channel ref="qa-secure-amf"></channel>
+    </default-channels>
+<destination id="qa.EchoService">
+        <properties>
+            <wsdl>http://localhost:8400/qa-regress/axis/services/interopTestPort?wsdl</wsdl>
+            <soap>http://localhost:8400/qa-regress/axis/services/interopTestPort</soap>
+            <!-- could have more than one soap element -->
+        </properties>
+
+        <security>
+            <!-- <run-as username="freddie" password="nightmare"/> -->
+        </security>
+
+        <adapter ref="soap-proxy"></adapter>
+    </destination>
+<destination id="DefaultHTTP">
+        <properties>
+            <dynamic-url>http://{server.name}:*/{context.root}/remote/*</dynamic-url>
+            <dynamic-url>http://{server.name}:*/{context.root}/services/*</dynamic-url>
+            <dynamic-url>http://{server.name}:*/{context.root}/flexunit/*</dynamic-url>
+            <dynamic-url>http://{server.name}:*/{context.root}/qa-services/*</dynamic-url>
+			<!-- move these to internal version of proxy-config -->
+            <!-- 
+            <dynamic-url>http://royalesoap2.rnd.newton.allairecorp.com:8080/*</dynamic-url>
+            <dynamic-url>http://royalesoap2.rnd.newton.allairecorp.com/*</dynamic-url>
+            <dynamic-url>http://10.60.144.67:81/*</dynamic-url>
+            -->
+            <dynamic-url>http://www.yahoo.com/*</dynamic-url>
+            <dynamic-url>*</dynamic-url>
+        </properties>
+    </destination>
+<destination id="DefaultHTTPS">
+        <properties>
+            <dynamic-url>https://{server.name}:*/{context.root}/remote/*</dynamic-url>
+            <dynamic-url>https://{server.name}:*/{context.root}/services/*</dynamic-url>
+            <dynamic-url>https://{server.name}:*/{context.root}/flexunit/*</dynamic-url>
+			<!-- move these to internal version of proxy-config -->
+            <!-- 
+            
+            <dynamic-url>https://royalesoap2.rnd.newton.allairecorp.com/*</dynamic-url>
+            <dynamic-url>https://royalesoap2.rnd.newton.allairecorp.com:8443/*</dynamic-url>
+            <dynamic-url>http://10.60.144.67:81/*</dynamic-url>
+			-->
+        </properties>
+        <channels>
+            <channel ref="qa-secure-amf"></channel>
+        </channels>
+    </destination>
+<destination id="basic.xml_amf">
+        <channels>
+            <channel ref="qa-amf"></channel>
+        </channels>
+
+		<properties>
+		
+			<network>
+        	<!--	<cluster ref="default-tcp-cluster"/> -->
+        	</network>
+		
+		
+            <url>http://localhost:8400/qa-regress/remote/basic.xml</url>
+        </properties>
+    </destination>
+<destination id="echoParams_amf">
+        <channels>
+            <channel ref="qa-amf"></channel>
+        </channels>
+
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/echoParams.jsp</url>
+        </properties>
+    </destination>
+<destination id="echoParams_secureamf">
+        <channels>
+            <channel ref="qa-secure-amf"></channel>
+        </channels>
+
+        <properties>
+            <url>https://localhost:9400/qa-regress/remote/echoParams.jsp</url>
+        </properties>
+    </destination>
+<destination id="echoParamsSecure_amf">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/echoParams.jsp</url>
+        </properties>
+        <channels>
+            <channel ref="qa-amf"></channel>
+        </channels>
+        <security>
+            <security-constraint ref="sample-users"></security-constraint>
+        </security>
+    </destination>
+<destination id="echoParamsSecureBad_amf">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/echoParams.jsp</url>
+        </properties>
+        <channels>
+            <channel ref="qa-amf"></channel>
+        </channels>
+        <security>
+            <security-constraint ref="admins"></security-constraint>
+        </security>
+    </destination>
+<destination id="echoParamsAsFlashvars_amf">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/echoParamsAsFlashvars.jsp</url>
+        </properties>
+        <channels>
+            <channel ref="qa-amf"></channel>
+        </channels>
+    </destination>
+<destination id="echoParamsExtraOnUrl_amf">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/echoParamsAsFlashvars.jsp?extra=extra</url>
+        </properties>
+        <channels>
+            <channel ref="qa-amf"></channel>
+        </channels>
+    </destination>
+<destination id="echoXml_amf">
+        <channels>
+            <channel ref="qa-amf"></channel>
+        </channels>
+
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/HttpXmlEchoService.jsp</url>
+        </properties>
+    </destination>
+<destination id="echoXml_Ja_amf">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/languages_utf8.xml</url>
+        </properties>
+
+        <channels>
+            <channel ref="qa-amf"></channel>
+        </channels>
+    </destination>
+<destination id="decodeURL_amf">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remoteTest</url>
+        </properties>
+        <channels>
+            <channel ref="qa-amf"></channel>
+        </channels>
+    </destination>
+<destination id="basic.xml_http">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/basic.xml</url>
+        </properties>
+        
+        <channels>
+            <channel ref="qa-http"></channel>
+        </channels>
+    </destination>
+<destination id="echoParams_http">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/echoParams.jsp</url>
+        </properties>
+
+        <channels>
+            <channel ref="qa-http"></channel>
+        </channels>
+    </destination>
+<destination id="echoParams_securehttp">
+        <properties>
+            <url>https://localhost:9400/qa-regress/remote/echoParams.jsp</url>
+        </properties>
+
+        <channels>
+            <channel ref="qa-secure-http"></channel>
+        </channels>
+    </destination>
+<destination id="echoParamsSecure_http">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/echoParams.jsp</url>
+        </properties>
+        <channels>
+            <channel ref="qa-http"></channel>
+        </channels>
+        <security>
+            <security-constraint ref="sample-users"></security-constraint>
+        </security>
+    </destination>
+<destination id="echoParamsAsFlashvars_http">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/echoParamsAsFlashvars.jsp</url>
+        </properties>
+            
+        <channels>
+            <channel ref="qa-http"></channel>
+        </channels>
+    </destination>
+<destination id="echoParamsExtraOnUrl_http">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/echoParamsAsFlashvars.jsp?extra=extra</url>
+        </properties>
+        <channels>
+            <channel ref="qa-http"></channel>
+        </channels>
+    </destination>
+<destination id="echoXml_http">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/HttpXmlEchoService.jsp</url>
+        </properties>
+            
+        <channels>
+            <channel ref="qa-http"></channel>
+        </channels>
+    </destination>
+<destination id="echoXml_Ja_http">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/languages_utf8.xml</url>
+        </properties>
+        <channels>
+            <channel ref="qa-http"></channel>
+        </channels>
+    </destination>
+<destination id="decodeURL_http">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remoteTest</url>
+        </properties>
+        <channels>
+            <channel ref="qa-http"></channel>
+        </channels>
+    </destination>
+<destination id="bug110823">
+        <properties>
+        <!--  add this to service props <cookie-limit>5</cookie-limit> -->
+            <url>http://10.60.144.67:8080/cookies/set500Cookies.jsp?debug=false</url>
+        </properties>
+        <channels>
+            <channel ref="qa-http"></channel>
+        </channels>
+    </destination>
+<destination id="echoParamsAsFlashvars_channelSet">
+        <properties>
+            <url>http://localhost:8400/qa-regress/remote/echoParamsAsFlashvars.jsp</url>
+        </properties>
+  
+    </destination>
+<destination id="qa.axis.EchoService">
+
+        <properties>
+            <wsdl>http://10.60.144.67:8080/axis/services/echo?wsdl</wsdl>
+            <soap>http://10.60.144.67:8080/axis/services/echo</soap>
+        </properties>
+
+        <security>
+            <!-- <run-as username="freddie" password="nightmare"/> -->
+        </security>
+
+        <adapter ref="soap-proxy"></adapter>
+    </destination>
+<destination id="basic.xml">
+        <properties>
+            <url>http://{server.name}:{server.port}/{context.root}/remote/basic.xml</url>
+        </properties>
+    </destination>
+<destination id="echoParams">
+        <properties>
+            <url>http://{server.name}:{server.port}/{context.root}/remote/echoParams.jsp</url>
+        </properties>
+    </destination>
+<destination channels="qa-secure-amf" id="echoParamsSecure">
+        <properties>
+            <url>http://{server.name}:{server.port}/{context.root}/remote/echoParams.jsp</url>
+        </properties>
+
+        <security>
+            <security-constraint ref="sample-users"></security-constraint>
+        </security>
+    </destination>
+<destination id="echoParamsAsFlashvars">
+        <properties>
+            <url>http://{server.name}:{server.port}/{context.root}/remote/echoParamsAsFlashvars.jsp</url>
+        </properties>
+    </destination>
+<destination id="echoParamsExtraOnUrl">
+        <properties>
+            <url>http://{server.name}:{server.port}/{context.root}/remote/echoParamsAsFlashvars.jsp?extra=extra</url>
+        </properties>
+    </destination>
+<destination id="echoXml">
+        <properties>
+            <!--<url>http://royalesoap2.rnd.newton.allairecorp.com:8080/axis/XmlEchoTest</url>-->
+            <url>http://{server.name}:{server.port}/{context.root}/httpxmlechoservice</url>
+        </properties>
+    </destination>
+<destination adapter="soap-proxy" id="WeatherService_proxy">
+        <properties>
+            <wsdl>http://{server.name}:{server.port}/{context.root}/axis/services/WeatherService?wsdl</wsdl>
+            <soap>http://{server.name}:*/{context.root}/axis/services/WeatherService</soap>
+        </properties>
+    </destination>
+<destination adapter="soap-proxy" id="CompanyInfoService">
+        <channels>
+            <channel ref="qa-amf"></channel>
+            <channel ref="qa-secure-amf"></channel>
+            <channel ref="qa-http"></channel>
+        </channels>
+        <properties>
+            <wsdl>http://{server.name}:{server.port}/{context.root}/axis/services/CompanyInfoService?wsdl</wsdl>
+            <soap>http://{server.name}:*/{context.root}/axis/services/CompanyInfoService</soap>
+        </properties>
+    </destination>
+<destination adapter="soap-proxy" id="bug184631">
+	    <properties>
+	        <wsdl>http://www.cynergysystems.com/axis/services/CustomerService?WSDL</wsdl>
+	        <soap>http://www.cynergysystems.com/axis/services/CustomerService</soap>
+	    </properties>
+	</destination>
+<destination id="SForce">
+		<properties>
+			<wsdl>https://localhost:9400/qa-regress/sforce_partner.wsdl</wsdl>
+			<soap>*</soap>
+		</properties>
+		<channels>
+            <channel ref="qa-secure-amf"></channel>
+        </channels>
+	</destination>
+<destination id="blog">
+		<properties>
+			<url>http://weblogs.macromedia.com/mchotin/index.xml</url>
+		</properties>
+    </destination>
+<destination id="multiheader_dest">
+        <properties>
+            <url>http://{server.name}:{server.port}/{context.root}/remote/MultipleHeadersTest.jsp</url>
+        </properties>
+        <channels>
+            <channel ref="qa-amf"></channel>
+            <channel ref="qa-amf-ac"></channel>
+            <channel ref="qa-http"></channel>
+            <channel ref="qa-http-ac"></channel>
+        </channels>
+    </destination>
+<destination id="codecoverage-dest">
+		<properties>
+			<url>http://feeds.adobe.com</url>
+		</properties>
+		 <adapter ref="codecoverage-proxy"></adapter>
+    </destination>
+</service>

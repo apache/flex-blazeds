@@ -1,0 +1,1 @@
+Run "ant qa" from /resources/fds-ajax-bridge directory to build the required libraries before running the tests in this directory.

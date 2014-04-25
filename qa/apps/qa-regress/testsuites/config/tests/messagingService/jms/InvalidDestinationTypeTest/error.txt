@@ -1,0 +1,1 @@
+JMS Adapter destination type must be Topic or Queue.

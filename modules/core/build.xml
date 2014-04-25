@@ -1,0 +1,244 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<project name="modules/core/build.xml" default="main" basedir="../..">
+
+    <!-- properties -->
+    <property file="${basedir}/build.properties"/>
+    <property name="module.dir" value="${basedir}/modules/core"/>
+    <property name="test.dir" value="${module.dir}/test/src"/>
+
+    <!-- to exclude tests, add test.excludes to local.properties -->
+    <property file="${test.dir}/local.properties"/>
+    <!-- Set up feature to can run subset of tests -->
+    <property file="${qa.dir}/features/${feature}.properties" /> <!-- includes only feature -->
+    <property file="${qa.dir}/features/full.properties" />       <!-- includes all filesets -->
+
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="module.lib.dir" location="${module.dir}/lib"/>
+    <property name="tomcat.lib.dir" location="${basedir}/servers/apache-tomcat-6.0.29/lib" />
+    <property name="module.src" value="${module.dir}/src"/>
+    <property name="module.classes" value="${module.dir}/classes"/>
+    <property name="module.jar" value="${lib.dir}/flex-messaging-core.jar"/>
+    <property name="module.test.src" value="${module.dir}/test/src"/>
+    <property name="module.test.classes" value="${module.dir}/test/classes"/>
+    <property name="module.dist.dir" value="${basedir}/dist/source"/>
+    <property name="common.src" value="${basedir}/modules/common/src"/>
+
+    <property name="remoting.src" value="${basedir}/modules/remoting/src"/>
+    <property name="proxy.src" value="${basedir}/modules/proxy/src"/>
+    <property name="opt.src" value="${basedir}/modules/opt/src"/>    
+
+    <property name="build.number" value=""/>
+
+    <!-- j2ee apis required to compile -->
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+        <fileset dir="${module.lib.dir}" includes="**/*.jar"/>
+        <fileset dir="${tomcat.lib.dir}" includes="**/*.jar"/>
+    </path>
+
+    <path id="test.classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar" excludes="adt.jar" />
+        <pathelement location="${module.test.classes}"/>
+    </path>
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+
+    <target name="main" depends="clean,prepare,run-depend,jar" description="cleans and runs the full build"/>
+    <target name="dev" depends="prepare,run-depend,jar" description="runs src.depend build for development"/>
+
+    <target name="prepare">
+        <mkdir dir="${lib.dir}"/>
+        <mkdir dir="${module.classes}"/>
+    </target>
+
+    <target name="run-depend" if="src.depend">
+        <echo message="Removing class files that changed and dependent class files."/>
+        <depend cache="${module.classes}" srcdir="${module.src}" destdir="${module.classes}"/>
+    </target>
+
+    <target name="compile" depends="prepare" description="compile">
+        <javac debug="${src.debug}" destdir="${module.classes}" 
+        	srcdir="${module.src}" classpathref="classpath" >
+            <include name="**/*.java" />
+           	<exclude name="flex/messaging/cluster/JGroupsCluster.java" />
+           	<exclude name="flex/messaging/cluster/ClusterNode.java" />
+           	<exclude name="flex/messaging/cluster/ClusterMembershipListener.java" />
+            </javac>
+        <echo file="${module.classes}/flex/messaging/version.properties" append="false">build=${build.number}</echo>
+			
+        <copy todir="${module.classes}/flex/messaging" overwrite="true">
+            <fileset dir="${module.src}/flex/messaging" includes="*.properties"/>
+        </copy>
+        <copy toDir="${module.classes}" file="${module.dir}/AdobeInfo.xml" />
+    </target>
+
+	<!-- only compile jgroups code if jgroups present -->
+	<condition property="jgroups.available">
+	  <available classname="org.jgroups.Channel" classpathref="classpath"/>
+	</condition>
+
+	<target name="compile-jgroups" depends="prepare" if="jgroups.available">
+		<echo >-== Found JGroups, compiling JGroups cluster implementation ==-</echo>
+        <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${module.src}"
+			classpathref="classpath" >
+           	<include name= "flex/messaging/cluster/JGroupsCluster.java" />
+           	<include name= "flex/messaging/cluster/ClusterNode.java" />
+           	<include name= "flex/messaging/cluster/ClusterMembershipListener.java" />
+		</javac>
+	</target>
+
+    <!-- jar containing messaging core infrastructure -->
+    <target name="jar" depends="compile,compile-jgroups">
+
+        <jar destfile="${module.jar}" basedir="${module.classes}">
+            <include name="AdobeInfo.xml"/>
+            <include name="flex/management/**"/>
+            <include name="flex/messaging/**"/>
+            <include name="flex/core/**"/>
+            <exclude name=".dependency-info/**"/>
+            <manifest>
+        		<attribute name="Sealed" value="${manifest.sealed}"/>
+        		<attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Community Edition"/>
+			    <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+			    <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+            </manifest>
+        </jar>
+
+        <delete failonerror="false">
+            <fileset dir="${module.classes}/flex/messaging" includes="*.properties"/>
+        </delete>
+
+    </target>
+
+    <target name="clean" description="clean">
+        <delete file="${module.jar}" failonerror="false"/>
+        <delete failonerror="false" includeEmptyDirs="true">
+            <fileset dir="${module.classes}">
+                <include name="**/*"/>
+                <exclude name="dependencies.txt"/>
+                <exclude name=".dependency-info/**"/>
+            </fileset>
+        </delete>
+        <delete dir="${module.test.classes}" failonerror="false" includeEmptyDirs="true"/>
+        <delete dir="${module.classes}" failonerror="false" includeEmptyDirs="true"/>
+    </target>
+
+	<!-- only run unit tests if junit present -->
+    <condition property="junit.available">
+        <available file="${junit.jar}" />
+    </condition>
+
+    <target name="startserver" description="Start Tomcat Server">
+        <ant antfile="${basedir}/build.xml" target="startserver"/>
+    </target>
+
+    <target name="stopserver" description="Stop Tomcat Server">
+        <ant antfile="${basedir}/build.xml" target="stopserver"/>
+    </target>
+
+ 	<target name="waitforAppserverToStart">
+        <ant antfile="${basedir}/build.xml" target="waitforAppserverToStart"/>
+    </target>
+    
+    <target name="unit" depends="startserver, waitforAppserverToStart, runtests, stopserver, check-test-results" description="runs unit tests">
+        <if>
+            <not>
+                <equals arg1="${junit.available}" arg2="true"/>
+            </not>
+            <then>
+                <echo>Unit test can not be run as junit.jar was not found in ${ant.home}/lib. See http://www.junit.org</echo>
+            </then>
+        </if>
+    </target>
+
+    <target name="compile-tests" if="junit.available">
+        <echo message="Compiling test code..."/>
+        <mkdir dir="${module.test.classes}"/>
+
+        <javac srcdir="${module.test.src}" destdir="${module.test.classes}" debug="true">
+            <classpath refid="classpath"/>
+        </javac>
+
+        <copy todir="${module.test.classes}">
+            <fileset dir="${module.test.src}" includes="**/*.xml,**/*.xsd"/>
+        </copy>
+    </target>
+
+    <target name="runtests" depends="compile-tests" if="junit.available">
+        <junit printsummary="yes" dir="${test.dir}" fork="yes" maxmemory="1024m" timeout="90000" showoutput="yes"
+            haltonerror="false"
+            haltonfailure="false" 
+            failureproperty="test-failed">
+            <sysproperty key="royale.home" value="${basedir}"/>
+            <classpath refid="test.classpath"/>
+            <formatter type="xml" usefile="true"/>
+            <batchtest fork="yes">
+                <fileset dir="${module.test.src}"
+                    includes="${junit.core.includes}"
+                    excludes="${junit.core.excludes}"/>
+            </batchtest>
+        </junit>
+    </target>
+
+    <!-- If one of more unit tests fail, runtests sets unit-test-failed property
+         which gets checked by this target and reported
+    -->
+    <target name="check-test-results">
+        <fail if="test-failed" message="One or more unit tests failed."/>
+    </target>
+
+   <target name="javadoc">
+
+        <path id="javadoc.classpath">
+            <path refid="classpath"/>
+            <fileset dir="${basedir}/modules/opt/lib" includes="*.jar" excludes="catalina-708.jar"/>
+        </path>
+
+        <mkdir dir="${basedir}/docs"/>
+        <mkdir dir="${basedir}/docs/api"/>
+        <javadoc
+             access="public" 
+             destdir="${basedir}/docs/api"
+             doclet="ExcludeDoclet"
+             docletpathref="javadoc.classpath"
+             author="false"
+             version="true"
+             use="true"
+             sourcePath="${common.src};${module.src};${remoting.src};${proxy.src};${opt.src}/jrun;${opt.src}/oracle;${opt.src}/tomcat;${opt.src}/weblogic;${opt.src}/websphere"
+             classpathref="javadoc.classpath"
+             packageNames="flex.*"
+             failonerror="true"
+             windowtitle="${manifest.Implementation-Title} - Public APIs">
+ 
+             <doctitle><![CDATA[<h1>${manifest.Implementation-Title} - Public APIs</h1><h2>Build: ${manifest.Implementation-Version}.${build.number}</h2>]]></doctitle>
+             <bottom><![CDATA[<i>Copyright &#169; 2008 Adobe Systems Inc. All Rights Reserved.</i>]]></bottom>
+             <group title="Messaging APIs" packages="flex.messaging:flex.messaging.services"/>
+             <group title="AMF Serialization APIs" packages="flex.messaging.io.amf"/>
+             <group title="Logging and Debugging APIs" packages="flex.messaging.log"/>
+             <group title="Configuration APIs" packages="flex.messaging.config:flex.messaging.security"/>
+             <group title="Management APIs" packages="flex.management, flex.management.jmx, flex.management.runtime.*"/>
+             <link offline="false" href="http://java.sun.com/j2se/1.5.0/docs/api/" packagelistLoc="C:\tmp"/>
+</javadoc>
+  <zip destfile="${basedir}/docs/javadoc.zip" basedir="${basedir}/docs/api" />
+</target>
+
+</project>
+

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" creationComplete="runTest()">
+
+	<mx:Script>
+		<![CDATA[
+			/*******************************************************
+	         *  This example tests RemoteObject over IPv6 channel.
+	         *  Run the test with a global IPv6 address and [::1].  
+	         *  Change the targetUrl accordingly.
+	         * 
+	         * 	<destination id="qa.echoservice.Echo">
+        	 *		<properties>
+             *			<source>dev.echoservice.Echo</source>
+        	 * 		</properties>
+    		 * 	</destination>
+	         *******************************************************/
+			
+			import mx.rpc.remoting.RemoteObject;
+			import mx.messaging.channels.AMFChannel;
+			import mx.messaging.ChannelSet;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent; 
+			import qa.mxunit.*;
+			
+			private var ro:RemoteObject;
+			private var targetUrl:String = "[::1]";
+			private var resultType:String = "";
+			
+			public function runTest():void {
+				ro =  new RemoteObject("qa.echoservice.Echo");
+				var cs:ChannelSet = new ChannelSet();
+				cs.addChannel(new AMFChannel("data-amf", "http://" + targetUrl + ":8400/qa-manual/messagebroker/amf"));
+				ro.channelSet = cs;
+				
+				ro.addEventListener(ResultEvent.RESULT, handleResult);
+				ro.addEventListener(FaultEvent.FAULT, handleFault);	
+				ro.echoString(ti.text);
+				
+				MXUnitManager.delay = 2000;
+				MXUnitManager.addTests(this,["testResult"],1000);
+			}
+
+			private function handleResult(event:ResultEvent):void{
+				log("Result: " + event.result.toString());	
+				resultType = "result";
+			}
+			
+			private function handleFault(event:FaultEvent):void{
+				log("FaultEvent: code=" + event.fault.faultCode  + " detail=" + event.fault.faultDetail + " FaultString=" + event.fault.faultString);
+				resultType = "fault";
+			}
+			
+			public function testResult():void
+			{
+				Assert.assertEquals("Expect a result event", "result", resultType);	
+			}
+			
+			private function log(s:String):void{
+				ta.text += s + "\n";
+			}
+		]]>
+	</mx:Script>
+	<mx:TextInput id="ti" text="Hello" />
+	<mx:Button label="echo" click="ro.echoString(ti.text)" />
+	<mx:TextArea id="ta" width="100%" height="50%" />	
+</mx:Application>

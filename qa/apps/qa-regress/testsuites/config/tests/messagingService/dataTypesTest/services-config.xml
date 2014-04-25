@@ -1,0 +1,473 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<services-config>
+    <validators>
+        <validator class="flex.messaging.validators.ClassDeserializationValidator" type="flex.messaging.validators.DeserializationValidator">
+            <properties>
+                <disallow-classes>
+                </disallow-classes>
+                <allow-classes>
+                    <class name="java.*"/>
+                    <class name="\[Ljava.*"/>
+                    <class name="\[B*"/>
+                    <class name="flex.*"/>
+                    <class name="blazeds.qa.remotingService.Book"/>
+                    <class name="blazeds.qa.*"/>
+                    <class name="remoting.datatype.*"/>
+                </allow-classes>
+             </properties>
+        </validator>
+    </validators>
+
+    <services>
+        <service-include file-path="remoting-config.xml"></service-include>
+        <service-include file-path="proxy-config.xml"></service-include>
+        <service-include file-path="messaging-config.xml"></service-include>
+    <service class="runtimeconfig.components.RuntimeMessageDestination" id="messageDest1"></service>
+<service class="runtimeconfig.components.RuntimeJMSDestination" id="messageDest2"></service>
+<service class="runtimeconfig.components.RuntimeHttpProxyDestination" id="proxyDest1"></service>
+<service class="runtimeconfig.components.RuntimeSOAPProxyAdapter" id="proxyDest2"></service>
+<service class="runtimeconfig.components.RuntimeRemotingDestination" id="remotingDest1"></service>
+<service class="runtimeconfig.components.RuntimeMessageDestinationClustered" id="clusterDest1"></service>
+<service class="runtimeconfig.components.RuntimeUnmanagedMessageDestination" id="messageDest3"></service>
+<default-channels>
+        <channel ref="qa-amf-ac"></channel>       
+    </default-channels>
+</services>
+
+    <security>
+        <login-command class="flex.messaging.security.TomcatLoginCommand" server="Tomcat"></login-command>
+        <!-- Uncomment the correct app server
+        <login-command class="flex.messaging.security.TomcatLoginCommand" server="JBoss">
+        <login-command class="flex.messaging.security.JRunLoginCommand" server="JRun"/>
+        <login-command class="flex.messaging.security.WeblogicLoginCommand" server="Weblogic"/>
+        <login-command class="flex.messaging.security.WebSphereLoginCommand" server="WebSphere"/>
+        -->
+        <security-constraint id="basic-read-access">
+            <auth-method>Basic</auth-method>
+            <roles>
+                <role>guests</role>
+                <role>accountants</role>
+                <role>employees</role>
+                <role>managers</role>
+            </roles>
+        </security-constraint>
+    <login-command class="flex.messaging.security.TomcatLoginCommand" server="JBoss"></login-command>
+<login-command class="flex.messaging.security.WeblogicLoginCommand" server="Weblogic"></login-command>
+<login-command class="flex.messaging.security.WebSphereLoginCommand" server="WebSphere"></login-command>
+<security-constraint id="admins">
+        <auth-method>Custom</auth-method>
+        <roles>
+            <role>admin</role>
+        </roles>
+    </security-constraint>
+<security-constraint id="sample-users">
+        <auth-method>Custom</auth-method>
+        <roles>
+            <role>sampleusers</role>
+        </roles>
+    </security-constraint>
+<security-constraint id="sample-users-basic">
+        <auth-method>Basic</auth-method>
+        <roles>
+            <role>sampleusers</role>
+        </roles>
+    </security-constraint>
+<security-constraint id="sample-managers">
+        <auth-method>Custom</auth-method>
+        <roles>
+            <role>samplemanagers</role>
+        </roles>
+    </security-constraint>
+<security-constraint id="custom-read-access">
+        <auth-method>Custom</auth-method>
+        <roles>
+            <role>guests</role>
+            <role>accountants</role>
+            <role>employees</role>
+            <role>supervisors</role>
+            <role>managers</role>
+        </roles>
+    </security-constraint>
+<security-constraint id="custom-count-access">
+        <auth-method>Custom</auth-method>
+        <roles>
+            <role>accountants</role>
+            <role>employees</role>
+            <role>supervisors</role>
+            <role>managers</role>
+        </roles>
+    </security-constraint>
+<security-constraint id="custom-update-access">
+        <auth-method>Custom</auth-method>
+        <roles>
+            <role>employees</role>
+            <role>supervisors</role>
+            <role>managers</role>
+        </roles>
+    </security-constraint>
+<security-constraint id="custom-create-access">
+        <auth-method>Custom</auth-method>
+        <roles>
+            <role>supervisors</role>
+            <role>managers</role>
+        </roles>
+    </security-constraint>
+<security-constraint id="custom-delete-access">
+        <auth-method>Custom</auth-method>
+        <roles>
+            <role>managers</role>
+        </roles>
+    </security-constraint>
+<security-constraint id="sample-users-per-client-authentication">
+        <auth-method>Custom</auth-method>
+        <roles>
+            <role>sampleusers</role>
+        </roles>
+    </security-constraint>
+<security-constraint id="console">
+    <auth-method>Custom</auth-method>
+    <roles>
+        <role>admins</role>
+    </roles>
+    </security-constraint>
+</security>
+
+    <channels>
+        
+
+        
+
+        
+
+        
+
+        
+    <channel-definition class="mx.messaging.channels.AMFChannel" id="qa-amf">
+        <endpoint class="flex.messaging.endpoints.AMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/amf"></endpoint>
+        <properties>
+            <polling-enabled>false</polling-enabled>
+            <serialization>
+                <log-property-errors>true</log-property-errors>
+                <legacy-collection>true</legacy-collection>
+            </serialization>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.StreamingAMFChannel" id="qa-streaming-amf">
+        <endpoint class="flex.messaging.endpoints.StreamingAMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/streaming-amf"></endpoint>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.StreamingAMFChannel" id="qa-streaming-amf-no-props">
+        <endpoint class="flex.messaging.endpoints.StreamingAMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/streaming-amf-no-props"></endpoint>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.StreamingAMFChannel" id="qa-streaming-amf-custom-marshaller">
+        <endpoint class="flex.messaging.endpoints.StreamingAMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/streaming-amf-custom"></endpoint>
+        <properties>
+            <max-streaming-clients>10</max-streaming-clients>
+            <serialization>
+                <type-marshaller>qa.messaging.CustomTypeMarshaller</type-marshaller>
+            </serialization>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.SecureStreamingAMFChannel" id="qa-secure-streaming-amf">
+        <endpoint class="flex.messaging.endpoints.SecureStreamingAMFEndpoint" url="https://{server.name}:9400/qa-regress/messagebroker/secure-streaming-amf"></endpoint>
+        <properties>
+            <add-no-cache-headers>false</add-no-cache-headers>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.AMFChannel" id="qa-codecoverage-amf">
+        <endpoint class="flex.messaging.endpoints.AMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/amfcc"></endpoint>
+        <properties>
+            <polling-enabled>false</polling-enabled>
+            <serialization>
+                   <ignore-property-errors>true</ignore-property-errors>
+                    <log-property-errors>false</log-property-errors>
+                    <legacy-collection>false</legacy-collection>
+                    <legacy-map>false</legacy-map>
+                    <legacy-xml>false</legacy-xml>
+                    <legacy-throwable>false</legacy-throwable>
+                    <restore-references>false</restore-references>
+                    <instantiate-types>true</instantiate-types>                    
+            </serialization>
+            <max-waiting-poll-requests>0</max-waiting-poll-requests>
+            <login-after-disconnect>false</login-after-disconnect>
+            <wait-interval-millis>0</wait-interval-millis>
+            <polling-interval-millis>8000</polling-interval-millis>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.AMFChannel" id="qa-hanging-amf">
+        <endpoint class="dev.endpoints.HangingAMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/hangingamf"></endpoint>
+        <properties>
+            <connect-timeout-seconds>1</connect-timeout-seconds>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.AMFChannel" id="qa-amf-ac">
+        <endpoint class="flex.messaging.endpoints.AMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/amfac"></endpoint>
+        <properties>
+            <polling-enabled>false</polling-enabled>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.SecureAMFChannel" id="qa-secure-amf">
+        <endpoint class="flex.messaging.endpoints.SecureAMFEndpoint" url="https://{server.name}:9400/qa-regress/messagebroker/amfsecure"></endpoint>
+        <properties>
+            <serialization>
+                <legacy-collection>true</legacy-collection>
+            </serialization>
+            <add-no-cache-headers>false</add-no-cache-headers>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.AMFChannel" id="qa-polling-amf">
+        <endpoint class="flex.messaging.endpoints.AMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/amfpolling"></endpoint>
+        <properties>
+            <polling-enabled>true</polling-enabled>
+            <polling-interval-millis>2000</polling-interval-millis>
+            <serialization>
+                <legacy-collection>true</legacy-collection>
+            </serialization>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.AMFChannel" id="qa-polling-constraint-amf">
+        <endpoint class="flex.messaging.endpoints.AMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/amfpollingconstraint"></endpoint>
+        <properties>
+            <polling-enabled>true</polling-enabled>
+            <polling-interval-millis>2000</polling-interval-millis>
+            <serialization>
+                <legacy-collection>true</legacy-collection>
+            </serialization>
+        </properties>
+         <security>
+            <security-constraint ref="custom-create-access"></security-constraint>
+        </security>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.AMFChannel" id="qa-rtpush-amf">
+        <endpoint class="flex.messaging.endpoints.AMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/amfrtpushbasic"></endpoint>
+        <properties>
+            <polling-enabled>true</polling-enabled>
+            <wait-interval-millis>-1</wait-interval-millis> 
+            <max-waiting-poll-requests>2</max-waiting-poll-requests> 
+            <polling-interval-millis>2000</polling-interval-millis>
+            <serialization>
+                <legacy-collection>true</legacy-collection>
+            </serialization>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.AMFChannel" id="qa-slow-polling-amf">
+        <endpoint class="flex.messaging.endpoints.AMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/amfslowpolling"></endpoint>
+        <properties>
+            <polling-enabled>true</polling-enabled>
+            <polling-interval-millis>90000</polling-interval-millis>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.AMFChannel" id="qa-polling-amf-ac">
+        <endpoint class="flex.messaging.endpoints.AMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/amfpollingac"></endpoint>
+        <properties>
+            <polling-enabled>true</polling-enabled>
+            <polling-interval-millis>2000</polling-interval-millis>
+            <serialization>
+                <legacy-collection>false</legacy-collection>
+            </serialization>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.AMFChannel" id="qa-unreachable-amf">
+        <endpoint class="flex.messaging.endpoints.AMFEndpoint" url="http://{server.name}:{server.port}/noSuchApp/badAMFChannnel"></endpoint>
+        <properties>
+            <!-- <connect-timeout-seconds>1</connect-timeout-seconds> -->
+            <polling-enabled>true</polling-enabled>
+            <polling-interval-millis>2000</polling-interval-millis>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.HTTPChannel" id="qa-unreachable-http">
+        <endpoint class="flex.messaging.endpoints.HTTPEndpoint" url="http://{server.name}:{server.port}/noSuchApp/badHTTPChannnel"></endpoint>
+        <properties>
+            <!-- <connect-timeout-seconds>1</connect-timeout-seconds> -->
+            <polling-enabled>true</polling-enabled>
+            <polling-interval-millis>2000</polling-interval-millis>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.SecureAMFChannel" id="qa-secure-polling-amf">
+        <endpoint class="flex.messaging.endpoints.SecureAMFEndpoint" url="https://{server.name}:9400/qa-regress/messagebroker/amfpollingsecure"></endpoint>
+        <properties>
+            <polling-enabled>true</polling-enabled>
+            <polling-interval-millis>2000</polling-interval-millis>
+            <serialization>
+                <legacy-collection>false</legacy-collection>
+            </serialization>
+            <add-no-cache-headers>false</add-no-cache-headers>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.HTTPChannel" id="qa-http">
+        <endpoint class="flex.messaging.endpoints.HTTPEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/http"></endpoint>
+        <properties>
+            <serialization>
+                <legacy-collection>true</legacy-collection>
+            </serialization>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.StreamingHTTPChannel" id="qa-streaming-http">
+        <endpoint class="flex.messaging.endpoints.StreamingHTTPEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/streaming-http"></endpoint>
+        <properties>
+            <max-streaming-clients>15</max-streaming-clients>
+            <serialization>
+                <legacy-collection>true</legacy-collection>
+            </serialization>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.StreamingHTTPChannel" id="qa-streaming-http-custom-marshaller">
+        <endpoint class="flex.messaging.endpoints.StreamingHTTPEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/streaming-http-custom"></endpoint>
+        <properties>
+            <max-streaming-clients>15</max-streaming-clients>
+            <serialization>
+                <type-marshaller>qa.messaging.CustomTypeMarshaller</type-marshaller>
+            </serialization>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.SecureStreamingHTTPChannel" id="qa-secure-streaming-http">
+        <endpoint class="flex.messaging.endpoints.SecureStreamingHTTPEndpoint" url="https://{server.name}:9400/qa-regress/messagebroker/secure-streaming-http"></endpoint>
+        <properties>
+            <serialization>
+                <legacy-collection>true</legacy-collection>
+            </serialization>
+            <add-no-cache-headers>false</add-no-cache-headers>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.HTTPChannel" id="qa-hanging-http">
+        <endpoint class="dev.endpoints.HangingHTTPEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/hanginghttp"></endpoint>
+        <properties>
+            <connect-timeout-seconds>1</connect-timeout-seconds>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.SecureHTTPChannel" id="qa-secure-http">
+        <endpoint class="flex.messaging.endpoints.SecureHTTPEndpoint" url="https://{server.name}:9400/{context.root}/messagebroker/securehttp"></endpoint>
+        <properties>
+            <serialization>
+                <legacy-collection>true</legacy-collection>
+            </serialization>
+            <add-no-cache-headers>false</add-no-cache-headers>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.HTTPChannel" id="qa-http-ac">
+        <endpoint class="flex.messaging.endpoints.HTTPEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/httpac"></endpoint>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.HTTPChannel" id="qa-http-polling">
+        <endpoint class="flex.messaging.endpoints.HTTPEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/httppolling"></endpoint>
+        <properties>
+            <polling-enabled>true</polling-enabled>
+            <polling-interval-millis>2000</polling-interval-millis>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.HTTPChannel" id="qa-rtpush-http">
+        <endpoint class="flex.messaging.endpoints.HTTPEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/httprtpushbasic"></endpoint>
+        <properties>
+            <polling-enabled>true</polling-enabled>
+            <wait-interval-millis>-1</wait-interval-millis> 
+            <max-waiting-poll-requests>2</max-waiting-poll-requests>
+            <polling-interval-millis>2000</polling-interval-millis>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.AMFChannel" id="mpi-polling-amf">
+        <endpoint class="flex.messaging.endpoints.AMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/amfpollingmpi"></endpoint>
+        <properties>
+            <record-message-times>true</record-message-times>
+            <record-message-sizes>true</record-message-sizes> 
+            <polling-enabled>true</polling-enabled>
+            <polling-interval-millis>2000</polling-interval-millis>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.StreamingAMFChannel" id="mpi-streaming-amf">
+        <endpoint class="flex.messaging.endpoints.StreamingAMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/mpistreamingamf"></endpoint>
+        <properties>
+            <record-message-times>true</record-message-times>
+            <record-message-sizes>true</record-message-sizes> 
+            <max-streaming-clients>10</max-streaming-clients>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.StreamingHTTPChannel" id="mpi-streaming-http">
+        <endpoint class="flex.messaging.endpoints.StreamingHTTPEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/mpistreaminghttp"></endpoint>
+        <properties>
+            <record-message-times>true</record-message-times>
+            <record-message-sizes>true</record-message-sizes> 
+            <max-streaming-clients>10</max-streaming-clients>
+        </properties>
+    </channel-definition>
+<channel-definition class="mx.messaging.channels.AMFChannel" id="polling-amf-oqp">
+        <endpoint class="flex.messaging.endpoints.AMFEndpoint" url="http://{server.name}:{server.port}/qa-regress/messagebroker/amfpollingopq"></endpoint>
+        <properties>
+            <flex-client-outbound-queue-processor class="qa.messaging.MessageRoutedListenerTest"></flex-client-outbound-queue-processor>
+            <polling-enabled>true</polling-enabled>
+            <polling-interval-millis>2000</polling-interval-millis>
+        </properties>
+    </channel-definition>
+</channels>
+
+    <logging>
+        <target class="flex.messaging.log.ConsoleTarget" level="Error">
+            <properties>
+                <prefix>[Flex] </prefix>
+                <includeDate>false</includeDate>
+                <includeTime>false</includeTime>
+                <includeLevel>false</includeLevel>
+                <includeCategory>false</includeCategory>
+            </properties>
+            <filters>
+                <pattern>Endpoint.*</pattern>
+                <pattern>Service.*</pattern>
+                <pattern>Configuration</pattern>
+            </filters>
+        </target>
+    <target class="flex.messaging.log.ServletLogTarget" level="Debug">
+        <properties>
+            <prefix>[BlazeDS] </prefix>
+            <includeDate>true</includeDate>
+            <includeTime>true</includeTime>
+            <includeLevel>true</includeLevel>
+            <includeCategory>true</includeCategory>
+        </properties>
+        <filters>
+            <pattern>*</pattern>            
+        </filters>
+    </target>
+</logging>
+
+    <system>
+        <redeploy>
+            <enabled>true</enabled>
+            <watch-interval>20</watch-interval>
+            <watch-file>{context.root}/WEB-INF/flex/services-config.xml</watch-file>
+            <watch-file>{context.root}/WEB-INF/flex/proxy-config.xml</watch-file>
+            <watch-file>{context.root}/WEB-INF/flex/remoting-config.xml</watch-file>
+            <watch-file>{context.root}/WEB-INF/flex/messaging-config.xml</watch-file>
+            <touch-file>{context.root}/WEB-INF/web.xml</touch-file>
+        </redeploy>
+    <locale>
+        <default-locale>en</default-locale>
+    </locale>
+</system>
+
+<factories>
+        <factory class="flex.messaging.factories.JavaFactory" id="remotingTestFactory">
+        </factory>
+    </factories>
+<clusters>
+        <cluster class="flex.messaging.cluster.JGroupsCluster" default="false" id="default-udp-cluster" properties="jgroups-udp.xml" url-load-balancing="false"></cluster>
+        <cluster id="default-tcp-cluster" properties="jgroups-tcp.xml" url-load-balancing="false"></cluster>
+    </clusters>
+<flex-client>
+        <timeout-minutes>45</timeout-minutes>
+    </flex-client>
+</services-config>

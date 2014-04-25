@@ -1,0 +1,1 @@
+Please specify a valid 'services.configuration.file' in web.xml. You specified '/WEB-INF/flex/services-config.xml'. This is not a valid file system path reachable via the app server and is also not a path to a resource in your J2EE application archive

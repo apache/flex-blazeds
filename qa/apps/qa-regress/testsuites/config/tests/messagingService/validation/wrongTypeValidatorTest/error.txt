@@ -1,0 +1,1 @@
+Given type 'runtimeconfig.remoteobjects.RuntimeConfigurator' is not of expected type 'flex.messaging.validators.DeserializationValidator'.

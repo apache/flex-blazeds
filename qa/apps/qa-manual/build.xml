@@ -1,0 +1,381 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<project name="qa-manual.war/build.xml" default="main" basedir="../..">
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${env.ANT_HOME}/lib/ant-contrib-1.0b2.jar"/>
+    <property name="qa.dir" location="${basedir}"/>
+    <property name="blazeds.dir" location="${qa.dir}/.."/>
+    
+    <property file="${qa.dir}/local.properties"/>
+    <property file="${qa.dir}/build.properties" />
+    <property file="${blazeds.dir}/build.properties" />
+
+    <property name="blazeds.frameworks.dir" value="${blazeds.dir}/frameworks"/>
+ 
+    <property name="qa-manual.war" value="${qa.dir}/apps/qa-manual"/>
+    <property name="dist.dir" value="${blazeds.dir}/dist"/>
+    <property name="qa-manual.src.dir" value="${qa-manual.war}/WEB-INF/src"/>
+    <property name="config.dir" value="${qa-manual.war}/WEB-INF/flex"/>
+    <property name="config.file" value="flex-config.xml"/>
+    <property name="classes.dir" value="${qa-manual.war}/WEB-INF/classes"/>
+    
+    <property name="qa.frameworks.dir" value="${qa.dir}/frameworks"/>
+    
+    <if>
+        <equals arg1="${sdk.version}" arg2="3"/>
+        <then>
+            <property name="template.dir" value="client-side-detection-with-history"/>
+            <property name="qa-manual.war.file" value="qa-manual-sdk3.war"/>
+        </then>            
+        <else>
+            <property name="template.dir" value=""/>
+            <property name="qa-manual.war.file" value="qa-manual.war"/>
+        </else>        
+    </if>
+
+    <path id="qa-manual-classpath">
+        <fileset dir="${qa-manual.war}/WEB-INF/lib" includes="**/*.jar"/>
+        <pathelement location="${servlet.jar}"/>
+        <pathelement location="${jms.jar}"/>
+    </path>
+
+    <path id="qa.classpath">
+        <pathelement location="${qa.dir}/classes" />
+        <fileset dir="${qa.dir}/lib" includes="**/*.jar"/>
+        <fileset dir="${FLEX_HOME}/lib/external" includes="xercesImpl.jar"/>
+    </path>
+
+    <target name="main" depends="clean,prepare,run-depend,copy-resources,generate-config-files,compile"/>
+  
+    <target name="prepare">
+        <mkdir dir="${qa-manual.war}/WEB-INF/lib"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${qa-manual.war}/WEB-INF/flex/libs"/>        
+    </target>
+
+	<target name="copy-webtier" description="copy QE webtier resources" >
+		<copy todir="${qa-manual.war}/WEB-INF">
+            <fileset dir="${qa.dir}/resources/webtier/qa/">
+                <include name="web.xml"/>
+            </fileset>
+        </copy>
+        
+        <copy todir="${qa-manual.war}/WEB-INF/src" overwrite="true">
+            <fileset dir="${qa.dir}/resources/webtier/qa/src">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        
+       <copy todir="${qa-manual.war}/WEB-INF/lib">
+            <fileset dir="${qa.dir}/lib/" includes="ant.jar,ant-launcher.jar"/>
+        </copy>
+        
+         <!--copy ant flexTask for the mxml servlet -->
+        <copy todir="${qa-manual.war}/WEB-INF/lib">
+            <fileset dir="${blazeds.dir}/lib">
+                <include name="flexTasks.jar"/>
+            </fileset>
+        </copy>
+	</target>
+	
+	<target name="webtier-clean" >
+		<delete quiet="true">
+            <fileset dir="${qa-manual.war}/WEB-INF" includes="web.xml"/>
+        </delete>
+        
+        <delete quiet="true">
+            <fileset dir="${qa-manual.war}/WEB-INF/lib" includes="ant.jar,ant-launcher.jar,flexTasks.jar"/>
+        </delete>
+	</target>
+	
+    <target name="copy-resources" depends="copy-webtier">
+        
+        <!-- copy to the WEB-INF/flex directory -->
+        <copy todir="${qa-manual.war}/WEB-INF/flex">
+            <fileset dir="${blazeds.frameworks.dir}">
+                <include name="*-manifest.xml"/>
+                <include name="flash-unicode-table.xml"/>
+                <include name="flex-sdk-description.xml"/>
+                <include name="*.ser"/>
+                <include name="locale/**/*"/>
+                <include name="themes/**/*"/>
+            </fileset>
+        </copy>
+
+        <!-- copy swcs to the WEB-INF/flex/libs directory -->
+        <copy todir="${qa-manual.war}/WEB-INF/flex/libs">
+            <fileset dir="${blazeds.frameworks.dir}/libs" includes="**/*.swc"/>
+        </copy>
+        
+        <!-- copy qa swcs to the WEB-INF/flex/libs directory
+        <copy todir="${qa-manual.war}/WEB-INF/flex/libs">
+            <fileset dir="${qa.frameworks.dir}/libs" includes="${qa.libs}"/>
+        </copy>
+         -->
+         
+        <!-- copy template file to the history directory -->
+        <copy todir="${qa-manual.war}/history" flatten="true">
+            <fileset dir="${blazeds.dir}/templates/${template.dir}" includes="**/*.js,**/*.css,**/historyFrame.html"/>
+        </copy>
+        
+        <!-- copy to the lib directory -->
+        <copy todir="${qa-manual.war}/WEB-INF/lib">
+            <fileset dir="${blazeds.dir}/lib" includes="${webapp.lib},${jgroups.jars},commons-collections-3.1.jar"/> 
+            <fileset dir="${qa.dir}/lib" includes="${axis.jars},${qa-services.jars}"/>
+        </copy>
+
+        <!-- copy to the classes directory -->
+        <copy todir="${qa-manual.war}/WEB-INF/classes">
+            <fileset dir="${qa-manual.war}/WEB-INF/src">
+                <include name="**/*.xml"/>
+            </fileset>
+            <fileset dir="${blazeds.dir}/lib" includes="${webapp.classes}" />
+        </copy>
+
+        <!-- create version.properties -->
+        <propertyfile file="${qa-manual.war}/WEB-INF/flex/version.properties">
+            <entry key="build" value="${manifest.Implementation-Version}.${build.number}"/>
+            <entry key="minimumSDKVersion" value="${min.sdk.version}"/>
+        </propertyfile>
+    </target>
+
+    <target name="run-depend" if="src.depend">
+        <echo message="Removing class files that changed and dependent class files."/>
+        <depend cache="${classes.dir}" srcdir="${qa-manual.src.dir}" destdir="${classes.dir}"/>
+    </target>
+
+    <target name="compile" description="--> compile">
+        <echo message="${servlet.jar}"/>
+        <javac source="1.5" debug="${src.debug}" destdir="${classes.dir}" srcdir="${qa-manual.src.dir}" classpathref="qa-manual-classpath" excludes="contentcache/*"/>
+    </target>
+
+
+
+    <target name="package" depends="generate-config-files,generate-deployable-config-files" description="--> Creates distribution war file">
+         <war file="${dist.dir}/${qa-manual.war.file}"
+            webxml="${qa-manual.war}/WEB-INF/web.xml">
+            <manifest>
+                <attribute name="Sealed" value="${manifest.sealed}"/>
+                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - QA Manual Application"/>
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${label}"/>
+                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+            </manifest>
+            <fileset dir="${qa-manual.war}" excludes="**/generated/**/*,build.xml,WEB-INF/jsp/**/*,WEB-INF/sessions/**/*,WEB-INF/web.xml,WEB-INF/flex/*.mods.*xml,web.xml"/>
+        </war>
+    </target>
+
+
+    <target name="clean" depends="webtier-clean" description="--> Removes jars and classes">
+
+        <delete quiet="true">
+            <fileset dir="${qa-manual.war}/WEB-INF/lib" includes="${webapp.lib},${jgroups.jars},commons-collections-3.1.jar"/>
+            <fileset dir="${qa-manual.war}/WEB-INF/lib" includes="${axis.jars},${qa-services.jars}"/>
+        </delete>
+        <delete quiet="true">
+            <fileset dir="${qa-manual.war}/WEB-INF" includes="web.xml"/>
+        </delete>
+        <delete quiet="true">
+            <fileset dir="${qa-manual.war}/WEB-INF/flex/jars" includes="**/*"/>
+        </delete>
+        <delete quiet="true" includeEmptyDirs="true">
+            <fileset dir="${qa-manual.war}/WEB-INF/flex/locale" includes="**/*"/>
+        </delete>
+        <delete quiet="true" includeEmptyDirs="true">
+            <fileset dir="${qa-manual.war}/WEB-INF/flex" includes="cache.dep,*.ser,*-manifest.xml,flex-sdk-description.xml,flash-unicode-table.xml"/>
+        </delete>
+        <delete quiet="true" >
+            <fileset dir="${qa-manual.war}/WEB-INF/flex" includes="services-config.xml,proxy-config.xml,remoting-config.xml,messaging-config.xml,flex-config.xml"/>
+        </delete>
+        <delete quiet="true" >
+            <fileset dir="${qa-manual.war}/WEB-INF/flex/libs" includes="*.swc"/>
+        </delete>        
+        <delete quiet="true">
+            <fileset dir="${classes.dir}" includes="**/*.class"/>
+        </delete>
+        <delete quiet="true" file="${dist.dir}/${qa-manual.war.file}"/>
+        <delete quiet="true" file="${qa-manual.war}/qa-manual.zip"/>
+        <delete quiet="true" file="${qa-manual.war}/mbean/jmx/simpleMBean.jar"/>
+        <delete quiet="true" includeEmptyDirs="true">
+            <fileset dir="${qa-manual.war}/history" includes="**/*"/>
+        </delete>
+        <delete quiet="true" dir="${qa-manual.war}/WEB-INF/flex/libs"/>
+        <delete quiet="true" dir="${qa-manual.war}/WEB-INF/flex/locale"/>
+        <delete quiet="true" dir="${qa-manual.war}/WEB-INF/flex/themes"/>
+        <delete quiet="true" file="${qa-manual.war}/WEB-INF/flex/version.properties"/>
+        <delete quiet="true" dir="${classes.dir}"/>
+        <delete quiet="true" dir="${qa-manual.war}/history"/>
+        <delete quiet="true" dir="${qa-manual.war}/WEB-INF/src/qa/utils/mxml"/>       
+    </target>
+
+    <target name="clean.generated" description="remove generated files">
+        <delete includeEmptyDirs="true" quiet="true">
+            <fileset dir="${qa-manual.war}" includes="**/generated/*" />
+        </delete>
+        <delete includeEmptyDirs="true" quiet="true">
+            <fileset dir="${qa-manual.war}" includes="**/generated" />
+        </delete>
+        <delete includeEmptyDirs="true" quiet="true">
+            <fileset dir="${qa-manual.war}" includes="**/*.swf" excludes="WEB-INF/**/*"/>
+        </delete>
+    </target>
+
+    <target name="generate-config-files" description="--> Merge local .mod.xml files with original config files.  Override 'config.sourcedir' to specify a different source location for the original config files." >
+        <property name="config.sourcedir" location="${qa.dir}/resources/config" />
+
+        <taskdef name="MergeXML" classname="tools.ant.MergeXML">
+            <classpath refid="qa.classpath"/>
+        </taskdef>
+
+        <delete dir="${config.dir}/mergeGenerated" quiet="true"/>
+
+        <mkdir dir="${config.dir}/mergeGenerated" />
+     
+
+        <!-- Merge mods and local overrides into flex-config.xml -->
+        <MergeXML baseFile="${config.sourcedir}/flex-config.xml"
+            importFile="${config.dir}/flex-config.mods.xml"
+            destinationFile="${config.dir}/mergeGenerated/flex-config.aftermods.xml"/>
+
+        <MergeXML baseFile="${config.dir}/mergeGenerated/flex-config.aftermods.xml"
+            importFile="${config.dir}/flex-config.mods.local.xml"
+            destinationFile="${config.dir}/flex-config.xml"/>
+
+        <!-- Merge mods and local overrides into services-config.xml -->
+        <MergeXML baseFile="${config.sourcedir}/services-config.xml"
+            importFile="${config.dir}/services-config.mods.xml"
+            destinationFile="${config.dir}/mergeGenerated/services-config.aftermods.xml"/>
+
+        <MergeXML baseFile="${config.dir}/mergeGenerated/services-config.aftermods.xml"
+            importFile="${config.dir}/services-config.mods.local.xml"
+            destinationFile="${config.dir}/services-config.xml"/>
+
+
+        <!-- Merge mods and local overrides into proxy-config.xml -->
+        <MergeXML baseFile="${config.sourcedir}/proxy-config.xml"
+            importFile="${config.dir}/proxy-config.mods.xml"
+            destinationFile="${config.dir}/mergeGenerated/proxy-config.aftermods.xml"/>
+
+        <MergeXML baseFile="${config.dir}/mergeGenerated/proxy-config.aftermods.xml"
+            importFile="${config.dir}/proxy-config.mods.local.xml"
+            destinationFile="${config.dir}/proxy-config.xml"/>
+
+
+       
+        <!-- Merge mods and local overrides into remoting-config.xml -->
+        <MergeXML baseFile="${config.sourcedir}/remoting-config.xml"
+            importFile="${config.dir}/remoting-config.mods.xml"
+            destinationFile="${config.dir}/mergeGenerated/remoting-config.aftermods.xml"/>
+
+        <MergeXML baseFile="${config.dir}/mergeGenerated/remoting-config.aftermods.xml"
+            importFile="${config.dir}/remoting-config.mods.local.xml"
+            destinationFile="${config.dir}/remoting-config.xml"/>
+
+
+        <!-- Merge mods and local overrides into messaging-config.xml -->
+        <MergeXML baseFile="${config.sourcedir}/messaging-config.xml"
+            importFile="${config.dir}/messaging-config.mods.xml"
+            destinationFile="${config.dir}/mergeGenerated/messaging-config.aftermods.xml"/>
+
+        <MergeXML baseFile="${config.dir}/mergeGenerated/messaging-config.aftermods.xml"
+            importFile="${config.dir}/messaging-config.mods.local.xml"
+            destinationFile="${config.dir}/messaging-config.xml"/>
+
+        <!-- 
+        /* 
+        * Merge mods and local overrides into messaging-config.xml specifically for throttling and msg priority tests
+        * Chain together recentely generated messaging-config.xml as the baseFile to the throttle-config mods.
+        * Notes: 
+        * 1) baseFile refs ${config.dir} not ${config.sourcedir} 
+        * 2) purposly omit the mods.local.xml. We're going to phase these out once we re-write the process of merging configs.
+        *    The MergeXML task will be done in a loop for each config file.
+        */
+        -->
+        <MergeXML baseFile="${config.dir}/messaging-config.xml"
+            importFile="${config.dir}/messaging-throttle-config.mods.xml"
+            destinationFile="${config.dir}/messaging-config.xml"/>
+
+
+        <delete dir="${config.dir}/mergeGenerated" quiet="true"/>
+    </target>
+
+
+    <target name="generate-deployable-config-files" description="--> Remove relative paths from config files.  Override 'config.sourcedir' to specify a different source location for the original config files." >
+        <property name="config.sourcedir" location="${blazeds.dir}/apps/flex/WEB-INF/flex" />
+
+        <taskdef name="MergeXML" classname="tools.ant.MergeXML">
+            <classpath refid="qa.classpath"/>
+        </taskdef>
+
+        <mkdir dir="${config.dir}/previousConfigs" />
+
+        <move file="${config.dir}/flex-config.xml" toDir="${config.dir}/previousConfigs" overwrite="true" failonerror="false"/>
+
+        <!-- Remove relative paths from flex-config.xml -->
+        <MergeXML baseFile="${config.dir}/previousConfigs/flex-config.xml"
+            importFile="${config.dir}/flex-config.mods.deployable.xml"
+            destinationFile="${config.dir}/flex-config.xml"/>
+        
+        <delete dir="${config.dir}/previousConfigs" quiet="true"/>
+
+    </target>
+	
+	<target name="compile-swf" description="Compile mxml">
+		<property name="flex.config.file" value="${config.dir}/flex-config.xml" />
+        <property name="services.config.file" value="${config.dir}/services-config.xml" />
+        <property name="mxmlc.dir" value="${blazeds.dir}/bin" />
+        <property name="compc.dir" value="${blazeds.dir}/bin" />
+        <property name="mxmlc.exe" value="${mxmlcCommand}" />
+		
+		<taskdef resource="flexTasks.tasks" classpath="${basedir}/ant/lib/flexTasks.jar" />
+		        
+        <mxmlc file="${application.src.dir}/${application.file}.mxml" 
+            output="${application.bin.dir}/${application.file}.swf"
+            actionscript-file-encoding="UTF-8"
+            keep-generated-actionscript="false"
+            incremental="false"
+            services="${samples.war}/WEB-INF/flex/services-config.xml"
+            context-root="${context.root}"
+            locale="en_US">
+            <load-config filename="${basedir}/frameworks/flex-config.xml"/>
+            <license product="flexbuilder3" serial-number="${env.fb3_license}"/>
+            <source-path path-element="${basedir}/frameworks"/>
+            <external-library-path/>
+            <metadata>
+                <publisher name="${manifest.Implementation-Vendor}" />
+                <creator name="${manifest.Implementation-Vendor}" />
+            </metadata>
+        </mxmlc>
+
+        <html-wrapper title="${application.name}"
+            height="100%"
+            width="100%"
+            application="app"
+            swf="${application.file}"
+            version-major="10"
+            version-minor="0"
+            version-revision="0"
+            express-install="true"
+            output="${application.bin.dir}"/>
+		
+		
+	</target>
+
+</project>

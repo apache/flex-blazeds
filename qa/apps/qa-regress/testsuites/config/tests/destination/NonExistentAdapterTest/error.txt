@@ -1,0 +1,1 @@
+adapter not found for reference 'foo' in destination 'thisDest'

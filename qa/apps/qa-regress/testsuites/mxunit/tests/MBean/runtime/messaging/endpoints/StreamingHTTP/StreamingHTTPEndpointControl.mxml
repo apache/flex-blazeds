@@ -1,0 +1,191 @@
+<?xml version="1.0"?> 
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="run()">
+<mx:Script source="simpleMessagingTest.as" />
+<mx:Script>
+	<![CDATA[
+		import mx.utils.ObjectUtil;
+        import mx.rpc.remoting.RemoteObject;
+
+        import mx.messaging.ChannelSet;
+        import mx.messaging.channels.AMFChannel;
+
+        import mx.rpc.events.ResultEvent;
+        import mx.rpc.events.FaultEvent;
+        import mx.rpc.AsyncToken;
+        import mx.rpc.IResponder;
+        import mx.rpc.Fault;
+        import mx.rpc.AsyncResponder;
+
+        import qa.mxunit.MXUnitManager;
+        import qa.mxunit.Assert;
+        
+        private var runtimeManagement:RemoteObject;
+        private var nameResolver:RemoteObject;
+        private var csAMF:ChannelSet;
+        public static var handler:Function;  
+        private var manager:MXUnitManager;
+        private var MBeanObjectName:String;
+        private var  MessageBrokerObjectName:String;
+        
+        private function run():void
+        {
+        	//configure the MXUnitManager           
+            manager = MXUnitManager.getInstance();  
+            
+            runtimeManagement = new RemoteObject("RuntimeManagement");
+            // for security-enabled Websphere
+        	runtimeManagement.setCredentials("manager","manager1");
+        	nameResolver = new RemoteObject("MBeanObjectNameResolver");
+	    	nameResolver.setCredentials("manager","manager1");
+    	    nameResolver.addEventListener(ResultEvent.RESULT, nameResolverHandler);
+    	    nameResolver.addEventListener(FaultEvent.FAULT, nameResolverHandler);
+    	    var token:AsyncToken = nameResolver.getObjectNameForEndpoint("qa-streaming-http");  
+    	    token.op = "getObjectNameForEndpoint"; 
+    	    
+    	    var token2:AsyncToken = nameResolver.getObjectNameForMessageBroker();  
+    	    token2.op = "getObjectNameForMessageBroker";                                                                
+        }
+        
+        public function nameResolverHandler(event:Object = null):void {
+            if (event is ResultEvent)
+            {   
+                if (event.token.op == "getObjectNameForEndpoint")
+                {	
+                    out.text += "\nnameResolver result: " + ObjectUtil.toString(event.result) + "\n";
+                    MBeanObjectName = event.result ;  
+   
+                    manager.addTests(this, ["resetPushCount","getPushFrequencyAfterReset","sendMessage","getpushCount","getStreamingClientsCount","getMaxStreamingClients",
+                                       "getLastPushTimestamp","getPushFrequency","getStreamingHTTPThroughput","disconnectTheProducer"], 5000); 
+                }
+                else if (event.token.op == "getObjectNameForMessageBroker") 
+                {
+                    out.text += "getObjectNameForMessageBroker result: " + ObjectUtil.toString(event.result) + "\n";
+                    MessageBrokerObjectName = event.result;
+                }  
+            }
+            else
+            {     
+         	   out.text += "NameResolver failed" + ObjectUtil.toString(event.fault);  
+            }
+        }
+
+        public function resetPushCount():void {
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],invokeOperationHandler,{"metric":"resetPushCount","expected":null});      
+            var token:AsyncToken = runtimeManagement.invoke(MBeanObjectName, "resetPushCount", null, null);      
+        }
+        
+        public function getPushFrequencyAfterReset():void
+        {
+        	handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],invokeOperationHandler,{"metric":"PushFrequency","expected":0});      
+            var token:AsyncToken = runtimeManagement.getAttribute(MBeanObjectName, "PushFrequency");
+        }
+
+        public function sendMessage():void {
+            simpleMessageTest();
+        }
+        
+        public function getStreamingClientsCount():void
+        {
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],invokeOperationHandler,{"metric":"StreamingClientsCount","expected":1});      
+            var token:AsyncToken = runtimeManagement.getAttribute(MBeanObjectName, "StreamingClientsCount");
+        }
+        
+        public function getMaxStreamingClients():void
+        {
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],invokeOperationHandler,{"metric":"MaxStreamingClients","expected":15});      
+            var token:AsyncToken = runtimeManagement.getAttribute(MBeanObjectName, "MaxStreamingClients");
+        }
+        
+        public function getpushCount():void
+        {
+        	handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],invokeOperationHandler,{"metric":"PushCount","expected":2});      
+            var token:AsyncToken = runtimeManagement.getAttribute(MBeanObjectName, "PushCount");
+        }
+
+       public function getLastPushTimestamp():void
+        {
+        	handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],timestampHandler,{"metric":"LastPushTimestamp","expected":1});      
+            var token:AsyncToken = runtimeManagement.getAttribute(MBeanObjectName, "LastPushTimestamp");
+        }
+        
+        public function getPushFrequency():void
+        {
+        	handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],invokeOperationHandler,{"metric":"PushFrequency","expected":2});      
+            var token:AsyncToken = runtimeManagement.getAttribute(MBeanObjectName, "PushFrequency");
+        }
+        
+        public function getStreamingHTTPThroughput():void
+        {
+        	handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],invokeOperationHandler,{"metric":"StreamingHTTPThroughput"});      
+            var token:AsyncToken = runtimeManagement.getAttribute(MessageBrokerObjectName, "StreamingHTTPThroughput");
+            token.check = "positive";
+        }
+        
+        public function disconnectTheProducer():void {
+            // adding this to avoid an error in Firefox when close the browser
+            disconnectProducer();
+            Assert.assertTrue(true);
+            Assert.hasPendingTest = false;
+        }
+        
+        
+        public function invokeOperationHandler(event:Object = null, params:Object = null):void   
+        {
+         if (event is ResultEvent)
+         {	
+            out.text += params.metric + " result: " + event.result + "\n";
+            if (event.token.check == "positive")
+            {
+                Assert.assertTrue(event.result > 100);    
+            }
+            else
+            {
+                Assert.assertEquals(params.expected,event.result);
+            }
+         }
+         else
+         {
+         	out.text += ObjectUtil.toString(event.fault);
+            Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: "
+            		+ event.fault.faultCode);
+         }
+       }
+       
+       public function timestampHandler(event:Object = null, params:Object = null):void   
+        {
+         if (event is ResultEvent)
+         {	
+            out.text += params.metric + " result: " + event.result + "\n";
+            var d:Date = event.result;
+            Assert.assertTrue("LastInvokeHTTPTimestamp should be today", d.getDate() == new Date().getDate() );
+         }
+         else
+         {
+         	out.text += ObjectUtil.toString(event.fault);
+            Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: "
+            		+ event.fault.faultCode);
+         }
+       } 
+	]]>
+</mx:Script>
+<mx:TextArea id="out" width="90%" height="250"/>
+
+</mx:Application>

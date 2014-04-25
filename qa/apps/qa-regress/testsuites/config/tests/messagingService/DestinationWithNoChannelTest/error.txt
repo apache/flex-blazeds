@@ -1,0 +1,1 @@
+Destination 'MyTopic' must specify at least one channel.

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:qa="http://www.adobe.com/2006/flexqa"
+	creationComplete="appReady()">
+    <mx:Script source="MBeanFunctions.as" />
+    <mx:Script>
+    <![CDATA[
+    	import mx.rpc.remoting.RemoteObject;
+    	import mx.rpc.events.ResultEvent;
+        import mx.rpc.events.FaultEvent;
+        import flash.events.Event;
+        import mx.collections.ArrayCollection;       
+        import qa.mxunit.MXUnitManager;
+        import qa.mxunit.Assert;
+        import mx.rpc.AsyncToken;
+        import mx.utils.ObjectUtil;    
+          
+        private var manager:MXUnitManager;
+        private var runtimeManagement:RemoteObject = new RemoteObject("RuntimeManagement");
+        private var MBeanObjectNameResolver:RemoteObject = new RemoteObject("MBeanObjectNameResolver");
+                                                                             
+        private var ObjectName:String;
+        private var TargetLevel:int = 2;
+        public static var handler:Function;  
+        
+        public function appReady():void {
+            
+        	manager = MXUnitManager.getInstance(); 
+            
+            manager.addTests(this,["getObjectNameForLogManager","getCategories","getTargets","getId","getType","GetTargetLevel","ChangeTargetLevel",
+            "getLevelAfterChange","ChangeTargetLevelBack","GetTargetFilters","AddFilterForTarget","AddBadFilterForTarget",
+            "CheckFilter","RemoveFilterForTarget","CheckFiltersAfterRemove"], 5000);
+                  
+       // "LogCategories","GetTargetLevel","ChangeTargetLevel","ChangeTargetLevelBack","GetTargetFilters","AddFilterForTarget","RemoveFilterForTarget"
+       // ,"getCategories","getTargets"  
+        }
+        
+        public function getObjectNameForLogManager():void {
+            // setCredentials call needed for Websphere
+            runtimeManagement.setCredentials("manager","manager1");
+            MBeanObjectNameResolver.getObjectNameForLogManager();
+			manager.currentTest.chain(MBeanObjectNameResolver,[ResultEvent.RESULT,FaultEvent.FAULT],NameResolverHandler);
+        }
+        
+        public function NameResolverHandler(event:Object):void {
+            if (event is ResultEvent)
+            {	 
+               out.text += "Log Manager MBean Name: " + event.result + "\n";
+               ObjectName = event.result;
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+            }
+            Assert.hasPendingTest = false;
+        }
+        public function getCategories():void
+        {
+        	getMBeanAttribute(ObjectName,"Categories");
+        }
+        
+        public function getTargets():void
+        {
+        	getMBeanAttribute(ObjectName,"Targets");
+        }
+        
+        public function getId():void
+        {
+        	getMBeanAttribute(ObjectName,"Id");
+        }
+        
+        public function getType():void
+        {
+        	getMBeanAttribute(ObjectName,"Type");
+        }
+         
+        public function GetTargetLevel():void
+        {
+        	var params:Array = ["ConsoleTarget0"];
+        	var signature:Array = ["java.lang.String"];
+        	invokeOperation(ObjectName, "getTargetLevel", params, signature);
+        } 
+        
+        public function ChangeTargetLevel():void
+        {
+            // 1000 = FATAL  other levels defined in blazeds-common/java/flex/messaging/log/LogEvent.java
+        	var params:Array = ["ConsoleTarget0","1000"];
+        	var signature:Array = ["java.lang.String","java.lang.String"];
+        	invokeOperation(ObjectName, "changeTargetLevel", params, signature);  	
+       }
+        
+        public function getLevelAfterChange():void {
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],getLevelAfterChangeHandler);      
+            var token:AsyncToken = runtimeManagement.invoke(ObjectName, "getTargetLevel", ["ConsoleTarget0"], ["java.lang.String"]); 
+        }
+        
+            public function getLevelAfterChangeHandler(event:Object = null):void {
+             if (event is ResultEvent)
+             {	 
+                out.text += "\nTargetLevel after change (should be 1000): " + ObjectUtil.toString(event.result) + "\n";
+                Assert.assertEquals(1000,event.result);
+             }
+             else
+             {
+             	out.text += ObjectUtil.toString(event.fault);
+                Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+             }
+            }
+        
+        public function ChangeTargetLevelBack():void
+        {
+            // change the level back to what it was
+        	var params:Array = ["ConsoleTarget0",TargetLevel.toString()];
+        	var signature:Array = ["java.lang.String","java.lang.String"];
+        	invokeOperation(ObjectName, "changeTargetLevel", params, signature);
+        }
+         
+        
+        public function GetTargetFilters():void
+        {
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],GetTargetFiltersHandler);      
+            var token:AsyncToken = runtimeManagement.invoke(ObjectName, "getTargetFilters", ["ConsoleTarget0"], ["java.lang.String"]); 
+        } 
+        
+           public function GetTargetFiltersHandler(event:Object = null):void {
+              if (event is ResultEvent)
+             {	 
+                out.text += "\nFilters: " + ObjectUtil.toString(event.result) + "\n";
+                Assert.assertTrue(event.result.length > 0);
+             }
+             else
+             {
+             	out.text += ObjectUtil.toString(event.fault);
+                Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+             }   
+           }
+        
+        
+        
+        public function AddFilterForTarget():void
+        {
+        	var params:Array = ["ConsoleTarget0","Endpoint.NIOAMF"];
+        	var signature:Array = ["java.lang.String","java.lang.String"];
+        	invokeOperation(ObjectName, "addFilterForTarget", params, signature);
+        }
+        
+         public function AddBadFilterForTarget():void
+        {
+        	var params:Array = ["ConsoleTarget0","Endpoint.yo"];
+        	var signature:Array = ["java.lang.String","java.lang.String"];
+        	invokeOperation(ObjectName, "addFilterForTarget", params, signature);
+        }
+        
+           public function CheckFilter():void
+           {
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],CheckFiltersHandler);      
+            var token:AsyncToken = runtimeManagement.invoke(ObjectName, "getTargetFilters", ["ConsoleTarget0"], ["java.lang.String"]); 
+           } 
+        
+           public function CheckFiltersHandler(event:Object = null):void {
+              if (event is ResultEvent)
+             {	 
+                out.text += "\nFilters after add NIOAMF: " + ObjectUtil.toString(event.result) + "\n";
+                Assert.assertContains("Endpoint.NIOAMF", event.result);
+             }
+             else
+             {
+             	out.text += ObjectUtil.toString(event.fault);
+                Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+             }   
+           }
+        
+        public function RemoveFilterForTarget():void
+        {
+        	var params:Array = ["ConsoleTarget0","Endpoint.NIOAMF"];
+        	var signature:Array = ["java.lang.String","java.lang.String"];
+        	invokeOperation(ObjectName, "removeFilterForTarget", params, signature);
+        }  
+        
+            public function CheckFiltersAfterRemove():void
+           {
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],CheckFiltersAfterRemoveHandler);      
+            var token:AsyncToken = runtimeManagement.invoke(ObjectName, "getTargetFilters", ["ConsoleTarget0"], ["java.lang.String"]); 
+           } 
+        
+           public function CheckFiltersAfterRemoveHandler(event:Object = null):void {
+              if (event is ResultEvent)
+             {	 
+                out.text += "\nFilters after remove NIOAMF: " + ObjectUtil.toString(event.result) + "\n";
+                Assert.assertDoesNotContain("Endpoint.NIOAMF", event.result);
+             }
+             else
+             {
+             	out.text += ObjectUtil.toString(event.fault);
+                Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+             }   
+             runtimeManagement.logout();
+           }
+           /*
+        public function getCategories():void
+        {
+        	invokeOperation(ObjectName, "getCategories", [],[]);
+        }
+         
+         public function getTargets():void
+        {
+        	invokeOperation(ObjectName, "getTargets", [],[]);
+        }   
+        */
+    ]]>
+    </mx:Script>
+<mx:TextArea id="out" width="90%" height="250"/>
+</mx:Application>

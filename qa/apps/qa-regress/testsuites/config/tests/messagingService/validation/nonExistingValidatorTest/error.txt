@@ -1,0 +1,1 @@
+Cannot create class of type 'features.validators.deserialization.KenTestDeserializationValidator'.

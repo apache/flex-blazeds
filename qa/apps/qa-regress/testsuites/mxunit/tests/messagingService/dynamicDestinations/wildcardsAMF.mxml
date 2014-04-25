@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" creationComplete="runTest()" height="100%" width="100%">
+
+
+    <mx:Producer id="us_producer" destination="DynamicDestinationAMF"
+        subtopic="destinations.us"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+    <mx:Producer id="fl_beaches_producer" destination="DynamicDestinationAMF"
+        subtopic="destinations.us.fl.beaches"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+    <mx:Producer id="us_ca_venice_producer" destination="DynamicDestinationAMF"
+        subtopic="destinations.us.ca.venice"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+    <mx:Producer id="italy_venice_producer" destination="DynamicDestinationAMF"
+        subtopic="destinations.europe.italy.venice"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+    <mx:Producer id="italy_venice_bauer_producer" destination="DynamicDestinationAMF"
+        subtopic="destinations.europe.italy.venice.bauer"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+    <mx:Producer id="tokyo_producer" destination="DynamicDestinationAMF"
+        subtopic="destinations.asia.japan.tokyo"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+
+    <mx:Consumer id="star_consumer" destination="DynamicDestinationAMF"
+        subtopic="*"
+        message="messageHandler(event, event.target.id)"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+    <mx:Consumer id="star_star_consumer" destination="DynamicDestinationAMF"
+        subtopic="*.*"
+        message="messageHandler(event, event.target.id)"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+
+    <mx:Consumer id="us_star_consumer" destination="DynamicDestinationAMF"
+        subtopic="destinations.us.*"
+        message="messageHandler(event, event.target.id)"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+
+    <mx:Consumer id="fl_star_consumer" destination="DynamicDestinationAMF"
+        subtopic="destinations.us.fl.*"
+        message="messageHandler(event, event.target.id)"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+
+    <mx:Consumer id="ca_star_consumer" destination="DynamicDestinationAMF"
+        subtopic="destinations.us.ca.*"
+        message="messageHandler(event, event.target.id)"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+
+    <mx:Consumer id="star_star_venice_consumer" destination="DynamicDestinationAMF"
+        subtopic="destinations.*.*.venice"
+        message="messageHandler(event, event.target.id)"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+
+    <mx:Script>
+        <![CDATA[
+        import mx.messaging.events.MessageAckEvent;
+        import qa.mxunit.Assert;
+        import qa.mxunit.MXUnitManager;
+
+        import mx.messaging.events.ChannelEvent;
+        import mx.messaging.events.MessageEvent;
+        import mx.messaging.events.MessageFaultEvent;
+        import mx.messaging.messages.AsyncMessage;
+
+
+        public var us_producerEvents:Array = [];
+        public var fl_beaches_producerEvents:Array = [];
+        public var italy_venice_producerEvents:Array = [];
+        public var italy_venice_bauer_producerEvents:Array = [];
+        public var us_ca_venice_producerEvents:Array = [];
+        public var tokyo_producerEvents:Array = [];
+
+
+        public var star_consumerEvents:Array = [];
+        public var star_consumerMessages:Array = [];
+
+        public var star_star_consumerEvents:Array = [];
+        public var star_star_consumerMessages:Array = [];
+
+        public var us_star_consumerEvents:Array = [];
+        public var us_star_consumerMessages:Array = [];
+
+        public var ca_star_consumerEvents:Array = [];
+        public var ca_star_consumerMessages:Array = [];
+
+        public var fl_star_consumerEvents:Array = [];
+        public var fl_star_consumerMessages:Array = [];
+
+        public var star_star_venice_consumerEvents:Array = [];
+        public var star_star_venice_consumerMessages:Array = [];
+
+        [Bindable]
+        public var colors:Object = {
+                    star_consumer:"#787878",
+                    star_star_consumer:"#00B2EE",
+                    us_star_consumer:"#FFA54F",
+                    ca_star_consumer:"#FF0000",
+                    fl_star_consumer:"#0AC92B",
+                    star_star_venice_consumer:"#0000FF",
+
+                    us_producer:"#FF3E96",
+                    fl_beaches_producer:"#008B00",
+                    italy_venice_producer:"#EE00EE",
+                    italy_venice_bauer_producer:"#964514",
+                    us_ca_venice_producer:"#C0C0C0",
+                    tokyo_producer:"#AA00FF"};
+
+        public var allMessages:Array = [
+                    "?: sent to destinations.asia.japan.tokyo",
+                    "il presidente: sent to destinations.europe.italy.venice.bauer",
+                    "il tizio: sent to destinations.europe.italy.venice",
+                    "me y'all: sent to destinations.us.fl.beaches",
+                    "me: sent to destinations.us",
+                    "the dude: sent to destinations.us.ca.venice"];
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Setup method.
+        //
+        //////////////////////////////////////////////////////////////////////////// 
+        
+        /**
+        *  This setup method does all of the testing work and the test methods just verify
+        *  the outcome. Be careful not to remove the delay on the MXUnitManager otherwise the 
+        *  test methods will be called to verify the results before the test work has finished.   
+        */
+        public function runTest():void {
+            clearMessages();
+
+            star_consumer.subscribe();
+            star_star_consumer.subscribe();
+            us_star_consumer.subscribe();
+            ca_star_consumer.subscribe();
+            fl_star_consumer.subscribe();
+            star_star_venice_consumer.subscribe();
+
+            us_ca_venice_producer.defaultHeaders = {from:"myself"};
+
+            us_producer.defaultHeaders = {from:"me"};
+            fl_beaches_producer.defaultHeaders = {from:"me y'all"};
+            italy_venice_producer.defaultHeaders = {from:"il tizio"};
+            italy_venice_bauer_producer.defaultHeaders = {from:"il presidente"};
+            us_ca_venice_producer.defaultHeaders = {from:"the dude"};
+            tokyo_producer.defaultHeaders = {from:"unsigned"};
+
+            us_producer.send(new AsyncMessage("sent to destinations.us"));
+            fl_beaches_producer.send(new AsyncMessage("sent to destinations.us.fl.beaches"));
+            italy_venice_producer.send(new AsyncMessage("sent to destinations.europe.italy.venice"));
+            italy_venice_bauer_producer.send(new AsyncMessage("sent to destinations.europe.italy.venice.bauer"));
+            us_ca_venice_producer.send(new AsyncMessage("sent to destinations.us.ca.venice"));
+            tokyo_producer.send(new AsyncMessage("sent to destinations.asia.japan.tokyo", {from:"?"}));
+
+
+            MXUnitManager.delay = 15000;
+            MXUnitManager.detectTests(this, 10000);
+
+            allMessages.sort();
+        }
+
+        private function unsubscribe():void {
+            star_consumer.unsubscribe();
+            star_star_consumer.unsubscribe();
+            us_star_consumer.unsubscribe();
+            ca_star_consumer.unsubscribe();
+            fl_star_consumer.unsubscribe();
+            star_star_venice_consumer.unsubscribe();
+        }
+
+        private function messageHandler(event:MessageEvent, whose:String):void {
+            logMessage(event.message.headers.from + ": " + event.message.body + "</b></font>", whose);
+            this[whose + "Messages"].push(event.message.headers.from + ": " + event.message.body);
+        }
+
+        private function faultHandler(event:MessageFaultEvent, whose:String):void {
+            log("*** " + whose + " fault: " + event.faultCode + " : " + event.faultString + " ***", colors[whose]);
+            this[whose + "Events"].push("fault: " + event.faultCode + " : " + event.faultString);
+        }
+
+        private function connectedHandler(event:ChannelEvent, whose:String):void {
+            log(' - ' + whose + ' channelConnect.', colors[whose]);
+            this[whose + "Events"].push("channelConnect");
+        }
+
+        private function disconnectedHandler(event:ChannelEvent, whose:String):void {
+            log(' - ' + whose + ' channelDisconnect.', colors[whose]);
+            this[whose + "Events"].push("channelDisconnect");
+        }
+
+        private function ackHandler(event:MessageEvent, whose:String):void {
+            log(' - ' + whose + ' ack.', colors[whose]);
+            this[whose + "Events"].push("ack");
+        }
+
+        private function log(message:String, color:String = "#000000"):void {
+            output.htmlText += "<font color='" + color + "'>" + message + "</font>\n";
+        }
+
+
+        private function logMessage(message:String, whose:String = "output"):void {
+            var outputTextArea:String = whose == "output"? "output" : whose + "Output";
+
+            this[outputTextArea].htmlText += "<font color='" + colors[whose] + "'>" + message + "</font>\n";
+        }
+
+        private function clearMessages():void {
+
+            star_consumerOutput.htmlText = "";
+            star_star_consumerOutput.htmlText = "";
+            us_star_consumerOutput.htmlText = "";
+            fl_star_consumerOutput.htmlText = "";
+            ca_star_consumerOutput.htmlText = "";
+            star_star_venice_consumerOutput.htmlText = "";
+
+            logMessage("(star_consumer color)", "star_consumer");
+            logMessage("(star_star_consumer color)", "star_star_consumer");
+            logMessage("(us_star_consumer color)", "us_star_consumer");
+            logMessage("(fl_star_consumer color)", "fl_star_consumer");
+            logMessage("(ca_star_consumer color)", "ca_star_consumer");
+            logMessage("(star_star_venice_consumer color)", "star_star_venice_consumer");
+        }
+
+        private function clearEvents():void {
+            output.htmlText = "";
+        }
+
+
+        public function test_star_consumer():void {
+            unsubscribe();
+
+            Assert.assertDoesNotContain("Subtopics not allowed fault was found", "does not allow subtopics", star_consumerEvents.toString());
+            Assert.assertDoesNotContain("Other fault was found", "fault", star_consumerEvents.toString());
+
+            star_consumerMessages.sort();
+
+            Assert.assertEquals("messages.length", 6, star_consumerMessages.length);
+            Assert.assertEquals("first message", allMessages[0], star_consumerMessages[0]);
+            Assert.assertEquals("second message", allMessages[1], star_consumerMessages[1]);
+            Assert.assertEquals("third message", allMessages[2], star_consumerMessages[2]);
+            Assert.assertEquals("fourth message", allMessages[3], star_consumerMessages[3]);
+            Assert.assertEquals("fifth message", allMessages[4], star_consumerMessages[4]);
+            Assert.assertEquals("sixth message", allMessages[5], star_consumerMessages[5]);
+        }
+
+        public function test_star_star_consumer():void {
+
+            Assert.assertDoesNotContain("Subtopics not allowed fault was found", "does not allow subtopics", star_star_consumerEvents.toString());
+            Assert.assertDoesNotContain("Other fault was found", "fault", star_star_consumerEvents.toString());
+
+            star_star_consumerMessages.sort();
+
+            Assert.assertEquals("messages.length", 6, star_star_consumerMessages.length);
+            Assert.assertEquals("first message", allMessages[0], star_star_consumerMessages[0]);
+            Assert.assertEquals("second message", allMessages[1], star_star_consumerMessages[1]);
+            Assert.assertEquals("third message", allMessages[2], star_star_consumerMessages[2]);
+            Assert.assertEquals("fourth message", allMessages[3], star_star_consumerMessages[3]);
+            Assert.assertEquals("fifth message", allMessages[4], star_star_consumerMessages[4]);
+            Assert.assertEquals("sixth message", allMessages[5], star_star_consumerMessages[5]);
+        }
+
+
+        public function test_us_star_consumer():void {
+
+            Assert.assertDoesNotContain("Subtopics not allowed fault was found", "does not allow subtopics", us_star_consumerEvents.toString());
+            Assert.assertDoesNotContain("Other fault was found", "fault", us_star_consumerEvents.toString());
+
+            us_star_consumerMessages.sort();
+
+            Assert.assertEquals("messages.length", 2, us_star_consumerMessages.length);
+            Assert.assertEquals("first message", allMessages[3], us_star_consumerMessages[0]);
+            Assert.assertEquals("second message", allMessages[5], us_star_consumerMessages[1]);
+        }
+
+
+        public function test_ca_star_consumer():void {
+
+            Assert.assertDoesNotContain("Subtopics not allowed fault was found", "does not allow subtopics", ca_star_consumerEvents.toString());
+            Assert.assertDoesNotContain("Other fault was found", "fault", ca_star_consumerEvents.toString());
+
+            ca_star_consumerMessages.sort();
+
+            Assert.assertEquals("messages.length", 1, ca_star_consumerMessages.length);
+            Assert.assertEquals("first message", allMessages[5], ca_star_consumerMessages[0]);
+        }
+
+
+        public function test_fl_star_consumer():void {
+
+            Assert.assertDoesNotContain("Subtopics not allowed fault was found", "does not allow subtopics", fl_star_consumerEvents.toString());
+            Assert.assertDoesNotContain("Other fault was found", "fault", fl_star_consumerEvents.toString());
+
+            fl_star_consumerMessages.sort();
+
+            Assert.assertEquals("messages.length", 1, fl_star_consumerMessages.length);
+            Assert.assertEquals("first message", allMessages[3], fl_star_consumerMessages[0]);
+        }
+
+
+        public function test_star_star_venice_consumer():void {
+
+            Assert.assertDoesNotContain("Subtopics not allowed fault was found", "does not allow subtopics", star_star_venice_consumerEvents.toString());
+            Assert.assertDoesNotContain("Other fault was found", "fault", star_star_venice_consumerEvents.toString());
+
+            star_star_venice_consumerMessages.sort();
+
+            Assert.assertEquals("messages.length", 2, star_star_venice_consumerMessages.length);
+            Assert.assertEquals("first message", allMessages[2], star_star_venice_consumerMessages[0]);
+            Assert.assertEquals("second message", allMessages[5], star_star_venice_consumerMessages[1]);
+        }
+
+        public function test_us_producer():void {
+            Assert.assertDoesNotContain("Subtopics not allowed fault was found", "does not allow subtopics", us_producerEvents.toString());
+            Assert.assertDoesNotContain("Other fault was found", "fault", us_producerEvents.toString());
+
+            us_producerEvents.sort();
+            Assert.assertContains("Ack was not found", "ack", us_producerEvents[0]);
+        }
+
+        public function test_fl_beaches_producer():void {
+            Assert.assertDoesNotContain("Subtopics not allowed fault was found", "does not allow subtopics", fl_beaches_producerEvents.toString());
+            Assert.assertDoesNotContain("Other fault was found", "fault", fl_beaches_producerEvents.toString());
+
+            fl_beaches_producerEvents.sort();
+            Assert.assertContains("Ack was not found", "ack", fl_beaches_producerEvents[0]);
+        }
+
+        public function test_italy_venice_producer():void {
+            Assert.assertDoesNotContain("Subtopics not allowed fault was found", "does not allow subtopics", italy_venice_producerEvents.toString());
+            Assert.assertDoesNotContain("Other fault was found", "fault", italy_venice_producerEvents.toString());
+
+            italy_venice_producerEvents.sort();
+            Assert.assertContains("Ack was not found", "ack", italy_venice_producerEvents[0]);
+        }
+
+        public function test_italy_venice_bauer_producer():void {
+            Assert.assertDoesNotContain("Subtopics not allowed fault was found", "does not allow subtopics", italy_venice_bauer_producerEvents.toString());
+            Assert.assertDoesNotContain("Other fault was found", "fault", italy_venice_bauer_producerEvents.toString());
+
+            italy_venice_bauer_producerEvents.sort();
+            Assert.assertContains("Ack was not found", "ack", italy_venice_bauer_producerEvents[0]);
+        }
+
+        public function test_us_ca_venice_producer():void {
+            Assert.assertDoesNotContain("Subtopics not allowed fault was found", "does not allow subtopics", us_ca_venice_producerEvents.toString());
+            Assert.assertDoesNotContain("Other fault was found", "fault", us_ca_venice_producerEvents.toString());
+
+            us_ca_venice_producerEvents.sort();
+            Assert.assertContains("Ack was not found", "ack", us_ca_venice_producerEvents[0]);
+        }
+
+        public function test_tokyo_producer():void {
+            Assert.assertDoesNotContain("Subtopics not allowed fault was found", "does not allow subtopics", tokyo_producerEvents.toString());
+            Assert.assertDoesNotContain("Other fault was found", "fault", tokyo_producerEvents.toString());
+
+            tokyo_producerEvents.sort();
+            Assert.assertContains("Ack was not found", "ack", tokyo_producerEvents[0]);
+        }
+        ]]>
+    </mx:Script>
+
+    <!-- <mx:FormItem label="Producer subtopic:"><mx:Label text="{us_producer.subtopic}" /></mx:FormItem> -->
+
+    <mx:HBox width="100%">
+        <mx:Grid width="70%">
+            <mx:GridRow>
+                <mx:GridItem >
+                    <mx:Panel title="* (star_consumer)" width="100%">
+                        <mx:TextArea id="star_consumerOutput" height="150" width="100%" editable="false"/>
+                    </mx:Panel>
+                </mx:GridItem>
+                <mx:GridItem >
+                    <mx:Panel title="*.* (star_star_consumer)" width="100%">
+                        <mx:TextArea id="star_star_consumerOutput" height="150" width="100%" editable="false"/>
+                    </mx:Panel>
+                </mx:GridItem>
+            </mx:GridRow>
+            <mx:GridRow>
+                <mx:GridItem >
+                    <mx:Panel title="destinations.us.ca.* (ca_star_consumer)" width="100%">
+                        <mx:TextArea id="ca_star_consumerOutput" height="150" width="100%" editable="false" />
+                    </mx:Panel>
+                </mx:GridItem>
+                <mx:GridItem>
+                    <mx:Panel title="destinations.us.fl.* (fl_star_consumer)" width="100%">
+                        <mx:TextArea id="fl_star_consumerOutput" height="150" width="100%" editable="false" />
+                    </mx:Panel>
+                </mx:GridItem>
+            </mx:GridRow>
+            <mx:GridRow>
+                <mx:GridItem>
+                    <mx:Panel title="destinations.*.*.venice (star_star_venice_consumer)" width="100%">
+                        <mx:TextArea id="star_star_venice_consumerOutput" height="150" width="100%" editable="false" />
+                    </mx:Panel>
+                </mx:GridItem>
+                <mx:GridItem >
+                    <mx:Panel title="destinations.us.* (us_star_consumer)" width="100%">
+                        <mx:TextArea id="us_star_consumerOutput" height="150" width="100%" editable="false" />
+                    </mx:Panel>
+                </mx:GridItem>
+            </mx:GridRow>
+        </mx:Grid>
+
+        <mx:Panel title="Non-message events" width="30%" >
+            <mx:TextArea id="output" height="500" width="100%" editable="false" fontSize="10" fontFamily="Arial" />
+            <mx:HBox>
+                <mx:Button label="clear messages" click="clearMessages()" />
+                <mx:Button label="clear events" click="clearEvents()" />
+            </mx:HBox>
+        </mx:Panel>
+    </mx:HBox>
+
+
+    <mx:Button label="unsubscribe" click="unsubscribe()"/>
+</mx:Application>

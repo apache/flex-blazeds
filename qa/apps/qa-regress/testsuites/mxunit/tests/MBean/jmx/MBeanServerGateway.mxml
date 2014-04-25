@@ -1,0 +1,628 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="run()">
+<mx:Script source="MBeanFunctions.as" /> 
+<mx:Script>
+    <![CDATA[
+        import mx.messaging.management.Attribute;
+        import mx.utils.ObjectUtil;
+        import mx.rpc.remoting.RemoteObject;
+
+        import mx.messaging.ChannelSet;
+        import mx.messaging.channels.AMFChannel;
+
+        import mx.rpc.events.ResultEvent;
+        import mx.rpc.events.FaultEvent;
+        import mx.rpc.AsyncToken;
+        import mx.rpc.IResponder;
+        import mx.rpc.Fault;
+        import mx.rpc.AsyncResponder;
+        import MBeanFunctions;
+
+        import qa.mxunit.MXUnitManager;
+        import qa.mxunit.Assert;
+
+        private var runtimeManagement:RemoteObject;
+        private var nameResolver:RemoteObject;
+        private var csAMF:ChannelSet;
+        public static var handler:Function;  
+        private var manager:MXUnitManager;
+        private var qahttpMBeanObjectName:String;
+        private var appServer:String = "";
+        private var messageBrokerObjectName:String;
+        private const simpleObjectName:String = "codecoverage:Simple=MySimpleMBean";
+
+        private function run():void
+        {
+            //configure the MXUnitManager           
+            manager = MXUnitManager.getInstance();  
+            
+            // Make an HTTPService call to appServer.jsp to determine which app server we are running on.
+            // Handle result with httpResultHandler()
+            var token:AsyncToken = getPort.send();                                                             
+   
+            runtimeManagement = new RemoteObject("RuntimeManagement");
+            // for security-enabled Websphere
+            runtimeManagement.setCredentials("manager","manager1");
+            
+            nameResolver = new RemoteObject("MBeanObjectNameResolver");
+            // for security-enabled Websphere
+            nameResolver.setCredentials("manager","manager1");
+            nameResolver.addEventListener(ResultEvent.RESULT,resolverHandler);
+            nameResolver.addEventListener(FaultEvent.FAULT,resolverHandler);
+        }
+/* "testGetMBeanNames","testGetMBeanInfo ","testqueryNames","testqueryMBeans","testGetMBeanInfo","testgetFlexMBeanCount","testgetFlexDomains",
+"testgetFlexMBeanObjectNames","testisInstanceOf","testisInstanceOfException","testgetMBeanCount","testgetFlexMBeanCount","testgetObjectInstance","testgetObjectInstanceException",
+"testisRegistered","testisInstanceOf", "testregisterMBean", "testgetObjectInstance"
+*/
+  
+        public function httpResultHandler(event:ResultEvent):void {
+           out.text += "appServer.jsp result: " + ObjectUtil.toString(event.result);
+        
+           if (event.result.toString().indexOf("8400") > 0 ) {
+              appServer = "TomCat";
+           }
+           else if (event.result.toString().indexOf("8080") > 0 ) {
+              appServer = "JBoss" ; 
+           }
+           else if (event.result.toString().indexOf("WebSphere") > 0 ) {
+              appServer = "WebSphere";
+           }
+           else if (event.result.toString().indexOf("7001") > 0 || event.result.toString().indexOf("7002") > 0  ) {
+              appServer = "WebLogic";
+           }
+           
+           out.text += "\nappServer = " + appServer;
+           
+           // now that we know which app server we are running on, call the nameResolver remote object to get the MBean name of the MessageBroker
+           var token:AsyncToken = nameResolver.getObjectNameForMessageBroker(); 
+           token.op = "getMessageBroker";
+        }
+        
+        public function resolverHandler(event:Object = null):void {
+            if (event is ResultEvent)
+            {  
+               out.text += "\nnameResolver result: " + ObjectUtil.toString(event.result) + "\n";
+               if (event.token.op == "getMessageBroker"){
+                   messageBrokerObjectName = event.result;
+                   
+                   // after we get the messageBrokerObjectName result, then make the call to get the MBean name for the qa-http endpoint.
+                   // this is used in several of the tests which follow as an example MBean to pass to operations on the MBeanServerGateway.
+                   var token:AsyncToken = nameResolver.getObjectNameForEndpoint("qa-http");
+                   token.op = "getObjectNameForEndpoint";
+               }
+               
+               else if (event.token.op == "getObjectNameForEndpoint") { 
+                  qahttpMBeanObjectName = event.result ;
+                  
+                  // now that we have MBean names for the MessageBroker and the qa-http endpoint, we can run the tests 
+                  manager.detectTests(this,5000);     
+               }
+            }
+            else
+            {     
+               out.text += "NameResolver failed" + ObjectUtil.toString(event.fault);  
+            }
+        }
+    
+        public function httpFault(event:FaultEvent):void 
+        {
+           out.text += ObjectUtil.toString(event.fault.faultString);
+        }
+        
+        // get the names of the metrcis for a specific MBean
+        public function testgetMBeanInfo():void
+        {
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],mbeanInfoHandler);      
+            var token:AsyncToken = runtimeManagement.getMBeanInfo(qahttpMBeanObjectName);
+        } 
+        
+        public function mbeanInfoHandler(event:Object = null, params:Object = null):void   
+        {
+          if (event is ResultEvent)
+          {     
+             out.text += ObjectUtil.toString(event.result);
+             Assert.assertEquals("flex.management.runtime.messaging.endpoints.HTTPEndpointControl", 
+                                  event.result.className);
+          }
+          else
+          {
+              out.text += ObjectUtil.toString(event.fault);
+              Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+          }
+        }
+        
+        public function testqueryNames():void
+        {
+            // this MBeanName string is a property pattern, as it ends with an asterisk, as defined in http://java.sun.com/j2ee/1.4/docs/api/javax/management/ObjectName.html
+            var MBeanName:String="flex.runtime.Flex QA Web Application:MessageBroker=MessageBroker1,id=qa-http,*";
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],queryNamesHandler,{"MBeanName":"qa-http"});      
+            var token:AsyncToken = runtimeManagement.queryNames(MBeanName);
+        }  
+        
+        public function queryNamesHandler(event:Object = null, params:Object = null):void   
+        {
+          if (event is ResultEvent)
+          {      
+              out.text +=  "\nqueryNames for " + params.MBeanName + ": \n"
+              out.text += ObjectUtil.toString(event.result);
+              // need to concatenate a result to check as the result that comes back from the ObjectNameResolver lists the attributes in a different order
+              // that the canonicalName orders them.
+              Assert.assertEquals(qahttpMBeanObjectName, 
+                                  event.result[0].domain + ":" + event.result[0].keyPropertyListString);
+          }
+          else
+          {
+              out.text += ObjectUtil.toString(event.fault);
+              Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+          }
+        }
+        
+        public function testqueryMBeans():void
+        {
+            var MBeanName:String="flex.runtime.Flex QA Web Application:MessageBroker=MessageBroker1,id=qa-http,*";
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],queryMBeansHandler,{"MBeanName":"qa-http"});      
+            var token:AsyncToken = runtimeManagement.queryMBeans(MBeanName);
+        }
+        
+        public function queryMBeansHandler(event:Object = null, params:Object = null):void   
+        {
+          if (event is ResultEvent)
+          {      
+              out.text +=  "\nqueryMBeans for " + params.MBeanName + ": \n"
+              out.text += "length = " + event.result.length + "\n";
+              for (var i:int = 0; i < event.result.length; i++) {    
+                 out.text +=  ObjectUtil.toString(event.result[i].objectName.canonicalName) + "\n";
+              }
+              // need to concatenate a result to check as the result that comes back from the ObjectNameResolver lists the attributes in a different order
+              // that the canonicalName orders them.
+              Assert.assertEquals(qahttpMBeanObjectName,
+                                   event.result[0].objectName.domain + ":" + event.result[0].objectName.keyPropertyListString)
+          }
+          else
+          {
+              out.text += ObjectUtil.toString(event.fault);
+              Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+          }
+        }
+        
+        public function testgetFlexMBeanCount():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],getFlexMBeanCountHandler,{"Operation":"getFlexMBeanCount"});      
+            var token:AsyncToken = runtimeManagement.getFlexMBeanCount();
+        }
+        
+        public function testgetMBeanCount():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],getFlexMBeanCountHandler,{"Operation":"getMBeanCount"});      
+            var token:AsyncToken = runtimeManagement.getMBeanCount();
+        }
+        
+        public function getFlexMBeanCountHandler(event:Object = null, params:Object=null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\n" + params.Operation + " result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.assertTrue(event.result > 100 );
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+            }
+       }
+       
+        public function testgetFlexDomains():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],getFlexDomainsHandler,{"Operation":"getFlexDomains"});      
+            var token:AsyncToken = runtimeManagement.getFlexDomains();
+        }
+        
+        public function getFlexDomainsHandler(event:Object = null, params:Object=null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               var resultString:String = ObjectUtil.toString(event.result);
+               out.text += "\n" + params.Operation + " result: \n" + resultString + "\n";
+               var i:int = event.result.indexOf("flex.runtime.Flex QA Web Application");
+               Assert.assertTrue(" 'Flex QA Web Application' not found in getFlexDomains result: " + resultString, i > -1 );
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+            }
+       }
+        
+        public function testgetDefaultDomain():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],getDefaultDomainHandler);      
+            var token:AsyncToken = runtimeManagement.getDefaultDomain();
+        }
+        
+        public function getDefaultDomainHandler(event:Object = null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "default domain result: " + ObjectUtil.toString(event.result) + "\n";
+               switch (appServer) {
+               // JBoss returns NULL for getDefaultDomain.  This is a JBoss-specific issue as reported http://lists.jboss.org/pipermail/jboss-user/2007-February/039375.html, etc.
+               case "JBoss":
+                  Assert.assertNull(event.result );
+                  break;  
+               case "WebSphere":
+                  Assert.assertEquals("WebSphere", event.result );
+                  break;               
+               default: 
+                  Assert.assertEquals("DefaultDomain", event.result );
+               }
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+            }
+       }
+       
+       
+       // commenting this test out since it can take a long time to run ( ~ 30 seconds on Websphere)
+       // this method also gets covered by getFlexMBeanCount() and getFlexDomains() which call it
+       /*
+       public function testgetFlexMBeanObjectNames():void
+       {     
+          // pass in the domainName - i.e. the app for which you want to get MBeannames    
+          getFlexMBeanObjectNames("flex.runtime.Flex QA Web Application"); 
+       }
+     */   
+       
+        public function testisInstanceOf():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],isInstanceOfHandler,{"Operation":"isInstanceOf"});      
+            var token:AsyncToken = runtimeManagement.isInstanceOf(qahttpMBeanObjectName,
+                  "flex.management.runtime.messaging.endpoints.HTTPEndpointControl");
+        }
+        
+        public function isInstanceOfHandler(event:Object = null, params:Object=null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\n" + params.Operation + " result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.assertTrue(event.result);
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+            }
+       }
+       
+       public function testisInstanceOfException():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],isInstanceOfExceptionHandler,{"Operation":"isInstanceOf"});      
+            var token:AsyncToken = runtimeManagement.isInstanceOf("flex.runtime.Flex QA Web Application:MessageBroker=MessageBroker1,id=qa-http,type=MessageBroker.HTTPEndpoint.Yo",
+                  "flex.management.runtime.messaging.endpoints.HTTPEndpointControl");
+        }
+        
+        public function isInstanceOfExceptionHandler(event:Object = null, params:Object=null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\n" + params.Operation + " result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.fail("test should fail with an exception");
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault.faultString);
+               Assert.assertEquals("The MBean, 'flex.runtime.Flex QA Web Application:MessageBroker=MessageBroker1,id=qa-http,type=MessageBroker.HTTPEndpoint.Yo', could not be found.",event.fault.faultString);
+            }
+       }
+       
+       public function testgetObjectInstance():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],getObjectInstanceHandler);      
+            var token:AsyncToken = runtimeManagement.getObjectInstance(qahttpMBeanObjectName);
+        }
+        
+        public function getObjectInstanceHandler(event:Object = null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\ngetObjectInstance result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.assertEquals(event.result.className,"flex.management.runtime.messaging.endpoints.HTTPEndpointControl");
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+            }
+        }
+        
+        public function testgetObjectInstanceException():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],getObjectInstanceExceptionHandler);      
+            var token:AsyncToken = runtimeManagement.getObjectInstance("flex.runtime.Flex QA Web Application:MessageBroker=MessageBroker1,id=qa-http,type=MessageBroker.HTTPEndpoint.Yo");
+        }
+        
+        public function getObjectInstanceExceptionHandler(event:Object = null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\nisgetObjectInstanceException result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.fail("test should fail with an exception");
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault.faultString);
+               Assert.assertEquals("The MBean, 'flex.runtime.Flex QA Web Application:MessageBroker=MessageBroker1,id=qa-http,type=MessageBroker.HTTPEndpoint.Yo', could not be found.",event.fault.faultString);
+            }
+        }
+        
+        public function testisRegistered():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],isInstanceOfHandler,{"Operation":"isRegistered"});      
+            var token:AsyncToken = runtimeManagement.isRegistered(qahttpMBeanObjectName);
+        }
+        
+        public function testsetAttributeException():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],setAttributeExceptionHandler);      
+            var token:AsyncToken = runtimeManagement.setAttribute("flex.runtime.Flex QA Web Application:id=MessageBroker1,type=MessageBroker","AMFThroughput");
+        }
+        
+        public function setAttributeExceptionHandler(event:Object = null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\nsetAttributeException result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.fail("should not pass - can not pass a String for the Attribute param"); 
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.assertEquals("Cannot invoke method 'setAttribute'.", event.fault.faultString );
+            }
+        }
+         
+         public function testsetAttributesException():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],setAttributesExceptionHandler); 
+            var attribArray:Array = new Array();   
+            var myAttribute:Attribute = new Attribute();
+            myAttribute.name = "Categories";
+            myAttribute.value = "Client.*";  
+            attribArray.push(myAttribute);
+            var token:AsyncToken = runtimeManagement.setAttributes("flex.runtime.Flex QA Web Application:MessageBroker=MessageBroker1,id=log,type=MessageBroker.Log.Yo",attribArray);
+        }  
+        
+        public function setAttributesExceptionHandler(event:Object = null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\nsetAttributeException result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.fail("should not pass - invalid mbean object name"); 
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.assertEquals("The MBean, 'flex.runtime.Flex QA Web Application:MessageBroker=MessageBroker1,id=log,type=MessageBroker.Log.Yo', could not be found.", event.fault.faultString );
+            }
+        }                                                        
+        
+        // Commenting out for bug http://bugs.adobe.com/jira/browse/BLZ-362 - FlexSessionCount & MaxFlexSessionsInCurrentHourmetric return 0 value
+        /*
+         public function testgetMBeanAttributes():void
+        {
+        //  var ObjectName:String = "flex.runtime.Flex QA Web Application:id=MessageBroker1,type=MessageBroker";
+          
+         
+         // use messageBrokerObjectName returned from nameResolver here:
+          var AttributeNames:Array = ["AMFThroughput","FlexSessionCount","StartTimestamp"];
+          getMBeanAttributes(messageBrokerObjectName, AttributeNames);
+        }
+        */
+        
+        public function testinvoke():void {
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],isInstanceOfHandler,{"Operation":"invoke isRunning"});      
+            var token:AsyncToken = runtimeManagement.invoke(qahttpMBeanObjectName,"isRunning", null, null); 
+        }
+
+        public function testinvokeException():void {
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],invokeExceptionHandler);      
+            var token:AsyncToken = runtimeManagement.invoke(qahttpMBeanObjectName,"isRunningYo", null, null); 
+        }
+        
+        public function invokeExceptionHandler(event:Object = null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\n invoke result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.fail("this invoke should throw an exception");
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.assertContains("A reflection exception was thrown while trying to invoke the method, 'isRunningYo'", event.fault.faultString);
+            }
+        }
+        
+        public function testreset():void {
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],resetHandler); 
+            var token:AsyncToken = runtimeManagement.invoke(qahttpMBeanObjectName, "resetServiceMessageCount", null, null );      
+        }
+        
+        public function resetHandler(event:Object = null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\nresetServiceMessageCount result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.assertNull(event.result);
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+            }
+        }
+        
+        public function testcreateMBeanException():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],createMBeanExceptionHandler);      
+            var token:AsyncToken = runtimeManagement.createMBean("flex.management.runtime.messaging.endpoints.HTTPEndpointControl",
+                                                                  qahttpMBeanObjectName );
+        }
+        
+        public function createMBeanExceptionHandler(event:Object = null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\n createMBean result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.fail("this creatMBean should throw an exception");
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault.rootCause.message);
+               
+               if (appServer == "JBoss") {
+                  Assert.assertEquals("Cannot find such a public constructor: flex.management.runtime.messaging.endpoints.HTTPEndpointControl", event.fault.rootCause.message);    
+               }
+               else {
+                  Assert.assertEquals("The MBean class could not be loaded by the default loader repository", event.fault.rootCause.message);
+               }
+            }
+       }
+       
+        public function testcreateMBeanLoaderException():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],createMBeanLoaderExceptionHandler);      
+            var token:AsyncToken = runtimeManagement.createMBean("flex.management.runtime.messaging.endpoints.HTTPEndpointControl",
+                      qahttpMBeanObjectName,
+                     "flex.runtime.Flex QA Web Application:MessageBroker=MessageBroker1,id=qa-http,type=MessageBroker.HTTPEndpoint.badLoader" );
+        }
+        
+        public function createMBeanLoaderExceptionHandler(event:Object = null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\n createMBean result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.fail("this creatMBean should throw an exception");
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.assertContains("flex.runtime.Flex QA Web Application:MessageBroker=MessageBroker1,id=qa-http,type=MessageBroker.HTTPEndpoint.badLoader is not registered", event.fault.rootCause.message);
+            }
+       }
+       
+        public function testcreateMBeanLoaderParamsException():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],createMBeanLoaderExceptionHandler);      
+            var token:AsyncToken = runtimeManagement.createMBean("flex.management.runtime.messaging.endpoints.HTTPEndpointControl",
+                     qahttpMBeanObjectName,
+                     "flex.runtime.Flex QA Web Application:MessageBroker=MessageBroker1,id=qa-http,type=MessageBroker.HTTPEndpoint.badLoader",
+                     null,null );
+        }
+    ////////////////////////////////////////////////////////////////////////// 
+    /* These tests require manual set up, so have been moved to qa-manual.  
+       If setup steps are performed, these can be uncommented and run here.  
+       See qa-manual\testsuites\mxunit\tests\MBean\jmx\MBeanServerGateway_create.mxml
+    */
+    ////////////////////////////////////////////////////////////////////////////  
+    /*    public function testcreateMBean():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],createMBeanHandler);      
+            var token:AsyncToken = runtimeManagement.createMBean("Simple", "codecoverage:Simple=NoPackageSimpleMBean" );
+        }
+        
+        public function createMBeanHandler(event:Object = null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\n createMBean result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.assertEquals("Simple", event.result.className);
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+            }
+        }
+        
+        public function testcreateMBeanParams():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],createMBeanParamsHandler);      
+            var token:AsyncToken = runtimeManagement.createMBean("Simple", "codecoverage:Simple=NoPackageSimpleMBeanParams",null,null );
+        }
+        
+        public function createMBeanParamsHandler(event:Object = null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\n createMBean result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.assertEquals("Simple", event.result.className);
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.fail("Should not have FaultEvent: " + event.fault.faultString + ",Code: " + event.fault.faultCode);
+            }
+        }
+        
+        public function testcreateMBeanAlreadyExists():void
+        {        
+            handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],createMBeanAlreadyExistsHandler);      
+            var token:AsyncToken = runtimeManagement.createMBean("Simple", simpleObjectName );
+        }
+        
+        public function createMBeanAlreadyExistsHandler(event:Object = null):void   
+        {
+            if (event is ResultEvent)
+            {   
+               out.text += "\n createMBean result: " + ObjectUtil.toString(event.result) + "\n";
+               Assert.fail("this createMBean should throw an already exists exception");
+            }
+            else
+            {
+               out.text += ObjectUtil.toString(event.fault);
+               Assert.assertEquals("The MBean, 'codecoverage:Simple=MySimpleMBean', already exists and is registered with the MBean server.", event.fault.faultString);
+            }
+       }
+       
+       public function testunregistercreatedMBean():void
+       {        
+           handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],unregisterMBeanHandler);      
+           var token:AsyncToken = runtimeManagement.unregisterMBean("codecoverage:Simple=NoPackageSimpleMBean");
+       }
+       
+       public function testunregistercreatedMBeanParms():void
+       {        
+           handler = manager.currentTest.chain(runtimeManagement,[ResultEvent.RESULT,FaultEvent.FAULT],unregisterMBeanHandler);      
+           var token:AsyncToken = runtimeManagement.unregisterMBean("codecoverage:Simple=NoPackageSimpleMBeanParams");
+       }
+       */
+   ////////////////////    
+    ]]>
+</mx:Script>
+<mx:HTTPService
+        id="getPort" method="GET" useProxy="false" url="appServer.jsp"
+        result="httpResultHandler(event);" fault="httpFault(event);"/>
+        
+<mx:TextArea id="out" width="90%" height="250"/>
+
+</mx:Application>

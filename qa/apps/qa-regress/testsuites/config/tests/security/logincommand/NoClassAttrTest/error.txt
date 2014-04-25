@@ -1,0 +1,1 @@
+Attribute 'class' must be specified for element 'login-command'.

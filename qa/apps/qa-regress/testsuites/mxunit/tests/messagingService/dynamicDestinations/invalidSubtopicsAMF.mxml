@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" creationComplete="runTest()" height="100%" width="100%">
+
+    <mx:Consumer id="dotConsumer" destination="DynamicDestinationAMF"
+        subtopic="."
+        message="messageHandler(event, event.target.id)"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+    <mx:Consumer id="aStarConsumer" destination="DynamicDestinationAMF"
+        subtopic="a*"
+        message="messageHandler(event, event.target.id)"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+    <mx:Consumer id="foo_baStarConsumer" destination="DynamicDestinationAMF"
+        subtopic="foo.ba*"
+        message="messageHandler(event, event.target.id)"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+    <mx:Consumer id="foo_baStar_bazConsumer" destination="DynamicDestinationAMF"
+        subtopic="foo.ba*.baz"
+        message="messageHandler(event, event.target.id)"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+    <mx:Consumer id="foo_dotConsumer" destination="DynamicDestinationAMF"
+        subtopic="foo."
+        message="messageHandler(event, event.target.id)"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+    <mx:Consumer id="foo_dotDot_barConsumer" destination="DynamicDestinationAMF"
+        subtopic="foo..bar"
+        message="messageHandler(event, event.target.id)"
+        fault="faultHandler(event, event.target.id)"
+        acknowledge="ackHandler(event, event.target.id)"
+        channelConnect="connectedHandler(event, event.target.id)"
+        channelDisconnect="disconnectedHandler(event, event.target.id)"/>
+
+    <mx:Script>
+        <![CDATA[
+        import mx.messaging.events.MessageAckEvent;
+        import qa.mxunit.Assert;
+        import qa.mxunit.MXUnitManager;
+
+        import mx.messaging.events.ChannelEvent;
+        import mx.messaging.events.MessageEvent;
+        import mx.messaging.events.MessageFaultEvent;
+        import mx.messaging.messages.AsyncMessage;
+
+        /**
+        * Used for logging. Each producer and consumer component is assigned a
+        * different color.  
+        */ 
+        public var colors:Object = {dotConsumer:"#FF0000",
+                                    aStarConsumer:"#0AC92B",
+                                    foo_baStarConsumer:"#964514",
+                                    foo_baStar_bazConsumer:"#0000FF",
+                                    foo_dotConsumer:"#C0C0C0",
+                                    foo_dotDot_barConsumer:"#FFA54F"};
+        /**
+        * When an event on the Consumer component with an id of "dotConsumer" causes
+        * one of the event handlers to get called information about the event gets 
+        * stored in this array.   
+        */                            
+        public var dotConsumerEvents:Array = [];
+        /**
+        * When an event on the Consumer component with an id of "aStarConsumer" causes
+        * one of the event handlers to get called information about the event gets 
+        * stored in this array.   
+        */   
+        public var aStarConsumerEvents:Array = [];
+        /**
+        * When an event on the Consumer component with an id of "foo_baStarConsumer" causes
+        * one of the event handlers to get called information about the event gets 
+        * stored in this array.   
+        */   
+        public var foo_baStarConsumerEvents:Array = [];
+        /**
+        * When an event on the Consumer component with an id of "foo_baStar_bazConsumer" causes
+        * one of the event handlers to get called information about the event gets 
+        * stored in this array.   
+        */   
+        public var foo_baStar_bazConsumerEvents:Array = [];
+        /**
+        * When an event on the Consumer component with an id of "foo_dotConsumer" causes
+        * one of the event handlers to get called information about the event gets 
+        * stored in this array.   
+        */   
+        public var foo_dotConsumerEvents:Array = [];
+        /**
+        * When an event on the Consumer component with an id of "foo_dotDot_barConsumer" causes
+        * one of the event handlers to get called information about the event gets 
+        * stored in this array.   
+        */   
+        public var foo_dotDot_barConsumerEvents:Array = [];
+        
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Setup method.
+        //
+        //////////////////////////////////////////////////////////////////////////// 
+        
+        /**
+        *  This setup method does all of the testing work and the test methods just verify
+        *  the outcome. Be careful not to remove the delay on the MXUnitManager otherwise the 
+        *  test methods will be called to verify the results before the test work has finished.   
+        */  
+        public function runTest():void {
+
+            dotConsumer.subscribe();
+            aStarConsumer.subscribe();
+            foo_baStarConsumer.subscribe();
+            foo_baStar_bazConsumer.subscribe();
+            foo_dotConsumer.subscribe();
+            foo_dotDot_barConsumer.subscribe();
+
+            MXUnitManager.delay = 10000;
+            MXUnitManager.detectTests(this, 10000);
+        }
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Tests
+        //
+        ////////////////////////////////////////////////////////////////////////////
+       /**
+        * Tests that a subtopic of "." is not valid and when a consumer that uses the 
+        * subtopic tries to subscribe to a destination a fault is returned. 
+        */  
+       public function testDotConsumer():void {
+            Assert.assertContains("Invalid subtopic fault was not found", "is not valid", dotConsumerEvents.toString());
+        }
+        /**
+        * Tests that a subtopic of "a*" is not valid and when a consumer that uses the 
+        * subtopic tries to subscribe to a destination a fault is returned. 
+        */
+        public function testAStarConsumer():void {
+            Assert.assertContains("Invalid subtopic fault was not found", "is not valid", aStarConsumerEvents.toString());
+        }
+        /**
+        * Tests that a subtopic of "foo.ba*" is not valid and when a consumer that uses the 
+        * subtopic tries to subscribe to a destination a fault is returned. 
+        */
+        public function testFoo_baStarConsumer():void {
+            Assert.assertContains("Invalid subtopic fault was not found", "is not valid", foo_baStarConsumerEvents.toString());
+        }
+        /**
+        * Tests that a subtopic of "foo.ba*.baz" is not valid and when a consumer that uses the 
+        * subtopic tries to subscribe to a destination a fault is returned. 
+        */
+        public function testFoo_baStar_bazConsumer():void {
+            Assert.assertContains("Invalid subtopic fault was not found", "is not valid", foo_baStar_bazConsumerEvents.toString());
+        }
+        /**
+        * Tests that a subtopic of "foo." is not valid and when a consumer that uses the 
+        * subtopic tries to subscribe to a destination a fault is returned. 
+        */
+        public function testFoo_dotConsumer():void {
+            Assert.assertContains("Invalid subtopic fault was not found", "is not valid", foo_dotConsumerEvents.toString());
+        }
+        /**
+        * Tests that a subtopic of "foo..bar" is not valid and when a consumer that uses the 
+        * subtopic tries to subscribe to a destination a fault is returned. 
+        */
+        public function testFoo_dotDot_barConsumer():void {
+            Assert.assertContains("Invalid subtopic fault was not found", "is not valid", foo_dotDot_barConsumerEvents.toString());
+        }
+        
+        /**
+        * @private
+        * Event handler for message events
+        */ 
+        private function messageHandler(event:MessageEvent, whose:String):void {
+            log("<font size='+3'><b>" + whose + " message: " + event.message.headers.from + ": " + event.message.body + "</b></font>", colors[whose]);
+            this[whose + "Messages"].push(event.message.headers.from + ": " + event.message.body);
+        }
+        /**
+        * @private
+        * Event handler for message fault events
+        */ 
+        private function faultHandler(event:MessageFaultEvent, whose:String):void {
+            log("*** " + whose + " fault: " + event.faultCode + " : " + event.faultString + " ***", colors[whose]);
+            this[whose + "Events"].push("fault: " + event.faultCode + " : " + event.faultString);
+        }
+        /**
+        * @private
+        * Event handler for channel connect events
+        */ 
+        private function connectedHandler(event:ChannelEvent, whose:String):void {
+            log(' - ' + whose + ' channelConnect.', colors[whose]);
+            this[whose + "Events"].push("channelConnect");
+        }
+
+        /**
+        * @private
+        * Event handler for channel disconnect events
+        */ 
+        private function disconnectedHandler(event:ChannelEvent, whose:String):void {
+            log(' - ' + whose + ' channelDisconnect.', colors[whose]);
+            this[whose + "Events"].push("channelDisconnect");
+        }
+        /**
+        * @private
+        * Event handler for message ack events
+        */ 
+        private function ackHandler(event:MessageAckEvent, whose:String):void {
+            log(' - ' + whose + ' ack.', colors[whose]);
+            this[whose + "Events"].push("ack");
+        }
+        /**
+        *  @private
+        *  Utility method for logging messages to a text field. 
+        */
+        private function log(message:String, color:String = "#000000"):void {
+            output.htmlText += "<font color='" + color + "'>" + message + "</font>\n";
+        }
+        ]]>
+    </mx:Script>
+
+    <mx:TextArea id="output" height="300" width="500" editable="false" fontSize="10" fontFamily="Arial" />
+
+</mx:Application>

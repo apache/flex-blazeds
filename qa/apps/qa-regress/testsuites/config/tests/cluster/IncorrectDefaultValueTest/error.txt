@@ -1,0 +1,1 @@
+Default attribute to cluster tag: 'default-cluster' must be true or false not: 'foo'.

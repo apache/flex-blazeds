@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application  width='800' height='800' xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="setUp()">
+
+    <mx:RemoteObject destination="qa.echoservice.Echo" id="ro"
+            result="testHandler(event,false)" fault="testHandler(event,true)" endpoint="/bad/forwardToAMF.jsp"/>
+    <mx:Script>
+    <![CDATA[
+        import qa.mxunit.*;
+        import mx.core.mx_internal;
+        import mx.messaging.ChannelSet;
+        import mx.messaging.channels.*;
+        import mx.messaging.config.ServerConfig;
+        import mx.collections.*;
+        import mx.rpc.events.*;
+
+        private var expectedValue:Number = 3;
+        private var expectedArray:Array = [int.MIN_VALUE,0, int.MAX_VALUE];
+        
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Setup method.
+        //
+        //////////////////////////////////////////////////////////////////////////// 
+        
+        private function setUp():void
+        {
+
+            MXUnitManager.detectTests(this,10000);
+
+        }
+        /**
+        *    Test java int through amf channel
+        **/
+        public function test():void
+        {
+            var call:Object = ro.echoInt(expectedValue);
+            call.expectFault = true;
+        }
+
+
+
+        private function testHandler(e:Object, fromFault:Boolean):void
+        {
+            if (e.token.expectFault)
+            {
+                Assert.currentTest.doAssertEquals("Send failed", e.fault.faultString);
+            }
+            else if (fromFault)
+            {
+                Assert.currentTest.doFail(e.fault.faultString);
+            }
+            else
+            {
+                Assert.currentTest.doAssertEquals(e.result,e.token.expected);
+            }
+        }
+    ]]>
+    </mx:Script>
+
+</mx:Application>

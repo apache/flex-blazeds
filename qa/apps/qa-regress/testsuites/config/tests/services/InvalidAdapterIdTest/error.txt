@@ -1,0 +1,1 @@
+Invalid adapter-definition id '' for service 'message-service'

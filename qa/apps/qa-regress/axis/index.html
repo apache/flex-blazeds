@@ -1,0 +1,59 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<title>Apache-Axis</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h1 align="center">Apache-AXIS</h1>
+
+<p>Hello! <em>Welcome</em> to Apache-Axis.</p>
+
+<p>What do you want to do today?</p>
+
+<ul>
+    <li><a href="happyaxis.jsp">Validate</a>
+        the local installation's configuration</li>
+    <li><a href="servlet/AxisServlet">View</a>
+        the list of deployed Web services</li>
+    <li><a href="EchoHeaders.jws?method=list">
+        Call a local endpoint</a> that list's the caller's
+        http headers (or see its
+        <a href="EchoHeaders.jws?wsdl">WSDL</a>). 
+    <li><a href="http://xml.apache.org/axis">Visit</a>
+        the Apache-Axis Home Page</li>
+    <li><a href="servlet/AdminServlet">Administer Axis</a> <br>
+        [disabled by default for security reasons]</li>
+    <li><a href="SOAPMonitor">SOAPMonitor</a> <br>
+        [disabled by default for security reasons]</li>
+</ul>
+To enable the disabled features, uncomment the appropriate declarations in 
+WEB-INF/web.xml in the webapplication and restart it.
+<hr>
+If the "happyaxis" validation page returns some kind of error, it is invariably a 
+configuration issue. Consult the Axis documentation for specific details
+on your server, or the axis-user mailing list. Sometimes that page 
+returns a jasper error: if this is the case it is related to XML parser
+versions. We strongly recommend you download and install
+<a href="http://xml.apache.org/xerces2-j/">Xerces</a>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="setup()">
+    
+
+    <mx:Script>
+    <![CDATA[
+        /*
+         *    Test that small messages is enabled by default for RTMP and NIO AMF endpoints. 
+         */
+        import mx.messaging.Channel;
+        import mx.messaging.ChannelSet;
+        import mx.messaging.channels.AMFChannel;
+        import mx.messaging.config.*;
+        import mx.messaging.events.*;
+        import mx.messaging.messages.*;
+        import mx.rpc.AsyncToken;
+        import mx.rpc.events.FaultEvent;
+        import mx.rpc.events.ResultEvent;
+        import mx.rpc.remoting.RemoteObject;
+        
+        import qa.mxunit.*;
+        import qa.mxunit.Assert;
+        import qa.mxunit.MXUnitManager;
+ 
+        public var channelNames:Array;
+        private var currentTest:String; 
+        private var destination:String = "qa.amf.remoting.Test";          
+        public static var handler:Function;           
+        public var index:int = 0; 
+        private var manager:MXUnitManager;
+        public var testNames:Array = new Array();        
+        
+        public function setup():void
+        {    
+           var channelParam:String = Application.application.parameters.channel;
+           if(channelParam != null) 
+           {
+                channelNames = [channelParam];
+           } else { 
+                channelNames = (ServerConfig.getChannelSet(destination) as ChannelSet).channelIds;           
+           }                                 
+           var testObj:Object = new Object();  
+                                           
+           for (var i:int = 0; i < channelNames.length; i++) {               
+               var channel:Channel = ServerConfig.getChannel(channelNames[i]);               
+               var testName:String = "test_" + channel.id;               
+               testObj[testName] = testIsSmallMessagesEnabled;                    
+               testNames.push(testName);                                 
+            }                                      
+            
+            manager = MXUnitManager.getInstance();                                                                 
+           
+            MXUnitManager.addTests(testObj,testNames, 20000);                        
+        }
+      
+        public function testIsSmallMessagesEnabled():void 
+        {  
+            var pointer:uint = index++; 
+            var channelName:String = channelNames[pointer]; 
+            currentTest = channelName;
+            var channel:Channel = ServerConfig.getChannel(channelName, false);      
+            var cs:ChannelSet = new ChannelSet();           
+            cs.addChannel(channel);
+            
+            //set the consumer to use the new channel set then subscribe the consumer
+            var ro:RemoteObject = new RemoteObject();
+            ro.destination = destination;
+            ro.channelSet = cs;
+            
+            manager.currentTest.chain(ro,[ResultEvent.RESULT,FaultEvent.FAULT,],resultHandler);
+            ro.throwException("Look for this string in the body of the message in the server log.");
+                                                  
+        }
+       
+        private function resultHandler(event:Event):void
+        {             
+             if (event is FaultEvent) {
+                 var fe:FaultEvent = event as FaultEvent;
+                 Assert.assertTrue(true);
+             } else if (event is ResultEvent) 
+             {
+                 var re:ResultEvent = event as ResultEvent;
+                 Assert.fail("RemoteObject should have thrown an exception and not returned a result " + re.result);    
+             }
+             
+                        
+        }                        
+    ]]>
+    </mx:Script>    
+</mx:Application>

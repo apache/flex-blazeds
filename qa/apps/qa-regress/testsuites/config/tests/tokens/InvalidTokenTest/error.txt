@@ -1,0 +1,1 @@
+Token '{myToken}' in 'services-config.xml' was not replaced. Either supply a value to this token with a JVM option or remove it from the configuration

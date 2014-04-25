@@ -1,0 +1,167 @@
+<?xml version="1.0" ?>
+<!--
+
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-->
+
+<mx:Application 
+		xmlns:mx="http://www.adobe.com/2006/mxml" 
+		xmlns:qa="http://www.adobe.com/2006/flexqa"
+		creationComplete="run()"
+		>
+	
+	<!-- without proxy -->
+	<mx:HTTPService 
+			id="hsNoParamsGet" 
+			destination="echoParams_http"
+			method="get"
+			useProxy="true"
+			result="onServiceResultNoParamsGet(event)" 
+			fault="onServiceFaultNoParamsGet(event)"
+			/>
+			
+	<!-- with proxy -->
+	<mx:HTTPService 
+			id="hsNoParamsPost" 
+			destination="echoParams_http"
+			method="post"
+			useProxy="true"
+			result="onServiceResultNoParamsPost(event)" 
+			fault="onServiceFaultNoParamsPost(event)"
+			/>
+	
+	<!-- fault="onServiceFaultWithParamsGet(event)" -->
+	<mx:HTTPService 
+			id="hsWithParamsGet" 
+			destination="echoParams_http"
+			method="get"
+			useProxy="true"
+			result="onServiceResultWithParamsGet(event)" 
+			fault="onServiceFaultWithParams(event)"
+			/>
+		
+	<!-- fault="onServiceFaultWithParamsPost(event)" -->	
+	<mx:HTTPService 
+			id="hsWithParamsPost" 
+			destination="echoParams_http"
+			method="post"
+			useProxy="true"
+			result="onServiceResultWithParamsPost(event)" 
+			fault="onServiceFaultWithParams(event)"
+			/>
+						
+			
+	
+	
+	<mx:Script>
+	
+	<![CDATA[
+	     /****************************************************
+        *  HttpService no request test
+        * **************************************************/
+        
+		import qa.mxunit.*;
+		import mx.rpc.events.*;
+
+
+        public var bPassNoParamsGet : Boolean = true;
+		public var bPassNoParamsPost : Boolean = true;
+		public var resultWithParamsGet : Object;
+		public var resultWithParamsPost : Object;
+
+        public function onServiceFaultNoParamsGet(event:FaultEvent):void {
+            bPassNoParamsGet = false;
+
+        }
+
+  		public function onServiceFaultNoParamsPost(event:FaultEvent):void {
+            bPassNoParamsPost = false;
+
+        }
+        
+       public  function onServiceFaultWithParams(event:FaultEvent):void {
+            trace("service fault: " + event.fault.faultString);
+
+        }
+
+		public function onServiceResultNoParamsGet(event:ResultEvent):void {
+             
+			 for (var i : String in event.result)
+				{
+					if (i != "parameters")
+						bPassNoParamsGet = false;
+				}
+
+        }
+
+  		public function onServiceResultNoParamsPost(event:ResultEvent):void {
+				 
+              for (var i : String in event.result)
+				{
+					
+					if (i != "parameters")
+						bPassNoParamsPost = false;
+				}
+
+        }
+        
+		public function onServiceResultWithParamsGet(event:ResultEvent):void {
+             resultWithParamsGet = event.result;
+			
+        }
+
+  		public function onServiceResultWithParamsPost(event:ResultEvent):void {
+			resultWithParamsPost = event.result;
+		}
+		
+		
+		public function run():void {
+			hsNoParamsGet.send();
+            hsNoParamsPost.send();
+            hsWithParamsGet.send({value: 'value'});
+            hsWithParamsPost.send({value: 'value'});
+
+            MXUnitManager.delay = 6000;
+			MXUnitManager.addTests(this,["Test_NoParamsGet","Test_NoParamsPost","Test_WithParamsGet","Test_WithParamsPost"],10000);
+		}
+
+	    public function Test_NoParamsGet():void {
+
+			Assert.isTrue(bPassNoParamsGet, "");
+		}
+
+		public function Test_NoParamsPost():void {
+
+            Assert.isTrue(bPassNoParamsPost, "");
+		}
+		
+		
+		public function Test_WithParamsGet():void {
+		
+			trace("resultWithParamsGet.parameters.value: " + resultWithParamsGet.parameters.value);
+
+			Assert.isTrue(resultWithParamsGet.parameters.value == "value", "result.parameters.value should be value");
+		}
+		
+		public function Test_WithParamsPost():void {
+
+			Assert.isTrue(resultWithParamsPost.parameters.value == "value", "result.parameters.value should be value");
+		}		
+
+	]]>
+	</mx:Script>
+</mx:Application>

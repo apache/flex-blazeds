@@ -1,0 +1,1 @@
+The services configuration root element must be 'services-config'

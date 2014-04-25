@@ -1,0 +1,1 @@
+The destination-include root element in file dest-config.xml must be 'destinations' or 'destination'

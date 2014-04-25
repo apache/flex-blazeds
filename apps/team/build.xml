@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+
+
+<project name="team.war/build.xml" default="main" basedir="../..">
+
+    <property file="${basedir}/build.properties" />
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${env.ANT_HOME}/lib/ant-contrib-1.0b2.jar"/>
+    <property name="team.war" value="${basedir}/apps/team" />
+    <property name="dist.dir" value="${basedir}/dist" />
+    <property name="src.dir" value="${team.war}/WEB-INF/src" />
+    <property name="classes.dir" value="${team.war}/WEB-INF/classes" />
+    <if>
+        <equals arg1="${sdk.version}" arg2="3"/>
+        <then>
+            <property name="template.dir" value="client-side-detection-with-history"/>
+            <property name="war.filename" value="team-sdk3.war"/>
+        </then>            
+        <else>
+            <property name="template.dir" value=""/>
+            <property name="war.filename" value="team.war"/>
+        </else>        
+    </if>
+
+    <path id="classpath">
+        <fileset dir="${team.war}/WEB-INF/lib" includes="**/*.jar" />
+        <fileset dir="${team.war}/WEB-INF/flex/jars" includes="**/*.jar"/>
+        <pathelement location="${servlet.jar}" />
+        <pathelement location="${jms.jar}"/>
+    </path>
+
+    <target name="main" depends="clean,compile" />
+
+    <target name="prepare">
+        <mkdir dir="${team.war}/WEB-INF/classes" />
+        <mkdir dir="${team.war}/WEB-INF/lib" />
+        <mkdir dir="${team.war}/WEB-INF/src" />
+    </target>
+
+    <target name="copy-resources">
+        <fail unless="local.sdk.lib.dir" message="must specify local.sdk.lib.dir in server/build.properties"/>
+        <fail unless="local.sdk.frameworks.dir" message="must specify local.sdk.frameworks.dir in build.properties"/>
+    
+        <!-- copy sdk version sepecific web.xml. this is required for webtier -->
+        <copy todir="${team.war}/WEB-INF">
+            <fileset dir="${qa.dir}/resources/webtier/flex_sdk_${sdk.version}/">
+                <include name="web.xml"/>
+            </fileset>
+        </copy>
+        
+        <!-- copy sdk version specific flex-config.xml, air-config.xml and flex-webtier-config.xml -->
+        <copy todir="${team.war}/WEB-INF/flex">
+            <fileset dir="${qa.dir}/resources/webtier/flex_sdk_${sdk.version}" includes="flex-config.xml,air-config.xml,flex-webtier-config.xml"/>
+        </copy>
+        
+        <!-- copy to the WEB-INF/flex directory -->
+        <copy todir="${team.war}/WEB-INF/flex">
+            <fileset dir="${local.sdk.frameworks.dir}">
+                <include name="*-manifest.xml" />
+                <include name="flash-unicode-table.xml"/>
+                <include name="flex-sdk-description.xml" />
+                <include name="*.ser"/>
+                <include name="locale/**/*"/>
+                <include name="themes/**/*"/>
+            </fileset>
+        </copy>
+
+        <!-- copy swcs to the WEB-INF/flex/libs directory -->
+        <copy todir="${team.war}/WEB-INF/flex/libs">
+            <fileset dir="${local.sdk.frameworks.dir}/libs" includes="**/*.swc"/>
+        </copy>
+        
+        <!-- copy to the lib directory -->            
+        <copy todir="${team.war}/WEB-INF/lib">
+            <fileset dir="${basedir}/lib" includes="${webapp.ce.lib},${webtier.lib},${jgroups.jars}" />
+            <fileset dir="${qa.dir}/lib" includes="${axis.jars},${qa-services.jars}"/>
+        </copy>
+                                      
+        <!-- copy to the jars directory -->
+        <copy todir="${team.war}/WEB-INF/flex/jars">
+            <fileset dir="${basedir}/lib" includes="${webtier.jars}"/>
+        </copy>    
+                        
+        <!-- copy to the classes directory -->                        
+        <copy todir="${team.war}/WEB-INF/classes">
+            <fileset dir="${team.war}/WEB-INF/src">
+                <include name="**/*.xml,**/*.properties" />
+            </fileset>
+            <fileset dir="${basedir}/lib" includes="${webapp.classes}" />
+        </copy> 
+        
+        <!-- copy template file to the history directory -->
+        <copy todir="${team.war}/history" flatten="true">
+            <fileset dir="${basedir}/templates/${template.dir}" includes="**/*.js,**/*.css,**/historyFrame.html"/>
+        </copy>       
+    </target>
+
+    <target name="run-depend" if="src.depend">
+        <echo message="Removing class files that changed and dependent class files." />
+        <depend cache="${classes.dir}" srcdir="${src.dir}" destdir="${classes.dir}" />
+    </target>
+
+    <target name="compile" depends="prepare,run-depend,copy-resources" description="compile">
+        <javac source="1.5" debug="${src.debug}" destdir="${classes.dir}" srcdir="${src.dir}" classpathref="classpath" />
+    </target>
+
+    <target name="package" description=" Creates distribution war file">
+        <mkdir dir="${dist.dir}" />
+        <war file="${dist.dir}/${war.filename}" webxml="${team.war}/WEB-INF/web.xml">
+            <manifest>
+                <attribute name="Sealed" value="${manifest.sealed}" />
+                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Team Application" />
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}" />
+                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}" />
+            </manifest>
+            <fileset dir="${team.war}">
+                <exclude name="build.xml" />
+                <exclude name="WEB-INF/src/**/*.java" />
+                <exclude name="WEB-INF/jsp/**/*" />
+                <exclude name="WEB-INF/sessions/**/*" />
+                <!-- This is included in the war task already -->
+                <exclude name="WEB-INF/web.xml" />
+            </fileset>
+        </war>
+    </target>
+
+    <target name="clean" description="--> Removes jars and classes">
+        <delete quiet="true">
+            <fileset dir="${team.war}/WEB-INF/lib" includes="${webapp.ce.lib},${webtier.lib},${jgroups.jars}" />
+            <fileset dir="${team.war}/WEB-INF" includes="web.xml"/>
+            <fileset dir="${team.war}/WEB-INF/flex">
+                <include name="*-manifest.xml" />
+                <include name="air-config.xml"/>
+                <include name="flex-config.xml"/>
+                <include name="flex-webtier-config.xml"/>
+                <include name="flash-unicode-table.xml"/>
+                <include name="flex-sdk-description.xml" />
+                <include name="*.ser"/>
+                <include name="locale/**/*"/>
+                <include name="themes/**/*"/>
+            </fileset>
+        </delete>
+        <delete quiet="true">
+            <fileset dir="${team.war}/WEB-INF/flex/jars" includes="**/*"/>
+        </delete> 
+         <delete quiet="true" includeEmptyDirs="true">
+             <fileset dir="${team.war}/WEB-INF/flex/locale" includes="**/*"/>
+         </delete>
+         <delete quiet="true" includeEmptyDirs="true">
+             <fileset dir="${team.war}/WEB-INF/flex/libs" includes="**/*"/>
+         </delete>
+         <delete quiet="true" includeEmptyDirs="true">
+            <fileset dir="${team.war}/WEB-INF/flex" includes="*.ser,cache.dep,*-manifest.xml"/>
+        </delete>
+        <delete quiet="true">
+            <fileset dir="${classes.dir}" includes="**/*.class" />
+        </delete>
+        <delete quiet="true" file="${dist.dir}/${war.filename}" />
+        <delete quiet="true" includeEmptyDirs="true">
+            <fileset dir="${team.war}/history" includes="**/*"/>
+        </delete>
+        <delete quiet="true" dir="${team.war}/history" />
+        <delete quiet="true" dir="${team.war}/WEB-INF/lib" />
+        <delete quiet="true" dir="${team.war}/WEB-INF/classes" />
+        <delete quiet="true" dir="${team.war}/WEB-INF/flex/jars" />
+        <delete quiet="true" dir="${team.war}/WEB-INF/flex/libs" />
+        <delete quiet="true" dir="${team.war}/WEB-INF/flex/locale" />
+        <delete quiet="true" dir="${team.war}/WEB-INF/flex/themes" />
+    </target>
+
+    <target name="generated-clean">
+        <delete includeEmptyDirs="true" quiet="true">
+            <fileset dir="${team.war}" includes="**/generated/*" />
+        </delete>
+        <delete includeEmptyDirs="true" quiet="true">
+            <fileset dir="${team.war}" includes="**/generated" />
+        </delete>
+    </target>
+
+</project>

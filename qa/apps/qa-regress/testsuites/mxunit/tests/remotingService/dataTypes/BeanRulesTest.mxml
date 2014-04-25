@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application  width='800' height='800' xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="setup()">
+
+    <mx:TraceTarget />
+
+    <mx:RemoteObject id="ro" destination="qa.echoservice.Echo"
+            result="resultHandler(event)"
+            fault="faultHandler(event)"/>
+
+    <mx:Script>
+    <![CDATA[
+        import mx.messaging.Channel;
+        import qa.mxunit.*;
+        import mx.rpc.events.*;
+        import mx.core.mx_internal;
+        import mx.messaging.config.ServerConfig;
+        import mx.messaging.ChannelSet;
+        import mx.messaging.channels.*;
+        import mx.utils.ObjectUtil;
+
+        private var bean:Bean;
+        private static var expectedCount:int = 3;
+        private static var expectedPropertyValue:String = "BeanRuleTestPropertyValue";
+        private static var expectedFieldValue:String = "BeanRuleTestFieldValue";
+        private static var expectedProperties:Array = ["foo","publicField","publicProperty"];
+        private static var expectedValues:Array = ["bar", expectedFieldValue, expectedPropertyValue];
+       ////////////////////////////////////////////////////////////////////////////
+        //
+        // Variables
+        //
+        ////////////////////////////////////////////////////////////////////////////                          
+        
+        /**
+        *  Array to hold names of channels that will be tested
+        */       
+        public var channelNames:Array;
+        
+        /**
+        *  Name of test that is currently being executed. 
+        */
+        private var currentTest:String; 
+        
+        /**
+        *  Name of the destination to be used by the Producer and the Consumer. 
+        */
+        private var destination:String = "qa.echoservice.Echo";                         
+        
+        /**
+        *  Index used to point to channel in the channelNames array for the currently executing test. 
+        */
+        public var index:int = 0; 
+        
+        /**
+        *  Variable to hold singleton instance of the MXUnitManager.  
+        */
+        private var manager:MXUnitManager;
+        
+        /**
+        *  Array of test names. Test name will be based on the channel 
+        */  
+        
+        public var testNames:Array = new Array();        
+
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Setup method.
+        //
+        //////////////////////////////////////////////////////////////////////////// 
+        
+        /**
+        *  This setup method dynamically creates a series of tests, and 
+        *  creates different channelsets. Same data is going to test under different
+        *  channelSets
+        */
+        private function setup():void
+        {            
+            bean = new Bean();
+            bean.publicProperty = expectedPropertyValue;
+            bean.publicField = expectedFieldValue;           
+             
+           //get the list of channel names for the destination from ServerConfig 
+           channelNames = (ServerConfig.getChannelSet(destination) as ChannelSet).channelIds;           
+                                            
+           //create a new generic object to add test functions to
+           var testObj:Object = new Object();  
+                                           
+           /*
+            * Loop over the channel names and create a new test function for each channel. 
+            * Even though the test function will have a new name it just points to our generic 
+            * test function which will need to keep track of which test is being run. 
+            */
+           for (var i:int = 0; i < channelNames.length; i++) {
+           	            
+               var channel:Channel = ServerConfig.getChannel(channelNames[i]);               
+               if (channel.id != "qa-secure-amf")
+               {  
+               	    var testName:String = "test_" + channel.id;               
+               	    testObj[testName] = testEchoBean;                    
+               	    testNames.push(testName);
+               }                                 
+            }                                      
+            //configure the MXUnitManager           
+            manager = MXUnitManager.getInstance();                                                                 
+           
+            //Call addTests giving it the object that contains all our test functions and an array of test names
+            MXUnitManager.addTests(testObj,testNames, 2000);
+        }
+        /**
+        *  Test custom object serialization. Only instance's public fields and properties are serialized
+        **/
+        public function testEchoBean():void
+        {
+            Assert.hasPendingTest = true;
+            //increment the counter to point to the next test
+            var pointer:uint = index++; 
+            //create a new channel using the next channel name in the list and add it to a new channelset
+            var channelName:String = channelNames[pointer]; 
+            currentTest = channelName;
+            var channel:Channel = ServerConfig.getChannel(channelName, false);      
+            var cs:ChannelSet = new ChannelSet();           
+            cs.addChannel(channel);          
+            
+            ro.channelSet = cs;
+            ro.echoObject(bean);
+        }
+      
+
+
+        private function resultHandler(event:ResultEvent):void
+        {
+            var result:Bean = Bean(event.result);
+            var classInfo:Object = ObjectUtil.getClassInfo(result, null, {includeReadOnly:false});
+            var properties:Array = classInfo.properties;
+
+            if (properties.length != expectedCount)
+            {
+                Assert.currentTest.doFail("Unexpected number of properties on Bean. Found " + properties.length + ", expected " + expectedCount);
+            }
+
+            var expectedPropNames:String = expectedProperties.join();
+
+            for (var i:uint = 0; i < properties.length; i++)
+            {
+                var propName:String = properties[i];
+                if (expectedPropNames.indexOf(propName) == -1)
+                {
+                    Assert.currentTest.doFail("Unexpected property '" + propName + "' found on Bean");
+                }
+            }
+
+            for (var p:uint = 0; p < expectedProperties.length; p++)
+            {
+                var expectedProp:String = expectedProperties[p];
+                if (result[expectedProp] != expectedValues[p])
+                {
+                    Assert.currentTest.doFail("Property '" + propName + "' has value " + result[expectedProp] + " but expected " + expectedValues[p]);
+                }
+            }
+
+            Assert.pass("Bean test passed");
+            Assert.hasPendingTest = false;
+        }
+
+        private function faultHandler(e:FaultEvent):void
+        {
+            
+	    Assert.fail(e.fault.faultString);
+        }
+    ]]>
+    </mx:Script>
+
+</mx:Application>

@@ -1,0 +1,1 @@
+The service-include root element in file messaging-config.xml must be 'services' or 'service'

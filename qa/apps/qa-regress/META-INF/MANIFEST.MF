@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Sealed: false
+Implementation-Title: "Apache Flex"
+Implementation-Vendor: "Apache Software Foundation"
+Implementation-Version: "2.0."

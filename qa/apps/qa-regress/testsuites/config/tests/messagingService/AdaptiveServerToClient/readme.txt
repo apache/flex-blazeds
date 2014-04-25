@@ -1,0 +1,1 @@
+these advanced features are not supported on BlazeDS. We want to test what happens when these configs are set to verify that we don't do anything unexpected.

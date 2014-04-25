@@ -1,0 +1,6 @@
+This is an overview of how to secure BlazeDS destinations:
+
+1- In services-config.xml, under security section, uncomment a login command for your application server. 
+2- In services-config.xml, under security section, define a security constraint that your destinatios will refer to. A security constraint can be basic or custom and it can have one or more roles. Basic authentication means a browser window pops up asking the user for username and password when the client tries to access the destination. Custom authentication means instead of a browser window, the Flex application itself passes the authentication to BlazeDS. Roles are application server specific. For example, in Tomcat, they are defined in conf/tomcat-user.xml file.
+3- In your destination definition, refer to the security constraint you defined in the previous step with "<security-constraint ref=""/>" tag.
+4- If your destinations are using basic authentication, then no extra work is required in your Flex application. If they are using custom authentication, then you need to pass the credentials to BlazeDS, preferably using ChannelSet.login method and listening for authentication success or failure with AsyncToken pattern.

@@ -1,0 +1,114 @@
+<?xml version="1.0" ?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:qa="http://www.adobe.com/2006/flexqa" creationComplete="run()">
+	
+	<!-- result format = e4x -->
+	 <mx:HTTPService id="hsE4X" useProxy="true"	destination="echoXml_amf" contentType="application/xml" resultFormat="e4x"
+        method = "POST" result="onServiceResult_e4x(event)" fault="onServiceFault(event)" />
+   	
+	<!-- result format = object -->
+	 <mx:HTTPService id="hsObject" useProxy="true" 	destination="echoXml_amf" contentType="application/xml" resultFormat="object"
+        makeObjectsBindable="false"  method = "POST" result="onServiceResult_object(event)"  fault="onServiceFault(event)" />
+   
+	<!-- result format = xml -->
+	<mx:HTTPService id="hsXML" useProxy="true" destination="echoXml_amf" contentType="application/xml" resultFormat="xml"
+        method = "POST" result="onServiceResult_xml(event)" fault="onServiceFault(event)" />
+	
+	<mx:Script>
+	<![CDATA[
+	    /****************************************************
+        *  HttpService contentType test
+        * **************************************************/
+
+		import qa.mxunit.*;
+		import mx.rpc.events.*;
+
+        public var fault:Object;
+        public var resultE4X:Object;
+        public var resultObject:Object;
+        public var resultXML:Object;
+	
+        public var events:Array;
+
+		//request data
+		public var toSend : XML = new XML("<basic><string>string</string><integer>123</integer><float>123.123</float><boolean>true</boolean><array>1</array><array>2</array><array>3</array><object><property>value</property></object></basic>");
+
+        //	toSend.ignoreWhite = true;
+	    public var toSendXML:XMLDocument = new XMLDocument();
+ 		
+        public function onServiceResult_e4x(event:ResultEvent):void {
+			 resultE4X = event.result;
+		}
+
+    	public function onServiceResult_xml(event:ResultEvent):void {
+			 resultXML= event.result;
+		}
+
+		public function onServiceResult_object(event:ResultEvent):void {
+			 resultObject = event.result;
+		}
+		
+        public function onServiceFault(event:FaultEvent):void {
+        	trace("service fault: " + event.fault.faultString);
+        }
+
+		public function run():void {
+       		toSendXML.ignoreWhite = true;
+        	toSendXML.parseXML("<basic><string>string</string><integer>123</integer><float>123.123</float><boolean>true</boolean><array>1</array><array>2</array><array>3</array><object><property>value</property></object></basic>");
+
+			hsE4X.send(toSend);
+            hsObject.send(toSend);
+            hsXML.send(toSendXML);
+            
+            MXUnitManager.delay = 6000;
+			MXUnitManager.addTests(this,["Test_e4x","Test_object","Test_xml"],10000);			
+		}
+
+		//result = e4x
+        public function Test_e4x():void {
+			Assert.isTrue(resultE4X.toString() == toSend.toString(), "");
+		}
+
+	   //result = object
+	   public function Test_object():void {
+            Assert.isTrue(resultObject.basic != null, "first property should be not be null");
+			Assert.isTrue(resultObject.basic.string == "string", "result.basic.string should be string");
+			Assert.isTrue(resultObject.basic.string is String, "result.basic.string is String = true");
+			Assert.isTrue(resultObject.basic.integer == 123, "result.basic.integer should be 123");
+			Assert.isTrue(resultObject.basic.integer is int, "result.basic.integer is int = true");
+			Assert.isTrue(resultObject.basic.float == 123.123, "result.basic.float should be 123.123");
+			Assert.isTrue(resultObject.basic.float is Number, "result.basic.float is Number = true");
+			Assert.isTrue(resultObject.basic.boolean == true, "result.basic.boolean should be true");
+			Assert.isTrue(resultObject.basic.boolean is Boolean, "result.basic.boolean is Boolean = true");
+			Assert.isTrue(resultObject.basic.array.length == 3, "result.basic.array.length should be 3");
+			Assert.isTrue(resultObject.basic.array is Array, "result.basic.array is Array = true");
+			Assert.isTrue(resultObject.basic.array[0] == 1, "result.basic.array[0] should be 1");
+			Assert.isTrue(resultObject.basic.array[1] == 2, "result.basic.array[1] should be 2");
+			Assert.isTrue(resultObject.basic.array[2] == 3, "result.basic.array[2] should be 3");
+		}
+		
+		//result = xml
+		public function Test_xml():void {
+			Assert.isTrue(resultXML.toString() == toSendXML.toString(), "");
+		}
+	]]>
+	</mx:Script>
+</mx:Application>

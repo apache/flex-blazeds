@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="initApp()">
+    <mx:RemoteObject id="ro" destination="qa.remoting.Test" requestTimeout="2"
+        result="event.token.resultHandler(event)" fault="event.token.faultHandler(event)"/>
+    <mx:Script>
+        <![CDATA[
+            import mx.effects.easing.Back;
+            import qa.mxunit.MXUnitManager;
+            import mx.rpc.AsyncToken;
+            import qa.mxunit.Assert;
+            
+            private var mxunitManager: MXUnitManager;
+            
+            private function initApp():void
+            {
+                mxunitManager = MXUnitManager.getInstance();
+                var tests:Array = new Array();
+                tests.push("testResultAfterTimeout");
+                tests.push("testResultBeforeTimeout");
+                tests.push("testFaultAfterTimeout");
+                mxunitManager.addTests(this, tests, 7000);
+            }
+            
+            private var hasTimeoutEvent:Boolean = false;
+            
+            //tests
+            
+            /**
+            * Result is returned in 4 second after remote object timeout the request
+            * Should expect result handler is not called
+            **/
+            public function testResultAfterTimeout():void
+            {
+                hasTimeoutEvent = false;
+                var async: Function = mxunitManager.currentTest.addAsync(shouldGetTimeout);
+                //result returns in 4 seconds
+                var call:AsyncToken = ro.slowEchoString("abcde", 4000);
+                call.faultHandler = async;
+                call.resultHandler = failTest;
+                delayAssert({expectedHasTimeout:true}, 6000);        
+            }
+            
+             /**
+            * Result is returned before remote object timeout the request
+            * Should expect result handler is not called
+            **/
+            public function testResultBeforeTimeout():void
+            {
+                hasTimeoutEvent = false;
+                var async: Function = mxunitManager.currentTest.addAsync(resultHandler);
+                var call:AsyncToken = ro.slowEchoString("abcde", 1);
+                call.faultHandler = failTest;
+                call.resultHandler = async;
+                delayAssert({expectedHasTimeout:false}, 6000);        
+            }
+            
+            /**
+            * Fault is returned in 4 second after remote object timeout the request
+            * Should expect fault handler is not called
+            **/
+            public function testFaultAfterTimeout():void
+            {
+                hasTimeoutEvent = false;
+                var async: Function = mxunitManager.currentTest.addAsync(shouldGetTimeout);
+                var call:AsyncToken = ro.throwSlowException("abcde", 4000);
+                call.faultHandler = async;
+                call.resultHandler = failTest;
+                delayAssert({expectedHasTimeout:true}, 6000);        
+            }
+ 
+            private function shouldGetTimeout(event:Object):void
+            {
+                if (event.fault.faultCode == "Client.Error.RequestTimeout")
+                {
+                    hasTimeoutEvent = true;
+                }
+                else
+                {
+                    Assert.fail("expected to have Client.Error.RequestTimeout, but got" + event.fault.faultCode);
+                }      
+            }
+            
+            private function resultHandler(event:Object):void
+            {
+                
+            }
+            
+            private function failTest(event:Object):void
+            {
+                mxunitManager.currentTest.doFail("Do not expected to have fault or result: " + event);
+            }
+            
+            private function delayAssert(expectResult: Object, delay:uint):void
+            {
+                var async: Function = mxunitManager.currentTest.addAsync(doDelayAssert, expectResult);
+                var timer:Timer = new Timer(delay, 1);
+                timer.addEventListener(TimerEvent.TIMER, async);
+                timer.start();
+            }
+            
+            private function doDelayAssert(event:Object, extraParam:Object):void
+            {
+                Assert.assertEquals(extraParam.expectedHasTimeout, hasTimeoutEvent);   
+            }
+            
+        ]]>
+    </mx:Script>
+    
+</mx:Application>

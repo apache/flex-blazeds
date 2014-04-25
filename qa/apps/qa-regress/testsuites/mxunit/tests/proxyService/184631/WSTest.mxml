@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" initialize="run();">
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import qa.mxunit.*;
+			import mx.rpc.events.*;
+
+	        public var result:Object;
+			public var type : String;
+			public var faultType : String;
+			[Bindable]
+			public var localAC:ArrayCollection = null;
+	
+	        public function onServiceResult(event:ResultEvent):void {
+	        	 type = event.type;
+				 result = event.result;
+				 //Alert.show("done!");
+				 dg.dataProvider=customerService.getOperation('getCustomerList').lastResult;
+				 this.localAC = new ArrayCollection(customerService.operations as Array); 
+				 //Alert.show('lastResult - ' + customerService.getOperation('getCustomerList').lastResult[0].lastName + ' ' + customerService.getOperation('getCustomerList').lastResult[0].id);	
+				 }
+	
+	
+		    public function onServiceFault(event:FaultEvent):void {
+	            trace("http service fault: " + event.fault.faultString);
+	        }
+			
+			public function onServiceFaultTest(event:FaultEvent):void {
+	            faultType = event.type;
+	        }
+	
+			public function run():void {
+				// run customerService
+				customerService.getCustomerList.send();
+	            MXUnitManager.delay = 6000;
+				MXUnitManager.addTests(this,["Test_Type", "Test_Values"],10000);
+				
+			}
+			
+			
+			public function Test_Type():void {
+	
+	           // Assert.isTrue(type == "result", "should result in a Result");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[0].id is Number == true, "should be Number 0");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[1].id is Number == true, "should be Number 1");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[2].id is Number == true, "should be Number 2");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[3].id is Number == true, "should be Number 3");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[4].id is Number == true, "should be Number 4");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[5].id is Number == true, "should be Number 5");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[6].id is Number == true, "should be Number 6");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[7].id is Number == true, "should be Number 7");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[8].id is Number == true, "should be Number 8");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[9].id is Number == true, "should be Number 9");
+	           
+	
+			}
+			public function Test_Values():void {
+	
+	           // Assert.isTrue(type == "result", "should result in a Result");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[0].id  == 0, "should be Number 0");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[1].id == 1, "should be Number 1");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[2].id == 2, "should be Number 2");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[3].id == 3, "should be Number 3");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[4].id == 4, "should be Number 4");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[5].id == 5, "should be Number 5");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[6].id == 6, "should be Number 6");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[7].id == 7, "should be Number 7");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[8].id == 8, "should be Number 8");
+	           Assert.isTrue(customerService.getOperation('getCustomerList').lastResult[9].id == 9, "should be Number 9");
+	           
+	
+			}
+
+		]]>
+	</mx:Script>
+	<mx:WebService id="customerService" 
+		wsdl="http://www.cynergysystems.com/axis/services/CustomerService?WSDL" 
+		useProxy="false" 
+		result="onServiceResult(event)" 
+		fault="onServiceFault(event)">
+		<mx:operation name="getCustomerList" resultFormat="object" />
+	</mx:WebService>
+	
+	<mx:Form x="49" y="58" width="1014" height="722">
+		
+		<mx:FormItem label="GetCustomerList">
+			<mx:DataGrid id="dg" 
+				
+				width="839" 
+				height="678" wordWrap="true" />
+				
+		</mx:FormItem>
+
+	</mx:Form>
+</mx:Application>

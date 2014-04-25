@@ -1,0 +1,1 @@
+Destination 'thisDest' must specify at least one adapter

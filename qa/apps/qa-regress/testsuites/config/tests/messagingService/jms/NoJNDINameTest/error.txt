@@ -1,0 +1,1 @@
+JNDI names for message destinations with JMS Adapters must be specified.

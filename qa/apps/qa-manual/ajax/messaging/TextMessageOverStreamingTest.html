@@ -1,0 +1,97 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html>
+<head>
+	<title>Flex Text Messaging through LCDS FABridge </title>
+	<style>
+		body { margin: 10px;
+		 overflow:hidden }
+		
+		textarea {
+			font-size: 1em;
+		}
+	</style>
+	<script type="text/javascript" src="../includes/js/FABridge.js"></script>
+	<script type="text/javascript" src="../includes/js/FDMSLib.js"></script>
+</head>
+
+<p>The page tests sending/recieving a simple text message through LCDS-FABridge using a polling amf channel</p>
+<p>Feature tested: 
+<li>Producer.send, Producer.setDestination, Producer.setChannelSet</li>
+<li>Consumer.setDestination, Consumer.setChannelSet, Consumer.subscribe;</li>
+<li>Channelset.addChannel.</li>
+
+<body scroll='no' style="font-size:.9em;">
+<script language="javascript">
+    var p;
+    var c;
+     
+    function fdmsLibraryReady()
+    {       
+        log("Library is ready");
+
+		var cs = new ChannelSet();    
+		var c = new StreamingAMFChannel("qa-streaming-amf", "http://localhost:8400/qa-manual/messagebroker/streaming-amf");		
+        cs.addChannel(c);
+        p = new Producer();
+        p.setDestination("MyTopic"); 
+		p.setChannelSet(cs);
+
+        c = new Consumer();
+        c.setDestination("MyTopic");
+        c.addEventListener("message", messageHandler);
+		c.setChannelSet(cs);
+        c.subscribe();
+    }
+
+   function sendChat()
+    {       
+        var m = new AsyncMessage();        
+        var body = "Hello sent thru Ajax bridge!";
+        m.setBody(body);        
+        p.send(m);
+		log("Sent message: "  + body);
+    }
+
+    function messageHandler(event)
+    {
+        log("Received message(" + (typeof(event.getMessage().getBody())) + "): " + event.getMessage().getBody());
+    }
+		
+	function log(s){
+		var myta = document.getElementById("ta");
+		myta.appendChild(document.createTextNode(s + "\n" ));
+	}
+
+</script>
+
+<script>
+    FDMSLibrary.load("../includes/swf/FDMSBridge.swf", fdmsLibraryReady);
+</script>
+
+	<div style="width:1024px">
+	<div style="margin-bottom: 20px;float:left;padding: 20px;">
+	<!-- <button onClick="fesLib_send();return false;">execute</button>	 -->
+	<button onClick="sendChat();return false;">Send</button>
+    <br />
+    <textarea name="ta" cols="100" rows="30" id="ta" ></textarea>
+</div>
+</div>
+</body>
+
+
+</html>

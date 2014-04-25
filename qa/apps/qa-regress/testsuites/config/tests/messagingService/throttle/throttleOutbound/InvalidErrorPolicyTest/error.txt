@@ -1,0 +1,1 @@
+Invalid outbound throttle policy 'ERROR' for destination 'MyTopic'. Valid values are 'NONE' and 'IGNORE'.

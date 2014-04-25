@@ -1,0 +1,298 @@
+<flex-message-service-mods>
+<!--
+
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-->
+    <!--
+     The contents of this file will be used to modify an existing messaging-config.xml file so
+     there is no need to maintain an entire config file.
+
+     Each child directly under the root has two extra attributes - parent and action.
+
+        parent - REQUIRED.  slash delimited path as to the parent node for the change
+        action - replace, add, delete.  Default is replace.
+
+    Local overrides are encouraged to be in messaging-config.mods.local.xml
+
+    THE BASE PARENT FOR flex-message-service is "service".
+    -->
+
+
+<!-- Begin section for priority testing -->
+    <destination id="MyTopicPriority" parent="service">
+        <channels>
+            <channel ref="data-polling-amf"/>
+        </channels>
+    </destination>
+
+    <destination id="MyTopicDefaultPriority05" parent="service">
+        <properties>
+            <server>
+                <!-- set a default priority to 5 -->
+                <message-priority>5</message-priority>
+            </server>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+        </channels>
+    </destination>
+
+    <destination id="MyTopicDefaultPriority03" parent="service">
+        <properties>
+            <server>
+                <!-- set a default priority to 3 -->
+                <message-priority>3</message-priority>
+            </server>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+        </channels>
+    </destination>
+
+    <destination id="MyTopicDefaultPriority09" parent="service">
+        <properties>
+            <server>
+                <!-- set a default priority to 9 -->
+                <message-priority>9</message-priority>
+            </server>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+        </channels>
+    </destination>
+
+    <destination id="MyTopicDefaultPriority00" parent="service">
+        <properties>
+            <server>
+                <!-- set a default priority to 9 -->
+                <message-priority>0</message-priority>
+            </server>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+        </channels>
+    </destination>
+
+        <destination id="MyTopicDefaultPriorityNegative1" parent="service">
+        <properties>
+            <server>
+                <!-- set a default priority to 9 -->
+                <message-priority>-1</message-priority>
+            </server>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+        </channels>
+    </destination>
+
+        <destination id="MyTopicDefaultPriority10" parent="service">
+        <properties>
+            <server>
+                <!-- set a default priority to 9 -->
+                <message-priority>10</message-priority>
+            </server>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+        </channels>
+    </destination>
+<!-- End section for priority testing-->
+
+<!-- Begin section for throttle: message frequency and policy test matrix -->
+    <!-- BEGIN OUTBOUND-->
+    <destination id="ThrottleOutNoneMFTenMCFZero" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE"/>
+                <throttle-outbound policy="NONE" max-frequency="10" max-client-frequency="0"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>
+    <destination id="ThrottleOutNoneMFTenMCFFive" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE"/>
+                <throttle-outbound policy="NONE" max-frequency="10" max-client-frequency="5"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>
+    <destination id="ThrottleOutNoneMFFiftyMCFTwentyFive" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE"/>
+                <throttle-outbound policy="NONE" max-frequency="50" max-client-frequency="25"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>    
+
+    <destination id="ThrottleOutIgnoreMFTenMCFZero" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE"/>
+                <throttle-outbound policy="IGNORE" max-frequency="10" max-client-frequency="0"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>
+    <destination id="ThrottleOutIgnoreMFTenMCFFive" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE"/>
+                <throttle-outbound policy="IGNORE" max-frequency="10" max-client-frequency="5"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>
+    <destination id="ThrottleOutIgnoreMFFiftyMCFTwentyFive" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE"/>
+                <throttle-outbound policy="IGNORE" max-frequency="50" max-client-frequency="25"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>
+    <destination id="ThrottleOutIgnoreMFOneHundredMCFFifty" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE"/>
+                <throttle-outbound policy="IGNORE" max-frequency="100" max-client-frequency="50"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>
+
+    <!-- END OUTBOUND-->
+    <!-- BEGIN INBOUND -->
+    <destination id="ThrottleInNoneMFTenMCFZero" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE" max-frequency="10" max-client-frequency="0"/>
+                <throttle-outbound policy="NONE"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>
+
+    <destination id="ThrottleInNoneMFTenMCFFive" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE" max-frequency="10" max-client-frequency="5"/>
+                <throttle-outbound policy="NONE"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>
+
+    <destination id="ThrottleInIgnoreMFTenMCFZero" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="IGNORE" max-frequency="10" max-client-frequency="0"/>
+                <throttle-outbound policy="NONE"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>
+
+    <destination id="ThrottleInIgnoreMFTenMCFFive" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="IGNORE" max-frequency="10" max-client-frequency="5"/>
+                <throttle-outbound policy="NONE"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>
+
+    <destination id="ThrottleInErrorMFTenMCFZero" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="ERROR" max-frequency="10" max-client-frequency="0"/>
+                <throttle-outbound policy="NONE"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>
+
+    <destination id="ThrottleInErrorMFTenMCFFive" parent="service">
+        <properties>
+            <network>
+                <throttle-inbound policy="ERROR" max-frequency="10" max-client-frequency="5"/>
+                <throttle-outbound policy="NONE"/>
+            </network>
+        </properties>
+        <channels>
+            <channel ref="data-polling-amf"/>
+            <channel ref="data-amf"/>
+            <channel ref="data-amf-longpoll"/>
+        </channels>
+    </destination>
+    <!-- END INBOUND-->
+<!-- End section for throttle: message frequency and policy test matrix -->
+
+</flex-message-service-mods>

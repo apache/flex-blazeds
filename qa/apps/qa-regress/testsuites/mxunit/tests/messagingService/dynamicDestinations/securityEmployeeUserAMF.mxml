@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" creationComplete="runTest()" height="100%" width="100%">
+
+    <!-- tests Subtopic.isHierarchical(), Subtopic.getValue(), Subtopic.matches(), Subtopic.containsSubtopicWildcard() -->
+    <!-- verifies user headers are not overwritten (subtopic) -->
+
+
+    <!-- Permissions:
+    guest -     can subscribe to any non-hierarchical, non-wildcard subtopic
+                can post only to 'sandbox'
+
+    employee -  can subscribe to any non-wildcard subtopic not containing |hr|
+                can post to any subtopic not containing |hr|
+
+    supervisor - can subscribe to any subtopic not containing |hr|
+                can post to any subtopic not containing |hr|
+
+    manager -   can subscribe to anything
+                can post to anything
+    -->
+
+    <mx:Label color="red" fontSize="18" text="For unexpected failures be sure to start with a new browser to ensure a new session."/>
+
+    <mx:Consumer id="starConsumer" destination="SecuredDynamicDestinationSlashSeparatorAMF"
+        subtopic="*"
+        message="messageHandler(event, event.target.id, consumerOutput)"
+        fault="faultHandler(event, event.target.id, consumerOutput)"
+        acknowledge="ackHandler(event, event.target.id, consumerOutput)"
+        channelConnect="connectedHandler(event, event.target.id, consumerOutput)"
+        channelDisconnect="disconnectedHandler(event, event.target.id, consumerOutput)"/>
+
+    <mx:Consumer id="sandboxConsumer" destination="SecuredDynamicDestinationSlashSeparatorAMF"
+        subtopic="sandbox"
+        message="messageHandler(event, event.target.id, consumerOutput)"
+        fault="faultHandler(event, event.target.id, consumerOutput)"
+        acknowledge="ackHandler(event, event.target.id, consumerOutput)"
+        channelConnect="connectedHandler(event, event.target.id, consumerOutput)"
+        channelDisconnect="disconnectedHandler(event, event.target.id, consumerOutput)"/>
+
+    <mx:Consumer id="adobeConsumer" destination="SecuredDynamicDestinationSlashSeparatorAMF"
+        subtopic="adobe"
+        message="messageHandler(event, event.target.id, consumerOutput)"
+        fault="faultHandler(event, event.target.id, consumerOutput)"
+        acknowledge="ackHandler(event, event.target.id, consumerOutput)"
+        channelConnect="connectedHandler(event, event.target.id, consumerOutput)"
+        channelDisconnect="disconnectedHandler(event, event.target.id, consumerOutput)"/>
+
+    <mx:Consumer id="adobeHRConsumer" destination="SecuredDynamicDestinationSlashSeparatorAMF"
+        subtopic="adobe/hr"
+        message="messageHandler(event, event.target.id, consumerOutput)"
+        fault="faultHandler(event, event.target.id, consumerOutput)"
+        acknowledge="ackHandler(event, event.target.id, consumerOutput)"
+        channelConnect="connectedHandler(event, event.target.id, consumerOutput)"
+        channelDisconnect="disconnectedHandler(event, event.target.id, consumerOutput)"/>
+
+    <mx:Consumer id="adobeProductsFlexConsumer" destination="SecuredDynamicDestinationSlashSeparatorAMF"
+        subtopic="adobe/products/flex"
+        message="messageHandler(event, event.target.id, consumerOutput)"
+        fault="faultHandler(event, event.target.id, consumerOutput)"
+        acknowledge="ackHandler(event, event.target.id, consumerOutput)"
+        channelConnect="connectedHandler(event, event.target.id, consumerOutput)"
+        channelDisconnect="disconnectedHandler(event, event.target.id, consumerOutput)"/>
+
+    <mx:Consumer id="adobeProductsStarConsumer" destination="SecuredDynamicDestinationSlashSeparatorAMF"
+        subtopic="adobe/products/*"
+        message="messageHandler(event, event.target.id, consumerOutput)"
+        fault="faultHandler(event, event.target.id, consumerOutput)"
+        acknowledge="ackHandler(event, event.target.id, consumerOutput)"
+        channelConnect="connectedHandler(event, event.target.id, consumerOutput)"
+        channelDisconnect="disconnectedHandler(event, event.target.id, consumerOutput)"/>
+
+
+    <mx:Producer id="sandboxProducer" destination="SecuredDynamicDestinationSlashSeparatorAMF"
+        subtopic="sandbox"
+        fault="faultHandler(event, event.target.id, producerOutput)"
+        acknowledge="ackHandler(event, event.target.id, producerOutput)"
+        channelConnect="connectedHandler(event, event.target.id, producerOutput)"
+        channelDisconnect="disconnectedHandler(event, event.target.id, producerOutput)"/>
+
+    <mx:Producer id="adobeProducer" destination="SecuredDynamicDestinationSlashSeparatorAMF"
+        subtopic="adobe"
+        fault="faultHandler(event, event.target.id, producerOutput)"
+        acknowledge="ackHandler(event, event.target.id, producerOutput)"
+        channelConnect="connectedHandler(event, event.target.id, producerOutput)"
+        channelDisconnect="disconnectedHandler(event, event.target.id, producerOutput)"/>
+
+    <mx:Producer id="adobeHRProducer" destination="SecuredDynamicDestinationSlashSeparatorAMF"
+        subtopic="adobe/hr"
+        fault="faultHandler(event, event.target.id, producerOutput)"
+        acknowledge="ackHandler(event, event.target.id, producerOutput)"
+        channelConnect="connectedHandler(event, event.target.id, producerOutput)"
+        channelDisconnect="disconnectedHandler(event, event.target.id, producerOutput)"/>
+
+    <mx:Producer id="adobeProductsFlexProducer" destination="SecuredDynamicDestinationSlashSeparatorAMF"
+        subtopic="adobe/products/flex"
+        fault="faultHandler(event, event.target.id, producerOutput)"
+        acknowledge="ackHandler(event, event.target.id, producerOutput)"
+        channelConnect="connectedHandler(event, event.target.id, producerOutput)"
+        channelDisconnect="disconnectedHandler(event, event.target.id, producerOutput)"/>
+
+    <mx:Producer id="adobeProductsFlashPlayerProducer" destination="SecuredDynamicDestinationSlashSeparatorAMF"
+        subtopic="adobe/products/flash/player"
+        fault="faultHandler(event, event.target.id, producerOutput)"
+        acknowledge="ackHandler(event, event.target.id, producerOutput)"
+        channelConnect="connectedHandler(event, event.target.id, producerOutput)"
+        channelDisconnect="disconnectedHandler(event, event.target.id, producerOutput)"/>
+
+    <mx:Script>
+        <![CDATA[
+        import mx.messaging.events.MessageAckEvent;
+        import qa.mxunit.Assert;
+        import qa.mxunit.MXUnitManager;
+
+        import mx.messaging.events.ChannelEvent;
+        import mx.messaging.events.MessageEvent;
+        import mx.messaging.events.MessageFaultEvent;
+        import mx.messaging.messages.AsyncMessage;
+        import mx.messaging.messages.IMessage;
+
+
+        public var starConsumerEvents:Array = [];
+        public var starConsumerMessages:Array = [];
+
+        public var sandboxConsumerEvents:Array = [];
+        public var sandboxConsumerMessages:Array = [];
+
+        public var adobeConsumerEvents:Array = [];
+        public var adobeConsumerMessages:Array = [];
+
+        public var adobeHRConsumerEvents:Array = [];
+        public var adobeHRConsumerMessages:Array = [];
+
+        public var adobeProductsFlexConsumerEvents:Array = [];
+        public var adobeProductsFlexConsumerMessages:Array = [];
+
+        public var adobeProductsStarConsumerEvents:Array = [];
+        public var adobeProductsStarConsumerMessages:Array = [];
+
+
+        public var sandboxProducerEvents:Array = [];
+        public var adobeProducerEvents:Array = [];
+        public var adobeHRProducerEvents:Array = [];
+        public var adobeProductsFlexProducerEvents:Array = [];
+        public var adobeProductsFlashPlayerProducerEvents:Array = [];
+
+        public var lastMessage:IMessage;
+
+        ///////////////////////////////////
+        public var user:String = "employee";
+        ///////////////////////////////////
+
+        public var colors:Object = {
+                    starConsumer:"#787878",
+                    sandboxConsumer:"#00B2EE",
+                    adobeConsumer:"#FFA54F",
+                    adobeHRConsumer:"#FF0000",
+                    adobeProductsFlexConsumer:"#0AC92B",
+                    adobeProductsStarConsumer:"#0000FF",
+
+                    sandboxProducer:"#FF3E96",
+                    adobeProducer:"#008B00",
+                    adobeHRProducer:"#EE00EE",
+                    adobeProductsFlexProducer:"#964514",
+                    adobeProductsFlashPlayerProducer:"#C0C0C0"};
+
+        public var allMessages:Array = [
+                    "adobeHRProducer: Message sent to adobe/hr",
+                    "adobeProducer: Message sent to adobe",
+                    "adobeProductsFlashPlayerProducer: Message sent to adobe/products/flash/player",
+                    "adobeProductsFlexProducer: Message sent to adobe/products/flex",
+                    "sandboxProducer: Message sent to sandbox"];
+
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Setup method.
+        //
+        //////////////////////////////////////////////////////////////////////////// 
+        
+        /**
+        *  This setup method does all of the testing work and the test methods just verify
+        *  the outcome. Be careful not to remove the delay on the MXUnitManager otherwise the 
+        *  test methods will be called to verify the results before the test work has finished.   
+        */
+        public function runTest():void {
+
+            starConsumer.setCredentials(user, user);
+            sandboxConsumer.setCredentials(user, user);
+            adobeConsumer.setCredentials(user, user);
+            adobeHRConsumer.setCredentials(user, user);
+            adobeProductsFlexConsumer.setCredentials(user, user);
+            adobeProductsStarConsumer.setCredentials(user, user);
+
+            starConsumer.subscribe();
+            sandboxConsumer.subscribe();
+            adobeConsumer.subscribe();
+            adobeHRConsumer.subscribe();
+            adobeProductsFlexConsumer.subscribe();
+            adobeProductsStarConsumer.subscribe();
+
+            sandboxProducer.send(new AsyncMessage("Message sent to sandbox", {subtopic:"sandboxProducer"}));
+            adobeProducer.send(new AsyncMessage("Message sent to adobe", {subtopic:"adobeProducer"}));
+            adobeHRProducer.send(new AsyncMessage("Message sent to adobe/hr", {subtopic:"adobeHRProducer"}));
+            adobeProductsFlexProducer.send(new AsyncMessage("Message sent to adobe/products/flex", {subtopic:"adobeProductsFlexProducer"}));
+            adobeProductsFlashPlayerProducer.send(new AsyncMessage("Message sent to adobe/products/flash/player", {subtopic:"adobeProductsFlashPlayerProducer"}));
+
+            MXUnitManager.delay = 10000;
+            MXUnitManager.detectTests(this, 10000);
+        }
+
+
+        private function messageHandler(event:MessageEvent, whose:String, whichOutput:TextArea):void {
+            log("<font size='+3'><b>" + whose + " message: " + event.message.headers.subtopic + ": " + event.message.body + "</b></font>", colors[whose], whichOutput);
+            this[whose + "Messages"].push(event.message.headers.subtopic + ": " + event.message.body);
+            lastMessage = event.message;
+        }
+
+        private function faultHandler(event:MessageFaultEvent, whose:String, whichOutput:TextArea):void {
+            log("*** " + whose + " fault: " + event.faultCode + " : " + event.faultString + " ***", colors[whose], whichOutput);
+            this[whose + "Events"].push("fault: " + event.faultCode + " : " + event.faultString);
+        }
+
+        private function connectedHandler(event:ChannelEvent, whose:String, whichOutput:TextArea):void {
+            log(' - ' + whose + ' channelConnect.', colors[whose], whichOutput);
+            this[whose + "Events"].push("channelConnect");
+        }
+
+        private function disconnectedHandler(event:ChannelEvent, whose:String, whichOutput:TextArea):void {
+            log(' - ' + whose + ' channelDisconnect.', colors[whose], whichOutput);
+            this[whose + "Events"].push("channelDisconnect");
+        }
+
+        private function ackHandler(event:MessageEvent, whose:String, whichOutput:TextArea):void {
+            log(' - ' + whose + ' ack.', colors[whose], whichOutput);
+            this[whose + "Events"].push("ack");
+        }
+
+        private function log(message:String, color:String, whichOutput:TextArea):void {
+            whichOutput.htmlText += "<font color='" + color + "'>" + message + "</font>\n";
+        }
+
+        private function unsubscribe():void {
+            starConsumer.unsubscribe();
+            sandboxConsumer.unsubscribe();
+            adobeConsumer.unsubscribe();
+            adobeHRConsumer.unsubscribe();
+            adobeProductsFlexConsumer.unsubscribe();
+            adobeProductsStarConsumer.unsubscribe();
+
+            starConsumer.logout();
+            sandboxConsumer.logout();
+            adobeConsumer.logout();
+            adobeHRConsumer.logout();
+            adobeProductsFlexConsumer.logout();
+            adobeProductsStarConsumer.logout();
+        }
+
+        public function testStarConsumer():void {
+            unsubscribe();
+            Assert.assertContains("Subscription denied message was not found", "was denied", starConsumerEvents.toString());
+            Assert.assertEquals("Message count", 0, starConsumerMessages.length);
+        }
+
+        public function testSandboxConsumer():void {
+            Assert.assertDoesNotContain("Subscription denied message was found", "was denied", sandboxConsumerEvents.toString());
+
+            sandboxConsumerMessages.sort();
+            Assert.assertEquals("Message count", 1, sandboxConsumerMessages.length);
+            Assert.assertEquals("Message content", allMessages[4], sandboxConsumerMessages[0]);
+        }
+
+        public function testAdobeConsumer():void {
+            Assert.assertDoesNotContain("Subscription denied message was found", "was denied", adobeConsumerEvents.toString());
+
+            adobeConsumerMessages.sort();
+            Assert.assertEquals("Message count", 1, adobeConsumerMessages.length);
+            Assert.assertEquals("Message content", allMessages[1], adobeConsumerMessages[0]);
+        }
+
+        public function testAdobeHRConsumer():void {
+            Assert.assertContains("Subscription denied message was not found", "was denied", adobeHRConsumerEvents.toString());
+
+            adobeHRConsumerMessages.sort();
+            Assert.assertEquals("Message count", 0, adobeHRConsumerMessages.length);
+        }
+
+        public function testAdobeProductsFlexConsumer():void {
+            Assert.assertDoesNotContain("Subscription denied message was found", "was denied", adobeProductsFlexConsumerEvents.toString());
+
+            adobeProductsFlexConsumerMessages.sort();
+            Assert.assertEquals("Message count", 1, adobeProductsFlexConsumerMessages.length);
+            Assert.assertEquals("Message content", allMessages[3], adobeProductsFlexConsumerMessages[0]);
+        }
+
+        public function testAdobeProductsStarConsumer():void {
+            Assert.assertContains("Subscription denied message was not found", "was denied", adobeProductsStarConsumerEvents.toString());
+
+            adobeProductsStarConsumerMessages.sort();
+            Assert.assertEquals("Message count", 0, adobeProductsStarConsumerMessages.length);
+        }
+
+
+        public function testSandboxProducer():void {
+            Assert.assertDoesNotContain("Send denied message was found", "was blocked", sandboxProducerEvents.toString());
+        }
+
+        public function testAdobeProducer():void {
+            Assert.assertDoesNotContain("Send denied message was found", "was blocked", adobeProducerEvents.toString());
+        }
+
+        public function testAdobeHRProducer():void {
+            Assert.assertContains("Send denied message was not found", "was blocked", adobeHRProducerEvents.toString());
+        }
+
+        public function testAdobeProductsFlexProducer():void {
+            Assert.assertDoesNotContain("Send denied message was found", "was blocked", adobeProductsFlexProducerEvents.toString());
+        }
+
+        public function testAdobeProductsFlashPlayerProducer():void {
+            Assert.assertDoesNotContain("Send denied message was found", "was blocked", adobeProductsFlashPlayerProducerEvents.toString());
+        }
+        ]]>
+    </mx:Script>
+
+    <mx:VBox>
+        <mx:VBox>
+            <mx:Label text="Consumer output" />
+            <mx:TextArea id="consumerOutput" height="300" width="800" editable="false" fontSize="10" fontFamily="Arial" />
+        </mx:VBox>
+        <mx:VBox>
+            <mx:Label text="Producer output" />
+            <mx:TextArea id="producerOutput" height="300" width="800" editable="false" fontSize="10" fontFamily="Arial" />
+        </mx:VBox>
+    </mx:VBox>
+
+
+</mx:Application>

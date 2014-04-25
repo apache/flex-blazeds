@@ -1,0 +1,283 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="setUp()">           
+    
+    <mx:Script>
+    <![CDATA[
+    	import mx.events.PropertyChangeEvent;
+        import qa.utils.TestTask;
+        import qa.utils.TestTaskEvent;
+        import mx.messaging.Producer;
+        import mx.messaging.channels.AMFChannel;
+        import mx.messaging.Consumer;   
+        import mx.messaging.ChannelSet;
+        import mx.messaging.Channel;
+        import qa.mxunit.Assert;
+        import qa.mxunit.MXUnitManager;
+        import mx.messaging.messages.*;
+        import mx.messaging.config.*;
+        import mx.messaging.events.*;
+        import mx.controls.Alert;
+        import mx.utils.ObjectUtil;
+ 
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Variables
+        //
+        ////////////////////////////////////////////////////////////////////////////                          
+        
+        /**
+        *  Array to hold names of channels that will be tested
+        */       
+        public var channelNames:Array;
+        
+        /**
+        *  Consumer instance used in the test
+        */           
+        public var con:Consumer;
+        
+        /**
+        *  Name of test that is currently being executed. 
+        */
+        private var currentTest:String; 
+        
+        /**
+        *  Name of the destination to be used by the Producer and the Consumer. 
+        */
+        private var destination:String = "MyTopicDefaultPriority10";          
+        
+        /**
+         *  Allows handlers to be removed, queued, etc. across async response handling.
+         */
+        public static var handler:Function;           
+        
+        /**
+        *  Index used to point to channel in the channelNames array for the currently executing test. 
+        */
+        public var index:int = 0; 
+        
+        /**
+        *  Variable to hold singleton instance of the MXUnitManager.  
+        */
+        private var manager:MXUnitManager;
+        
+        /**
+        *  Producer instance used in the test
+        */       
+        public var pro:Producer;
+        
+        /**
+        *  Array of test names. Test name will be based on the channel 
+        */    
+        public var testNames:Array = new Array();     
+        
+        /**
+        *  expected priority  
+        */    
+        public var expectedPriorityValues:uint = 9;     
+        
+        /**
+        *  place holder for returned values
+        */    
+        public var actualiPriorityValues:Array = new Array();    
+
+        /**
+        *  index position for each of the expectedPriorityValues 
+        */        
+        public var pointer:uint;
+
+        
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Setup method.
+        //
+        //////////////////////////////////////////////////////////////////////////// 
+        
+        /**
+        *  This setup method dynamically creates a series of tests using the list of 
+        *  channels available for the destination. This will cause the generic test method
+        *  simpleMessageTest that is defined below to get run once per channel. 
+        */
+        public function setUp():void {    
+            
+           //get the list of channel names for the destination from ServerConfig 
+           channelNames = (ServerConfig.getChannelSet(destination) as ChannelSet).channelIds;
+                                            
+           //create a new generic object to add test functions to
+           var testObj:Object = new Object();  
+           var testName:String = "test_" + expectedPriorityValues;               
+           testObj[testName] = simpleMessageTest;                    
+           testNames.push(testName);                                 
+
+            //configure the MXUnitManager           
+            manager = MXUnitManager.getInstance();                                                             
+            //Call addTests giving it the object that contains all our test functions and an array of test names
+            MXUnitManager.addTests(testObj,testNames, 5000);                        
+        }
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Tests.
+        //
+        ////////////////////////////////////////////////////////////////////////////       
+        /**
+		* This test tests that messages can be sent and received using a messaging destination that 
+		* uses the ActionScriptAdapter adapter. This test get looped over for all channels available 
+		* on the destination used in the test.     
+		*/
+        public function simpleMessageTest():void {  
+            
+            //setup the producer
+            pro = new Producer();
+            pro.destination = destination;
+            
+            //setup the consumer
+            con = new Consumer(); 
+            con.destination = destination;
+            
+            /*
+             * Use the chain method to setup event handlers for the producer and push an addAsync method onto the stack. Receiving a 
+             * message fault a channel fault or an acknowledgement that the server received the message sent by the producer will 
+             * remove the addAsync method from the stack. Unless all addAsync methods have been executed the test will time out so 
+             * you want to make sure that at least one of the events will get fired. This call is essentially the same as writing 
+             * the following code: 
+             * var asyncHandler = manager.currentTest.addAsync(producerEventHandler,{"c":con});
+             * pro.addEventListener(ChannelFaultEvent.FAULT, asyncHandler);
+             * pro.addEventListener(MessageFaultEvent.FAULT, asyncHandler);
+             * pro.addEventListener(MessageAckEvent.ACKNOWLEDGE, asyncHandler);   
+            */                                        
+            manager.currentTest.chain(pro,[MessageFaultEvent.FAULT,ChannelFaultEvent.FAULT,MessageAckEvent.ACKNOWLEDGE],producerEventHandler);
+            
+            /*
+             * Use the chain method to setup event handlers for the consumer and push an addAsync method onto the stack. Receiving a 
+             * message fault a channel fault or a message event will cause the addAsync method to be removed from the stack.
+             */
+            manager.currentTest.chain(con,[MessageFaultEvent.FAULT,ChannelFaultEvent.FAULT,MessageEvent.MESSAGE],consumerEventHandler);
+                        
+            /*
+             * Setup event listener to listen for property changed events from the Consumer. Use this to tell when the 
+             * Consumer has subscribed to the destination.    
+             */
+            con.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,conPropertyChanged); 
+                        
+                        
+            //increment the counter to point to the next test
+            pointer = index++; 
+            
+            //create a new channel using the next channel name in the list and add it to a new channelset
+            var channelName:String = channelNames[0]; 
+            currentTest = channelName;
+            var channel:Channel = ServerConfig.getChannel(channelName, false);		
+ 			var cs:ChannelSet = new ChannelSet(); 			
+			cs.addChannel(channel);
+			
+			//set the consumer and producer to use the new channel set then subscribe the consumer
+			con.channelSet = cs; 
+			pro.channelSet = cs;            
+            con.subscribe();                           
+            
+        }
+        /**
+        *  Listen for property change events on the consumer so we can tell when the consumer has subscribed.    
+        */
+        private function conPropertyChanged(event:PropertyChangeEvent):void {
+            //make sure the ack is for a subscribe operation
+            if(event.property == "subscribed" && con.subscribed)
+            {
+                //test that the subscribe operation was for the channel we are currently testing                 
+                Assert.assertTrue("Wrong channel: " + con.channelSet.currentChannel.id, con.channelSet.currentChannel.id == currentTest);                              
+                var msg:IMessage = new AsyncMessage();
+                //the expected priority changes per test
+
+                //this will over-ride both destination and Producer instance level settings
+                //msg.headers[AbstractMessage.PRIORITY_HEADER] = 0;
+                //pro.priority = 0;
+                msg.body = "priority is: " + msg.headers["DSPriority"];
+                            
+                //send the message
+                pro.send(msg);              
+            } 
+        }
+        
+        /**
+        *  Listen for disconnect events. Because we used chain (the same would be true had we used
+        *  addAsync), the handler will get called by MXUnit instead of getting called directly by the 
+        *  producer. This allows the handler to have an extra parameter that we use to pass along the 
+        *  Consumer instance that was created in our test function.   
+        */
+        public function channelDisconnect(event:ChannelEvent):void {
+            con.removeEventListener(ChannelEvent.DISCONNECT, handler);    
+            //manager.currentTest.abortAllAsyncFunctions();
+            //assert that the consumer is no longer subscribed or connected
+            Assert.assertTrue("Consumer shouldn't be subscribed", con.subscribed != true);
+            Assert.assertTrue("Consumer shouldn't be connected", con.connected != true);
+        }
+        /**
+        *  Listen for events from the producer.    
+        */
+        public function producerEventHandler(event:Event):void 
+        {   
+            if (event is MessageAckEvent) {
+                trace("Producer received ack for message");    
+            } else if (event is ChannelFaultEvent) {
+                con.unsubscribe();
+                con.disconnect();
+                var cfe:ChannelFaultEvent = event as ChannelFaultEvent;                        
+                Assert.fail("Channel faulted with following error while sending message: " + cfe.faultDetail);     
+            } else if (event is MessageFaultEvent) {
+                con.unsubscribe();
+                con.disconnect();
+                var mfe:MessageFaultEvent = event as MessageFaultEvent;
+                Assert.fail("Message fault while sending message: " + mfe.faultDetail);                
+            }
+        }
+        /**
+        *  Listen for events from the consumer. 
+        */
+        public function consumerEventHandler(event:Event):void
+        {   
+            if (event is ChannelFaultEvent) {
+                var cfe:ChannelFaultEvent = event as ChannelFaultEvent;                        
+                Assert.fail("Consumer channel faulted with the following error: " + cfe.faultDetail);     
+            } else if (event is MessageFaultEvent) {            
+                var mfe:MessageFaultEvent = event as MessageFaultEvent;
+                Assert.fail("Consumer got the following message fault: " + mfe.faultDetail);                
+            } else if (event is MessageEvent) {                     
+                var me:MessageEvent = event as MessageEvent;
+                //get the message body from the message and store it.
+                var result:String = me.message.body.toString();
+                //set this only when successfully get MessageEvent
+                actualiPriorityValues.push(me.message.headers["DSPriority"]);
+                
+                //assert we got the correct message for the channel being tested
+                Assert.assertEquals("Wrong priority: " + actualiPriorityValues[pointer], expectedPriorityValues,actualiPriorityValues[pointer]);
+                /*
+                 * Create a new event listener for disconnect events using chain as we did previously. 
+                 */ 
+                handler = manager.currentTest.chain(con,[ChannelEvent.DISCONNECT],channelDisconnect);              
+                    
+            }
+            //disconnect the consumer
+            con.unsubscribe();
+            con.disconnect();
+        }
+       
+    ]]>
+    </mx:Script>           
+</mx:Application>
