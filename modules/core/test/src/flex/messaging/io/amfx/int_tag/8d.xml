@@ -32,6 +32,9 @@
                 <string>prop8</string>
                 <string>prop9</string>
             </traits>
+
+            <int>-1</int>
+
             <int>2  </int>
 
             <!-- Both sides with spaces -->

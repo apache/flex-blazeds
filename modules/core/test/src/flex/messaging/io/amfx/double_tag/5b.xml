@@ -34,6 +34,8 @@
                 <string>prop10</string>
             </traits>
 
+            <double>-1.7976931348623157e+308</double>
+
             <double>-4.9E-324</double>
 
             <!-- 0 -->

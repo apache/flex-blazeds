@@ -32,9 +32,8 @@ import flex.messaging.config.ChannelSettings;
 import flex.messaging.config.ConfigurationConstants;
 import flex.messaging.config.ConfigurationException;
 import flex.messaging.messages.AsyncMessage;
-import flex.messaging.messages.Message;
 
-public class AbstractServiceTest extends TestCase
+public abstract class AbstractServiceTest extends TestCase
 {
     protected AbstractService service;
     protected MessageBroker broker;

@@ -32,6 +32,9 @@
                 <string>prop8</string>
                 <string>prop9</string>
             </traits>
+
+            <string>  Alpha</string>
+
             <string>Beta  </string>
 
             <!-- Both sides with spaces -->

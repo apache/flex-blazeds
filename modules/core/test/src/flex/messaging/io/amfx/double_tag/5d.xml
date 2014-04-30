@@ -32,6 +32,9 @@
                 <string>prop8</string>
                 <string>prop9</string>
             </traits>
+
+            <double>-1.000001</double>
+
             <double>2.2  </double>
 
             <!-- Both sides with spaces -->

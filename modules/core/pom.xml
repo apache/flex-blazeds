@@ -79,6 +79,10 @@ limitations under the License.
         <testResources>
             <testResource>
                 <directory>test/src</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.xsd</include>
+                </includes>
             </testResource>
         </testResources>
 		<plugins>

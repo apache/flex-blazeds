@@ -39,7 +39,6 @@ public class Confirm5b extends DeserializationConfirmation
         aso.put("prop3", new Double(0.0));
         aso.put("prop4", new Double(Double.MIN_VALUE)); // 4.9e-324
         aso.put("prop5", new Double(Double.MAX_VALUE)); // 1.7976931348623157e+308
-
         aso.put("prop6", new Double(Double.NaN));
         aso.put("prop7", new Double(Double.POSITIVE_INFINITY));
         aso.put("prop8", new Double(Double.NEGATIVE_INFINITY));

@@ -26,6 +26,8 @@
                 <string>prop2</string>
             </traits>
 
+            <int>-2147483648</int>
+
             <int>0</int>
 
             <!-- int.MAX_VALUE -->
