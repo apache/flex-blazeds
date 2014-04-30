@@ -22,36 +22,23 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.adobe.blazeds</groupId>
+	<groupId>org.apache.flex.blazeds</groupId>
 	<artifactId>blazeds</artifactId>
-	<version>4.5.0.0-SNAPSHOT</version>
-
+	<version>4.6.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>${project.artifactId} ${project.version}</name>
-	<description>${project.groupId} ${project.artifactId}</description>
-	<url>${maven.site.remote.url}</url>
+
+	<name>Apache Flex: BlazeDS</name>
 
 	<distributionManagement>
-		<site>
-			<id>blazeds_mvn_site</id>
-			<url>${maven.site.local.url}</url>
-		</site>
 		<repository>
-			<id>txi_releases</id>
-			<url>http://txici.can.adobe.com:9999/nexus/content/repositories/txi
-			</url>
+			<id>apache.releases.https</id>
+			<url>https://repository.apache.org/service/local/staging/deploy/maven2</url>
 		</repository>
 		<snapshotRepository>
-			<id>txi_snapshot</id>
-			<url>file://C:/workspaces/opensource.adobe/cairngorm3/maven-repository</url>
-			<!--
-				<url>http://txici.can.adobe.com:9999/nexus/content/repositories/txi_snapshots/
-				</url>
-			-->
-
+			<id>apache.snapshots.https</id>
+			<url>https://repository.apache.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
-
 
 	<modules>
 		<module>common</module>
@@ -65,14 +52,8 @@
 		<!--  TODO fix the failing bugs if any -->
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8
-		</project.reporting.outputEncoding>
-		<maven.site.local.url>file://C:/apps/java/apache-tomcat-6.0.18-ac-cc/webapps/mvn_site/blazeds
-		</maven.site.local.url>
-		<maven.site.remote.url>http://txici.can.adobe.com:9999/mvn_site/blazeds
-		</maven.site.remote.url>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
-
 
 	<build>
 		<!--  <pluginManagement>
@@ -101,7 +82,6 @@
 		</pluginManagement>
 		-->
 		<plugins>
-			<!-- TODO scm connection and release plugin like in cairngorm3-->
            	<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -136,7 +116,6 @@
 				</executions>
 			</plugin>
 
-
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
@@ -144,8 +123,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
 
 	<reporting>
 		<plugins>
@@ -161,7 +138,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-
 				<configuration>
 					<doclet>org.jboss.apiviz.APIviz</doclet>
 					<docletArtifact>
@@ -315,6 +291,5 @@
 			</releases>
 		</pluginRepository>
 	</pluginRepositories>
-
 
 </project>

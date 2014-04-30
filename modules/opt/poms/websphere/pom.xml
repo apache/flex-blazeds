@@ -20,23 +20,14 @@ limitations under the License.
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-
 	<parent>
-		<groupId>com.adobe.blazeds</groupId>
+        <groupId>org.apache.flex.blazeds</groupId>
 		<artifactId>flex-messaging-opt</artifactId>
-		<version>4.5.0.0-SNAPSHOT</version>
+		<version>4.6.0.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
-	<artifactId>flex-messaging-opt-webpshere</artifactId>
-	<description>${project.groupId} ${project.artifactId}</description>
-	<name>${project.artifactId}</name>
 
-	<distributionManagement>
-		<site>
-			<id>blazeds_mvn_site</id>
-			<url>${maven.site.local.url}/flex-messaging-opt/${project.artifactId}</url>
-		</site>
-	</distributionManagement>
+	<artifactId>flex-messaging-opt-webpshere</artifactId>
 
 	<dependencies>
 		<dependency>
@@ -61,11 +52,11 @@ limitations under the License.
 			<systemPath>${basedir}/../../lib/sas.jar</systemPath>
 		</dependency>
 	</dependencies>
+
 	<properties>
 		<appserver>websphere</appserver>
 		<source.dir>src/websphere</source.dir>
 		<exclude.pattern>none</exclude.pattern>
 	</properties>
-
 
 </project>

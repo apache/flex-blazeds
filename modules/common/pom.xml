@@ -21,15 +21,13 @@ limitations under the License.
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.adobe.blazeds</groupId>
+        <groupId>org.apache.flex.blazeds</groupId>
 		<artifactId>blazeds</artifactId>
-		<version>4.5.0.0-SNAPSHOT</version>
+		<version>4.6.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<name>${project.artifactId}</name>
-	<description>${project.groupId} ${project.artifactId}</description>
 
-	<artifactId>flex-messaging-common</artifactId>
+    <artifactId>flex-messaging-common</artifactId>
 
 	<dependencies>
 		<dependency>
@@ -49,6 +47,6 @@ limitations under the License.
 	<build>
 		<finalName>flex-messaging-common</finalName>
 		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test/src</testSourceDirectory>
 	</build>
+
 </project>

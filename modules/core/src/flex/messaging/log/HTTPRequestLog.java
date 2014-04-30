@@ -33,7 +33,7 @@ public class HTTPRequestLog
     /**
      * Request attribute for storing error info.
      */
-    public static final String HTTP_ERROR_INFO = "com.adobe.internal._exception_info";
+    public static final String HTTP_ERROR_INFO = "org.apache.flex.blazeds.internal._exception_info";
     
     // Default file name
     private static String filename;

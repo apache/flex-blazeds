@@ -21,31 +21,29 @@ limitations under the License.
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.adobe.blazeds</groupId>
+        <groupId>org.apache.flex.blazeds</groupId>
 		<artifactId>blazeds</artifactId>
-		<version>4.5.0.0-SNAPSHOT</version>
+		<version>4.6.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>flex-messaging-opt</artifactId>
 	<packaging>pom</packaging>
 
-	<name>${project.artifactId}</name>
-	<description>${project.groupId} ${project.artifactId}</description>
-
 	<modules>
 	    <module>poms/tomcat7</module>
 		<module>poms/tomcat6</module>
 		<module>poms/tomcat4</module>
-		<module>poms/websphere</module>
-		<module>poms/weblogic</module>
-		<module>poms/oracle</module>
-		<module>poms/jrun</module>
+        <!-- TODO: Commented out these project as they have third-party dependencies that might be problematic. -->
+		<!--module>poms/websphere</module-->
+		<!--module>poms/weblogic</module-->
+		<!--module>poms/oracle</module-->
+		<!--module>poms/jrun</module-->
 	</modules>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.adobe.blazeds</groupId>
+            <groupId>org.apache.flex.blazeds</groupId>
 			<artifactId>flex-messaging-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>

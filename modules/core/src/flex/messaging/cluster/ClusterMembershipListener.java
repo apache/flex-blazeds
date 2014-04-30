@@ -35,7 +35,8 @@ class ClusterMembershipListener implements MembershipListener
     /**
      * The cluster implementation that owns this listener.
      */
-    private JGroupsCluster cluster;
+   // TODO: The missing class JGroupsCluster seems to extend Cluster, but is missing from the repository.
+//    private JGroupsCluster cluster;
 
     /**
      * The list of current cluster members as we know it.
@@ -54,7 +55,7 @@ class ClusterMembershipListener implements MembershipListener
      */
     public ClusterMembershipListener(Cluster cluster)
     {
-        this.cluster = (JGroupsCluster)cluster;
+//        this.cluster = (JGroupsCluster)cluster;
         this.members = new ArrayList<Address>();
         this.zombies = new ArrayList<Address>();
     }
@@ -119,7 +120,7 @@ class ClusterMembershipListener implements MembershipListener
         {
             if (!membershipView.containsMember(member))
             {
-                cluster.removeClusterNode(member);
+//                cluster.removeClusterNode(member);
                 zombies.remove(member);
             }
         }
@@ -130,8 +131,8 @@ class ClusterMembershipListener implements MembershipListener
     {
         for (Address member : currentMemberList) 
         {
-            if (!cluster.getLocalAddress().equals(member) && !members.contains(member))
-                cluster.addClusterNode(member);
+/*            if (!cluster.getLocalAddress().equals(member) && !members.contains(member))
+                cluster.addClusterNode(member);*/
         }
     }
 }

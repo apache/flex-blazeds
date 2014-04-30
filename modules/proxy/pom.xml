@@ -21,20 +21,17 @@ limitations under the License.
 	<modelVersion>4.0.0</modelVersion>
 
    <parent>
-        <groupId>com.adobe.blazeds</groupId>
+       <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>blazeds</artifactId>
-        <version>4.5.0.0-SNAPSHOT</version>
+        <version>4.6.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-	<name>${project.artifactId}</name>
-	<description>${project.groupId} ${project.artifactId}</description>
 
 	<artifactId>flex-messaging-proxy</artifactId>
 
 	<dependencies>
-
 		<dependency>
-			<groupId>com.adobe.blazeds</groupId>
+            <groupId>org.apache.flex.blazeds</groupId>
 			<artifactId>flex-messaging-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -45,7 +42,6 @@ limitations under the License.
 			<version>3.0.1</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -53,19 +49,16 @@ limitations under the License.
 			<scope>provided</scope>
 		</dependency>
 
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.2</version>
 			<scope>test</scope>
 		</dependency>
-
-
 	</dependencies>
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test/src</testSourceDirectory>
 	</build>
+
 </project>

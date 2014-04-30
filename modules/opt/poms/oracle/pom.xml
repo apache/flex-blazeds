@@ -20,24 +20,15 @@ limitations under the License.
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-
 	<parent>
-		<groupId>com.adobe.blazeds</groupId>
+        <groupId>org.apache.flex.blazeds</groupId>
 		<artifactId>flex-messaging-opt</artifactId>
-		<version>4.5.0.0-SNAPSHOT</version>
+		<version>4.6.0.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
+
 	<artifactId>flex-messaging-opt-oracle</artifactId>
-	<description>${project.groupId} ${project.artifactId}</description>
-	<name>${project.artifactId}</name>
-	
-	<distributionManagement>
-		<site>
-			<id>blazeds_mvn_site</id>
-			<url>${maven.site.local.url}/flex-messaging-opt/${project.artifactId}</url>
-		</site>
-	</distributionManagement>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.oracle.oc4j</groupId>
@@ -54,11 +45,11 @@ limitations under the License.
 			<systemPath>${basedir}/../..//lib/jazncore.jar</systemPath>
 		</dependency>
 	</dependencies>
+
 	<properties>
 		<appserver>oracle</appserver>
 		<source.dir>src/oracle</source.dir>
 		<exclude.pattern>none</exclude.pattern>
 	</properties>
-
 
 </project>
