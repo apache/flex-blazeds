@@ -235,14 +235,14 @@ public class XMLMerge {
             */
 
             // Alternative #2 - everything on its own line including text.  Some extra spaces.  Looks strange.
-            /*
             XMLUtils.PrettyDocumentToWriter(doc, fileWriter);
             fileWriter.close();
-            */
+            
 
 
             // Alternative #3 - but without setPreserveSpace() it's all bunched together and
             // with setPreserveSpace() it's the same as the original.
+			/*
             OutputFormat format = new OutputFormat(doc);
             format.setLineWidth(65);
             format.setIndenting(true);
@@ -250,6 +250,7 @@ public class XMLMerge {
             //format.setPreserveSpace();
             org.apache.xml.serialize.XMLSerializer serializer = new XMLSerializer(fileWriter, format);
             serializer.serialize(doc);
+			*/
 
         } catch (FileNotFoundException fnf) {
             System.out.println("FILE NOT FOUND!!!" + filename);
