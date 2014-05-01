@@ -35,7 +35,7 @@ public interface TomcatLogin
      * 
      * @param username username.
      * @param password credentials.
-     * @param request request via which this login attempt was made.§
+     * @param request request via which this login attempt was made
      * @return Principal generated for user if login were successful
      */
     Principal login(String username, String password, HttpServletRequest request);
