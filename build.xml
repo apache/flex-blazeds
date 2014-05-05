@@ -51,6 +51,7 @@ Each of the main targets for the modules will call clean themselves before proce
     <property name="env.FLEX_HOME" value="${basedir}/../flex-sdk"/>
     <!-- set FLEX_HOME from environment if not already set -->
     <property name="FLEX_HOME" value="${env.FLEX_HOME}"/>
+    <property name="ANT_HOME" value="${env.ANT_HOME}"/>
 
     <target name="check-env" 
         depends="check-flex-home, load-more-properties, check-playerglobal-home" />

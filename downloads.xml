@@ -520,7 +520,8 @@
     </target>
     
     <target name="download-mx4j-java" unless="mx4j.zip.exists">
-        <get src="http://repo1.maven.org/maven2/mx4j/mx4j-jmx/1.1.1/mx4j-jmx-1.1.1.jar" 
+		<mkdir dir="${modules.opt.lib.dir}"/>
+		<get src="http://repo1.maven.org/maven2/mx4j/mx4j-jmx/1.1.1/mx4j-jmx-1.1.1.jar" 
             dest="${modules.opt.lib.dir}/mx4j-jmx.jar" 
             verbose="false"/>
     </target>
@@ -539,6 +540,7 @@
     </target>
     
     <target name="download-cat708-java" unless="cat708.zip.exists">
+		<mkdir dir="${modules.opt.lib.dir}"/>
         <get src="http://repo1.maven.org/maven2/org/apache/tomcat/tomcat-catalina/7.0.8/tomcat-catalina-7.0.8.jar" 
             dest="${modules.opt.lib.dir}/catalina-708.jar" 
             verbose="false"/>
@@ -560,6 +562,7 @@
                 <include name="**/*"/>
             </patternset>
         </unzip>
+		<mkdir dir="${modules.opt.lib.dir}"/>
         <copy file="${download.dir}/cat4150/jakarta-tomcat-4.0.6/server/lib/catalina.jar" toFile="${modules.opt.lib.dir}/catalina-4150.jar"/>
     </target>
     
@@ -584,6 +587,7 @@
     </target>
     
     <target name="download-cat-java" unless="cat.zip.exists">
+		<mkdir dir="${modules.opt.lib.dir}"/>
         <get src="http://repo1.maven.org/maven2/org/apache/tomcat/catalina/6.0.26/catalina-6.0.26.jar" 
             dest="${modules.opt.lib.dir}/catalina.jar" 
             verbose="false"/>

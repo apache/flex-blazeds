@@ -52,6 +52,7 @@
 
     <path id="qa-manual-classpath">
         <fileset dir="${qa-manual.war}/WEB-INF/lib" includes="**/*.jar"/>
+        <fileset dir="${FLEX_HOME}/ant/lib" includes="flexTasks.jar"/>
         <pathelement location="${servlet.jar}"/>
         <pathelement location="${jms.jar}"/>
     </path>

@@ -23,7 +23,7 @@ limitations under the License.
 	<parent>
         <groupId>org.apache.flex.blazeds</groupId>
 		<artifactId>blazeds</artifactId>
-		<version>4.6.0.0-SNAPSHOT</version>
+		<version>4.7.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -69,14 +69,12 @@ limitations under the License.
 	</dependencies>
 
 	<build>
-		<sourceDirectory>none.here</sourceDirectory>
-		<resources>
+    	<resources>
 			<resource>
 				<filtering>false</filtering>
 				<directory>${basedir}/../../src/properties</directory>
 			</resource>
 		</resources>
-		<testSourceDirectory>none-yet</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>

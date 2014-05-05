@@ -58,6 +58,7 @@
 
     <path id="classpath">
         <fileset dir="${qa.war}/WEB-INF/lib" includes="**/*.jar"/>
+        <fileset dir="${FLEX_HOME}/ant/lib" includes="flexTasks.jar"/>
         <pathelement location="${jms.jar}"/>
         <pathelement location="${servlet.jar}"/>
         <pathelement location="${xalan.jar}"/>
@@ -65,6 +66,8 @@
 
     <path id="qa.classpath">
         <fileset dir="${qa.dir}/lib" includes="**/*.jar"/>
+        <!--fileset dir="${ANT_HOME}/lib" includes="**/*.jar"/>
+        <fileset dir="${FLEX_HOME}/ant/lib" includes="flexTasks.jar"/-->
         <fileset dir="${FLEX_HOME}/lib/external" includes="xercesImpl.jar"/>
         <pathelement location="${qa.dir}/classes" />
     </path>

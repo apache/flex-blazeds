@@ -23,7 +23,7 @@ limitations under the License.
 	<parent>
         <groupId>org.apache.flex.blazeds</groupId>
 		<artifactId>blazeds</artifactId>
-		<version>4.6.0.0-SNAPSHOT</version>
+		<version>4.7.0.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -64,27 +64,18 @@ limitations under the License.
 			<scope>provided</scope>
 		</dependency>
 
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.2</version>
-			<scope>test</scope>
-		</dependency>
+        <!-- needed in order to build the ExcludeDoclet -->
+        <dependency>
+            <groupId>com.sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>jdk-version</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+        </dependency>
 	</dependencies>
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test/src</testSourceDirectory>
-        <testResources>
-            <testResource>
-                <directory>test/src</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                    <include>**/*.xsd</include>
-                </includes>
-            </testResource>
-        </testResources>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

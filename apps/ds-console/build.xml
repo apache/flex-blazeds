@@ -47,6 +47,7 @@
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${ant-contrib.jar}"/>
 
     <target name="prepare">
+        <mkdir dir="${ds-console.war}/WEB-INF/src"/>
         <mkdir dir="${ds-console.war}/WEB-INF/lib"/>
         <mkdir dir="${ds-console.war}/WEB-INF/classes"/>
     </target>
@@ -62,7 +63,7 @@
 
         <!-- copy to the classes directory -->
         <copy todir="${ds-console.war}/WEB-INF/classes">
-            <fileset dir="${ds-console.war}/WEB-INF/src">
+            <fileset dir="${ds-console.war}/WEB-INF/src" erroronmissingdir="false">
                 <include name="**/*.xml"/>
             </fileset>
             <fileset dir="${basedir}/lib" includes="${webapp.classes}" />
@@ -75,13 +76,14 @@
     </target>
 
     <target name="compile" depends="prepare,run-depend,copy-resources" description="compile">
+		<mkdir dir="${src.dir}"/>
         <javac source="1.4" debug="${src.debug}" destdir="${classes.dir}" srcdir="${src.dir}" classpathref="classpath"/>
     </target>
 
     <target name="compile-swf" >
 
         <delete file="${ds-console.war}/${application.file}.swf"/>
-        <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/lib/flexTasks.jar" />
+        <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
         <property name="FLEX_HOME" value="${basedir}"/>
 
         <mxmlc file="${application.dir}/${application.file}.mxml" 

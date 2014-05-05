@@ -21,15 +21,16 @@
 
     <!-- properties -->
     <property file="${basedir}/build.properties"/>
-    <property name="module.dir" value="${basedir}/modules/remoting"/>
-    <property name="build.number" value=""/>
-
     <property name="lib.dir" value="${basedir}/lib"/>
+
+    <property name="module.dir" value="${basedir}/modules/remoting"/>
     <property name="module.lib.dir" location="${module.dir}/lib"/>
     <property name="module.src" value="${module.dir}/src"/>
     <property name="module.classes" value="${module.dir}/classes"/>
     <property name="module.jar" value="${lib.dir}/flex-messaging-remoting.jar"/>
-    
+
+    <property name="build.number" value=""/>
+
     <path id="classpath">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
     </path>
@@ -48,7 +49,6 @@
         <depend cache="${module.classes}" srcdir="${module.src}" destdir="${module.classes}"/>
     </target>   
                 
-
     <target name="clean" description="clean">
         <delete file="${module.jar}" failonerror="false"/>
         <delete failonerror="false" includeEmptyDirs="true">
@@ -65,16 +65,10 @@
         <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${module.src}"
             includes="**/*.java" classpathref="classpath"/>
         <echo file="${module.classes}/flex/messaging/version.properties" append="false">build=${build.number}</echo>
-
-        <copy todir="${module.classes}/flex/messaging" overwrite="true">
-            <fileset dir="${module.src}/flex/messaging" includes="*.properties"/>
-        </copy>
-
     </target>
 
     <!-- jar containing messaging core infrastructure -->
     <target name="jar" depends="compile">
-
         <jar destfile="${module.jar}" basedir="${module.classes}">
             <include name="flex/management/**"/>
             <include name="flex/messaging/**"/>
@@ -86,11 +80,6 @@
                 <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
             </manifest>
         </jar>
-
-        <delete failonerror="false">
-            <fileset dir="${module.classes}/flex/messaging" includes="*.properties"/>
-        </delete>
-
     </target>
 
 </project>

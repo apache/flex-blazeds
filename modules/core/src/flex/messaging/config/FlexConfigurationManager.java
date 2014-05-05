@@ -192,30 +192,29 @@ public class FlexConfigurationManager implements ConfigurationManager
                 // an entry was specified in web.xml,
                 configurationPath = p.trim();
 
-                // on windows, all paths starting with '/' should be available via the servlet resource resolver
-                // on other systems, you're not sure so try the servlet resource loader first it but don't throw an error,
-                //   after that try using LocalFileResolver
-                boolean isWindows = File.separator.equals("\\");
-                boolean isServletResource = isWindows && configurationPath.startsWith("/");
-                if (isServletResource || !isWindows)
-                {
-                    ServletResourceResolver resolver = new ServletResourceResolver(servletConfig.getServletContext());
-                    boolean available = resolver.isAvailable(configurationPath, isServletResource);
-                    if (available)
-                    {
-                        // it's available via the servlet resource loader
-                        configurationResolver = (ConfigurationFileResolver)resolver;
-                    }
-                    else
-                    {
-                        // it wasn't available via the servlet resource loader
+                // If the uri starts with "classpath:" we need to use a different resolver.
+                if(configurationPath.startsWith("classpath:")) {
+                    configurationResolver = new ClasspathResourceResolver();
+                } else {
+                    // on windows, all paths starting with '/' should be available via the servlet resource resolver
+                    // on other systems, you're not sure so try the servlet resource loader first it but don't throw an error,
+                    //   after that try using LocalFileResolver
+                    boolean isWindows = File.separator.equals("\\");
+                    boolean isServletResource = isWindows && configurationPath.startsWith("/");
+                    if (isServletResource || !isWindows) {
+                        ServletResourceResolver resolver = new ServletResourceResolver(servletConfig.getServletContext());
+                        boolean available = resolver.isAvailable(configurationPath, isServletResource);
+                        if (available) {
+                            // it's available via the servlet resource loader
+                            configurationResolver = (ConfigurationFileResolver) resolver;
+                        } else {
+                            // it wasn't available via the servlet resource loader
+                            configurationResolver = new LocalFileResolver(LocalFileResolver.SERVER);
+                        }
+                    } else {
+                        // it's windows but seems to be specified as a file
                         configurationResolver = new LocalFileResolver(LocalFileResolver.SERVER);
                     }
-                }
-                else
-                {
-                    // it's windows but seems to be specified as a file
-                    configurationResolver = new LocalFileResolver(LocalFileResolver.SERVER);
                 }
             }
         }

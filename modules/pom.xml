@@ -24,7 +24,7 @@
 
 	<groupId>org.apache.flex.blazeds</groupId>
 	<artifactId>blazeds</artifactId>
-	<version>4.6.0.0-SNAPSHOT</version>
+	<version>4.7.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Apache Flex: BlazeDS</name>
@@ -46,11 +46,10 @@
 		<module>proxy</module>
 		<module>remoting</module>
 		<module>opt</module>
+		<module>testsuite</module>
 	</modules>
 
 	<properties>
-		<!--  TODO fix the failing bugs if any -->
-		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>

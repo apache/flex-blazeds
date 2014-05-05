@@ -21,9 +21,9 @@
 
     <!-- properties -->
     <property file="${basedir}/build.properties"/>
-    <property name="module.dir" value="${basedir}/modules/common"/>
-
     <property name="lib.dir" value="${basedir}/lib"/>
+
+    <property name="module.dir" value="${basedir}/modules/common"/>
     <property name="module.lib.dir" location="${module.dir}/lib"/>
     <property name="module.src" value="${module.dir}/src"/>
     <property name="module.classes" value="${module.dir}/classes"/>
@@ -36,7 +36,7 @@
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
     </path>
 
-     <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
 
     <target name="main" depends="clean,prepare,run-depend,jar" description="cleans and runs the full build"/>
 
@@ -54,16 +54,14 @@
     <target name="compile" depends="prepare" description="compile">
         <javac target="1.4" source="1.4" debug="${src.debug}" destdir="${module.classes}" srcdir="${module.src}"
             includes="**/*.java" classpathref="classpath"/>
-        <echo file="${module.classes}/flex/messaging/version.properties" append="false">build=${build.number}</echo> 
+        <echo file="${module.classes}/flex/messaging/version.properties" append="false">build=${build.number}</echo>
     </target>
                 
     <!-- jar containing messaging common infrastructure -->
     <target name="jar" depends="compile">
-
         <copy todir="${module.classes}/flex/messaging" overwrite="true">
             <fileset dir="${module.src}/flex/messaging" includes="*.properties"/>
         </copy>
-
         <jar destfile="${module.jar}" basedir="${module.classes}">
             <include name="flex/**"/>
             <exclude name=".dependency-info/**"/>
@@ -74,11 +72,9 @@
 			    <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
         	</manifest>
         </jar>
-    	
         <delete failonerror="false">
             <fileset dir="${module.classes}/flex/messaging" includes="*.properties"/>
         </delete>
-
     </target>
 
     <target name="clean" description="clean">
@@ -91,7 +87,6 @@
             </fileset>
         </delete>
         <delete quiet="true" dir="${module.classes}"/>
-
     </target>
 
 </project>
