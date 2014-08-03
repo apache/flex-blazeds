@@ -50,8 +50,12 @@ public class TestServer {
             // Give the server some time to ramp up.
             Thread.sleep(500);
         } catch (IOException e) {
+            System.err.println("Got exception starting TestServer.");
+            e.printStackTrace();
             return false;
         } catch (InterruptedException e) {
+            System.err.println("Got exception starting TestServer.");
+            e.printStackTrace();
             return false;
         }
         return true;
