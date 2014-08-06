@@ -48,13 +48,14 @@ public class AMFConnectionTest extends TestCase
     private static final String DEFAULT_DESTINATION_ID = "amfConnectionTestService";
     private static final String DEFAULT_METHOD_NAME = "echoString";
     private static final String DEFAULT_METHOD_ARG = "echo me";
-    private static final String DEFAULT_URL = "http://localhost:8400/qa-regress/messagebroker/amf";
+    private static final String DEFAULT_URL = "http://localhost:%s/qa-regress/messagebroker/amf";
     private static final String DEFAULT_AMF_OPERATION = getOperationCall(DEFAULT_METHOD_NAME);
     private static final String FOO_STRING = "foo";
     private static final String BAR_STRING = "bar";
     private static final String UNEXPECTED_EXCEPTION_STRING = "Unexpected exception: ";
 
     private TestServer server;
+    private int serverPort;
 
     /**
      * Given a remote method name, returns the AMF connection call needed using
@@ -63,6 +64,10 @@ public class AMFConnectionTest extends TestCase
     private static String getOperationCall(String method)
     {
         return DEFAULT_DESTINATION_ID + "." + method;
+    }
+
+    protected String getConnectionUrl() {
+        return String.format(DEFAULT_URL, serverPort);
     }
 
 
@@ -107,7 +112,8 @@ public class AMFConnectionTest extends TestCase
     protected void setUp() throws Exception
     {
         server = new TestServer();
-        if(!server.startServer("classpath:/WEB-INF/flex/services-config.xml")) {
+        serverPort = server.startServer("classpath:/WEB-INF/flex/services-config.xml");
+        if(serverPort == -1) {
             Assert.fail("Couldn't start server process");
         }
 
@@ -135,7 +141,7 @@ public class AMFConnectionTest extends TestCase
         // Connect to the remote url.
         try
         {
-            amfConnection.connect(DEFAULT_URL);
+            amfConnection.connect(getConnectionUrl());
         }
         catch (ClientStatusException cse)
         {
@@ -166,8 +172,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
         }
         catch (ClientStatusException cse)
         {
@@ -184,8 +190,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
         }
         catch (ClientStatusException cse)
         {
@@ -222,7 +228,7 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
+            amfConnection.connect(getConnectionUrl());
         }
         catch (ClientStatusException cse)
         {
@@ -404,8 +410,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
             amfConnection.setObjectEncoding(MessageIOConstants.AMF0);
             retAMF = amfConnection.getObjectEncoding();
             Assert.assertEquals(MessageIOConstants.AMF0, retAMF);
@@ -426,8 +432,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
             AMFConnection.setDefaultObjectEncoding(MessageIOConstants.AMF3);
             retAMF = AMFConnection.getDefaultObjectEncoding();
             Assert.assertEquals(MessageIOConstants.AMF3, retAMF);
@@ -453,8 +459,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
             amfConnection.setAMFHeaderProcessor(setAMF);
             retAMF = amfConnection.getAMFHeaderProcessor();
             Assert.assertEquals(setAMF, retAMF);
@@ -476,8 +482,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
             amfConnection.addAmfHeader(FOO_STRING,val);
             retAMF = amfConnection.removeAmfHeader(FOO_STRING);
             Assert.assertTrue(retAMF);
@@ -499,8 +505,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
             amfConnection.addAmfHeader(FOO_STRING,true,val);
             retAMF = amfConnection.removeAmfHeader(FOO_STRING);
             Assert.assertTrue(retAMF);
@@ -522,8 +528,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
             amfConnection.addAmfHeader(FOO_STRING,true,val1);
             amfConnection.addAmfHeader(BAR_STRING,true,val2);
             amfConnection.removeAllAmfHeaders();
@@ -545,8 +551,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
             amfConnection.addHttpRequestHeader(FOO_STRING,BAR_STRING);
             retHttp = amfConnection.removeHttpRequestHeader(FOO_STRING);
             Assert.assertTrue(retHttp);
@@ -566,8 +572,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
             amfConnection.addHttpRequestHeader(FOO_STRING,BAR_STRING);
             amfConnection.addHttpRequestHeader(BAR_STRING,FOO_STRING);
             amfConnection.removeAllHttpRequestHeaders();
@@ -589,8 +595,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
             retAMF = amfConnection.removeAmfHeader(FOO_STRING);
             Assert.assertFalse(retAMF);
         }
@@ -609,8 +615,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
             amfConnection.removeAllAmfHeaders();
             Assert.assertTrue(true);
         }
@@ -630,8 +636,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
             retHttp = amfConnection.removeHttpRequestHeader(FOO_STRING);
             Assert.assertFalse(retHttp);
         }
@@ -650,8 +656,8 @@ public class AMFConnectionTest extends TestCase
         AMFConnection amfConnection = new AMFConnection();
         try
         {
-            amfConnection.connect(DEFAULT_URL);
-            Assert.assertEquals(DEFAULT_URL, amfConnection.getUrl());
+            amfConnection.connect(getConnectionUrl());
+            Assert.assertEquals(getConnectionUrl(), amfConnection.getUrl());
             amfConnection.removeAllHttpRequestHeaders();
             Assert.assertTrue(true);
         }
@@ -672,7 +678,7 @@ public class AMFConnectionTest extends TestCase
         try
         {
             AMFConnection amfConnection = new AMFConnection();
-            amfConnection.connect(DEFAULT_URL);
+            amfConnection.connect(getConnectionUrl());
 
             // First, make sure we get the strong type.
             Object result = amfConnection.call(getOperationCall(method));
@@ -696,7 +702,7 @@ public class AMFConnectionTest extends TestCase
         try
         {
             AmfTrace trace = new AmfTrace();
-            amfConnection.connect(DEFAULT_URL);
+            amfConnection.connect(getConnectionUrl());
             amfConnection.setAmfTrace(trace);
 
             String stringToEcho = DEFAULT_METHOD_ARG + 1;
@@ -766,7 +772,7 @@ public class AMFConnectionTest extends TestCase
     {
         AMFConnection amfConnection = new AMFConnection();
         // Connect.
-        amfConnection.connect(DEFAULT_URL);
+        amfConnection.connect(getConnectionUrl());
         // Make a remoting call and retrieve the result.
         Object result;
         if (methodArg == null)

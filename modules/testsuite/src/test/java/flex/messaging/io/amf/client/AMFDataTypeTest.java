@@ -42,11 +42,12 @@ public class AMFDataTypeTest extends TestCase
     private static final String DEFAULT_DESTINATION_ID = "amfConnectionTestService";
     private static final String DEFAULT_METHOD_NAME = "echoString";
     private static final String DEFAULT_METHOD_ARG = "echo me";
-    private static final String DEFAULT_URL = "http://localhost:8400/qa-regress/messagebroker/amf";
+    private static final String DEFAULT_URL = "http://localhost:%s/qa-regress/messagebroker/amf";
     private static final String DEFAULT_AMF_OPERATION = getOperationCall(DEFAULT_METHOD_NAME);
     private static final String UNEXPECTED_EXCEPTION_STRING = "Unexpected exception: ";
 
     private TestServer server;
+    private int serverPort;
 
     /**
      * Given a remote method name, returns the AMF connection call needed using
@@ -55,6 +56,10 @@ public class AMFDataTypeTest extends TestCase
     private static String getOperationCall(String method)
     {
         return DEFAULT_DESTINATION_ID + "." + method;
+    }
+
+    protected String getConnectionUrl() {
+        return String.format(DEFAULT_URL, serverPort);
     }
 
 
@@ -89,7 +94,8 @@ public class AMFDataTypeTest extends TestCase
     protected void setUp() throws Exception
     {
         server = new TestServer();
-        if(!server.startServer("classpath:/WEB-INF/flex/services-config.xml")) {
+        serverPort = server.startServer("classpath:/WEB-INF/flex/services-config.xml");
+        if(serverPort == -1) {
             Assert.fail("Couldn't start server process");
         }
 
@@ -465,7 +471,7 @@ public class AMFDataTypeTest extends TestCase
     {
         AMFConnection amfConnection = new AMFConnection();
         // Connect.
-        amfConnection.connect(DEFAULT_URL);
+        amfConnection.connect(getConnectionUrl());
         // Make a remoting call and retrieve the result.
         Object result;
         if (methodArg == null)
