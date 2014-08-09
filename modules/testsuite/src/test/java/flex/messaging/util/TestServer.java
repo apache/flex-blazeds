@@ -45,6 +45,7 @@ public class TestServer {
         final String classpath = System.getProperty("java.class.path");
         final String path = System.getProperty("java.home") + separator + "bin" + separator + "java";
         final int port = findFreePort();
+        System.out.print("Starting test-server on port: " + port + " ... ");
         final ProcessBuilder processBuilder = new ProcessBuilder(path,
                 /*"-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005",*/
                 "-cp", /*"\"" +*/ classpath /*+ "\""*/,
@@ -55,18 +56,23 @@ public class TestServer {
             serverProcess = processBuilder.start();
             // Give the server some time to ramp up.
             Thread.sleep(500);
+            System.out.println("STARTED");
             return port;
         } catch (IOException e) {
+            System.out.println("ERROR: " + e.toString());
             return -1;
         } catch (InterruptedException e) {
+            System.out.println("ERROR: " + e.toString());
             return -1;
         }
     }
 
     public void stopServer() {
         if(serverProcess != null) {
+            System.out.print("Stopping test-server ... ");
             // Send a signal to the server process to make itself shut down.
             serverProcess.destroy();
+            System.out.println("STOPPED");
         }
     }
 
