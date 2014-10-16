@@ -55,7 +55,7 @@ public class MBeanServerLocatorFactory
         {
             // Try app-server specific locators.
             // WebSphere provides access to its MBeanServer via a custom admin API.
-            instantiateLocator("flex.management.WebSphereMBeanServerLocator", new String[] {"com.ibm.websphere.management.AdminServiceFactory"});
+            // instantiateLocator("flex.management.WebSphereMBeanServerLocator", new String[] {"com.ibm.websphere.management.AdminServiceFactory"});
 
             // Sun JRE 1.5 based implementation
             if (locator == null)
