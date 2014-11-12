@@ -98,6 +98,8 @@ public class AMFDataTypeTest extends TestCase
         if(serverPort == -1) {
             Assert.fail("Couldn't start server process");
         }
+        // Give the "server" some time to startup.
+        Thread.sleep(200L);
 
         AMFConnection.registerAlias(
                 "remoting.amfclient.ServerCustomType" /* server type */,
