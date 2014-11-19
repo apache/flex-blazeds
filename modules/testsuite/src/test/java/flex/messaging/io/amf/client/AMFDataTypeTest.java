@@ -99,7 +99,7 @@ public class AMFDataTypeTest extends TestCase
             Assert.fail("Couldn't start server process");
         }
         // Give the "server" some time to startup.
-        Thread.sleep(200L);
+        Thread.sleep(400L);
 
         AMFConnection.registerAlias(
                 "remoting.amfclient.ServerCustomType" /* server type */,
