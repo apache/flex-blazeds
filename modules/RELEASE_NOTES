@@ -1,0 +1,20 @@
+Apache Flex BlazeDS 4.7
+=======================
+
+Apache Flex BlazeDS 4.7 is the first release of BlazeDS from Apache. Earlier
+releases were provided by Adobe Systems Inc. 
+
+Known Issues
+_____________
+
+
+Differences from Adobe BlazeDS 4.6 include:
+
+TBD
+
+Please report new issues to our bug tracker at:
+
+    https://issues.apache.org/jira/browse/FLEX
+
+                                          The Apache Flex Project
+                                          <http://flex.apache.org/>

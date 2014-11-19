@@ -1,0 +1,153 @@
+Apache Flex BlazeDS
+==================
+
+    Apache Flex SDK is an application development framework for easily building
+    Flash-based applications for mobile devices, web browsers, and desktops.
+
+    Apache Flex BlazeDS is the server-based Java remoting and web messaging
+    technology that enables developers to easily connect to back-end distributed
+    data and push data in real-time to Adobe® Flex® and Adobe AIR™ applications
+    for more responsive rich Internet application (RIA) experiences..
+
+    Apache Flex BlazeDS 4.7 is the initial release of BlazeDS from the Apache
+    Software Foundation.  Prior to this, releases were provided by Adobe
+    Systems Inc.  This version adds new features and implements bug fixes
+    that were unavailable in previous versions.  It is compatible with most code
+    written to target Adobe Flex 4.6.
+
+    For detailed information about Apache Flex please visit
+    http://flex.apache.org/
+
+
+Getting the latest sources via Git
+==================================
+
+    Getting the source code is the recommended way to get Apache Flex BlazeDS.
+
+    You can always checkout the latest source via git using the following
+    command:
+
+	 git clone https://git-wip-us.apache.org/repos/asf/flex-blazeds.git blazeds
+	 cd blazeds
+	 git checkout develop
+
+    For further information visit http://flex.apache.org/download-source.html
+
+
+Building Apache Flex BlazeDS 4.7
+================================
+
+    Apache Flex BlazeDS is a large project. It requires some build tools which must be
+    installed prior to building BlazeDS and it depends on some external software
+    which are downloaded as part of the build process.  Some of these have
+    different licenses.  See the Software Dependencies section for more
+    information on the external software dependencies.
+
+    From Apache's perspective, the Adobe Flash Player and Adobe AIR have
+    excluded licenses so they can not be bundled with the Apache Flex binaries.
+    They must be installed prior to building Apache Flex.
+
+    Linux support is currently experimental and while it is possible to compile
+    BlazeDS it has not been fully tested so you may run into issues.
+
+
+Install Prerequisites
+---------------------
+
+    Before building the Apache Flex Tool API you must install the following software
+    and set the corresponding environment variables using absolute file paths.  
+    Relative file paths will result in build errors.
+
+    ==================================================================================
+    SOFTWARE                                    ENVIRONMENT VARIABLE (absolute paths)
+    ==================================================================================
+
+    Java SDK 1.6 or greater (*1)                JAVA_HOME
+        (for Java 1.7 see note at (*2))
+
+    Maven 2.2.0 or greater (*1)                 MAVEN_HOME
+
+    ==================================================================================
+
+    *1) The bin directories for MAVEN_HOME and JAVA_HOME should be added to your
+        PATH.
+
+        On Windows, set PATH to
+
+            PATH=%PATH%;%MAVEN_HOME%\bin;%JAVA_HOME%\bin
+
+        On the Mac (bash), set PATH to
+
+            export PATH="$PATH:$MAVEN_HOME/bin:$JAVA_HOME/bin"
+
+         On Linux make sure you path include MAVEN_HOME and JAVA_HOME.
+
+
+Software Dependencies
+---------------------
+
+    Apache BlazeDS uses a variety of third party libraries. A detailed summary
+    of all of these dependencies is listed in the releases DEPENDENCIES file.
+
+
+Using the Binary Distribution
+-----------------------------
+
+    Binary artifacts of the Flex Tool API are available on Apache's
+    public Maven repositories.
+
+    By adding a Dependency to the following Maven artifact the
+    binary version of the Flex Tool API will automatically be downloaded.
+
+    <dependency>
+        <groupId>org.apache.flex.blazeds</groupId>
+        <artifactId>flex-messaging-common</artifactId>
+        <version>4.7.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.flex.blazeds</groupId>
+        <artifactId>flex-messaging-core</artifactId>
+        <version>4.7.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.flex.blazeds</groupId>
+        <artifactId>flex-messaging-opt</artifactId>
+        <version>4.7.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.flex.blazeds</groupId>
+        <artifactId>flex-messaging-proxy</artifactId>
+        <version>4.7.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.flex.blazeds</groupId>
+        <artifactId>flex-messaging-remoting</artifactId>
+        <version>4.7.0.0</version>
+    </dependency>
+
+
+Building the Source
+----------------------------------------------
+
+    When you have all the prerequisites in place and the environment variables
+    set (see Install Prerequisites above), use
+
+        cd <flex-blazeds.dir>/modules
+        mvn install
+
+    Notice that you have to enter the modules directory in order to able to
+    execute the Maven build as the rest of the project still contains an
+    outdated and no longer maintained ANT build. This will be removed in
+    future versions.
+
+
+Running Tests
+-------------
+
+    The testsuite is automatically executed during a normal maven build.
+
+
+Thanks for using Apache Flex BlazeDS.  Enjoy!
+
+                                          The Apache Flex Project
+                                          <http://flex.apache.org>
