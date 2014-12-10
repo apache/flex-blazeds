@@ -19,7 +19,6 @@
 -->
 <project name="qa-manual.war/build.xml" default="main" basedir="../..">
 
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${env.ANT_HOME}/lib/ant-contrib-1.0b2.jar"/>
     <property name="qa.dir" location="${basedir}"/>
     <property name="blazeds.dir" location="${qa.dir}/.."/>
     
@@ -38,21 +37,23 @@
     
     <property name="qa.frameworks.dir" value="${qa.dir}/frameworks"/>
     
-    <if>
+    <condition property="template.dir" value="client-side-detection-with-history">
         <equals arg1="${sdk.version}" arg2="3"/>
-        <then>
-            <property name="template.dir" value="client-side-detection-with-history"/>
-            <property name="qa-manual.war.file" value="qa-manual-sdk3.war"/>
-        </then>            
-        <else>
-            <property name="template.dir" value=""/>
-            <property name="qa-manual.war.file" value="qa-manual.war"/>
-        </else>        
-    </if>
+    </condition>
+    <condition property="qa-manual.war.file" value="qa-manual-sdk3.war">
+        <equals arg1="${sdk.version}" arg2="3"/>
+    </condition>
+    <property name="template.dir" value=""/>
+    <property name="qa-manual.war.file" value="qa-manual.war"/>
+
+    <condition property="flextasks.dir" value="${FLEX_HOME}/ant/lib">
+        <available file="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+    </condition>
+    <property name="flextasks.dir" value="${FLEX_HOME}/lib" />
 
     <path id="qa-manual-classpath">
         <fileset dir="${qa-manual.war}/WEB-INF/lib" includes="**/*.jar"/>
-        <fileset dir="${FLEX_HOME}/ant/lib" includes="flexTasks.jar"/>
+        <fileset dir="${flextasks.dir}" includes="flexTasks.jar"/>
         <pathelement location="${servlet.jar}"/>
         <pathelement location="${jms.jar}"/>
     </path>
@@ -60,6 +61,7 @@
     <path id="qa.classpath">
         <pathelement location="${qa.dir}/classes" />
         <fileset dir="${qa.dir}/lib" includes="**/*.jar"/>
+        <fileset dir="${blazeds.dir}/lib" includes="**/*.jar"/>
         <fileset dir="${FLEX_HOME}/lib/external" includes="xercesImpl.jar"/>
     </path>
 

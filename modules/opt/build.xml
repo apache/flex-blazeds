@@ -18,7 +18,6 @@
 
 -->
 <project name="modules/opt/build.xml" default="main" basedir="../..">
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
 
     <!-- properties -->
     <property file="${basedir}/build.properties"/>
@@ -48,15 +47,10 @@
 
     <property name="build.number" value=""/>
 
-    <if >
+    <condition property="javacexecutable" value="javac.exe">
         <os family="windows" />
-        <then>
-            <property name="javacexecutable" value="javac.exe"/>
-        </then>
-        <else>
-             <property name="javacexecutable" value="javac"/>
-        </else>
-    </if>
+    </condition>
+    <property name="javacexecutable" value="javac"/>
  
     <path id="base.classpath">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
@@ -124,8 +118,6 @@
             <include name="oc4j-api.jar"/>
         </fileset>
     </path>
-
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
 
     <target name="main" depends="clean,prepare,run-depend,jar" description="cleans and runs the full build"/>
 
@@ -238,21 +230,21 @@
 	<target name="compile-weblogic" depends="prepare" description="compile the weblogic-related classes">
 		<mkdir dir="${weblogic.src}"/>
 		<available file="${module.lib.dir}/weblogic.jar" property="isWeblogic"/>
-		<if>
-			<equals arg1="${isWeblogic}" arg2="true" />
-			<then>
-				<echo message="**** compiling with weblogic jar ****" />
-				<javac debug="${src.debug}" destdir="${module.classes}" srcdir="${weblogic.src}" 
-				classpathref="weblogic.classpath">
-				<include name="**/*.java"/>
-				</javac>    
-			</then>
-			<else>
-				<echo message="**** compiling without weblogic jar ****" />
-			</else>
-		</if>
+		<antcall target="actual.weblogic.compile" />
 	</target>
-	
+
+    <target name="check.weblogic" unless="isWeblogic" >
+        <echo message="**** compiling without weblogic jar ****" />
+    </target>
+
+    <target name="actual.weblogic.compile" depends="check.weblogic" if="isWeblogic" >
+        <echo message="**** compiling with weblogic jar ****" />
+        <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${weblogic.src}"
+            classpathref="weblogic.classpath">
+            <include name="**/*.java"/>
+        </javac>    
+    </target>
+    
 	<!--If asynchbeans.jar is present it looks for sas.jar and wsexception.jar otherwise the build will fail -->
 	<target name="compile-websphere" depends="prepare" description="compile the websphere-related classes">
 		<mkdir dir="${websphere.src}"/>
@@ -263,20 +255,20 @@
 				<available file="${module.lib.dir}/wsexception.jar"/>
 			</and>
 		</condition>
-		<if>
-			<equals arg1="${isWebsphere}" arg2="true" />
-			<then>
-				<echo message="**** compiling with websphere jars: asynchbeans jar, sas.jar and wsexception.jar ****" />
-				<javac debug="${src.debug}" destdir="${module.classes}" srcdir="${websphere.src}"
-				classpathref="websphere.classpath">
-				<include name="**/*.java"/>
-				</javac>    
-			</then>
-			<else>
-				<echo message="**** compiling without websphere jars: asynchbeans jar, sas.jar and wsexception.jar ****" />
-			</else>
-		</if>
+        <antcall target="actual.websphere.compile" />
 	</target>
+    
+    <target name="check.websphere" unless="isWebsphere" >
+        <echo message="**** compiling without websphere jars: asynchbeans jar, sas.jar and wsexception.jar ****" />
+    </target>
+    
+    <target name="actual.websphere.compile" depends="check.websphere" if="isWebsphere" >
+        <echo message="**** compiling with websphere jars: asynchbeans jar, sas.jar and wsexception.jar ****" />
+        <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${websphere.src}"
+            classpathref="websphere.classpath">
+            <include name="**/*.java"/>
+        </javac>
+    </target>
 	
 	<!-- Both the jar "jazncore and oc4j-api" files are in and condition because both are interdependent and with the absense of either one jar the build will fail.-->
 	<target name="compile-oracle" depends="prepare" description="compile the oracle-related classes">
@@ -287,20 +279,21 @@
 				<available file="${module.lib.dir}/oc4j-api.jar"/>
 			</and>
 		</condition>
-		<if>
-			<equals arg1="${isOracle}" arg2="true" />
-			<then>
-				<echo message="**** compiling with oracle jar ****" />
-				<javac debug="${src.debug}" destdir="${module.classes}" srcdir="${oracle.src}"
-                 classpathref="oracle.classpath">
-				<include name="**/*.java"/>
-				</javac>     
-			</then>
-			<else>
-				<echo message="**** compiling without oracle jar ****" />
-			</else>
-		</if>
+        <antcall target="actual.oracle.compile" />
 	</target>
+    
+    <target name="check.oracle" unless="isOracle" >
+        <echo message="**** compiling without oracle jar ****" />
+    </target>
+    
+    <target name="actual.oracle.compile" depends="check.oracle" if="isOracle" >
+        <echo message="**** compiling with oracle jar ****" />
+        <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${oracle.src}"
+            classpathref="oracle.classpath">
+            <include name="**/*.java"/>
+        </javac>
+    </target>
+    
 	<!--Edit Ends here; Making the dependencies of weblogic.jar, asynchbeans.jar, jazncore.jar and oc4j-api.jar conditional-->
 	      
     <target name="jar" depends="compile-jrun,jar-tomcat,compile-oracle,compile-weblogic,compile-websphere">
@@ -345,6 +338,7 @@
         <delete file="${tomcat.jar.dir}/${tomcat.valve}" failonerror="false"/>
         <delete dir="${appserver.dir}/lib/blazeds" failonerror="false" />
         <delete dir="${module.classes}" failonerror="false" />
+        <echo>modules/opt clean</echo>
     </target>
 
 </project>

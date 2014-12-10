@@ -36,8 +36,6 @@
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
     </path>
 
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
-
     <target name="main" depends="clean,prepare,run-depend,jar" description="cleans and runs the full build"/>
 
     <target name="prepare">

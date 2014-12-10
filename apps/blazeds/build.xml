@@ -93,6 +93,7 @@
         <delete quiet="true" dir="${blazeds.war}/WEB-INF/lib" />
         <delete quiet="true" dir="${blazeds.war}/WEB-INF/src" />
         <delete quiet="true" file="${blazeds.war}/WEB-INF/flex/version.properties" />
+        <echo>apps/blazeds clean</echo>
     </target>
 
 </project>

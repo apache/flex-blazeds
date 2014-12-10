@@ -45,8 +45,6 @@
         <fileset dir="${tomcat.lib.dir}" erroronmissingdir="false" includes="**/*.jar"/>
     </path>
 
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
-
     <target name="main" depends="clean,prepare,run-depend,jar" description="cleans and runs the full build"/>
     <target name="dev" depends="prepare,run-depend,jar" description="runs src.depend build for development"/>
 
@@ -120,6 +118,7 @@
             </fileset>
         </delete>
         <delete dir="${module.classes}" failonerror="false" includeEmptyDirs="true"/>
+        <echo>modules/core clean</echo>
     </target>
 
    <target name="javadoc">

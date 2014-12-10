@@ -22,7 +22,6 @@
     <!-- properties -->
     <property file="${basedir}/build.properties" />
     <property environment="env"/>
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${env.ANT_HOME}/lib/ant-contrib-1.0b2.jar"/>
 
     <property name="lib.dir" value="${basedir}/lib"/>
     <property name="webtier.dir" value="${basedir}/qa/resources/webtier"/>
