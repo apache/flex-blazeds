@@ -27,6 +27,8 @@ Each of the main targets for the modules will call clean themselves before proce
 
 -->
 <project name="BlazeDS" default="main" basedir=".">
+
+    <property file="${basedir}/env.properties"/>
     <property environment="env"/>
 
     <!-- properties -->
