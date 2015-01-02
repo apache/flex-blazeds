@@ -28,7 +28,9 @@
     <property name="module.src" value="${module.dir}/src"/>
     <property name="module.classes" value="${module.dir}/classes"/>
     <property name="module.jar" value="${lib.dir}/flex-messaging-common.jar"/>
-
+    <property name="license.file" value="${basedir}/LICENSE" />
+    <property name="notice.file" value="${basedir}/NOTICE" />
+    
     <property name="build.number" value=""/>
     
     <!-- j2ee apis required to compile -->
@@ -60,7 +62,15 @@
         <copy todir="${module.classes}/flex/messaging" overwrite="true">
             <fileset dir="${module.src}/flex/messaging" includes="*.properties"/>
         </copy>
+        <delete dir="${module.classes}/meta-inf" quiet="true"/>
+        
+        <mkdir dir="${module.classes}/META-INF"/>
+        <copy file="${license.file}" tofile="${module.classes}/META-INF/LICENSE"/>
+        <copy file="${notice.file}" tofile="${module.classes}/META-INF/NOTICE"/>
+        
         <jar destfile="${module.jar}" basedir="${module.classes}">
+            <include name="META-INF/LICENSE"/>
+            <include name="META-INF/NOTICE"/>
             <include name="flex/**"/>
             <exclude name=".dependency-info/**"/>
         	<manifest>
@@ -73,6 +83,7 @@
         <delete failonerror="false">
             <fileset dir="${module.classes}/flex/messaging" includes="*.properties"/>
         </delete>
+        <delete dir="${module.classes}/META-INF"/>
     </target>
 
     <target name="clean" description="clean">
