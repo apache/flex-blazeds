@@ -30,7 +30,7 @@ public class Confirm11a extends DeserializationConfirmation
         ActionMessage m = new ActionMessage();
         MessageBody body = new MessageBody();
         m.addBody(body);
-        body.setData("Section 1. All legislative Powers herein granted shall be vested in a Congress of the United States, which shall consist of a Senate and House of Representatives.");
+        body.setData("Instead of copying something that might be licensed by some special license I am replacing the extract of the US constitution with this little text which should demonstrate string serialization just as well.");
         EXPECTED_VALUE = m;
     }
 
