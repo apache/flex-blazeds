@@ -112,6 +112,7 @@
 							</execution>
 						</executions>
 						<configuration>
+							<finalName>apache-flex-blazeds-${project.version}</finalName>
 							<descriptors>
 								<descriptor>src/assembly/assemble-zip.xml</descriptor>
 								<descriptor>src/assembly/assemble-gz.xml</descriptor>
