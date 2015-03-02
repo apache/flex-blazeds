@@ -62,7 +62,6 @@ Install Prerequisites
     ==================================================================================
 
     Java SDK 1.6 or greater (*1)                JAVA_HOME
-        (for Java 1.7 see note at (*2))
 
     Maven 2.2.0 or greater (*1)                 MAVEN_HOME
 
