@@ -21,9 +21,9 @@ package qa.utils;
  * for different channels/endpoints being used by the test applications
  * 
  * This Generator class is instantiated by passing in how many generate calls should happen per second (targetRatePerSecond),
- * and how many CPU time slices (runs) per second you’d like it to shoot for (suggestedGeneratePassesPerSecond). It sleeps
- * between batches/runs so you don’t want so many batches that it’s giving up its CPU time
- * too quickly and isn’t able to get any work done within a second, but not so few that it
+ * and how many CPU time slices (runs) per second you'd like it to shoot for (suggestedGeneratePassesPerSecond). It sleeps
+ * between batches/runs so you don't want so many batches that it's giving up its CPU time
+ * too quickly and isn't able to get any work done within a second, but not so few that it
  * just generates a big burst of messages once a second up front rather than a stream.
  * Each generate call (either the doDataMessageGenerate(flex.messaging.io.amf.ASObject) or the doAsyncMessageGenerate() method) 
  * would create and send a message in an actual test. All in all, gives us the adaptive behavior
