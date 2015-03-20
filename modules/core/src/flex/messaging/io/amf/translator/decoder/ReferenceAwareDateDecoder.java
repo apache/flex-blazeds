@@ -20,8 +20,6 @@ import flex.messaging.io.SerializationContext;
 import flex.messaging.io.TypeMarshallingContext;
 
 /**
- * @author Peter Farland
- *
  * @exclude
  */
 public class ReferenceAwareDateDecoder extends DateDecoder

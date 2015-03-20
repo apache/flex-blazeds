@@ -28,8 +28,6 @@ import java.net.ServerSocket;
 /**
  * Simple little wrapper starting up a BlazeDS server in a separate VM useful for unit testing the
  * features that need different singletons in client and server.
- *
- * @author Christofer Dutz
  */
 public class TestServer {
 

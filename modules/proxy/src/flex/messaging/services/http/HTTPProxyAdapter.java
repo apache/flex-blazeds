@@ -56,9 +56,6 @@ import java.util.Map;
 
 /**
  * Adapter class for proxy services.
- *
- * @author Brian Deitte
- * @author Peter Farland
  */
 public class HTTPProxyAdapter extends ServiceAdapter
 {

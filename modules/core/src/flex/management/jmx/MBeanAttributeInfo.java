@@ -20,8 +20,6 @@ package flex.management.jmx;
  * Remotable <code>MBeanAttributeInfo</code> class that complies with Flash serialization requirements. 
  * The <code>isIs</code> property is not named <code>is</code> because <code>is</code> is 
  * an ActionScript keyword.
- *
- * @author shodgson
  */
 public class MBeanAttributeInfo
 {

@@ -22,7 +22,6 @@ import flex.messaging.log.LogEvent;
 /**
  * Exception type for Service errors.
  *
- * @author shodgson
  * @exclude
  */
 public class ServiceException extends MessageException

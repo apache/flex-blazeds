@@ -23,8 +23,6 @@ import java.net.URL;
 /**
  * @exclude
  * Encapsulates information about a proxy target.
- *
- * @author Brian Deitte
  */
 public class Target
 {

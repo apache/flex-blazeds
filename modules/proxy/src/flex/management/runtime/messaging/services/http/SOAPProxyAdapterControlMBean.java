@@ -20,8 +20,6 @@ package flex.management.runtime.messaging.services.http;
 /**
  * Defines the runtime monitoring and management interface for managed SOAP
  * proxy adapters.
- * 
- * @author shodgson
  */
 public interface SOAPProxyAdapterControlMBean extends
         HTTPProxyAdapterControlMBean

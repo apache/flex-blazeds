@@ -26,8 +26,6 @@ import java.util.Map;
  * typically stored in the session object. Users can request a subset of
  * data from the object given that they know it's id.
  *
- * @author Mark Sheppard
- * @author Peter Farland
  * @see javax.sql.RowSet
  */
 public interface PageableRowSet

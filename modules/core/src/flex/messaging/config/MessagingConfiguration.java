@@ -58,8 +58,6 @@ import java.util.Map;
  * instead, this object sets the relevant values on the broker using
  * information which a ConfigurationParser has provided for it.
  *
- * @author Peter Farland
- * @author neville
  * @exclude
  */
 public class MessagingConfiguration implements ServicesConfiguration

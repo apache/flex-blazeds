@@ -57,7 +57,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * an endpoint that can handle the request's content type. This
  * does not occur for non-http endpoints, such as the rtmp endpoint.
  *
- * @author sneville
  * @see flex.messaging.MessageBroker
  * @exclude
  */

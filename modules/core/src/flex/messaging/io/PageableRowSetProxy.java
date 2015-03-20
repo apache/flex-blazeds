@@ -32,8 +32,6 @@ import java.util.Map;
  * TODO: This proxy is similar to features made possible with Externalizable 
  * so PageableRowSet/RecordSet should be moved to an Externalizable 
  * implementation.
- *  
- * @author Peter Farland
  */
 public class PageableRowSetProxy extends AbstractProxy
 {

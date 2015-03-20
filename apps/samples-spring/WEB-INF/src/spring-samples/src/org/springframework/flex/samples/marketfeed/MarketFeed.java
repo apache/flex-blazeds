@@ -47,11 +47,6 @@ import org.w3c.dom.NodeList;
 
 import flex.messaging.messages.AsyncMessage;
 
-/**
- * 
- * @author Christophe Coenraets
- * @author Jeremy Grelle
- */
 public class MarketFeed {
 
     private static FeedThread thread;

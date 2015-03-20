@@ -23,8 +23,6 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
 /**
  * Establishes the settings used to construct an Apache Commons HTTPClient
  * HttpConnectionManager for the Proxy Service.
- * 
- * @author Peter Farland
  */
 public class HTTPConnectionManagerSettings 
 {    

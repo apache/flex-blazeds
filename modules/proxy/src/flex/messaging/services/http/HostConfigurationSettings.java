@@ -23,7 +23,6 @@ package flex.messaging.services.http;
  * connection to a host: remote host, port and protocol, proxy host and port,
  * local address, and virtual host.
  *  
- * @author Peter Farland
  * @see org.apache.commons.httpclient.HostConfiguration
  */
 public class HostConfigurationSettings

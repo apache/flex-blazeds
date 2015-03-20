@@ -32,7 +32,6 @@ import java.util.List;
  * Using a separate instance of this class keeps the subscriptions
  * of local clients separate from remote clients.
  *
- * @author Jeff Vroom
  * @exclude
  */
 public class RemoteSubscriptionManager extends SubscriptionManager implements RemoveNodeListener

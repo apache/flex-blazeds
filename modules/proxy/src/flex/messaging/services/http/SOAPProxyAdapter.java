@@ -27,8 +27,6 @@ import flex.messaging.MessageException;
 /**
  * A Soap specific subclass of HttpProxyAdapter to
  * allow for future web services features.
- *
- * @author Peter Farland
  */
 public class SOAPProxyAdapter extends HTTPProxyAdapter
 {

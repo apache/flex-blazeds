@@ -42,8 +42,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * This is the default implementation of <code>Service</code>, which provides a
  * convenient base for behavior and associations common to all Services.
- *
- * @author neville
  */
 public abstract class AbstractService extends ManageableComponent implements Service
 {

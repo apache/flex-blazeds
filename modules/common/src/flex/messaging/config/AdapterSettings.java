@@ -26,7 +26,6 @@ package flex.messaging.config;
  * </p>
  *
  * @see flex.messaging.services.ServiceAdapter
- * @author Peter Farland
  * @exclude
  */
 public class AdapterSettings extends PropertiesSettings

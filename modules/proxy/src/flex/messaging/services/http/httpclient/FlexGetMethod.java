@@ -24,8 +24,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 /**
  * @exclude
  * Simple wrapper around PostMethod that exposes one method for ProxyServlet.
- *
- * @author Brian Deitte
  */
 public class FlexGetMethod extends GetMethod
 {

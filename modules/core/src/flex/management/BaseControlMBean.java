@@ -22,8 +22,6 @@ import javax.management.ObjectName;
 /**
  * The base MBean interface for management beans that control aspects of
  * Flex behavior on the server.
- *
- * @author shodgson
  */
 public interface BaseControlMBean
 {

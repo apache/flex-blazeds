@@ -28,7 +28,6 @@ import flex.messaging.log.LogCategories;
  * categories it is interested in, and a collection of
  * properties required to initialize the target.
  *
- * @author Peter Farland
  * @exclude
  */
 public class TargetSettings extends PropertiesSettings

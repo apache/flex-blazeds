@@ -22,7 +22,6 @@ import java.util.Map;
 /**
  * The root interface for classes that provide access to localized resources.
  *
- * @author Seth Hodgson
  * @exclude
  */
 public interface ResourceLoader

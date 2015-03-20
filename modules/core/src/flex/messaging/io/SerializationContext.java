@@ -24,8 +24,6 @@ import java.io.Serializable;
 /**
  * A simple context to get settings from an endpoint to a deserializer
  * or serializer.
- *
- * @author Peter Farland
  */
 public class SerializationContext implements Serializable, Cloneable
 {

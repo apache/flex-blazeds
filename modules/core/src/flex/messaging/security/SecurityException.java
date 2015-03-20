@@ -27,9 +27,6 @@ import flex.messaging.util.ResourceLoader;
  * client authentication, client authorization and general server-related security
  * errors. It defines a set of supported error code values as constants suffixed
  * with _CODE.
- * 
- * @author Peter Farland
- * @author Seth Hodgson
  */
 public class SecurityException extends MessageException
 {

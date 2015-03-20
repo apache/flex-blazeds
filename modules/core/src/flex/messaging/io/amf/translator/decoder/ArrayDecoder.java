@@ -30,9 +30,6 @@ import java.util.Collection;
  *
  * This class does not handle the case where the source
  * encodedObject is modified while decoding.
- *
- * @author Brian Deitte
- * @author Peter Farland
  */
 public class ArrayDecoder extends ActionScriptDecoder
 {

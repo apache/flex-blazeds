@@ -19,7 +19,6 @@ package flex.messaging.io.amf;
 /**
  * AMF3 type markers and constants for AVM+ Serialization.
  *
- * @author Peter Farland
  * @see flex.messaging.io.amf.AmfTypes for AMF 0 Type Markers.
  */
 public interface Amf3Types

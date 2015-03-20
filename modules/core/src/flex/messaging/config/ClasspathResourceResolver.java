@@ -20,9 +20,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Stack;
 
-/**
- * @author Christofer Dutz
- */
 public class ClasspathResourceResolver implements ConfigurationFileResolver {
 
     private String baseConfigFileDirectory;

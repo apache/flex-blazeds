@@ -25,8 +25,6 @@ import javax.management.ObjectName;
 
 /**
  * Defines the runtime monitoring and management interface for managed destinations.
- *
- * @author shodgson
  */
 public interface DestinationControlMBean extends BaseControlMBean
 {

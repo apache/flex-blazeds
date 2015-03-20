@@ -25,7 +25,6 @@ import java.util.Map;
  * Implementations may have different levels of detail
  * based on how much of the configuration is supported.
  *
- * @author pfarland
  * @exclude
  */
 public interface ServicesConfiguration

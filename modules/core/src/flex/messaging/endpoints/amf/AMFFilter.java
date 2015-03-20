@@ -24,8 +24,6 @@ import java.io.IOException;
  * Filters perform pre- and post-processing duties on the ActionContext,
  * which contains the message/invocation as well as conextual information
  * about it, following the standard pipe-and-filter design pattern.
- *
- * @author PS Neville
  */
 public abstract class AMFFilter
 {

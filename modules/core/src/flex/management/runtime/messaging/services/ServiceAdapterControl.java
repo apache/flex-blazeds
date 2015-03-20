@@ -25,8 +25,6 @@ import flex.messaging.services.ServiceAdapter;
 /**
  * The <code>ServiceAdapterControl</code> class is the base MBean implementation 
  * for monitoring and managing a <code>ServiceAdapter</code> at runtime.
- * 
- * @author shodgson
  */
 public abstract class ServiceAdapterControl extends BaseControl implements
         ServiceAdapterControlMBean

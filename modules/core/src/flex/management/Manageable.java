@@ -20,8 +20,6 @@ package flex.management;
  * Manageability of a class is enabled by implementing this interface. The
  * specific level of manageability is defined by the relationship between
  * a manageable component and its corresponding control.
- * 
- * @author shodgson
  */
 public interface Manageable
 {

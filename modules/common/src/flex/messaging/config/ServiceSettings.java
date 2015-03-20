@@ -34,7 +34,6 @@ import java.util.Map;
  * of actions allowed by that service.
  * </p>
  *
- * @author Peter Farland
  * @exclude
  */
 public class ServiceSettings extends PropertiesSettings

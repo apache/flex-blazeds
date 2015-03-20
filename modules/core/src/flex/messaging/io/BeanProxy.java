@@ -45,8 +45,6 @@ import java.util.TreeMap;
 
 /**
  * Uses Bean introspection to collect the properties for a given instance.
- *
- * @author Peter Farland
  */
 public class BeanProxy extends AbstractProxy
 {

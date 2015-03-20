@@ -22,8 +22,6 @@ import flex.messaging.endpoints.HTTPEndpoint;
 /**
  * The <code>HTTPEndpointControl</code> class is the MBean implemenation
  * for monitoring and managing a <code>HTTPEndpoint</code> at runtime.
- *
- * @author shodgson
  */
 public class HTTPEndpointControl extends PollingEndpointControl implements
     HTTPEndpointControlMBean

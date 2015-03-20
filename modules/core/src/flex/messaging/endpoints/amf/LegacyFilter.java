@@ -54,8 +54,6 @@ import java.lang.reflect.Array;
  * indicated whether the header must be understood. The third element, any Object, represented
  * the header value, if required.
  * </p>
- *
- * @author Peter Farland
  */
 public class LegacyFilter extends AMFFilter
 {

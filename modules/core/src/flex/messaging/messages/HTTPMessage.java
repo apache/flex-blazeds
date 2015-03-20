@@ -32,7 +32,6 @@ import java.util.Map;
  * HEAD etc.
  * </p>
  *
- * @author Peter Farland
  * @exclude
  */
 public class HTTPMessage extends RPCMessage

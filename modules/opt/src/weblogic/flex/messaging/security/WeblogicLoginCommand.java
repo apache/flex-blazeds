@@ -35,9 +35,6 @@ import flex.messaging.FlexContext;
 /**
  * Authenticates against WebLogic and if using an HttpServlet will store
  * the authenticated user in the request.
- *
- *
- * @author Matt Chotin
  */
 public class WeblogicLoginCommand extends AppServerLoginCommand implements PrincipalConverter
 {

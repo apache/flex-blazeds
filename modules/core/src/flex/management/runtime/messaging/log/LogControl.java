@@ -24,8 +24,6 @@ import flex.messaging.log.Target;
 /**
  * The <code>LogControl</code> class is the MBean implemenation
  * for monitoring and managing a <code>Log</code> at runtime through the <code>LogManager</code>.
- * @author majacobs
- *
  */
 public class LogControl extends BaseControl implements
         LogControlMBean

@@ -43,7 +43,6 @@ import flex.messaging.util.Trace;
  * in avmglue/DataIO.cpp
  * </p>
  *
- * @author Peter Farland
  * @exclude
  */
 public class Amf3Input extends AbstractAmfInput implements Amf3Types

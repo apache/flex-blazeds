@@ -24,8 +24,6 @@ import org.apache.commons.httpclient.methods.PostMethod;
 /**
  * @exclude
  * Simple wrapper around PostMethod that exposes one method for ProxyServlet.
- *
- * @author Brian Deitte
  */
 public class FlexPostMethod extends PostMethod
 {

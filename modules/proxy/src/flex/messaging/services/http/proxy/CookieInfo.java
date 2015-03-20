@@ -18,7 +18,6 @@ package flex.messaging.services.http.proxy;
 
 /**
  * @exclude
- * @author Brian Deitte
  */
 public class CookieInfo
 {

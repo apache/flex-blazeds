@@ -39,9 +39,6 @@ import flex.messaging.messages.Message;
  * component creation code in one of <code>initialize</code>, <code>start</code>, 
  * and <code>stop</code> methods depending on when they want their components 
  * to be created.  
- * 
- * @author matamel
- *
  */
 public abstract class AbstractBootstrapService implements Service
 {

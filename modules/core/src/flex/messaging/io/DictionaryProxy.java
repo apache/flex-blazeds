@@ -24,8 +24,6 @@ import java.util.List;
  * Proxies serialization of a Dictionary and considers all keys as String based property 
  * names. Additionally, bean properties from the instance are also included and override 
  * any Dictionary entries with the same name.
- *  
- * @author Peter Farland
  */
 public class DictionaryProxy extends BeanProxy
 {

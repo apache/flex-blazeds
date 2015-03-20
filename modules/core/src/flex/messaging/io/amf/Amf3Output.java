@@ -55,7 +55,6 @@ import java.util.Map;
  * in avmglue/DataIO.cpp
  * </p>
  *
- * @author Peter Farland
  * @exclude
  */
 public class Amf3Output extends AbstractAmfOutput implements Amf3Types

@@ -39,7 +39,6 @@ import java.io.File;
  * the MessageBrokerServlet.
  * </p>
  *
- * @author Peter Farland
  * @see ConfigurationParser
  * @exclude
  */

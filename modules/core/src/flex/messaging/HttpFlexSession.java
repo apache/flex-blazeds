@@ -38,8 +38,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * FlexSession implementation for use with HTTP-based channels.
- *
- * @author shodgson
  */
 public class HttpFlexSession extends FlexSession
     implements HttpSessionBindingListener, HttpSessionListener, HttpSessionAttributeListener, Serializable

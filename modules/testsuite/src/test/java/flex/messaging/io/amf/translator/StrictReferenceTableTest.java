@@ -29,8 +29,6 @@ import junit.framework.Test;
  * auto increments correctly, does not try to access items
  * out of bounds, and correct auto generates index-based
  * and incremented Integer values for added keys.
- *
- * @author Peter Farland
  */
 public class StrictReferenceTableTest extends TestCase
 {

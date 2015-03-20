@@ -27,8 +27,6 @@ import flex.messaging.util.UUIDUtils;
  * A message that represents an infrastructure command passed between
  * client and server. Subscribe/unsubscribe operations result in
  * CommandMessage transmissions, as do polling operations.
- *
- * @author neville
  */
 public class CommandMessage extends AsyncMessage
 {

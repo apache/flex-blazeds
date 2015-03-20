@@ -18,11 +18,6 @@ package org.springframework.flex.samples.dao;
 
 import java.util.List;
 
-/**
- * 
- * @author Christophe Coenraets
- * @author Jeremy Grelle
- */
 public interface IGenericDAO<T> {
 
     public List<T> findAll();

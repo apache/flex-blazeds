@@ -23,8 +23,6 @@ import java.util.Date;
 
 /**
  * Defines the runtime monitoring and management interface for managed endpoints.
- *
- * @author shodgson
  */
 public interface EndpointControlMBean extends BaseControlMBean
 {

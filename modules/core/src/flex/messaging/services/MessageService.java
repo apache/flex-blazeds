@@ -63,8 +63,6 @@ import flex.messaging.util.StringUtils;
 /**
  * The MessageService class is the Service implementation that manages point-to-point
  * and publish-subscribe messaging.
- *
- * @author neville
  */
 public class MessageService extends AbstractService implements MessagingConstants
 {

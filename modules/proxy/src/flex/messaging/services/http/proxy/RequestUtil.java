@@ -22,8 +22,6 @@ import flex.messaging.services.HTTPProxyService;
 /**
  * @exclude
  * Request methods shared by J2EE and .NET.
- *
- * @author Brian Deitte
  */
 public class RequestUtil
 {

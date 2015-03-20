@@ -20,8 +20,6 @@ import javax.management.MBeanServer;
 
 /**
  * Interface for classes that locate MBeanServers to register MBeans with.
- * 
- * @author shodgson
  */
 public interface MBeanServerLocator
 {

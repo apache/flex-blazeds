@@ -23,8 +23,6 @@ import flex.messaging.io.RecoverableSerializationException;
 
 /**
  * Filter that breaks down the batched message buffer into individual invocations.
- *
- * @author PS Neville
  */
 public class BatchProcessFilter extends AMFFilter
 {

@@ -61,7 +61,6 @@ import javax.sql.RowSet;
  * XML is formatted using using UTF-8 encoding.
  * </p>
  *
- * @author Peter Farland
  * @see AmfxMessageSerializer
  * @see AmfxInput
  */

@@ -22,8 +22,6 @@ import flex.messaging.MessageException;
  * This exception type is thrown when errors occur generating 
  * <code>ObjectName</code>s for MBeans, or when registering them or
  * accessing them via the MBean server.
- * 
- * @author shodgson
  */
 public class ManagementException extends MessageException
 {

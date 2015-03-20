@@ -19,11 +19,6 @@ package org.springframework.flex.samples.marketfeed;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 
- * @author Christophe Coenraets
- * @author Jeremy Grelle
- */
 public class Stock implements Serializable {
 
     private static final long serialVersionUID = -1763421100056755200L;

@@ -27,8 +27,6 @@ import flex.messaging.services.http.HTTPProxyDestination;;
  * @exclude
  * The <code>HTTPProxyDestinationControl</code> class is the MBean implementation for
  * monitoring and managing a <code>HTTPProxyDestination</code> at runtime.
- * 
- * @author shodgson
  */
 public class HTTPProxyDestinationControl extends DestinationControl
     implements HTTPProxyDestinationControlMBean

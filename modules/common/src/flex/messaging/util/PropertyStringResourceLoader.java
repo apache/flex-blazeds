@@ -39,7 +39,6 @@ import flex.messaging.log.LogCategories;
  * within parameterized strings.
  * </p>
  *
- * @author Seth Hodgson
  * @see MessageFormat
  * @exclude
  */

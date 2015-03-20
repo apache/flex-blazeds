@@ -29,7 +29,6 @@ import java.lang.reflect.Modifier;
  * and handle error conditions consistently across the RemoteObject
  * code base.
  *
- * @author Peter Farland
  * @exclude
  */
 public class ClassUtil

@@ -94,7 +94,6 @@ import flex.messaging.util.Trace;
  * The component is provided as a reference material, which may be inappropriate
  * for use without additional customization.
  * </p>
- * @author <a href="mailto:oleg -at- ural.ru">Oleg Kalnichevski</a>
  */
 public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
 {

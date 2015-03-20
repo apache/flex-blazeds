@@ -34,8 +34,6 @@ import flex.messaging.services.messaging.ThrottleManager.ThrottleResult.Result;
  * specified. Its behavior is very simple. It adds all new messages in order to the tail
  * of the outbound queue and flushes all queued messages to the network as quickly as possible.
  * It also handles the outbound client-level throttling specified at the destination level.
- *
- * @author shodgson
  */
 public class FlexClientOutboundQueueProcessor
 {

@@ -31,7 +31,6 @@ import java.util.List;
  * </p>
  *
  * @see flex.messaging.Destination
- * @author Peter Farland
  * @exclude
  */
 public class DestinationSettings extends PropertiesSettings

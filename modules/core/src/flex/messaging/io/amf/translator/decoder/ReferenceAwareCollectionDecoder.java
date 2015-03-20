@@ -28,9 +28,7 @@ import java.lang.reflect.Array;
  * translation to another type.
  *
  * Note that tracking references is an expensive exercise and will
- * scale poorly with larger amounts of data.
- *
- * @author Peter Farland
+ * scale poorly with larger amounts of data.`
  *
  * @exclude
  */

@@ -28,7 +28,6 @@ import flex.messaging.MessageException;
  * A special sub-class RecoverableSerializationException can be thrown for non-fatal
  * serialization exceptions.
  * 
- * @author Peter Farland
  * @see flex.messaging.io.RecoverableSerializationException
  */
 public class SerializationException extends MessageException

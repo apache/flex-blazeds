@@ -22,8 +22,6 @@ import flex.messaging.services.MessageService;
 /**
  * The <code>MessageServiceControl</code> class is the MBean implemenation
  * for monitoring and managing a <code>MessageService</code> at runtime.
- *
- * @author shodgson
  */
 public class MessageServiceControl extends ServiceControl implements
         MessageServiceControlMBean

@@ -23,8 +23,6 @@ import flex.messaging.services.messaging.adapters.JMSAdapter;
 /**
  * The <code>JMSAdapterControl</code> class is the MBean implemenation
  * for monitoring and managing <code>JMSAdapter</code>s at runtime.
- * 
- * @author shodgson
  */
 public class JMSAdapterControl extends ServiceAdapterControl implements
         JMSAdapterControlMBean

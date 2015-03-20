@@ -20,8 +20,6 @@ import javax.management.MalformedObjectNameException;
 
 /**
  * Remotable ObjectInstance representation that complies with Flash serialization requirements.
- * 
- * @author shodgson
  */
 public class ObjectInstance
 {

@@ -33,8 +33,6 @@ import flex.messaging.FlexConfigurable;
  * Implementations of this interface must provide a default, no-args
  * constructor.
  * </p>
- * 
- * @author Peter Farland
  */
 public interface ProtocolFactory extends FlexConfigurable
 {

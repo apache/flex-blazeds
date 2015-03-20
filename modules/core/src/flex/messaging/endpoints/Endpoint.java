@@ -30,8 +30,6 @@ import flex.messaging.config.SecurityConstraint;
  * The endpoint also encodes messages and delivers them to clients.
  * Endpoints are specific to a message format and network transport,
  * and are defined by the named URI path on which they are located.
- * 
- * @author neville
  */
 public interface Endpoint extends Manageable
 {

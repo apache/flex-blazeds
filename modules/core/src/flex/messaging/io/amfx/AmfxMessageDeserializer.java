@@ -38,8 +38,6 @@ import java.lang.reflect.Method;
 
 /**
  * SAX based AMFX Parser.
- *
- * @author Peter Farland
  */
 public class AmfxMessageDeserializer extends DefaultHandler implements MessageDeserializer
 {

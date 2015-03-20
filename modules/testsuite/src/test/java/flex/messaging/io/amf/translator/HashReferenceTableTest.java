@@ -38,8 +38,6 @@ import flex.messaging.io.amf.TraitsInfo;
  * for our AMF3 serialization code.
  *
  * @see flex.messaging.io.amf.TraitsInfo;
- *
- * @author Peter Farland
  */
 public class HashReferenceTableTest extends TestCase
 {

@@ -37,8 +37,6 @@ import java.net.UnknownHostException;
 /**
  * @exclude
  * Fills in ProxyContext data for use by ProxyFilters within HttpProxyAdapter.
- *
- * @author Brian Deitte
  */
 public class ProxyContextFilter extends ProxyFilter
 {

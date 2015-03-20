@@ -19,8 +19,6 @@ package flex.management.runtime.messaging.services;
 
 /**
  * Defines the runtime monitoring and management interface for managed remoting services.
- * 
- * @author shodgson
  */
 public interface RemotingServiceControlMBean extends ServiceControlMBean
 {

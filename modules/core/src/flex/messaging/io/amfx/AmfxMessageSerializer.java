@@ -27,8 +27,6 @@ import java.io.OutputStream;
 import java.io.IOException;
 
 /**
- * @author Peter Farland
- *
  * @exclude
  */
 public class AmfxMessageSerializer implements MessageSerializer, AmfxTypes

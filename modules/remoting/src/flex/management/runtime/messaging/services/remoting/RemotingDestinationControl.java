@@ -29,8 +29,6 @@ import flex.messaging.services.remoting.RemotingDestination;
  *
  * This class performs no internal synchronization, so the statistics it tracks may differ slightly from
  * the true values but they don't warrant the cost full synchronization.
- *
- * @author shodgson
  */
 public class RemotingDestinationControl extends DestinationControl implements
         RemotingDestinationControlMBean

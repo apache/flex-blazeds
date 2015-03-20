@@ -31,7 +31,6 @@ import java.util.List;
  * and added as a Map.
  * </p>
  *
- * @author Peter Farland
  * @exclude
  */
 public abstract class PropertiesSettings

@@ -33,8 +33,6 @@ import java.util.Map;
  * client-side code is capable of dealing with non-fully-populated recordsets,
  * that is, ActionScript RecordSets which are missing some of their data.
  *
- * @author Mark Sheppard
- * @author Peter Farland
  * @version 1.0
  */
 public class PagedRowSet implements PageableRowSet

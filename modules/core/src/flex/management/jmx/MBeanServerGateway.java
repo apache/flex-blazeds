@@ -79,8 +79,6 @@ import javax.management.RuntimeOperationsException;
  *   <li>getFlexMBeanObjectNames()</li>
  * </ul>
  * </p>
- *
- * @author shodgson
  */
 public class MBeanServerGateway
 {

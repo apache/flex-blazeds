@@ -21,8 +21,6 @@ import flex.messaging.MessageException;
 /**
  * @exclude
  * Simple exception used to get back to ErrorFilter from other filters.
- *
- * @author Brian Deitte
  */
 public class ProxyException extends MessageException
 {

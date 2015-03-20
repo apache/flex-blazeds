@@ -24,8 +24,6 @@ import java.io.ObjectOutput;
  * Entry point for serializing an individual ActionMessage
  * response message for AMF, AMFX or RTMP Channels.
  *
- * @author Peter Farland
- *
  * @see flex.messaging.io.amf.Amf0Input Classic Version 0 Deserializer
  * @see flex.messaging.io.amf.Amf3Input AVM+ Version 3 Deserializer
  *

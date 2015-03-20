@@ -51,8 +51,6 @@ import javax.servlet.ServletConfig;
  * register instances with the MBean server, and the
  * <code>getObjectName()</code> method gaurantees consistent, well-formed
  * <code>ObjectName</code>s for all MBean instances.</p>
- *
- * @author shodgson
  */
 public abstract class BaseControl implements BaseControlMBean,
         MBeanRegistration

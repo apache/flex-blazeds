@@ -19,8 +19,6 @@ package flex.messaging.services.http.proxy;
 /**
  * @exclude
  * Store all the information needed for a proxy request that's used in flex.server.common.proxy.
- *
- * @author Brian Deitte
  */
 public class SharedProxyContext
 {

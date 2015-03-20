@@ -24,8 +24,6 @@ import java.util.Map;
  * sends them to a Service. The MessageBroker also sends Messages to
  * Endpoints, and a Service may ask its Broker to send Messages to
  * Endpoints.
- *
- * @author neville
  */
 public interface Message
         extends Serializable, Cloneable, Comparable<Message> //, javax.jms.Message

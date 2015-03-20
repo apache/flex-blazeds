@@ -25,8 +25,6 @@ import java.util.Date;
 /**
  * The <code>ThrottleManagerControl</code> class is the MBean implementation for
  * monitoring and managing a <code>ThrottleManager</code> at runtime.
- *
- * @author shodgson
  */
 public class ThrottleManagerControl extends BaseControl implements
         ThrottleManagerControlMBean

@@ -45,8 +45,6 @@ import flex.messaging.log.Log;
 /**
  * @exclude
  * Send the response to the client, including custom copying of headers and cookies.
- *
- * @author Brian Deitte
  */
 public class ResponseFilter extends ProxyFilter
 {

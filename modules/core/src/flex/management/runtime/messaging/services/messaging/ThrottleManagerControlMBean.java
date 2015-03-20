@@ -24,8 +24,6 @@ import java.util.Date;
 /**
  * Defines the runtime monitoring and management interface for
  * <code>ThrottleManager</code>s.
- *
- * @author shodgson
  */
 public interface ThrottleManagerControlMBean extends BaseControlMBean
 {

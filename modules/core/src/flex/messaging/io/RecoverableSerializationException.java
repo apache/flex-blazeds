@@ -23,7 +23,6 @@ package flex.messaging.io;
  * and the message can be processed in the usual stream.
  * The BatchProcessFilter will add an error message to the response
  * of any messages which have a recoverable serialization exception.
- * @author Cathy Reilly
  */
 public class RecoverableSerializationException extends SerializationException
 {

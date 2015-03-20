@@ -42,12 +42,6 @@ import javax.servlet.http.HttpServletRequest;
  * by accepting an HTTPMessage type which can be sent over
  * any channel.
  *
- * @author Cathy Murphy
- * @author Glen Daniels
- * @author Brian Deitte
- * @author Sean Neville
- * @author Peter Farland
- *
  * @see flex.messaging.messages.HTTPMessage
  */
 public class HTTPProxyService extends AbstractService

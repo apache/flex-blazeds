@@ -37,9 +37,6 @@ import javax.management.ObjectName;
 /**
  * The <code>MessageBrokerControl</code> class is the MBean implemenation for monitoring
  * and managing a <code>MessageBroker</code> at runtime.
- *
- * @author shodgson
- * @author majacobs
  */
 public class MessageBrokerControl extends BaseControl implements MessageBrokerControlMBean
 {

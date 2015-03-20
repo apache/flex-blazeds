@@ -29,8 +29,6 @@ import java.util.HashMap;
  * the ActionScript Object type we can map the class to a java.util.HashMap on the
  * server, since the user would expect this type to be deserialized as a
  * java.util.HashMap as it is...
- *
- * @author Peter Farland
  */
 public class ObjectProxy extends HashMap implements Externalizable
 {

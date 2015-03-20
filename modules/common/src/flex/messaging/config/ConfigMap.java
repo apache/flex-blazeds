@@ -33,8 +33,6 @@ import java.util.Set;
  * rather than replacing the existing property. It also provides utility APIs
  * for getting properties from the Map, cast to a certain type and allows a
  * default to be specified in the event that the property is missing.
- *
- * @author Peter Farland
  */
 public class ConfigMap extends LinkedHashMap
 {
