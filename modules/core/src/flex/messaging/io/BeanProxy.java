@@ -423,8 +423,7 @@ public class BeanProxy extends AbstractProxy
             {
                 synchronized (rwBeanPropertyCache)
                 {
-                    props = roBeanPropertyCache.get(c);
-
+                    props = rwBeanPropertyCache.get(c);
                 }
             }
             if (props != null)
@@ -503,8 +502,7 @@ public class BeanProxy extends AbstractProxy
             {
                 synchronized (rwBeanPropertyCache)
                 {
-                    roBeanPropertyCache.put(c, props);
-
+                    rwBeanPropertyCache.put(c, props);
                 }
             }
         }
