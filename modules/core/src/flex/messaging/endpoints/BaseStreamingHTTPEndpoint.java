@@ -777,7 +777,6 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
                 if (addNoCacheHeaders)
                     addNoCacheHeaders(req, res);
                 res.setContentType(getResponseContentType());
-                res.setHeader("Connection", "close");
                 res.setHeader("Transfer-Encoding", "chunked");
                 ServletOutputStream os = res.getOutputStream();
                 res.flushBuffer();
