@@ -123,6 +123,14 @@ public class XMLUtil
                 StringReader reader = new StringReader(xml);
                 InputSource input = new InputSource(reader);
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+                // Disable local resolution of entities due to security issues
+                // See: https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Processing
+                factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                factory.setXIncludeAware(false);
+                factory.setExpandEntityReferences(false);
+
                 factory.setNamespaceAware(nameSpaceAware);
                 factory.setValidating(false);
                 DocumentBuilder builder = factory.newDocumentBuilder();
