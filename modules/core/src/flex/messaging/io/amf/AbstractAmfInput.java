@@ -82,7 +82,8 @@ public abstract class AbstractAmfInput extends AmfIO implements ActionMessageInp
             return xml;
 
         // Validation performed in XMLUtil#stringToDocument.
-        return XMLUtil.stringToDocument(xml, !(context.legacyXMLNamespaces));
+        return XMLUtil.stringToDocument(xml, !(context.legacyXMLNamespaces),
+                context.allowXmlExternalEntityExpansion);
     }
 
     /**

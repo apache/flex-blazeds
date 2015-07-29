@@ -1049,7 +1049,8 @@ public class AmfxInput
         xml = unescapeCloseCDATA(xml);
 
         // Validation performed in XMLUtil#stringToDocument.
-        Object value = XMLUtil.stringToDocument(xml, !(context.legacyXMLNamespaces));
+        Object value = XMLUtil.stringToDocument(xml, !(context.legacyXMLNamespaces),
+                context.allowXmlExternalEntityExpansion);
         setValue(value);
     }
 

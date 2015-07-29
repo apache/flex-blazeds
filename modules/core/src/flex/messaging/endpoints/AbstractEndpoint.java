@@ -109,6 +109,8 @@ public abstract class AbstractEndpoint extends ManageableComponent
     private static final String LEGACY_THROWABLE = "legacy-throwable";
     private static final String LEGACY_BIG_NUMBERS = "legacy-big-numbers";
     private static final String LEGACY_EXTERNALIZABLE = "legacy-externalizable";
+    private static final String ALLOW_XML_EXTERNAL_ENTITY_EXPANSION = "allow-xml-external-entity-expansion";
+
     private static final String LOG_PROPERTY_ERRORS = "log-property-errors";
     private static final String IGNORE_PROPERTY_ERRORS = "ignore-property-errors";
     private static final String INCLUDE_READ_ONLY = "include-read-only";
@@ -276,6 +278,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
             serializationContext.legacyThrowable = serialization.getPropertyAsBoolean(LEGACY_THROWABLE, false);
             serializationContext.legacyBigNumbers = serialization.getPropertyAsBoolean(LEGACY_BIG_NUMBERS, false);
             serializationContext.legacyExternalizable = serialization.getPropertyAsBoolean(LEGACY_EXTERNALIZABLE, false);
+            serializationContext.allowXmlExternalEntityExpansion = serialization.getPropertyAsBoolean(ALLOW_XML_EXTERNAL_ENTITY_EXPANSION, false);
             serializationContext.maxObjectNestLevel = (int)serialization.getPropertyAsLong(MAX_OBJECT_NEST_LEVEL, 512);
             serializationContext.maxCollectionNestLevel = (int)serialization.getPropertyAsLong(MAX_COLLECTION_NEST_LEVEL, 15);
             serializationContext.preferVectors = serialization.getPropertyAsBoolean(PREFER_VECTORS, false);

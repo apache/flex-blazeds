@@ -41,7 +41,7 @@ public class SerializationContext implements Serializable, Cloneable
     public boolean restoreReferences;
     public boolean supportRemoteClass;
     public boolean supportDatesByReference; // Typically used by AMF Version 3 requests
-    
+
     /**
      * Determines whether an ASObject is created by default for a type that is
      * missing on the server, instead of throwing a server resource not found
@@ -76,9 +76,11 @@ public class SerializationContext implements Serializable, Cloneable
     // How deep level of nest object in the object graph that we support
     public int maxObjectNestLevel = 512;
     
-    // How deep levle of nest collection objects in the object graph that we support
+    // How deep level of nest collection objects in the object graph that we support
     // Similarly like how many dimensional matrix that we support for serialization.
     public int maxCollectionNestLevel = 15;
+
+    public boolean allowXmlExternalEntityExpansion = false;
 
     /**
      * In server-to-client serialization, determines whether Java Arrays and Lists
@@ -225,6 +227,7 @@ public class SerializationContext implements Serializable, Cloneable
             context.deserializationValidator = deserializationValidator;
             context.maxObjectNestLevel = maxObjectNestLevel;
             context.maxCollectionNestLevel = maxCollectionNestLevel;
+            context.allowXmlExternalEntityExpansion = allowXmlExternalEntityExpansion;
             context.preferVectors = preferVectors;
             return context;
         }

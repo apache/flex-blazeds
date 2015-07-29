@@ -16,9 +16,9 @@
  */
 package flex.messaging.util;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import flex.messaging.MessageException;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,11 +28,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-
-import flex.messaging.MessageException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 /**
  * Utility class for converting strings to XML documents and
@@ -59,7 +57,7 @@ public class XMLUtil
      */
     public static String documentToString(Document document) throws IOException
     {
-        String xml = null;
+        String xml;
 
         try
         {
@@ -99,7 +97,7 @@ public class XMLUtil
      */
     public static Document stringToDocument(String xml)
     {
-        return stringToDocument(xml, true);
+        return stringToDocument(xml, true, false);
     }
 
     /**
@@ -111,7 +109,7 @@ public class XMLUtil
      * is name-space aware
      * @return Document
      */
-    public static Document stringToDocument(String xml, boolean nameSpaceAware)
+    public static Document stringToDocument(String xml, boolean nameSpaceAware, boolean allowXmlExternalEntityExpansion)
     {
         ClassUtil.validateCreation(Document.class);
 
@@ -124,12 +122,15 @@ public class XMLUtil
                 InputSource input = new InputSource(reader);
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-                // Disable local resolution of entities due to security issues
-                // See: https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Processing
-                factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-                factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-                factory.setXIncludeAware(false);
-                factory.setExpandEntityReferences(false);
+                if(!allowXmlExternalEntityExpansion)
+                {
+                    // Disable local resolution of entities due to security issues
+                    // See: https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Processing
+                    factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                    factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                    factory.setXIncludeAware(false);
+                    factory.setExpandEntityReferences(false);
+                }
 
                 factory.setNamespaceAware(nameSpaceAware);
                 factory.setValidating(false);
