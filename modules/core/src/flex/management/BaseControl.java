@@ -113,7 +113,7 @@ public abstract class BaseControl implements BaseControlMBean,
 
     /**
      * Set the register object. 
-     * @param registar the registrar to set
+     * @param registrar the registrar to set
      */
     protected void setRegistrar(AdminConsoleDisplayRegistrar registrar)
     {
@@ -316,12 +316,14 @@ public abstract class BaseControl implements BaseControlMBean,
      * <li><code>domain</code>: The domain specified by the DOMAIN_PREFIX
      * constant followed by the application identifier if one is available.</li>
      * <li><code>type</code>: The short type name of the resource managed by
-     * the MBean.<br /> - The <code>MessageBrokerControlMBean</code> manages
+     * the MBean.
+     * - The <code>MessageBrokerControlMBean</code> manages
      * the <code>flex.messaging.MessageBroker</code> so:
      * <code>type=MessageBroker</code> </li>
      * <li><code>id</code>: The id value for the resource managed by this
      * MBean. If no name or id is available on the resource, an id will be
-     * fabricated according to this strategy:<br />
+     * fabricated according to this strategy:
+     *
      * <em>id = {type} + N</em> (where N is a numeric increment for instances
      * of this type) </li>
      * <li>* optional containment keys</li>
@@ -332,11 +334,13 @@ public abstract class BaseControl implements BaseControlMBean,
      * containment in the following fashion. First, the 'type' key for a
      * contained MBean indicates the containment hierarchy for the bean. So, the
      * <code>ObjectName</code> for an <code>RTMPEndpointControlMBean</code>
-     * would be: <code>type=MessageBroker.RTMPEndpoint</code><br />
+     * would be: <code>type=MessageBroker.RTMPEndpoint</code>
+     *
      * In addition to the hierarchical 'type' key, the full
      * <code>ObjectName</code> for this <code>RTMPEndpointControlMBean</code>
      * also contains a containment key:
-     * <code>MessageBroker=MessageBroker1</code><br />
+     * <code>MessageBroker=MessageBroker1</code>
+     *
      * Optional containment keys have the format:
      * <em>{parent type}={parent name}</em>. A containment key is added for
      * each ancestor up to the root of the hierarchy and these keys allow the

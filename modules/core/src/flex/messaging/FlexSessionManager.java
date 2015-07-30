@@ -21,7 +21,6 @@ import flex.messaging.log.LogCategories;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
  * Manages FlexSession instances for a MessageBroker. 
  */
 public class FlexSessionManager extends ManageableComponent
@@ -50,9 +49,10 @@ public class FlexSessionManager extends ManageableComponent
     /**
      *
      * Constructs a <tt>FlexSessionManager</tt> for the passed <tt>MessageBroker</tt> and optionally enables management.
-     * 
+     *
      * @param enableManagement <code>true</code> if the <tt>FlexSessionManager</tt>
-     * is manageable; otherwise <code>false</code>.
+     *                         is manageable; otherwise <code>false</code>.
+     * @param broker the message broker
      */
     public FlexSessionManager(boolean enableManagement, MessageBroker broker)
     {

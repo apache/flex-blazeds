@@ -88,6 +88,7 @@ public class ObjectName
      * <code>javax.management.ObjectName</code> instance.
      * 
      * @return A JMX <code>ObjectName</code> based upon this instance.
+     * @throws MalformedObjectNameException an exception
      */
     public javax.management.ObjectName toObjectName() throws MalformedObjectNameException
     {

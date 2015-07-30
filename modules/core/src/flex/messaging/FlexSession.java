@@ -338,6 +338,8 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      * small messages should be sent, even if they are supported.
      *
      * The default is false.
+     *
+     * @return true if the server can attempt to send small messages.
      */
     public boolean useSmallMessages()
     {
@@ -345,7 +347,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     }
 
     /**
-     *
+     * @param value true if the server can attempt to send small messages.
      */
     public void setUseSmallMessages(boolean value)
     {
@@ -469,7 +471,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      * Implements MessageClientListener.
      * Handling created events is a no-op.
      *
-     * @messageClient The new MessageClient.
+     * @param messageClient The new MessageClient.
      */
     public void messageClientCreated(MessageClient messageClient) {}
 

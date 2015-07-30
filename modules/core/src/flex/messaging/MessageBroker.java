@@ -682,8 +682,7 @@ public class MessageBroker extends ManageableComponent
      * Returns the <code>Endpoint</code> with the specified id.
      *
      * @param id The id of the <code>Endpoint</code>/
-     * @return The <code>Endpoint</code> with the specified id or null if no
-     * <code>Endpoint</code> with the id exists.
+     * @return The <code>Endpoint</code> with the specified id or null if no <code>Endpoint</code> with the id exists.
      */
     public Endpoint getEndpoint(String id)
     {
@@ -693,6 +692,8 @@ public class MessageBroker extends ManageableComponent
     /**
      *
      * Retrieve the map of all endpoints in this broker.
+     *
+     * @return the map of all endpoints in this broker
      */
     public Map<String, Endpoint> getEndpoints()
     {
@@ -703,6 +704,10 @@ public class MessageBroker extends ManageableComponent
      *
      * Retrieve an endpoint based on a requested URL path. Two endpoints should not be
      * registered to the same path.
+     *
+     * @param path the URL path
+     * @param contextPath the context path
+     * @return endpoint based on a requested URL path
      */
     public Endpoint getEndpoint(String path, String contextPath)
     {
@@ -1179,7 +1184,7 @@ public class MessageBroker extends ManageableComponent
         flexSessionManager = value;
     }
 
-    /** @exclude **/
+
     public RedeployManager getRedeployManager()
     {
         return redeployManager;
@@ -1675,7 +1680,8 @@ public class MessageBroker extends ManageableComponent
      * Services call this method in order to send a message
      * to a FlexClient.
      *
-     *
+     * @param message the message
+     * @param messageClient the message client the message should be sent to
      */
     public void routeMessageToMessageClient(Message message, MessageClient messageClient)
     {
@@ -1761,6 +1767,9 @@ public class MessageBroker extends ManageableComponent
     /**
      *
      * Returns the logging category to use for a given message.
+     *
+     * @param message the message
+     * @return the logging category to use for a given message
      */
     public String getLogCategory(Message message)
     {
@@ -1795,6 +1804,9 @@ public class MessageBroker extends ManageableComponent
      * Used internally by AbstractService to check existence of destination and service id
      * mapping in the destinationToService map.
      *
+     * @param destId the destination id
+     * @param svcId the service id
+     * @param throwException true if an exception should be thrown if something goes wrong
      * @return True if the destination is already registered.
      */
     public boolean isDestinationRegistered(String destId, String svcId, boolean throwException)
@@ -1853,6 +1865,7 @@ public class MessageBroker extends ManageableComponent
      * a destination is registered for.
      *
      * @param destId Destination id.
+     * @return the Destination oblect for the given destination id
      */
     public Destination getRegisteredDestination(String destId)
     {
@@ -1909,6 +1922,8 @@ public class MessageBroker extends ManageableComponent
     /**
      *
      * Utility method to make sure that message has an assigned messageId.
+     *
+     * @param message the message that should be checked
      */
     protected void checkMessageId(Message message)
     {
@@ -1924,8 +1939,8 @@ public class MessageBroker extends ManageableComponent
      *
      * Check the headers for the message for the RemoteCredentials.
      *
-     * @param service
-     * @param message
+     * @param service the service
+     * @param message the message
      */
     protected void extractRemoteCredentials(Service service, Message message)
     {
@@ -2009,6 +2024,8 @@ public class MessageBroker extends ManageableComponent
      *
      * This method was added so that Spring-BlazeDS Integration 1.0.2 works with latest BlazeDS binaries
      * Internally, this method simply invokes the setServletContext(...) method
+     *
+     * @param servletContext ServletContext that should be set.
      */
     protected void setInitServletContext(ServletContext servletContext)
     {
@@ -2042,8 +2059,6 @@ public class MessageBroker extends ManageableComponent
 
     /**
      * Stop all of the broker's endpoints.
-     *
-     *
      */
     protected void stopEndpoints()
     {

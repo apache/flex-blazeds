@@ -21,8 +21,6 @@ import flex.messaging.util.StringUtils;
 
 /**
  * Class representing the build version of Data Services.
- * 
- *@exclude
  */
 public class VersionInfo
 {

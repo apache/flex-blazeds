@@ -39,8 +39,6 @@ import flex.messaging.log.Log;
  *  should be able to extend the PrettyPrintable interface to handle
  *  any custom toString requirements without needing to actually call
  *  toString on a custom object.
- *
- *  @exclude
  */
 public class ToStringPrettyPrinter extends BasicPrettyPrinter
 {

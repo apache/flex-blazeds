@@ -138,7 +138,7 @@ public class JavaFactoryInstance extends FactoryInstance
         }
     }
 
-    /** @exclude **/
+
     @Override public String toString()
     {
         return "JavaFactory instance for id=" + getId() + " source=" + getSource() + " scope=" + getScope();

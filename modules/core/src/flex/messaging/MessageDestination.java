@@ -282,7 +282,7 @@ public class MessageDestination extends FactoryDestination
         return throttleManager;
     }
 
-    /** @exclude **/
+
     @Override
     public boolean equals(Object o)
     {
@@ -302,7 +302,7 @@ public class MessageDestination extends FactoryDestination
         return false;
     }
 
-    /** @exclude **/
+
     @Override
     public int hashCode()
     {
@@ -310,7 +310,7 @@ public class MessageDestination extends FactoryDestination
             (getId() == null ? 0 : getId().hashCode());
     }
 
-    /** @exclude **/
+
     @Override
     public String toString()
     {

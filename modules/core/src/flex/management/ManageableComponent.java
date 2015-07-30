@@ -256,7 +256,7 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
     /**
      * Sets if the component is started.
      *
-     * @param started
+     * @param started true if the component is started.
      */
     protected void setStarted(boolean started)
     {
@@ -292,7 +292,7 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
     /**
      * Sets if the component is valid.
      *
-     * @param valid
+     * @param valid true if the comoponent is valid.
      */
     protected void setValid(boolean valid)
     {

@@ -59,6 +59,8 @@ public class HttpFlexSession extends FlexSession
     /**
      *
      * Not for public use. Constructs new instances that effectively wrap pre-existing JEE HttpSession instances.
+     *
+     * @param provider HttpFlexSessionProvider object
      */
     public HttpFlexSession(HttpFlexSessionProvider provider) 
     {
@@ -309,6 +311,8 @@ public class HttpFlexSession extends FlexSession
      * disconnected its channel.
      * Supports invalidating the HttpFlexSession and underlying JEE HttpSession without
      * triggering session recreation.
+     *
+     * @param recreate true if the http session should be recreated.
      */
     public void invalidate(boolean recreate)
     {

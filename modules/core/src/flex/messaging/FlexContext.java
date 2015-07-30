@@ -56,6 +56,12 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @param flexClient the Flex client
+     * @param session the Flex session
+     * @param broker the message broker
+     * @param request the http servlet request
+     * @param response the http servlet response
+     * @param servletConfig the servlet config
      */
     public static void setThreadLocalObjects(FlexClient flexClient,
                                              FlexSession session,
@@ -79,6 +85,9 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @param flexClient the Flex client
+     * @param session the Flex session
+     * @param broker the message broker
      */
     public static void setThreadLocalObjects(FlexClient flexClient, FlexSession session, MessageBroker broker)
     {
@@ -112,6 +121,7 @@ public class FlexContext
      * The HttpServletResponse for the current request if the request is via HTTP.
      * Returns null if the client is using a non-HTTP channel.
      * Available for users.
+     *
      * @return HttpServletRequest current HttpServletRequest object
      */
     public static HttpServletRequest getHttpRequest()
@@ -122,6 +132,7 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @param value HttpServletRequest object
      */
     public static void setThreadLocalHttpRequest(HttpServletRequest value)
     {
@@ -138,6 +149,7 @@ public class FlexContext
      * The HttpServletResponse for the current request if the request is via HTTP.
      * Returns null if the using an non-HTTP channel.
      * Available for users.
+     *
      * @return HttpServletResponse current HttpServletResponse object
      */
     public static HttpServletResponse getHttpResponse()
@@ -148,6 +160,7 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @param value HttpServletResponse object
      */
     public static void setThreadLocalHttpResponse(HttpServletResponse value)
     {
@@ -164,6 +177,7 @@ public class FlexContext
      * The HttpServletRequest for the current request if it is transporting a tunneled protocol.
      * Returns null if the current request protocol it not tunneled.
      * Available for users.
+     *
      * @return HttpServletRequest tunnel HttpServletRequest object
      */
     public static HttpServletRequest getTunnelHttpRequest()
@@ -174,6 +188,7 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @param value HttpServletRequest object
      */
     public static void setThreadLocalTunnelHttpRequest(HttpServletRequest value)
     {
@@ -189,6 +204,7 @@ public class FlexContext
     /**
      * The ServletConfig for the current request, uses the last known ServletConfig
      * when the request is not via HTTP.  Available for users.
+     *
      * @return ServletConfig current ServletConfig object
      */
     public static ServletConfig getServletConfig()
@@ -203,6 +219,7 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @param value ServletConfig object
      */
     public static void setThreadLocalServletConfig(ServletConfig value)
     {
@@ -222,6 +239,7 @@ public class FlexContext
 
     /**
      * The ServletContext for the current web application.
+     *
      * @return ServletContext current ServletContext object
      */
     public static ServletContext getServletContext()
@@ -231,6 +249,7 @@ public class FlexContext
 
     /**
      * The FlexClient for the current request. Available for users.
+     *
      * @return FlexClient the current FlexClient object
      */
     public static FlexClient getFlexClient()
@@ -241,6 +260,7 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @param flexClient FlexClient object
      */
     public static void setThreadLocalFlexClient(FlexClient flexClient)
     {
@@ -255,6 +275,7 @@ public class FlexContext
 
     /**
      * The FlexSession for the current request.  Available for users.
+     *
      * @return FlexSession the current FlexSession object
      */
     public static FlexSession getFlexSession()
@@ -265,6 +286,7 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @param session FlexSession object
      */
     public static void setThreadLocalSession(FlexSession session)
     {
@@ -280,7 +302,7 @@ public class FlexContext
     /**
      * The MessageBroker for the current request.  Not available for users.
      *
-     *
+     * @return The MessageBroker for the current request
      */
     public static MessageBroker getMessageBroker()
     {
@@ -290,6 +312,7 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @param value MessageBroker object
      */
     public static void setThreadLocalMessageBroker(MessageBroker value)
     {
@@ -309,6 +332,7 @@ public class FlexContext
     /**
      * The Endpoint for the current message. Not available for users.
      *
+     * @return The Endpoint for the current message
      */
     public static Endpoint getEndpoint()
     {
@@ -318,6 +342,7 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @param value Endpoint object
      */
     public static void setThreadLocalEndpoint(Endpoint value)
     {
@@ -333,6 +358,7 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @return MessageRoutedNotifier object
      */
     public static MessageRoutedNotifier getMessageRoutedNotifier()
     {
@@ -342,6 +368,7 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @param value MessageRoutedNotifier object
      */
     public static void setMessageRoutedNotifier(MessageRoutedNotifier value)
     {
@@ -370,8 +397,6 @@ public class FlexContext
      * a server peer in a cluster.
      *
      * @param value True if the message came from a peer; otherwise false.
-     *
-     *
      */
     public static void setMessageFromPeer(boolean value)
     {
@@ -384,6 +409,7 @@ public class FlexContext
     /**
      * Users should not call this.
      *
+     * @return true if per-client-authentication is turned on.
      */
     public static boolean isPerClientAuthentication()
     {
@@ -419,7 +445,7 @@ public class FlexContext
      * perClientAuthentication is in use.
      *
      * @param userPrincipal The principal to associate with the FlexClient or FlexSession
-     * depending upon whether perClientAuthentication is in use.
+     *                      depending upon whether perClientAuthentication is in use.
      */
     public static void setUserPrincipal(Principal userPrincipal)
     {
@@ -430,7 +456,6 @@ public class FlexContext
     }
 
     /**
-     *
      * Create the static thread local storage.
      */
     public static void createThreadLocalObjects()
@@ -451,7 +476,6 @@ public class FlexContext
     }
 
     /**
-     *
      * Destroy the static thread local storage.
      * Call ONLY on shutdown
      */

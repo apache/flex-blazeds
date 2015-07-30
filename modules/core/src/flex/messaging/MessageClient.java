@@ -414,6 +414,8 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      * if it is attempting to notify the client, then we must leave the outbound queue containing
      * the notification in place. Otherwise, any messages queued for the subscription may be
      * removed from the queue and possibly shut down immediately.
+     *
+     * @return true if the MessageClient is currently trying to notify the client about it's invalidation.
      */
     public boolean isAttemptingInvalidationClientNotification()
     {
@@ -427,6 +429,8 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      * It allows the FlexClient class to cleanup the outbound queue for the channel's
      * corresponding server endpoint for the remote client, because we know that no
      * currently queued messages need to be retained for delivery.
+     *
+     * @param value true if the MessageClient is invalidated due to the client being disconnected
      */
     public void setClientChannelDisconnected(boolean value)
     {
@@ -434,7 +438,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     *
+     * @return true if the MessageClient is invalidated due to the client being disconnected
      */
     public boolean isClientChannelDisconnected()
     {

@@ -71,7 +71,7 @@ public class MessageService extends AbstractService implements MessagingConstant
     /** Log category for <code>MessageService</code> that captures message timing. */
     public static final String TIMING_LOG_CATEGORY = LogCategories.MESSAGE_TIMING;
 
-    /** @exclude **/
+
     public static final String NOT_SUBSCRIBED_CODE = "Server.Processing.NotSubscribed";
 
     // Errors

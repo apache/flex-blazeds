@@ -780,7 +780,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     //
     //--------------------------------------------------------------------------
 
-    /** @exclude **/
+
     public static void addNoCacheHeaders(HttpServletRequest req, HttpServletResponse res)
     {
         String userAgent = req.getHeader(UserAgentManager.USER_AGENT_HEADER_NAME);

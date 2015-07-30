@@ -124,7 +124,7 @@ public interface Endpoint extends Manageable
      */
     double getMessagingVersion();
     
-    /** @exclude **/
+
     String getParsedUrl(String contextPath);
     
     /**
