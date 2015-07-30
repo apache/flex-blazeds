@@ -236,6 +236,7 @@
                 <exclude name="**/*.flv"/>
                 <exclude name="installer/build.number"/>
                 <exclude name="**/swfobject.js"/>
+                <exclude name="**/DoNotDeleteUntilFile.txt" />
                 <exclude name="CONTRIBUTORS"/>
                 <exclude name="CONTRIBUTING"/>
             </fileset>
