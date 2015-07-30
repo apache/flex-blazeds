@@ -130,7 +130,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
 
     /**
      * Initializes the <code>HTTPProxyAdapter</code> with the properties.
-     * <p/>
+     *
      * <pre>
      * &lt;connection-manager&gt;
      *     &lt;cookie-policy&gt;rfc2109&lt;/cookie-policy&gt;

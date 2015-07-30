@@ -95,7 +95,7 @@ public interface Endpoint extends Manageable
      * All endpoints are referenceable by an ID that is unique among
      * all the endpoints registered to a single broker instance. The id
      * is set through this method, usually through parsed configuration.
-     * <p/>
+     *
      * @param id The endpoint ID.
      */
     void setId(String id);
@@ -158,7 +158,7 @@ public interface Endpoint extends Manageable
      * Responds to HTTP-based messages published by a client. Endpoints which
      * do not support access over HTTP should throw an UnsupportedOperationException
      * in the implementation of htis method.
-     * <p/>
+     *
      * @param req The HttpServletRequest object.
      * @param res The HttpServletResponse object.
      */

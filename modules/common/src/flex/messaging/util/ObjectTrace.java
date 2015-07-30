@@ -155,6 +155,8 @@ public class ObjectTrace
     /**
      * Uses the static member, m_indent to create a string of spaces of
      * the appropriate indentation.
+     *
+     * @return the ident string.
      */
     protected String indentString()
     {

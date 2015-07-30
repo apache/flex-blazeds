@@ -433,7 +433,7 @@ public class MessageBrokerServlet extends HttpServlet
         return this.getClass().getClassLoader();
     }
 
-    /** @exclude */
+
     // Call ONLY on servlet startup
     public static void createThreadLocals()
     {
@@ -443,7 +443,7 @@ public class MessageBrokerServlet extends HttpServlet
         TypeMarshallingContext.createThreadLocalObjects();
     }
 
-    /** @exclude */
+
     // Call ONLY on servlet shutdown
     protected static void destroyThreadLocals()
     {

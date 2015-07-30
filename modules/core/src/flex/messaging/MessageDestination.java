@@ -264,19 +264,19 @@ public class MessageDestination extends FactoryDestination
         return destinationConfig;
     }
 
-    /** @exclude */
+
     public SubscriptionManager getSubscriptionManager()
     {
         return subscriptionManager;
     }
 
-    /** @exclude */
+
     public RemoteSubscriptionManager getRemoteSubscriptionManager()
     {
         return remoteSubscriptionManager;
     }
 
-    /** @exclude */
+
     public ThrottleManager getThrottleManager()
     {
         return throttleManager;

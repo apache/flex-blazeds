@@ -40,8 +40,6 @@ import flex.messaging.util.FileUtils;
 
 /**
  * Provides a common base for DOM / XPath based ConfigurationParsers.
- *
- *
  */
 public abstract class AbstractConfigurationParser implements ConfigurationParser, ConfigurationConstants, EntityResolver
 {
@@ -60,7 +58,7 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
 
     /**
      * Parse the configurations in the configuration file.
-     * <p/>
+     *
      * @param path the configuration file path
      * @param fileResolver the ConfigurationFileResolver object
      * @param config the ServicesConfiguration object
@@ -76,7 +74,6 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
 
     /**
      * Report Tokens.
-     * <p/> 
      **/
     public void reportTokens()
     {
@@ -215,7 +212,7 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
     /**
      * Recursively processes all child elements for each of the properties in the provided
      * node list.
-     * <p/>
+     *
      * @param properties the NodeList object
      * @param sourceFileName the source file name
      * @return ConfigMap the ConfigMap object
@@ -271,7 +268,7 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
     
     /**
      * Get the item value by name if the item is present in the current node as attribute or child element. 
-     * <p/>
+     *
      * @param node the current Node object
      * @param name item name
      * @return String the value of item
@@ -288,7 +285,7 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
     
     /**
      * Check whether the required items are present in the current node as child elements. 
-     * <p/>
+     *
      * @param node the current Node object
      * @param allowed the String array of the allowed items
      **/
@@ -323,7 +320,7 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
     
     /**
      * Check whether the required items are present in the current node as attributes. 
-     * <p/>
+     *
      * @param node the current Node object
      * @param allowed the String array of the allowed items
      **/
@@ -350,7 +347,7 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
     
     /**
      * Check whether the allowed items are present in the current node as elements or attributes. 
-     * <p/>
+     *
      * @param node the current Node object
      * @param allowed the String array of the allowed items
      **/
@@ -363,7 +360,7 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
 
     /**
      * Check whether the required items are present in the current node as elements or attributes. 
-     * <p/>
+     *
      * @param node the current Node object
      * @param required the String array of the required items
      **/
@@ -404,7 +401,7 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
 
     /**
      * Check whether the required items are present in the current node (Child elements). 
-     * <p/>
+     *
      * @param node the current Node object
      * @param required the String array of the required items
      **/
@@ -431,7 +428,7 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
 
     /**
      * Check whether there is any unexpected item in the node list object.
-     * <p/>
+     *
      * @param attributes the current NodeList object
      * @param allowed, the String array of allowed items
      * @return Name of the first unexpected item from the list of allowed attributes, or null if all
@@ -545,8 +542,9 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
      * to prevent external entity injection attacks. 
      * @param publicId the public Id
      * @param systemId the system Id
-     * @throws SAXException, IOException when the parsing process failed with exceptions
      * @return InputSource the InputSource object
+     * @throws SAXException when the parsing process failed with exceptions
+     * @throws IOException when the parsing process failed with exceptions
      */
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
     {

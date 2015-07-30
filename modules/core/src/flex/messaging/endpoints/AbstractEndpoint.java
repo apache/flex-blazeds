@@ -502,7 +502,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * Sets the ID of the <code>AbstractEndpoint</code>. If the <code>AbstractEndpoint</code>
      * has a <code>MessageBroker</code> assigned, it also updates the ID in the
      * <code>MessageBroker</code>.
-     * <p/>
+     *
      * @param id The endpoint ID.
      */
     @Override
@@ -818,7 +818,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * Retrieves a <code>ConfigMap</code> of the endpoint properties the client
      * needs. Subclasses should add additional properties to <code>super.describeDestination</code>,
      * or return <code>null</code> if they must not send their properties to the client.
-     * <p/>
+     *
      * @return ConfigMap The ConfigMap object.
      */
     public ConfigMap describeEndpoint()
@@ -926,7 +926,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * Default implementation of the Endpoint <code>service</code> method.
      * Subclasses should call <code>super.service</code> before their custom
      * code.
-     * <p/>
+     *
      * @param req The HttpServletRequest object.
      * @param res The HttpServletResponse object.
      */
@@ -938,7 +938,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     /**
      * Typically invoked by subclasses, this method transforms decoded message data
      * into the appropriate Message object and routes the Message to the endpoint's broker.
-     * <p/>
+     *
      * @param message The decoded message data.
      * @return Message The transformed message.
      */

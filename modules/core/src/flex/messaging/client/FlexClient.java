@@ -1874,7 +1874,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     /**
      * Utility method to throw a not subscribed exception back to the client
      * if they issue a poll request to an endpoint that they haven't subscribed over.
-     * <p/>
+     *
      * This method should not be called when you hold an internal thread lock. It iterates
      * over all the FlexClients in the current session and will not work if two or more 
      * FlexClients in the same session call it simultaneously.

@@ -56,7 +56,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
     /**
      * Constructor.
      * Create a new AmfxMessageDeserializer object
-     * <p/>
+     *
      */
     public AmfxMessageDeserializer()
     {
@@ -66,7 +66,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
      * Establishes the context for reading in data from the given InputStream.
      * A null value can be passed for the trace parameter if a record of the
      * AMFX data should not be made.
-     * <p/>
+     *
      * @param context SerializationContext object
      * @param in InputStream to process
      * @param trace AmfTrace object
@@ -85,7 +85,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
 
     /**
      * Set the SerializationContext.
-     * <p/>
+     *
      * @param context the SerializationContext object
      */
     public void setSerializationContext(SerializationContext context)
@@ -95,7 +95,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
 
     /**
      * Read message from the ActionMessage and ActionContext.
-     * <p/>
+     *
      * @param m current ActionMessage
      * @param context current ActionContext
      * @throws IOException when the read message process failed
@@ -160,7 +160,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
      * 
      * AMFX does not need or use external entities, so disallow external entities
      * to prevent external entity injection attacks. 
-     * <p/>
+     *
      * @param publicId the public Id
      * @param systemId the system Id
      * @return InputSource the InputSource after entity resolution
@@ -189,7 +189,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
 
     /**
      * Start process of an Element.
-     * <p/>
+     *
      * @param uri the URI of the element
      * @param localName the local name of the element
      * @param qName the qualify name of the element
@@ -232,7 +232,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
 
     /**
      * End process of an Element.
-     * <p/>
+     *
      * @param uri the URI of the element
      * @param localName the local name of the element
      * @param qName the qualify name of the element
@@ -274,7 +274,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
 
     /**
      * Process a char array.
-     * <p/>
+     *
      * @param ch the char array
      * @param start the start position in the char array
      * @param length the length of chars to process
@@ -291,7 +291,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
 
     /**
      * Set the DocumentLocator object.
-     * <p/>
+     *
      * @param l the DocumentLocator object
      */
     public void setDocumentLocator(Locator l)
@@ -302,7 +302,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
 
     /**
      * Process Error of a SAXParseException.
-     * <p/>
+     *
      * @param exception SAXParseException
      * @throws SAXException rethrow the SAXException
      */
@@ -313,7 +313,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
 
     /**
      * Process FatalError of a SAXParseException.
-     * <p/>
+     *
      * @param exception SAXParseException
      * @throws SAXException rethrow the SAXException
      */
@@ -326,7 +326,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
 
     /**
      * Process warning of a SAXParseException.
-     * <p/>
+     *
      * @param exception SAXParseException
      * @throws SAXException rethrow the SAXException
      */

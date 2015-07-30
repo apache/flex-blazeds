@@ -117,7 +117,7 @@ public class MessageBroker extends ManageableComponent
      */
     public static final String LOG_CATEGORY_STARTUP_SERVICE = LogCategories.STARTUP_SERVICE;
 
-    /** @exclude */
+
     public static final String TYPE = "MessageBroker";
 
     //--------------------------------------------------------------------------
@@ -160,19 +160,19 @@ public class MessageBroker extends ManageableComponent
         this(true, null);
     }
 
-    /** @exclude */
+
     public MessageBroker(boolean enableManagement)
     {
         this(enableManagement, null);
     }
 
-    /** @exclude */
+
     public MessageBroker(boolean enableManagement, String mbid)
     {
         this(enableManagement, mbid, MessageBroker.class.getClassLoader());
     }
 
-    /** @exclude */
+
     public MessageBroker(boolean enableManagement, String mbid, ClassLoader loader)
     {
         super(enableManagement);
@@ -489,25 +489,25 @@ public class MessageBroker extends ManageableComponent
         this.externalPathResolver = externalPathResolver;
     }
 
-    /** @exclude */
+
     public void setInternalPathResolver(InternalPathResolver internalPathResolver)
     {
         this.internalPathResolver = internalPathResolver;
     }
 
-    /** @exclude */
+
     public InputStream resolveExternalPath(String filename) throws IOException
     {
         return externalPathResolver.resolve(filename);
     }
 
-    /** @exclude */
+
     public InputStream resolveInternalPath(String filename) throws IOException
     {
         return internalPathResolver.resolve(filename);
     }
 
-    /** @exclude */
+
     public interface PathResolver
     {
         InputStream resolve(String filename) throws IOException;
@@ -522,7 +522,7 @@ public class MessageBroker extends ManageableComponent
         // No-op.
     }
 
-    /** @exclude */
+
     public ClusterManager getClusterManager()
     {
         return clusterManager;
@@ -1131,19 +1131,19 @@ public class MessageBroker extends ManageableComponent
         return log;
     }
 
-    /** @exclude */
+
     public LogManager getLogManager()
     {
         return logManager;
     }
 
-    /** @exclude */
+
     public LoginManager getLoginManager()
     {
         return loginManager;
     }
 
-    /** @exclude */
+
     public void setLoginManager(LoginManager loginManager)
     {
         if (this.loginManager != null && this.loginManager.isStarted())
@@ -1155,25 +1155,25 @@ public class MessageBroker extends ManageableComponent
             loginManager.start();
     }
 
-    /** @exclude */
+
     public FlexClientManager getFlexClientManager()
     {
         return flexClientManager;
     }
 
-    /** @exclude */
+
     public void setFlexClientManager(FlexClientManager value)
     {
         flexClientManager = value;
     }
 
-    /** @exclude */
+
     public FlexSessionManager getFlexSessionManager()
     {
         return flexSessionManager;
     }
 
-    /** @exclude */
+
     public void setFlexSessionManager(FlexSessionManager value)
     {
         flexSessionManager = value;
@@ -1185,7 +1185,7 @@ public class MessageBroker extends ManageableComponent
         return redeployManager;
     }
 
-    /** @exclude */
+
     public void setRedeployManager(RedeployManager redeployManager)
     {
         if (this.redeployManager != null && this.redeployManager.isStarted())
@@ -1197,13 +1197,13 @@ public class MessageBroker extends ManageableComponent
             redeployManager.start();
     }
 
-    /** @exclude */
+
     public Class<? extends ThrottleManager> getThrottleManagerClass()
     {
         return throttleManagerClass;
     }
 
-    /** @exclude */
+
     public void setThrottleManagerClass(Class<? extends ThrottleManager> throttleManagerClass)
     {
         this.throttleManagerClass = throttleManagerClass;
@@ -1254,19 +1254,19 @@ public class MessageBroker extends ManageableComponent
         return (endpoints != null && endpoints.size() != 0)? new ArrayList<String>(endpoints.keySet()) : null;
     }
 
-    /** @exclude */
+
     public ChannelSettings getChannelSettings(String ref)
     {
         return channelSettings.get(ref);
     }
 
-    /** @exclude */
+
     public Map<String, ChannelSettings> getAllChannelSettings()
     {
         return channelSettings;
     }
 
-    /** @exclude */
+
     public void setChannelSettings(Map<String, ChannelSettings> channelSettings)
     {
         this.channelSettings = channelSettings;
@@ -1361,49 +1361,49 @@ public class MessageBroker extends ManageableComponent
         return getSecuritySettings().getConstraint(ref);
     }
 
-    /** @exclude */
+
     public ServletContext getServletContext()
     {
         return servletContext;
     }
 
-    /** @exclude */
+
     public SecuritySettings getSecuritySettings()
     {
         return securitySettings;
     }
 
-    /** @exclude */
+
     public void setSecuritySettings(SecuritySettings securitySettings)
     {
         this.securitySettings = securitySettings;
     }
 
-    /** @exclude */
+
     public SystemSettings getSystemSettings()
     {
         return systemSettings;
     }
 
-    /** @exclude */
+
     public void setSystemSettings(SystemSettings l)
     {
         systemSettings = l;
     }
 
-    /** @exclude */
+
     public FlexClientSettings getFlexClientSettings()
     {
         return flexClientSettings;
     }
 
-    /** @exclude */
+
     public void setFlexClientSettings(FlexClientSettings value)
     {
         flexClientSettings = value;
     }
 
-    /** @exclude */
+
     public void initThreadLocals()
     {
         // No thread-locals anymore, so no-op.
@@ -1530,7 +1530,7 @@ public class MessageBroker extends ManageableComponent
 
     }
 
-    /** @exclude */
+
     public AsyncMessage routeCommandToService(CommandMessage command, Endpoint endpoint)
     {
         // Make sure command has a messageId
@@ -1999,7 +1999,7 @@ public class MessageBroker extends ManageableComponent
         return LOG_CATEGORY;
     }
 
-    /** @exclude */
+
     public void setServletContext(ServletContext servletContext)
     {
         this.servletContext = servletContext;

@@ -35,9 +35,9 @@ public class FileUtils
      * mark (as for UTF-16 the parser will handle the BOM).
      *
      * @param in InputStream containing BOM and must support mark().
-     * @param default_encoding The default character set encoding. null or "" => system default
+     * @param default_encoding The default character set encoding. null or "" =&gt; system default
      * @return The file character set encoding.
-     * @throws IOException
+     * @throws IOException an IOException, if something went wrong.
      */
     public static final String consumeBOM(InputStream in, String default_encoding) throws IOException
     {

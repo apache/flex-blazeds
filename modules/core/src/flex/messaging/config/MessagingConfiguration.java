@@ -81,7 +81,7 @@ public class MessagingConfiguration implements ServicesConfiguration
     /**
      * Constructor.
      * Construct a MessagingConfiguration object
-     * <p/>
+     *
      */
     public MessagingConfiguration()
     {
@@ -98,7 +98,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Configure the MessageBroker.
-     * <p/>
+     *
      * @param broker current MessageBroker object
      */
     public void configureBroker(MessageBroker broker)
@@ -135,7 +135,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Create a MessageBroker object with the Id.
-     * <p/>
+     *
      * @param id String the MessageBroker Id
      * @param loader the ClassLoader used to load the MessageBroker class
      * @return the created MessageBroker object
@@ -643,7 +643,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Add Shared Server configurations.
-     * <p/>
+     *
      * @param settings the SharedServerSettings object
      **/
     public void addSharedServerSettings(SharedServerSettings settings)
@@ -653,7 +653,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Add the Channel configurations.
-     * <p/>
+     *
      * @param id the ChannelSetting Id
      * @param settings the ChannelSettings
      **/
@@ -664,7 +664,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Get the ChannelSettings by Id.
-     * <p/>
+     *
      * @param id the ChannelSettings Id 
      * @return ChannelSettings the Channel settings
      **/
@@ -684,7 +684,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Add the default Channel by Id.
-     * <p/>
+     *
      * @param id the Channel Id
      **/
     public void addDefaultChannel(String id)
@@ -694,7 +694,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Get the default Channel List.
-     * <p/>
+     *
      * @return List, the list of default Channels
      **/
     public List getDefaultChannels()
@@ -704,7 +704,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Get the Security Configurations.
-     * <p/>
+     *
      * @return SecuritySettings current SecuritySettings
      **/
     public SecuritySettings getSecuritySettings()
@@ -714,7 +714,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Add Service Configurations.
-     * <p/>
+     *
      * @param settings the ServiceSettings object
      **/
     public void addServiceSettings(ServiceSettings settings)
@@ -724,7 +724,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Get ServiceSettings by Id.
-     * <p/>
+     *
      * @param id the ServiceSettings Id
      * @return ServiceSettings the ServiceSettings object
      **/
@@ -741,7 +741,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Get all ServiceSettings.
-     * <p/>
+     *
      * @return List all the service settings
      **/
     public List getAllServiceSettings()
@@ -751,7 +751,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Get LoggingSettings.
-     * <p/>
+     *
      * @return LoggingSettings the LoggingSettings object
      **/
     public LoggingSettings getLoggingSettings()
@@ -761,7 +761,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Set LoggingSettings.
-     * <p/>
+     *
      * @param loggingSettings the LoggingSettings object
      **/
     public void setLoggingSettings(LoggingSettings loggingSettings)
@@ -771,7 +771,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Set SystemSettings.
-     * <p/>
+     *
      * @param ss the SystemSettings object
      **/
     public void setSystemSettings(SystemSettings ss)
@@ -781,7 +781,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Get SystemSettings.
-     * <p/>
+     *
      * @return SystemSettings the LoggingSettings object
      **/
     public SystemSettings getSystemSettings()
@@ -791,7 +791,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Set FlexClientSettings.
-     * <p/>
+     *
      * @param value the FlexClientSettings object
      **/
     public void setFlexClientSettings(FlexClientSettings value)
@@ -801,7 +801,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Get FlexClientSettings.
-     * <p/>
+     *
      * @return FlexClientSettings the FlexClientSettings object
      **/
     public FlexClientSettings getFlexClientSettings()
@@ -811,7 +811,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Add the ClusterSettings.
-     * <p/>   
+     *
      * @param settings the ClusterSettings object
      **/
     public void addClusterSettings(ClusterSettings settings)
@@ -841,7 +841,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Get the ClusterSettings object by Id.
-     * <p/>
+     *
      * @param clusterId the ClusterSettings Id
      * @return ClusterSettings the ClusterSettings object
      **/
@@ -860,7 +860,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Get the default ClusterSettings.
-     * <p/>
+     *
      * @return ClusterSettings the default ClusterSetting object
      **/
     public ClusterSettings getDefaultCluster()
@@ -876,7 +876,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Add FactorySettings by Id.
-     * <p/>
+     *
      * @param id the FactorySettings Id
      * @param settings the FactorySettings object
      **/
@@ -887,7 +887,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Add MessageFilterSettings.
-     * <p/>
+     *
      * @param settings the MessageFilterSettings object
      **/
     public void addMessageFilterSettings(MessageFilterSettings settings)
@@ -897,7 +897,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Add ValidatorSettings.
-     * <p/>
+     *
      * @param settings the ValidatorSettings object
      **/
     public void addValidatorSettings(ValidatorSettings settings)
@@ -915,7 +915,7 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Report unused properties.
-     * <p/>
+     *
      **/
     public void reportUnusedProperties()
     {

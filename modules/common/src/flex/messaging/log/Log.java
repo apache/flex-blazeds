@@ -35,7 +35,6 @@ import java.util.HashSet;
 public class Log
 {
 
-    /** @exclude **/
     public static final String INVALID_CHARS = "[]~$^&\\/(){}<>+=`!#%?,:;\'\"@";
 
     // Errors
@@ -48,7 +47,6 @@ public class Log
     private static String prettyPrinterClass = "BasicPrettyPrinter";
 
     private static final HashSet excludedProperties = new HashSet();
-    /** @exclude **/
     public static final String VALUE_SUPRESSED = "** [Value Suppressed] **";
 
     private volatile short targetLevel;
@@ -199,7 +197,9 @@ public class Log
     }
 
     /**
-     *
+     * @param log base logger.
+     * @param category category to log to.
+     * @return Logger instance for the given category.
      */
     public static Logger getLogger(Log log, String category)
     {
@@ -439,7 +439,8 @@ public class Log
     }
 
     /**
-     *
+     * @param l string representation of the log level.
+     * @return a short value representing the log level.
      */
     public static short readLevel(String l)
     {
@@ -502,8 +503,9 @@ public class Log
     }
 
     /**
-     *
      * Returns the PrettyPrinter used by the Log.
+     *
+     * @return the PrettyPrinter used by the Log.
      */
     public static PrettyPrinter getPrettyPrinter()
     {
@@ -523,8 +525,9 @@ public class Log
     }
 
     /**
-     *
      * Returns the current target level for the Log.
+     *
+     * @return the current target level for the Log.
      */
     public static short getTargetLevel()
     {

@@ -29,9 +29,6 @@ import java.util.List;
  * client messages for this destination and any security constraints that need
  * to be enforced.
  * </p>
- *
- * @see flex.messaging.Destination
- *
  */
 public class DestinationSettings extends PropertiesSettings
 {

@@ -100,7 +100,8 @@ public class FlexClientSettings extends PropertiesSettings
     /**
      * Sets the properties for the default <code>FlexClientOutboundQueueProcessor</code>.
      *
-     * @param flexClientOutboundQueueProcessorProperties
+     * @param flexClientOutboundQueueProcessorProperties properties for the default
+     *                                                   <code>FlexClientOutboundQueueProcessor</code>
      */
     public void setFlexClientOutboundQueueProcessorProperties(ConfigMap flexClientOutboundQueueProcessorProperties)
     {

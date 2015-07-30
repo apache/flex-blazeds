@@ -285,7 +285,7 @@ public class ConfigMap extends LinkedHashMap
     /**
      * Gets the property with the specified name as a ConfigMap if possible,
      * or returns the default value if the property is undefined.
-     * <p/>
+     *
      * @param name the property name
      * @param defaultValue the default value
      * @return ConfigMap the ConfigMap object of the property
@@ -303,7 +303,7 @@ public class ConfigMap extends LinkedHashMap
     /**
      * Gets the property with the specified name as a String if possible,
      * or returns the default value if the property is undefined.
-     * <p/>
+     *
      * @param name the property name
      * @param defaultValue the default value
      * @return String the String value of the property
@@ -349,7 +349,7 @@ public class ConfigMap extends LinkedHashMap
     /**
      * Gets the property with the specified name as a boolean if possible,
      * or returns the default value if the property is undefined.
-     * <p/>
+     *
      * @param name the property name
      * @param defaultValue the default value
      * @return boolean the boolean value of the property
@@ -367,7 +367,7 @@ public class ConfigMap extends LinkedHashMap
     /**
      * Gets the property with the specified name as an int if possible,
      * or returns the default value if the property is undefined.
-     * <p/>
+     *
      * @param name the property name
      * @param defaultValue the default value
      * @return int the int value of the property
@@ -391,7 +391,7 @@ public class ConfigMap extends LinkedHashMap
     /**
      * Gets the property with the specified name as a long if possible,
      * or returns the default value if the property is undefined.
-     * <p/>
+     *
      * @param name the property name
      * @param defaultValue the default value
      * @return long the long value of the property
@@ -415,7 +415,7 @@ public class ConfigMap extends LinkedHashMap
     /**
      * Returns a list of qualified property names that have not been accessed
      * by one of the get*() methods.
-     * <p/>
+     *
      * @return List a list of unused properties
      */
     public List findAllUnusedProperties()

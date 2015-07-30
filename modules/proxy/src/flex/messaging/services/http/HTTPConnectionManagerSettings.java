@@ -26,40 +26,40 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
  */
 public class HTTPConnectionManagerSettings 
 {    
-    /** @exclude */
+
     public static final String COOKIE_POLICY = "cookie-policy";
 
-    /** @exclude */
+
     public static final String CONNECTION_MANAGER = "connection-manager";
     
-    /** @exclude */
+
     public static final String CONNECTION_TIMEOUT = "connection-timeout";
     
-    /** @exclude */
+
     public static final String DEFAULT_MAX_CONNECTIONS_PER_HOST = "default-max-connections-per-host";
     
-    /** @exclude */
+
     public static final String LINGER = "linger";    
     
-    /** @exclude */
+
     public static final String MAX_PER_HOST = "max-per-host";    
     
-    /** @exclude */
+
     public static final String MAX_TOTAL_CONNECTIONS = "max-total-connections";
     
-    /** @exclude */
+
     public static final String RECEIVE_BUFFER_SIZE = "receive-buffer-size";
     
-    /** @exclude */
+
     public static final String SEND_BUFFER_SIZE = "send-buffer-size";
     
-    /** @exclude */
+
     public static final String SOCKET_TIMEOUT = "socket-timeout";
     
-    /** @exclude */
+
     public static final String STALE_CHECKING_ENABLED = "stale-checking-enabled";
     
-    /** @exclude */
+
     public static final String TCP_NO_DELAY = "tcp-no-delay";
 
     /** The default maximum number of connections allowed per host. */
