@@ -23,7 +23,7 @@ import flex.messaging.util.Trace;
 import flex.messaging.MessageException;
 
 /**
- * @exclude
+ *
  * Wraps filters with exception handling.
  */
 public class ErrorFilter extends ProxyFilter

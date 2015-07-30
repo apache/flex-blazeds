@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Iterator;
 
 /**
- * @exclude
+ *
  */
 public class ReferenceAwareMapDecoder extends MapDecoder
 {

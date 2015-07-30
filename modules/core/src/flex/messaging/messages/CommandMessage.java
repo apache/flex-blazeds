@@ -171,7 +171,7 @@ public class CommandMessage extends AsyncMessage
     public static final String NO_OP_POLL_HEADER = "DSNoOpPoll";
 
     /**
-     * @exclude
+     *
      * Internal header used to tag poll messages when a poll-wait must be suppressed.
      */
     public static final String SUPPRESS_POLL_WAIT_HEADER = "DSSuppressPollWait";
@@ -204,7 +204,7 @@ public class CommandMessage extends AsyncMessage
     public static final String PUSH_REGISTRATION_INFORMATION = "DSPushRegisteredInformation";
 
     /**
-     * @exclude
+     *
      * The position of the operation flag within all flags.
      * Constant used during serialization.
      */
@@ -278,7 +278,7 @@ public class CommandMessage extends AsyncMessage
     }
 
     /**
-     * @exclude
+     *
      */
     public Message getSmallMessage()
     {
@@ -294,7 +294,7 @@ public class CommandMessage extends AsyncMessage
     }
 
     /**
-     * @exclude
+     *
      * Debugging function which returns the name of the operation for
      * a given operation code.
      */
@@ -306,7 +306,7 @@ public class CommandMessage extends AsyncMessage
     }
 
     /**
-     * @exclude
+     *
      */
     public void readExternal(ObjectInput input)throws IOException, ClassNotFoundException
     {
@@ -342,7 +342,7 @@ public class CommandMessage extends AsyncMessage
     }
 
     /**
-     * @exclude
+     *
      * Utility method to pretty print a <code>CommandMessage</code>.
      *
      * @param indentLevel This method may be invoked recursively so this argument
@@ -371,7 +371,7 @@ public class CommandMessage extends AsyncMessage
     }
 
     /**
-     * @exclude
+     *
      */
     public void writeExternal(ObjectOutput output) throws IOException
     {
@@ -389,7 +389,7 @@ public class CommandMessage extends AsyncMessage
     }
 
     /**
-     * @exclude
+     *
      * Utility method to build the log category to use for logging <code>CommandMessage</code>s.
      */
     public String logCategory()

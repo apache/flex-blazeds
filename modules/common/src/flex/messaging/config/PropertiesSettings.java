@@ -31,7 +31,7 @@ import java.util.List;
  * and added as a Map.
  * </p>
  *
- * @exclude
+ *
  */
 public abstract class PropertiesSettings
 {

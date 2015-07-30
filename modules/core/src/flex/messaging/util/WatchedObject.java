@@ -22,7 +22,7 @@ import java.io.FileNotFoundException;
 /**
  * Used by redeployment manager to monitor for changes to the files.
  *
- * @exclude
+ *
  */
 public class WatchedObject
 {

@@ -26,7 +26,7 @@ import java.util.List;
  * sending only the values of each instance of the type
  * as it occurs in the stream.
  *
- * @exclude
+ *
  */
 public class TraitsInfo
 {

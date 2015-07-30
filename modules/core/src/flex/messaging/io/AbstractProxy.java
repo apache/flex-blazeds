@@ -34,7 +34,7 @@ import flex.messaging.util.ClassUtil;
  * a given property name.
  *
  * @see flex.messaging.io.PropertyProxy
- * @exclude
+ *
  */
 public abstract class AbstractProxy implements PropertyProxy, Serializable
 {

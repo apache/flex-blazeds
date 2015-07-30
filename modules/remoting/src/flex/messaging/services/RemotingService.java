@@ -128,7 +128,7 @@ public class RemotingService extends AbstractService
     //
     //--------------------------------------------------------------------------
     /**
-     * @exclude
+     *
      */
     public MethodMatcher getMethodMatcher()
     {

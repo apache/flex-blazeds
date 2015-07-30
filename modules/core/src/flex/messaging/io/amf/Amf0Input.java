@@ -33,7 +33,7 @@ import flex.messaging.util.ClassUtil;
 
 /**
  * An Amf0 input object.
- * @exclude
+ *
  */
 public class Amf0Input extends AbstractAmfInput implements AmfTypes
 {
@@ -43,12 +43,12 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
      * that the next object in the stream is to be deserialized differently. The
      * original hope was for two independent encoding versions... but for now
      * we just keep a reference to objectInput here.
-     * @exclude
+     *
      */
     protected ActionMessageInput avmPlusInput;
 
     /**
-     * @exclude
+     *
      */
     protected List objectsTable;
 

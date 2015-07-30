@@ -17,7 +17,7 @@
 package flex.messaging.config;
 
 /**
- * @exclude
+ *
  */
 public interface ConfigurationConstants
 {

@@ -31,12 +31,12 @@ import java.util.List;
  * </p>
  *
  * @see flex.messaging.Destination
- * @exclude
+ *
  */
 public class DestinationSettings extends PropertiesSettings
 {
     /**
-     * @exclude
+     *
      */
     public static final String SERVER_ELEMENT = "server";
 
@@ -71,7 +71,7 @@ public class DestinationSettings extends PropertiesSettings
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     String getSourceFile()
     {
@@ -80,7 +80,7 @@ public class DestinationSettings extends PropertiesSettings
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void setSourceFile(String sourceFile)
     {

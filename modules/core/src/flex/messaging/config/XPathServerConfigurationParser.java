@@ -32,7 +32,7 @@ import javax.xml.xpath.XPathFactory;
  * sections of the document need to be parsed first.
  * </p>
  *
- * @exclude
+ *
  */
 public class XPathServerConfigurationParser extends ServerConfigurationParser
 {

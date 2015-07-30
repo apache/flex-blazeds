@@ -42,7 +42,7 @@ import flex.messaging.endpoints.Endpoint;
 import flex.messaging.util.ClassUtil;
 
 /**
- * @exclude
+ *
  * The manager of all clusters defined in services-config.xml, and the broker
  * for the clusters created for clustered destinations.
  */
@@ -578,7 +578,7 @@ public class ClusterManager
         Constructor clusterConstructor = null;
         try
         {
-            clusterConstructor = clusterClass.getConstructor(new Class[] {ClusterManager.class});
+            clusterConstructor = clusterClass.getConstructor(ClusterManager.class);
         }
         catch (Exception e)
         {
@@ -589,7 +589,7 @@ public class ClusterManager
         }
         try
         {
-            cluster = (Cluster)clusterConstructor.newInstance(new Object[] {this});
+            cluster = (Cluster)clusterConstructor.newInstance(this);
             cluster.setClusterPropertiesFile(propsFile);
             cluster.setURLLoadBalancing(cls.getURLLoadBalancing());
             cluster.initialize(clusterId, cls.getProperties());

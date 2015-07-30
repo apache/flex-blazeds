@@ -220,7 +220,7 @@ public class MessageDestination extends FactoryDestination
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      * Returns a <tt>ConfigMap</tt> of destination properties that the client
      * needs. This includes properties from <code>super{@link #describeDestination(boolean)}</code>
      * and it also includes outbound throttling policy that the edge server might need.

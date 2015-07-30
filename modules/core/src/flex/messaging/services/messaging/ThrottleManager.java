@@ -31,7 +31,7 @@ import flex.messaging.messages.Message;
 import flex.messaging.services.messaging.ThrottleManager.ThrottleResult.Result;
 
 /**
- * @exclude
+ *
  *
  * The ThrottleManager provides functionality to limit the frequency of messages
  * routed through the system in message/second terms. Message frequency can be managed
@@ -203,7 +203,7 @@ public class ThrottleManager extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Used by the MessageClient in its cleanup process.
      *
      * @param clientId The id of the MessageClient.
@@ -478,7 +478,7 @@ public class ThrottleManager extends ManageableComponent
         public enum Result
         {
             OK, IGNORE, ERROR, BUFFER, CONFLATE
-        };
+        }
 
         private String detail;
         private Result result;

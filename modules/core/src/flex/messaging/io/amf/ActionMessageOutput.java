@@ -74,19 +74,19 @@ public interface ActionMessageOutput extends ObjectOutput
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void writeObjectTraits(TraitsInfo traits) throws IOException;
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void writeObjectProperty(String name, Object value) throws IOException;
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void writeObjectEnd() throws IOException;
 
@@ -97,19 +97,19 @@ public interface ActionMessageOutput extends ObjectOutput
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void setDebugTrace(AmfTrace debugBuffer);
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void setOutputStream(OutputStream out);
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void reset();
 

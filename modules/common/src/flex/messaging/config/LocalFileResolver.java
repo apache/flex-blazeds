@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * @exclude
+ *
  */
 public class LocalFileResolver implements ConfigurationFileResolver
 {

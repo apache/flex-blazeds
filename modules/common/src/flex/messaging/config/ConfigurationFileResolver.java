@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * @exclude
+ *
  */
 public interface ConfigurationFileResolver
 {

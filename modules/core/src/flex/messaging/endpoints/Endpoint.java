@@ -179,7 +179,7 @@ public interface Endpoint extends Manageable
     void setUrl(String url);  
     
     /**
-     * @exclude
+     *
      * Returns the url of the endpoint parsed for the client. 
      *  
      * @return The url of the endpoint parsed for the client.

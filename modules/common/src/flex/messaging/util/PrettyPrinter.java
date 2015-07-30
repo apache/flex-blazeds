@@ -20,7 +20,7 @@ package flex.messaging.util;
  * Implementations convert Object graphs to Strings for
  * logging and debugging.
  *
- * @exclude
+ *
  */
 public interface PrettyPrinter
 {

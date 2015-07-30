@@ -30,7 +30,7 @@ import java.lang.reflect.Array;
  * Note that tracking references is an expensive exercise and will
  * scale poorly with larger amounts of data.`
  *
- * @exclude
+ *
  */
 public class ReferenceAwareCollectionDecoder extends CollectionDecoder
 {
@@ -49,7 +49,7 @@ public class ReferenceAwareCollectionDecoder extends CollectionDecoder
 
     protected Collection decodeCollection(Collection shell, Object encodedObject)
     {
-        Collection decodedCollection = (Collection)shell;
+        Collection decodedCollection = shell;
         Object decodedObject = null;
         Object obj = null;
 

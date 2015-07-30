@@ -65,7 +65,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     /**
      * This value is passed to the server in an initial client connect to
      * indicate that the client needs a server-assigned FlexClient Id.
-     * @exclude
+     *
      */
     public static final String NULL_FLEXCLIENT_ID = "nil";
 
@@ -134,7 +134,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      * Constructs a new FlexClient instance.
      *
      * @param manager The FlexClientManager managing this instance.
@@ -145,7 +145,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Constructs a new FlexClient instance having the specified Id.
      *
      * @param manager The FlexClientManager managing this instance.
@@ -338,7 +338,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Returns the push handler registered with the FlexClient with the supplied
      * endpoint id, or null if no push handler was registered with the FlexClient
      * for that endpoint.
@@ -358,7 +358,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Returns the queue processor registered with the FlexClient with the supplied
      * endpoint id, or null if no queue processor was registered with the FlexClient
      * for that endpoint.
@@ -373,7 +373,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
     
     /**
-     * @exclude
+     *
      * Returns the endpoint queue registered with the FlexClient with the supplied
      * endpoint id, or null if no endpoint queue was registered with the FlexClient
      * for that endpoint.
@@ -475,7 +475,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      *
      * Returns the principal associated with this client.  If the client has not
      * authenticated the principal will be null.  Should only be called from FlexContext
@@ -493,7 +493,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      *
      * Should only be called from FlexContext and only if perClientAuthentication is used.
      * Not available to users.
@@ -710,7 +710,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Implements TimeoutCapable.
      * Determine the time, in milliseconds, that this object is allowed to idle
      * before having its timeout method invoked.
@@ -722,7 +722,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Implements MessageClientListener.
      * Handling created events is a no-op.
      *
@@ -731,7 +731,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     public void messageClientCreated(MessageClient messageClient) {}
 
     /**
-     * @exclude
+     *
      * Implements MessageClientListener.
      * Notification that an associated FlexSession was destroyed.
      *
@@ -743,7 +743,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Poll for outbound messages for the FlexClient.
      * This method is only invoked by internal code while processing a client poll request; it
      * is not intended for general public use.
@@ -778,7 +778,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Poll for outbound messages for the FlexClient and if no messages are available
      * immediately, store a reference to the passed async handler and call back when messages arrive.
      *
@@ -856,7 +856,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Poll for outbound messages for the FlexClient and if no messages are available
      * immediately, put processing into a wait state until messages arrive.
      * This method is only invoked by internal code while processing a client poll request; it
@@ -1024,7 +1024,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Poll for outbound messages for a specific MessageClient/Consumer.
      * This overload of poll() is only invoked when handling a Consumer.receive() request.
      *
@@ -1067,7 +1067,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Push a message to the FlexClient.
      * The message is added to the outbound queue of messages for the client and
      * will be pushed if possible or retrieved via a client poll request.
@@ -1154,7 +1154,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Registers an <tt>EndpointPushHandler</tt> for the specified endpoint to handle pushing messages
      * to remote clients.
      *
@@ -1180,7 +1180,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Used internally to associate a FlexSession with this FlexClient.
      *
      * @param session The FlexSession to associate with this FlexClient.
@@ -1195,7 +1195,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Used internally to associate a MessageClient with this FlexClient.
      *
      * @param messageClient The MessageClient to associate with this FlexClient.
@@ -1294,7 +1294,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Implements FlexSessionListener interface.
      * Notification that a FlexSession was created.
      * This is a no-op because the FlexClient is never added as a static FlexSession created listener
@@ -1306,7 +1306,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     public void sessionCreated(FlexSession session) {}
 
     /**
-     * @exclude
+     *
      * Implements FlexSessionListener interface.
      * Notification that an associated FlexSession was destroyed.
      *
@@ -1378,7 +1378,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Implements TimeoutCapable.
      * Inform the object that it has timed out.
      */
@@ -1388,7 +1388,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Unregisters an <tt>EndpointPushHandler</tt> from the specified endpoint.
      *
      * @param handler The <tt>EndpointPushHandler</tt> to unregister.
@@ -1407,7 +1407,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Used internally to disassociate a FlexSession from this FlexClient.
      *
      * @param session The FlexSession to disassociate from this FlexClient.
@@ -1425,7 +1425,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Used internally to disassociate a MessageClient (subscription) from a FlexClient.
      *
      * @param messageClient The MessageClient to disassociate from the FlexClient.
@@ -2199,7 +2199,7 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     }
 
     /**
-     * @exclude
+     *
      * Helper class that stores per-endpoint outbound queue state including:
      * <ul>
      *   <li>flexClient - The <tt>FlexClient</tt> the queue is used by.</li>

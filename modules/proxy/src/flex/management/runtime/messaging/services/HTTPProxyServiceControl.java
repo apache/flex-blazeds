@@ -20,7 +20,7 @@ import flex.management.BaseControl;
 import flex.messaging.services.HTTPProxyService;
 
 /**
- * @exclude
+ *
  * The <code>HTTPProxyServiceControl</code> class is the MBean implementation
  * for monitoring and managing a <code>HTTPProxyService</code> at runtime.
  */
@@ -43,7 +43,7 @@ public class HTTPProxyServiceControl extends ServiceControl implements
 
 
     /**
-     * @exclude
+     *
      *  (non-Javadoc)
      * @see flex.management.BaseControlMBean#getType()
      */

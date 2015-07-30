@@ -21,7 +21,7 @@ import flex.management.runtime.AdminConsoleTypes;
 import flex.messaging.client.FlexClientManager;
 
 /**
- * @exclude
+ *
  */
 public class FlexClientManagerControl extends BaseControl implements FlexClientManagerControlMBean
 {

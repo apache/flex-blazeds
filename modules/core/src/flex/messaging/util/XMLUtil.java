@@ -36,7 +36,7 @@ import java.io.StringWriter;
  * Utility class for converting strings to XML documents and
  * vice versa.
  *
- * @exclude
+ *
  */
 public class XMLUtil
 {

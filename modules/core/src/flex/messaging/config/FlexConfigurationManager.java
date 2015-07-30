@@ -40,7 +40,7 @@ import java.io.File;
  * </p>
  *
  * @see ConfigurationParser
- * @exclude
+ *
  */
 public class FlexConfigurationManager implements ConfigurationManager
 {
@@ -205,7 +205,7 @@ public class FlexConfigurationManager implements ConfigurationManager
                         boolean available = resolver.isAvailable(configurationPath, isServletResource);
                         if (available) {
                             // it's available via the servlet resource loader
-                            configurationResolver = (ConfigurationFileResolver) resolver;
+                            configurationResolver = resolver;
                         } else {
                             // it wasn't available via the servlet resource loader
                             configurationResolver = new LocalFileResolver(LocalFileResolver.SERVER);

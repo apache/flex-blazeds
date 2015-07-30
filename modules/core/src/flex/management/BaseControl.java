@@ -487,7 +487,7 @@ public abstract class BaseControl implements BaseControlMBean,
     }
 
     /**
-     * @exclude Returns the difference between a start and end timestamps in
+     * Returns the difference between a start and end timestamps in
      *          minutes. Differences of less than one minute are rounded up to
      *          one minute to avoid frequency calculations reporting infinite
      *          message frequencies.

@@ -24,7 +24,7 @@ import flex.messaging.io.TypeMarshallingContext;
 
 /**
  * Base class for Amf I/O. 
- * @exclude
+ *
  */
 abstract class AmfIO
 {
@@ -163,8 +163,6 @@ abstract class AmfIO
             return true;
         if (flex.messaging.io.ArrayCollection.class.equals(clazz))
             return true;
-        if (flex.messaging.io.ArrayList.class.equals(clazz))
-            return true;
-        return false;
+        return flex.messaging.io.ArrayList.class.equals(clazz);
     }
 }

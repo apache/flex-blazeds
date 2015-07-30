@@ -40,7 +40,7 @@ import flex.messaging.log.LogCategories;
  * each server.
  * </p>
  *
- * @exclude
+ *
  */
 public class LoginManager implements FlexComponent
 {

@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * @see ActionScriptDecoder
  *
- * @exclude
+ *
  */
 public class DecoderFactory
 {
@@ -335,7 +335,7 @@ public class DecoderFactory
 
         if (encodedObject instanceof ASObject)
         {
-            typed = TypeMarshallingContext.getType((ASObject)encodedObject) != null;
+            typed = TypeMarshallingContext.getType(encodedObject) != null;
         }
 
         return typed;

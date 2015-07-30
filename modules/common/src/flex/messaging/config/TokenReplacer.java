@@ -43,7 +43,7 @@ import flex.messaging.util.StringUtils;
  * If a token value is both specified as a JVM property and inside the token.file,
  * JVM property takes precedence.
  *
- * @exclude
+ *
  */
 public class TokenReplacer
 {

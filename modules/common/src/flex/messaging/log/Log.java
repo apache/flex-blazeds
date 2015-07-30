@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.HashSet;
 
 /**
- * @exclude
+ *
  */
 public class Log
 {
@@ -199,7 +199,7 @@ public class Log
     }
 
     /**
-     * @exclude
+     *
      */
     public static Logger getLogger(Log log, String category)
     {
@@ -426,7 +426,7 @@ public class Log
     }
 
     /**
-     * @exclude
+     *
      */
     public static void flush()
     {
@@ -439,7 +439,7 @@ public class Log
     }
 
     /**
-     * @exclude
+     *
      */
     public static short readLevel(String l)
     {
@@ -477,7 +477,7 @@ public class Log
     }
 
     /**
-     * @exclude
+     *
      * This method checks the specified string value for illegal characters.
      *
      * @param value to check for illegal characters.
@@ -502,7 +502,7 @@ public class Log
     }
 
     /**
-     * @exclude
+     *
      * Returns the PrettyPrinter used by the Log.
      */
     public static PrettyPrinter getPrettyPrinter()
@@ -523,7 +523,7 @@ public class Log
     }
 
     /**
-     * @exclude
+     *
      * Returns the current target level for the Log.
      */
     public static short getTargetLevel()
@@ -532,7 +532,7 @@ public class Log
     }
 
     /**
-     * @exclude
+     *
      * Sets the pretty printer class name used by the log.
      *
      * @param value Name of the pretty printer class.

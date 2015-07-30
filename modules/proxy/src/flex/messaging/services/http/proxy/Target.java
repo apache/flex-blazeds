@@ -21,7 +21,7 @@ import org.apache.commons.httpclient.HostConfiguration;
 import java.net.URL;
 
 /**
- * @exclude
+ *
  * Encapsulates information about a proxy target.
  */
 public class Target

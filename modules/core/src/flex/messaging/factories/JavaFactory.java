@@ -55,7 +55,7 @@ public class JavaFactory implements FlexFactory, DestructibleFlexFactory
     private static final int INVALID_CLASS_FOUND = 10654;
 
     /**
-     * @exclude
+     *
      * Default constructor
      */
     public JavaFactory()

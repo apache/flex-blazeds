@@ -19,7 +19,7 @@ package flex.messaging.cluster;
 import flex.messaging.MessageException;
 
 /**
- * @exclude
+ *
  * Exception type for cluster errors.
  */
 public class ClusterException extends MessageException

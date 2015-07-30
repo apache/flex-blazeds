@@ -28,7 +28,7 @@ import java.util.List;
  * no HTTP, and therefore cannot support the request/response and
  * session properties of the ActionContext).
  *
- * @exclude 
+ *
  */
 public class RemotingMessage extends RPCMessage
 {

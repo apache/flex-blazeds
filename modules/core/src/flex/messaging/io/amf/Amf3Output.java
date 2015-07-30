@@ -55,22 +55,22 @@ import java.util.Map;
  * in avmglue/DataIO.cpp
  * </p>
  *
- * @exclude
+ *
  */
 public class Amf3Output extends AbstractAmfOutput implements Amf3Types
 {
     /**
-     * @exclude
+     *
      */
     protected IdentityHashMap<Object, Integer> objectTable;
 
     /**
-     * @exclude
+     *
      */
     protected HashMap<TraitsInfo, Integer> traitsTable;
 
     /**
-     * @exclude
+     *
      */
     protected HashMap<String, Integer> stringTable;
 
@@ -130,7 +130,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
                 // Using double to write big numbers such as BigInteger or
                 // BigDecimal can result in information loss so we write
                 // them as String by default...
-                writeAMFString(((Number)o).toString());
+                writeAMFString(o.toString());
             }
             else
             {
@@ -286,7 +286,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     //
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFBoolean(boolean b) throws IOException
     {
@@ -300,7 +300,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFDate(Date d) throws IOException
     {
@@ -320,7 +320,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFDouble(double d) throws IOException
     {
@@ -332,7 +332,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFInt(int i) throws IOException
     {
@@ -590,7 +590,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeMapAsECMAArray(Map map) throws IOException
     {
@@ -629,7 +629,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFNull() throws IOException
     {
@@ -640,7 +640,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFString(String s) throws IOException
     {
@@ -654,7 +654,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeStringWithoutType(String s) throws IOException
     {
@@ -675,7 +675,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFArray(Object o, Class componentType) throws IOException
     {
@@ -698,7 +698,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeArrayCollection(Collection col, SerializationDescriptor desc) throws IOException
     {
@@ -729,7 +729,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeCustomObject(Object o) throws IOException
     {
@@ -785,7 +785,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writePropertyProxy(PropertyProxy proxy, Object instance) throws IOException
     {
@@ -866,7 +866,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
      * </p>
      *
      * @param obj An array of primitives
-     * @exclude
+     *
      */
     protected void writePrimitiveArray(Object obj) throws IOException
     {
@@ -989,7 +989,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFByteArray(byte[] ba) throws IOException
     {
@@ -1012,7 +1012,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFByteArray(Byte[] ba) throws IOException
     {
@@ -1042,7 +1042,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeCharArrayAsString(Character[] ca) throws IOException
     {
@@ -1061,7 +1061,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeCharArrayAsString(char[] ca) throws IOException
     {
@@ -1070,7 +1070,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeObjectArray(Object[] values, SerializationDescriptor descriptor) throws IOException
     {
@@ -1113,7 +1113,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeCollection(Collection c, SerializationDescriptor descriptor) throws IOException
     {
@@ -1164,7 +1164,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeUInt29(int ref) throws IOException
     {
@@ -1215,7 +1215,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     public void writeAMFUTF(String s) throws IOException
     {
@@ -1276,7 +1276,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
      *
      * @return Success/failure indicator as to whether the object could be
      *         serialized as a reference.
-     * @exclude
+     *
      */
     protected boolean byReference(Object o) throws IOException
     {
@@ -1306,7 +1306,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     public void addObjectReference(Object o) throws IOException
     {
@@ -1314,7 +1314,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected boolean byReference(String s) throws IOException
     {
@@ -1342,7 +1342,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected boolean byReference(TraitsInfo ti) throws IOException
     {

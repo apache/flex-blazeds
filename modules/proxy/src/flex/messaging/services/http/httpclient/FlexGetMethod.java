@@ -22,7 +22,7 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 /**
- * @exclude
+ *
  * Simple wrapper around PostMethod that exposes one method for ProxyServlet.
  */
 public class FlexGetMethod extends GetMethod

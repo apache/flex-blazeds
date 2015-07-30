@@ -19,7 +19,7 @@ package flex.messaging.io.amf.translator;
 import flex.messaging.MessageException;
 
 /**
- * @exclude
+ *
  */
 public class TranslationException extends MessageException
 {

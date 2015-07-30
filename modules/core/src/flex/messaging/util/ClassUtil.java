@@ -29,7 +29,7 @@ import java.lang.reflect.Modifier;
  * and handle error conditions consistently across the RemoteObject
  * code base.
  *
- * @exclude
+ *
  */
 public class ClassUtil
 {
@@ -221,7 +221,7 @@ public class ClassUtil
         {
             if (cls != null)
             {
-                Constructor c = cls.getConstructor(new Class[]{});
+                Constructor c = cls.getConstructor();
                 int mod = c.getModifiers();
                 return Modifier.isPublic(mod);
             }

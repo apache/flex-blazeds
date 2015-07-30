@@ -17,7 +17,7 @@
 package flex.messaging.services.http.proxy;
 
 /**
- * @exclude
+ *
  * Response methods shared by J2EE and .NET.
  */
 public class ResponseUtil

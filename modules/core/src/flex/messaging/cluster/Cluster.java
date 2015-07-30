@@ -26,7 +26,7 @@ import flex.messaging.config.ConfigMap;
 import flex.messaging.log.LogCategories;
 
 /**
- * @exclude
+ *
  * Base interface for cluster implementations.
  */
 public abstract class Cluster

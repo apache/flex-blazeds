@@ -24,7 +24,7 @@ import flex.messaging.io.SerializationContext;
 /**
  * Decode an ActionScript type (a string or a double) to a Java number (of any type).
  *
- * @exclude
+ *
  */
 public class NumberDecoder extends ActionScriptDecoder
 {

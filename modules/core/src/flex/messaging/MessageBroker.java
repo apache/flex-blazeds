@@ -150,7 +150,7 @@ public class MessageBroker extends ManageableComponent
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      * Create a MessageBroker. This constructor will
      * establish collections for routers, endpoints,
      * and services.
@@ -260,7 +260,7 @@ public class MessageBroker extends ManageableComponent
      * Sets the id of the <code>MessageBroker</code>. If id is null, uses the
      * default broker id.
      *
-     * @exclude
+     *
      */
     @Override public void setId(String id)
     {
@@ -300,7 +300,7 @@ public class MessageBroker extends ManageableComponent
 
     /**
      * Start the message broker's endpoints and services.
-     * @exclude
+     *
      */
     @Override public void start()
     {
@@ -365,7 +365,7 @@ public class MessageBroker extends ManageableComponent
 
     /**
      * Stop the broker's endpoints, clusters, and services.
-     * @exclude
+     *
      */
     @Override public void stop()
     {
@@ -515,7 +515,7 @@ public class MessageBroker extends ManageableComponent
 
     /**
      * This interface is being kept for backwards compatibility.
-     * @exclude
+     *
      */
     public interface InternalPathResolver extends PathResolver
     {
@@ -529,7 +529,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Add a <code>Server</code> to the broker's collection.
      *
      * @param server <code>Server</code> to be added.
@@ -572,7 +572,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Returns the <code>Server</code> with the specified id.
      *
      * @param id The id of the <code>Server</code>/
@@ -585,7 +585,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Stops and removes the <code>Server</code> from the set of shared servers managed by the <code>MessageBroker</code>.
      *
      * @param id The id of the <code>Server</code> to remove.
@@ -603,7 +603,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Creates an <code>Endpoint</code> instance, sets its id and url.
      * It further sets the endpoint manageable if the <code>MessageBroker</code>
      * is manageable, and assigns its <code>MessageBroker</code> to the
@@ -629,7 +629,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Add an endpoint to the broker's collection. Broker will accept the endpoint
      * to be added only if the endpoint is not null, it does not have null id or
      * url, and it does not have the same id or url as another endpoint.
@@ -678,7 +678,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Returns the <code>Endpoint</code> with the specified id.
      *
      * @param id The id of the <code>Endpoint</code>/
@@ -691,7 +691,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Retrieve the map of all endpoints in this broker.
      */
     public Map<String, Endpoint> getEndpoints()
@@ -700,7 +700,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Retrieve an endpoint based on a requested URL path. Two endpoints should not be
      * registered to the same path.
      */
@@ -721,7 +721,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Removes an endpoint from the <code>MessageBroker</code>.
      *
      * @param id The id of the endpoint.
@@ -891,7 +891,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Returns a <tt>ConfigMap</tt> of service and channel properties that the client
      * needs.
      * The <tt>allDestinations</tt> flag controls whether configuration for all
@@ -1675,7 +1675,7 @@ public class MessageBroker extends ManageableComponent
      * Services call this method in order to send a message
      * to a FlexClient.
      *
-     * @exclude
+     *
      */
     public void routeMessageToMessageClient(Message message, MessageClient messageClient)
     {
@@ -1704,7 +1704,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Check that the destination permits access over the endpoint, the security
      * constraint of the destination permits the operation, and the service and
      * the destination the message is targeting are running,
@@ -1736,7 +1736,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Verify that this destination permits access over this endpoint.
      *
      * @param message The incoming message.
@@ -1759,7 +1759,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Returns the logging category to use for a given message.
      */
     public String getLogCategory(Message message)
@@ -1780,7 +1780,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Sets the class loader used by the system to load user defined classes.
      *
      * @param classLoader The class loader used by the system to loader user defiend classes.
@@ -1791,7 +1791,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Used internally by AbstractService to check existence of destination and service id
      * mapping in the destinationToService map.
      *
@@ -1815,7 +1815,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Used internally by AbstractService to add destination and service id
      * mapping to destinationToService map.
      *
@@ -1836,7 +1836,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Used internally by AbstractService to remove destination and service id
      * mapping from destinationToService map.
      *
@@ -1848,7 +1848,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Looks up and returns a destination by id; removing the need to know which service
      * a destination is registered for.
      *
@@ -1907,7 +1907,7 @@ public class MessageBroker extends ManageableComponent
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      * Utility method to make sure that message has an assigned messageId.
      */
     protected void checkMessageId(Message message)
@@ -1921,7 +1921,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Check the headers for the message for the RemoteCredentials.
      *
      * @param service
@@ -2006,7 +2006,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * This method was added so that Spring-BlazeDS Integration 1.0.2 works with latest BlazeDS binaries
      * Internally, this method simply invokes the setServletContext(...) method
      */
@@ -2028,7 +2028,7 @@ public class MessageBroker extends ManageableComponent
     /**
      * Start all of the broker's endpoints.
      *
-     * @exclude
+     *
      */
     protected void startEndpoints()
     {
@@ -2043,7 +2043,7 @@ public class MessageBroker extends ManageableComponent
     /**
      * Stop all of the broker's endpoints.
      *
-     * @exclude
+     *
      */
     protected void stopEndpoints()
     {
@@ -2062,7 +2062,7 @@ public class MessageBroker extends ManageableComponent
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      */
     private void checkEndpointUrl(String id, String endpointUrl)
     {
@@ -2107,7 +2107,7 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Matches the current &quot;servlet + pathinfo&quot; to a list of channels registered
      * in the services configuration file, independent of context root.
      *
@@ -2198,7 +2198,7 @@ public class MessageBroker extends ManageableComponent
     /**
      * Start all of the broker's services.
      *
-     * @exclude
+     *
      */
     private void startServices()
     {
@@ -2227,7 +2227,7 @@ public class MessageBroker extends ManageableComponent
     /**
      * Stop all of the broker's services.
      *
-     * @exclude
+     *
      */
     private void stopServices()
     {

@@ -23,7 +23,7 @@ import flex.messaging.io.MessageIOConstants;
  * assume the content-type as &quot;text/xml; charset=utf-8&quot;
  * and the HTTP method will be POST.
  *
- * @exclude
+ *
  */
 public class SOAPMessage extends HTTPMessage
 {

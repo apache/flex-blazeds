@@ -24,7 +24,7 @@ import javax.jms.Message;
  * by the source.
  *
  * @see flex.messaging.services.messaging.adapters.JMSMessageListener
- * @exclude
+ *
  */
 public class JMSMessageEvent extends EventObject
 {

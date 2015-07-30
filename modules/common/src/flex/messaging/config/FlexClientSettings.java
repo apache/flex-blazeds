@@ -17,7 +17,7 @@
 package flex.messaging.config;
 
 /**
- * @exclude
+ *
  */
 public class FlexClientSettings extends PropertiesSettings
 {

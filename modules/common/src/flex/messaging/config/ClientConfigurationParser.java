@@ -32,7 +32,7 @@ import org.w3c.dom.NodeList;
  * processed to generate the information that the client needs at runtime,
  * such as channel definitions and service destination properties.
  *
- * @exclude
+ *
  */
 public abstract class ClientConfigurationParser extends AbstractConfigurationParser
 {

@@ -25,7 +25,7 @@ package flex.messaging.io.amf.translator.decoder;
  * values will be interpreted as false.
  * </p>
  *
- * @exclude
+ *
  */
 public class BooleanDecoder extends ActionScriptDecoder
 {

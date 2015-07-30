@@ -35,7 +35,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 
 /**
- * @exclude
+ *
  * Fills in ProxyContext data for use by ProxyFilters within HttpProxyAdapter.
  */
 public class ProxyContextFilter extends ProxyFilter

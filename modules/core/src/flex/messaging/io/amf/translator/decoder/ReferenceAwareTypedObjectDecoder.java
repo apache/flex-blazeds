@@ -26,7 +26,7 @@ import flex.messaging.io.TypeMarshallingContext;
 import flex.messaging.io.amf.translator.TranslationException;
 
 /**
- * @exclude
+ *
  */
 public class ReferenceAwareTypedObjectDecoder extends TypedObjectDecoder
 {

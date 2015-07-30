@@ -34,7 +34,7 @@ import flex.messaging.log.LogCategories;
  * For more information on the asynchbeans API, refer to the WAS Javadoc for 
  * <a href="http://publib.boulder.ibm.com/infocenter/wasinfo/v5r0/index.jsp?topic=/com.ibm.wasee.doc/info/ee/javadoc/ee/com/ibm/websphere/asynchbeans/WorkManager.html">WorkManager</a>.
  *
- * @exclude
+ *
  */
 public class AsynchBeansWorkManagerExecutor implements Executor
 {

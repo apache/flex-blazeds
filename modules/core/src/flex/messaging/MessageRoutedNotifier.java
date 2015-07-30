@@ -21,7 +21,7 @@ import flex.messaging.messages.Message;
 import java.util.ArrayList;
 
 /**
- * @exclude
+ *
  * Supports registration and notification of <tt>MessageRoutedListener</tt>s.
  * An instance of this class is exposed by <tt>FlexContext</tt> while a message is
  * being routed, and once routing of the message to the outbound messages queues for

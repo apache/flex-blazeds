@@ -23,7 +23,7 @@ import java.util.concurrent.Future;
  * out, where the timeout mechanism is provided by the TimeoutManager
  * class.
  *
- * @exclude
+ *
  */
 public interface TimeoutCapable
 {

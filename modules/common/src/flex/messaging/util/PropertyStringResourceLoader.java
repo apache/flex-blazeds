@@ -40,7 +40,7 @@ import flex.messaging.log.LogCategories;
  * </p>
  *
  * @see MessageFormat
- * @exclude
+ *
  */
 public class PropertyStringResourceLoader implements ResourceLoader
 {

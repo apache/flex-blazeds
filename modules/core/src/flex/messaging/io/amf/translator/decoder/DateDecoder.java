@@ -30,7 +30,7 @@ import java.util.Calendar;
  * pointers to Date instances in our representation of an ActionScript
  * object graph.
  *
- * @exclude
+ *
  */
 public class DateDecoder extends ActionScriptDecoder
 {

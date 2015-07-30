@@ -23,7 +23,7 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 
 /**
- * @exclude
+ *
  * Decodes native Java Array, java.util.Collection, or
  * java.lang.String (to char[]) instances to a native
  * Java Array instance with desired component type.

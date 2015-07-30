@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  * facilities in the the Java concurrency package to provide a common utility
  * for scheduling timeout Futures and managing the underlying worker thread pools.
  *
- * @exclude
+ *
  */
 public class TimeoutManager
 {

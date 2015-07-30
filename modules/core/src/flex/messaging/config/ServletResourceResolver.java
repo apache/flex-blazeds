@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.Stack;
 
 /**
- * @exclude
+ *
  */
 public class ServletResourceResolver implements ConfigurationFileResolver
 {

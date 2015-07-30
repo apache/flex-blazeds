@@ -24,7 +24,7 @@ import javax.jms.MessageListener;
 /**
  * A <code>MessageReceiver</code> that receives messages asynchronously from JMS.
  *
- * @exclude
+ *
  */
 class AsyncMessageReceiver implements MessageReceiver, ExceptionListener, MessageListener
 {

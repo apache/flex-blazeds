@@ -78,7 +78,7 @@ public final class MessagingSecurityConstraintManager
     }
 
     /**
-     * @exclude
+     *
      * Asserts send authorizations.
      */
     public void assertSendAuthorization()
@@ -87,7 +87,7 @@ public final class MessagingSecurityConstraintManager
     }
 
     /**
-     * @exclude
+     *
      * Asserts subscribe authorizations.
      */
     public void assertSubscribeAuthorization()
@@ -96,7 +96,7 @@ public final class MessagingSecurityConstraintManager
     }
 
     /**
-     * @exclude
+     *
      * Creates security constraints from the given server settings.
      *
      * @param serverSettings The <code>ConfigMap</code> of server settings.

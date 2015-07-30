@@ -34,7 +34,7 @@ import java.util.Map;
 /**
  * A <code>JMSProducer</code> subclass specifically for JMS Topic publishers.
  *
- * @exclude
+ *
  */
 public class JMSTopicProducer extends JMSProducer
 {

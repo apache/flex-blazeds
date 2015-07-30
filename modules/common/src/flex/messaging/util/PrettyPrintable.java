@@ -20,7 +20,7 @@ package flex.messaging.util;
  * Allows an Object to customize how it is pretty printed in
  * logging/debugging output.
  *
- * @exclude
+ *
  */
 public interface PrettyPrintable
 {

@@ -24,7 +24,7 @@ import java.util.Date;
 /**
  * Decode an ActionScript object (of some type) to a Java object (of some type).
  *
- * @exclude
+ *
  */
 public abstract class ActionScriptDecoder
 {
@@ -92,10 +92,7 @@ public abstract class ActionScriptDecoder
 
         else if (o instanceof Date)
         {
-            if (SerializationContext.getSerializationContext().supportDatesByReference)
-                return true;
-            else
-                return false;
+            return SerializationContext.getSerializationContext().supportDatesByReference;
         }
 
         else if (o instanceof Calendar)

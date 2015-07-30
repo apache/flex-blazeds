@@ -19,7 +19,7 @@ package flex.messaging.services.messaging.adapters;
 /**
  * Constants for JMSAdapter and its related classes.
  *
- * @exclude
+ *
  */
 public interface JMSConfigConstants
 {

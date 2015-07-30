@@ -29,7 +29,7 @@ import javax.xml.transform.TransformerException;
  * sections of the document need to be parsed first.
  * </p>
  *
- * @exclude
+ *
  */
 public class ApacheXPathServerConfigurationParser extends ServerConfigurationParser
 {

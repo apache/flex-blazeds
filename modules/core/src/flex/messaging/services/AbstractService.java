@@ -577,7 +577,7 @@ public abstract class AbstractService extends ManageableComponent implements Ser
     }
 
     /**
-     * @exclude
+     *
      * Returns a <tt>ConfigMap</tt> of service properties that the client needs.
      * The <tt>allDestinations</tt> flag controls whether configuration for all 
      * destinations or only reliable client destinations is returned. 

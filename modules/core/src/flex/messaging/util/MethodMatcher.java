@@ -34,7 +34,7 @@ import java.lang.reflect.Method;
  * when several overloaded methods match very closely through the use
  * of various combinations of generic types.
  *
- * @exclude
+ *
  */
 public class MethodMatcher
 {
@@ -298,7 +298,7 @@ public class MethodMatcher
      *
      * @param parameters - A list of supplied parameters.
      * @return An array of <tt>Class</tt> instances indicating the class of each corresponding parameter.
-     * @exclude
+     *
      */
     public static Class[] paramTypes(List parameters)
     {
@@ -405,7 +405,7 @@ public class MethodMatcher
      * A utility class to help rank methods in the search
      * for a best match, given a name and collection of
      * input parameters.
-     * @exclude
+     *
      */
     public static class Match
     {

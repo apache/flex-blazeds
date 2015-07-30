@@ -29,12 +29,12 @@ import org.w3c.dom.Document;
  * An abstract serializer of AMF protocol data.
  *
  * @see ActionMessageOutput
- * @exclude
+ *
  */
 public abstract class AbstractAmfOutput extends AmfIO implements ActionMessageOutput
 {
     /**
-     * @exclude
+     *
      */
     protected DataOutputStream out;
 

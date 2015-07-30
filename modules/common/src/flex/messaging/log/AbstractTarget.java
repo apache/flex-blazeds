@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @exclude
+ *
  */
 public abstract class AbstractTarget implements Target
 {

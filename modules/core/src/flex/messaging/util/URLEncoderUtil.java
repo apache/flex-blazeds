@@ -22,7 +22,7 @@ import java.net.URLEncoder;
 /**
  * Utility class for URL encoding
  * 
- * @exclude
+ *
  */
 public class URLEncoderUtil
 {

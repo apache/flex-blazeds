@@ -78,7 +78,7 @@ public class AsyncMessage extends AbstractMessage implements SmallMessage
     }
 
     /**
-     * @exclude
+     *
      */
     public Message getSmallMessage()
     {
@@ -86,7 +86,7 @@ public class AsyncMessage extends AbstractMessage implements SmallMessage
     }
 
     /**
-     * @exclude
+     *
      */
     @Override public void readExternal(ObjectInput input)throws IOException, ClassNotFoundException
     {
@@ -126,7 +126,7 @@ public class AsyncMessage extends AbstractMessage implements SmallMessage
     }
 
     /**
-     * @exclude
+     *
      */
     @Override public void writeExternal(ObjectOutput output) throws IOException
     {

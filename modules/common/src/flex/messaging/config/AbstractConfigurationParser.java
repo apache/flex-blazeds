@@ -41,7 +41,7 @@ import flex.messaging.util.FileUtils;
 /**
  * Provides a common base for DOM / XPath based ConfigurationParsers.
  *
- * @exclude
+ *
  */
 public abstract class AbstractConfigurationParser implements ConfigurationParser, ConfigurationConstants, EntityResolver
 {

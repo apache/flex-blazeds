@@ -23,7 +23,7 @@ package flex.messaging.util;
  * drain less than everything that is currently
  * available.
  * 
- * @exclude
+ *
  */
 public class Hex
 {
@@ -33,7 +33,7 @@ public class Hex
                 '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
             };
     /**
-    * @exclude
+    *
     */
     public static class Decoder
     {
@@ -95,7 +95,7 @@ public class Hex
     }
 
     /**
-    * @exclude
+    *
     */
     public static class Encoder
     {

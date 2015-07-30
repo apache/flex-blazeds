@@ -47,7 +47,7 @@ public interface Amf3Types
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     int UINT29_MASK = 0x1FFFFFFF; // 2^29 - 1
 

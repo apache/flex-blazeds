@@ -17,7 +17,7 @@
 package flex.messaging.services.http;
 
 /**
- * @exclude
+ *
  * Collects the properties needed to create an Apache Commons HTTPClient
  * HostConfiguration. Holds all of the variables needed to describe an HTTP
  * connection to a host: remote host, port and protocol, proxy host and port,

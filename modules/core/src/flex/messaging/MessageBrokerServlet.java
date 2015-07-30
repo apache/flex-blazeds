@@ -58,7 +58,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * does not occur for non-http endpoints, such as the rtmp endpoint.
  *
  * @see flex.messaging.MessageBroker
- * @exclude
+ *
  */
 public class MessageBrokerServlet extends HttpServlet
 {

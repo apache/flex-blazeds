@@ -47,7 +47,7 @@ public interface Message
     String ENDPOINT_HEADER = "DSEndpoint";
 
     /**
-     * @exclude
+     *
      * Used internally to enable/disable validation of the channel endpoint that a
      * message for a destination arrived over.
      */

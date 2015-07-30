@@ -173,7 +173,7 @@ public class ExternalProxySettings
     }
 
     /**
-     * @exclude
+     *
      */
     public static boolean isDotNet()
     {

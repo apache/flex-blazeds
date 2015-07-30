@@ -21,7 +21,7 @@ import javax.jms.JMSException;
 /**
  * An interface used by <code>JMSConsumer</code> to receive messages from JMS.
  *
- * @exclude
+ *
  */
 interface MessageReceiver
 {

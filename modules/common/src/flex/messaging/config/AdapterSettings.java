@@ -26,7 +26,7 @@ package flex.messaging.config;
  * </p>
  *
  * @see flex.messaging.services.ServiceAdapter
- * @exclude
+ *
  */
 public class AdapterSettings extends PropertiesSettings
 {
@@ -111,7 +111,7 @@ public class AdapterSettings extends PropertiesSettings
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     String getSourceFile()
     {
@@ -120,7 +120,7 @@ public class AdapterSettings extends PropertiesSettings
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void setSourceFile(String file)
     {

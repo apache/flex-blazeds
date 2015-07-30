@@ -203,7 +203,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
     //----------------------------------
 
     /**
-     * @exclude
+     *
      * This is a property used on the client.
      */
     protected boolean loginAfterDisconnect;
@@ -389,7 +389,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
 
 
     /**
-     * @exclude
+     *
      * Returns a <code>ConfigMap</code> of endpoint properties that the client
      * needs. This includes properties from <code>super.describeEndpoint</code>
      * and additional <code>BaseHTTPEndpoint</code> specific properties under

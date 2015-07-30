@@ -35,7 +35,7 @@ import flex.messaging.MessageException;
 /**
  * A <code>JMSProducer</code> subclass specifically for JMS Queue senders.
  *
- * @exclude
+ *
  */
 public class JMSQueueProducer extends JMSProducer
 {

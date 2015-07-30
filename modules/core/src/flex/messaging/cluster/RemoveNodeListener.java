@@ -18,7 +18,7 @@ package flex.messaging.cluster;
 
 
 /**
- * @exclude
+ *
  * Called when a node leaves the cluster.  Note that for JGroups at least, this
  * callback should not execute any "long running" operations.  This is indirectly
  * called from the MembershipListener interface in JGroups.

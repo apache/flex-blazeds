@@ -32,7 +32,7 @@ import java.util.Map;
  * HEAD etc.
  * </p>
  *
- * @exclude
+ *
  */
 public class HTTPMessage extends RPCMessage
 {

@@ -23,7 +23,7 @@ import flex.messaging.log.Log;
  * Base class for RPC request-styled messages, such as RemotingMessage,
  * HTTPMessage and SOAPMessage.
  *
- * @exclude
+ *
  */
 public abstract class RPCMessage extends AbstractMessage
 {

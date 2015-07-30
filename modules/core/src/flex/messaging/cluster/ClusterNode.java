@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * @exclude
+ *
  * ClusterNode is an encapsulation for pairing a physical host and a logical
  * software group, which is in effect a mapping between a physical address used
  * by the cluster infrastructure and a service destination used by the message

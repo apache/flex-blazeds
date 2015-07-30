@@ -24,7 +24,7 @@ import flex.messaging.log.Log;
  * Note that new lines are NOT added after the individual values
  * in complex type properties.
  *
- * @exclude
+ *
  */
 public class ObjectTrace
 {

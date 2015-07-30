@@ -17,7 +17,7 @@
 package flex.messaging.services.messaging;
 
 /**
- * @exclude
+ *
  */
 public interface MessagingConstants
 {

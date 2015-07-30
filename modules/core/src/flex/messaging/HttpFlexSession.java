@@ -49,7 +49,7 @@ public class HttpFlexSession extends FlexSession
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      * Not for public use. This constructor is used to create an instance of this class that
      * will operate as a javax.servlet.http.HttpSessionListener registered in web.xml.
      */
@@ -57,7 +57,7 @@ public class HttpFlexSession extends FlexSession
     {}
 
     /**
-     * @exclude
+     *
      * Not for public use. Constructs new instances that effectively wrap pre-existing JEE HttpSession instances.
      */
     public HttpFlexSession(HttpFlexSessionProvider provider) 
@@ -125,7 +125,7 @@ public class HttpFlexSession extends FlexSession
     /* package-private */ HttpSession httpSession;
 
     /**
-     * @exclude
+     *
      * Static lock for creating httpSessionToFlexSession map
      */
     public static final Object mapLock = new Object();
@@ -304,7 +304,7 @@ public class HttpFlexSession extends FlexSession
     }
 
     /**
-     * @exclude
+     *
      * Used by Http endpoints when they receive notification from a client that it has
      * disconnected its channel.
      * Supports invalidating the HttpFlexSession and underlying JEE HttpSession without
@@ -400,7 +400,7 @@ public class HttpFlexSession extends FlexSession
     }
 
     /**
-     * @exclude
+     *
      * FlexClient invokes this to determine whether the session can be used to push messages
      * to the client.
      *
@@ -562,7 +562,7 @@ public class HttpFlexSession extends FlexSession
     }
 
     /**
-     * @exclude
+     *
      * Invoked by HttpSessionListener or binding listener on HttpSession invalidation to invalidate the wrapping
      * FlexSession.
      */

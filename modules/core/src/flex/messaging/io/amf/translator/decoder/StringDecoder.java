@@ -19,7 +19,7 @@ package flex.messaging.io.amf.translator.decoder;
 /**
  * Decode an ActionScript String, Number or Boolean to a Java String.
  *
- * @exclude
+ *
  */
 public class StringDecoder extends ActionScriptDecoder
 {

@@ -18,7 +18,7 @@ package flex.messaging.services.http.proxy;
 
 
 /**
- * @exclude
+ *
  * Base filter definition that defines the filter contract.
  * Filters perform pre- and post-processing duties on the ProxyContext
  */

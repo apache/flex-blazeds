@@ -19,7 +19,7 @@ package flex.messaging.cluster;
 import java.util.List;
 
 /**
- * @exclude
+ *
  * This interface represents a handler for a message broadcast by a Cluster.
  * Clusters broadcast messages across their physical nodes, and when they
  * receive those messages they locate a BroadcastHandler capable of handling

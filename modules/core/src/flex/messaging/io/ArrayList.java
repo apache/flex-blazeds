@@ -21,7 +21,7 @@ package flex.messaging.io;
 import java.util.Collection;
 
 /**
- * @exclude
+ *
  */
 public class ArrayList extends ArrayCollection 
 {

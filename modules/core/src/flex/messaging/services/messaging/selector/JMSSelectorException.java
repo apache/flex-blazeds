@@ -21,7 +21,7 @@ import flex.messaging.MessageException;
 /**
  * Exception type for JMSSelector errors.
  *
- * @exclude
+ *
  */
 public class JMSSelectorException extends MessageException
 {

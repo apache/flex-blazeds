@@ -23,7 +23,7 @@ import java.io.ObjectOutput;
 import flex.messaging.util.UUIDUtils;
 
 /**
- * @exclude
+ *
  * This is the type of message returned by the MessageBroker
  * to endpoints after the broker has routed an endpoint's message
  * to a service.
@@ -47,7 +47,7 @@ public class AcknowledgeMessage extends AsyncMessage
     }
 
     /**
-     * @exclude
+     *
      */
     public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException
     {
@@ -75,7 +75,7 @@ public class AcknowledgeMessage extends AsyncMessage
     }
 
     /**
-     * @exclude
+     *
      */
     public Message getSmallMessage()
     {
@@ -85,7 +85,7 @@ public class AcknowledgeMessage extends AsyncMessage
     }
 
     /**
-     * @exclude
+     *
      */
     public void writeExternal(ObjectOutput output) throws IOException
     {

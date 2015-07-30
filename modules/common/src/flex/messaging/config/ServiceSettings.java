@@ -34,7 +34,7 @@ import java.util.Map;
  * of actions allowed by that service.
  * </p>
  *
- * @exclude
+ *
  */
 public class ServiceSettings extends PropertiesSettings
 {

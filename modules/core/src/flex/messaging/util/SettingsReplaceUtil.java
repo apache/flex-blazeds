@@ -32,7 +32,7 @@ import java.util.Set;
  * Methods for replacing tokens in config files
  * {context.root}, {context-root}, {server.name}, {server-name}, {server.port}, {server-port}.
  * 
- * @exclude
+ *
  */
 public class SettingsReplaceUtil
 {

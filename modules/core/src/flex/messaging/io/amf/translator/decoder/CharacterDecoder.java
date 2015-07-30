@@ -24,7 +24,7 @@ package flex.messaging.io.amf.translator.decoder;
  * character in the String will be used.
  * </p>
  *
- * @exclude
+ *
  */
 public class CharacterDecoder extends ActionScriptDecoder
 {

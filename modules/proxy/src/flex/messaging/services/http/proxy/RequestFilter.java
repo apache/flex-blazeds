@@ -57,7 +57,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * @exclude
+ *
  * Sends the request to the endpoint, including custom copying of headers and cookies.
  */
 public class RequestFilter extends ProxyFilter

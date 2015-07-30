@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * A log maintains a series of Loggers for each logging category and
  * Targets are established that listen for LogEvents on those Loggers.
  *
- * @exclude
+ *
  */
 public class LoggingSettings extends PropertiesSettings
 {

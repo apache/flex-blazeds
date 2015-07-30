@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 
 /**
- * @exclude
+ *
  * Handles whitelist/access and authentication/authorization system for requests.  Checks URL to make sure we
  * accept it.  Sets credentials if needed on the request.  After the request is made, changes response for
  * security info if needed

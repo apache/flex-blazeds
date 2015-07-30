@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  * A <code>MessageReceiver</code> that receives messages from JMS using
  * synchronous <code>javax.jms.MessageConsumer.receive</code> call.
  *
- * @exclude
+ *
  */
 class SyncMessageReceiver implements MessageReceiver
 {

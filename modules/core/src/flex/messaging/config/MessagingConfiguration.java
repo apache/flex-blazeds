@@ -58,7 +58,7 @@ import java.util.Map;
  * instead, this object sets the relevant values on the broker using
  * information which a ConfigurationParser has provided for it.
  *
- * @exclude
+ *
  */
 public class MessagingConfiguration implements ServicesConfiguration
 {
@@ -456,7 +456,7 @@ public class MessagingConfiguration implements ServicesConfiguration
     }
 
     /**
-     * @exclude
+     *
      * Used by the MessageBrokerServlet to set up the singleton Log instance
      * and add any targets defined in the logging configuration.
      * This needs to be invoked ahead of creating and bootstrapping a MessageBroker
@@ -506,7 +506,7 @@ public class MessagingConfiguration implements ServicesConfiguration
             {
                 // Unwrap to get to the interesting exception
                 if (t instanceof InvocationTargetException)
-                    t = ((InvocationTargetException ) t).getCause();
+                    t = t.getCause();
 
                 System.err.println("*** Error setting up logging system");
                 t.printStackTrace();
@@ -558,7 +558,7 @@ public class MessagingConfiguration implements ServicesConfiguration
                 Object filterChain = getMessageFilterChain.invoke(broker, (Object[])null);
                 Class arg = filterIsAsync ? asyncFilterClass : syncFilterClass; 
                 Method addFilter = filterChain.getClass().getDeclaredMethod("add", arg);
-                addFilter.invoke(filterChain, new Object[] {filter});
+                addFilter.invoke(filterChain, filter);
             }
             catch (Exception e)
             {

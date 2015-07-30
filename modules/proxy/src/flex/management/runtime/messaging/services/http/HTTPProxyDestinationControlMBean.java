@@ -22,7 +22,7 @@ import java.util.Date;
 import flex.management.runtime.messaging.DestinationControlMBean;
 
 /**
- * @exclude
+ *
  * Defines the runtime monitoring and management interface for managed
  * <code>HTTPProxyDestination</code>s.
  */

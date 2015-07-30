@@ -50,7 +50,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     public static final String FLEX_SESSION_LOG_CATEGORY = LogCategories.ENDPOINT_FLEXSESSION;
 
     /**
-     * @exclude
+     *
      */
     public static final int MAX_CONNECTIONS_PER_SESSION_UNLIMITED = -1;
 
@@ -77,7 +77,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      * @deprecated Post 2.6.1 releases require use of the constructor that takes an <tt>AbstractFlexSessionProvider</tt> argument.
      */
     public FlexSession()
@@ -86,7 +86,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     }
 
     /**
-     * @exclude
+     *
      * Constructs a new FlexSession instance.
      *
      * @param sessionProvider The provider that instantiated this instance.
@@ -197,7 +197,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //----------------------------------
 
     /**
-     * @exclude
+     *
      * Used internally to manage async long-polls; not for public use.
      *
      * A map of endpoint to async poll objects that keeps track of what
@@ -221,7 +221,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     private final AbstractFlexSessionProvider sessionProvider;
 
     /**
-     * @exclude
+     *
      * Returns the session provider that created this instance.
      *
      * @return The session provider that created this instance.
@@ -281,7 +281,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //----------------------------------
 
     /**
-     * @exclude
+     *
      * Used internally by streaming endpoints to enforce session level streaming
      * connection limits; not for public use.
      * This flag is volatile to allow for consistent reads across thread without
@@ -294,7 +294,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //----------------------------------
 
     /**
-     * @exclude
+     *
      * Used internally by streaming and long polling endpoints to enforce session
      * level streaming connection limits; not for public use. Default value is -1
      * (limitless)
@@ -306,7 +306,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //----------------------------------
 
     /**
-     * @exclude
+     *
      * Used internally by streaming and long polling endpoints to enforce
      * session level streaming connection limits; not for public use.
      *
@@ -326,12 +326,12 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //----------------------------------
 
     /**
-     * @exclude
+     *
      */
     private boolean useSmallMessages;
 
     /**
-     * @exclude
+     *
      * Determines whether the server can attempt to send small messages
      * for those messages that have a small form. This setting can be overridden
      * by an endpoint's enableSmallMessages switch which controls whether
@@ -345,7 +345,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     }
 
     /**
-     * @exclude
+     *
      */
     public void setUseSmallMessages(boolean value)
     {
@@ -357,7 +357,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //----------------------------------
 
     /**
-     * @exclude
+     *
      * Used internally to manage wait()-based long-polls; not for public use.
      *
      * This is the monitor that a request handling thread associated with this
@@ -465,7 +465,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     }
 
     /**
-     * @exclude
+     *
      * Implements MessageClientListener.
      * Handling created events is a no-op.
      *
@@ -474,7 +474,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     public void messageClientCreated(MessageClient messageClient) {}
 
     /**
-     * @exclude
+     *
      * Implements MessageClientListener.
      * Notification that an associated MessageClient was destroyed.
      *
@@ -486,7 +486,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     }
 
     /**
-     * @exclude
+     *
      * FlexClient invokes this to determine whether the session can be used to push messages
      * to the client.
      *
@@ -495,7 +495,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     public abstract boolean isPushSupported();
 
     /**
-     * @exclude
+     *
      * FlexClient invokes this to push a message to a remote client.
      *
      * @param message The message to push.
@@ -836,7 +836,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     }
 
     /**
-     * @exclude
+     *
      * Implements FlexClientListener interface.
      * Notification that a FlexClient was created.
      * This is a no-op because the FlexSession is never added as a static FlexClient created listener
@@ -848,7 +848,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     public void clientCreated(FlexClient flexClient) {}
 
     /**
-     * @exclude
+     *
      * Implements FlexClientListener interface.
      * Notification that an associated FlexClient was destroyed.
      *
@@ -860,7 +860,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     }
 
     /**
-     * @exclude
+     *
      * Used internally to associate a FlexClient with the FlexSession.
      *
      * @param flexClient The FlexClient to assocaite with the session.
@@ -875,7 +875,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     }
 
     /**
-     * @exclude
+     *
      * Used internally to disassociate a FlexClient from the FlexSession.
      *
      * @param flexClient The FlexClient to disassociate from the session.
@@ -890,7 +890,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     }
 
     /**
-     * @exclude
+     *
      * Used internally to associate a MessagClient (subscription) with the FlexSession.
      *
      * @param messageClient The MessageClient to associate with the session.
@@ -911,7 +911,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     }
 
     /**
-     * @exclude
+     *
      * Used internally to disassociate a MessageClient (subscription) from a FlexSession.
      *
      * @param messageClient The MessageClient to disassociate from the session.

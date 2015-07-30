@@ -27,7 +27,7 @@ import java.util.Iterator;
  * methods to log information out at the desired level. Each <code>Logger</code>
  * will log information out for a log category that is settable.
  *
- * @exclude
+ *
  */
 public class Logger
 {
@@ -344,7 +344,7 @@ public class Logger
     }
 
     /**
-     * @exclude
+     *
      * The methods named according to log level delegate to this method to log.
      *
      * @param level The log level.
@@ -358,7 +358,7 @@ public class Logger
     }
 
     /**
-     * @exclude
+     *
      * Logs a passed message if its level verifies as high enough.
      *
      * @param level The log level.

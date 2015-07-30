@@ -738,7 +738,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Returns the url of the endpoint parsed for the client.
      *
      * @return The url of the endpoint parsed for the client.
@@ -762,7 +762,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Returns the total throughput for the endpoint.
      *
      * @return The total throughput for the endpoint.
@@ -800,7 +800,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      */
     public Message convertToSmallMessage(Message message)
     {
@@ -896,7 +896,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Make sure this matches with ChannelSettings.getParsedUri.
      */
     public String getParsedUrl(String contextPath)
@@ -906,7 +906,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      */
     public void handleClientMessagingVersion(Number version)
     {
@@ -1107,7 +1107,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
    }
 
    /**
-    * @exclude
+    *
     * Performance metrics gathering property
     */
     public boolean isRecordMessageSizes()
@@ -1116,7 +1116,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
    /**
-    * @exclude
+    *
     * Performance metrics gathering property
     */
     public boolean isRecordMessageTimes()
@@ -1125,7 +1125,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      */
     public void setThreadLocals()
     {
@@ -1143,7 +1143,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      */
     public void clearThreadLocals()
     {
@@ -1372,7 +1372,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Verifies that the remote client supports the FlexClient API.
      * Legacy clients that do not support this receive a message fault for any messages they send.
      *
@@ -1389,7 +1389,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      */
     protected Class<?> createClass(String className)
     {

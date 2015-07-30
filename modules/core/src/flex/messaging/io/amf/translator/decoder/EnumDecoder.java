@@ -18,7 +18,7 @@ package flex.messaging.io.amf.translator.decoder;
 
 /**
  * Decode an ActionScript enumeration object (generally a string) to a Java enum.
- * @exclude
+ *
  */
 public class EnumDecoder extends ActionScriptDecoder
 {

@@ -85,19 +85,19 @@ public interface ActionMessageInput extends ObjectInput
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void setInputStream(InputStream in);
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void setDebugTrace(AmfTrace trace);
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void reset();
 }

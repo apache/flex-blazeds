@@ -22,7 +22,7 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 /**
- * @exclude
+ *
  * Simple wrapper around PostMethod that exposes one method for ProxyServlet.
  */
 public class FlexPostMethod extends PostMethod

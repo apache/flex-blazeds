@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * @exclude
+ *
  */
 public interface MessageSerializer
 {

@@ -23,7 +23,7 @@ import java.util.concurrent.Future;
  * providing the default behavior for an object that is capable of timing
  * out where that time out mechanism is managed by TimeoutManager.
  *
- * @exclude
+ *
  */
 public abstract class TimeoutAbstractObject implements TimeoutCapable
 {

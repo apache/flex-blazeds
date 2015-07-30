@@ -23,7 +23,7 @@ import java.io.ObjectOutput;
 import flex.messaging.io.ClassAlias;
 
 /**
- * @exclude
+ *
  */
 public class CommandMessageExt extends CommandMessage implements Externalizable, ClassAlias
 {

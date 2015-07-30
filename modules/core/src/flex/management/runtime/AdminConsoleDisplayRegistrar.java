@@ -23,7 +23,7 @@ import java.util.HashMap;
 import flex.management.BaseControl;
 
 /**
- * @exclude
+ *
  */
 public class AdminConsoleDisplayRegistrar extends BaseControl implements AdminConsoleDisplayRegistrarMBean
 {

@@ -22,7 +22,7 @@ import java.io.ObjectOutput;
 import java.util.Iterator;
 
 /**
- * @exclude
+ *
  */
 public class ManagedObjectProxy extends ObjectProxy 
 {

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @exclude
+ *
  */
 public class ClientConfiguration implements ServicesConfiguration
 {

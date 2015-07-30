@@ -23,7 +23,7 @@ package flex.messaging.util;
  * Enable as follows:
  * java -Dassert
  * 
- * @exclude
+ *
  */
 public class Assert 
 {

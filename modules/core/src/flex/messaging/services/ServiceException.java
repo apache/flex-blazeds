@@ -22,7 +22,7 @@ import flex.messaging.log.LogEvent;
 /**
  * Exception type for Service errors.
  *
- * @exclude
+ *
  */
 public class ServiceException extends MessageException
 {
@@ -59,10 +59,7 @@ public class ServiceException extends MessageException
      */
     public boolean isLogStackTraceEnabled()
     {
-        if (code != null && code.equals(MessageService.NOT_SUBSCRIBED_CODE))
-            return false;
-        else
-            return true;
+        return !(code != null && code.equals(MessageService.NOT_SUBSCRIBED_CODE));
     }    
     
     //----------------------------------

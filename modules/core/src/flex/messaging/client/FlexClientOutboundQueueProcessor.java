@@ -71,7 +71,7 @@ public class FlexClientOutboundQueueProcessor
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      * Stores the Id for the outbound queue's endpoint.
      *
      * @param value The Id for the outbound queue's endpoint.
@@ -92,7 +92,7 @@ public class FlexClientOutboundQueueProcessor
     }
 
     /**
-     * @exclude
+     *
      * Sets the associated FlexClient.
      *
      * @param value The associated FlexClient.

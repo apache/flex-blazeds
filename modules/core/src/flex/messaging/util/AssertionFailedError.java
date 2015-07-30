@@ -17,7 +17,7 @@
 package flex.messaging.util;
 
 /**
- * @exclude
+ *
  *
  */
 public class AssertionFailedError extends Error

@@ -36,7 +36,7 @@ import flex.messaging.util.TimeoutAbstractObject;
 import flex.messaging.util.UUIDUtils;
 
 /**
- * @exclude
+ *
  * Instances of this class are used by endpoints that support streaming
  * outbound data to connected clients when the client is not polling and
  * the FlexSession representing the connection does not support push directly.
@@ -339,7 +339,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
     }
 
     /**
-     * @exclude
+     *
      * Implements TimeoutCapable.
      * Determine the time, in milliseconds, that this object is allowed to idle
      * before having its timeout method invoked.
@@ -350,7 +350,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
     }
 
     /**
-     * @exclude
+     *
      */
     public void messageClientCreated(MessageClient messageClient)
     {
@@ -358,7 +358,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
     }
 
     /**
-     * @exclude
+     *
      */
     public void messageClientDestroyed(MessageClient messageClient)
     {
@@ -433,7 +433,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
     }
 
     /**
-     * @exclude
+     *
      * Implements TimeoutCapable.
      * Inform the object that it has timed out.
      */

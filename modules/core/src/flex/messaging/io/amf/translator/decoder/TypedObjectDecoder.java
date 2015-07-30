@@ -32,7 +32,7 @@ import flex.messaging.io.amf.translator.TranslationException;
  * If the TranslationContext has been set up to support
  * _remoteClass then this property may be used as a back up.
  *
- * @exclude
+ *
  */
 public class TypedObjectDecoder extends ActionScriptDecoder
 {
