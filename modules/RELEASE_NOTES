@@ -1,3 +1,13 @@
+Apache Flex BlazeDS 4.7.1
+=======================
+
+Apache Flex BlazeDS 4.7.1 is an update to 4.7.0 to allow configuration control
+over XML Entity processing. 
+
+Known Issues
+_____________
+FLEX-34648 Memory Leak occurred in AsyncMessage when sending alot of
+
 Apache Flex BlazeDS 4.7
 =======================
 
