@@ -16,38 +16,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
         <groupId>org.apache.flex.blazeds</groupId>
-		<artifactId>flex-messaging</artifactId>
-		<version>4.8.0-SNAPSHOT</version>
+		<artifactId>flex-messaging-opt</artifactId>
+		<version>4.7.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>flex-messaging-opt</artifactId>
-	<packaging>pom</packaging>
-
-	<modules>
-		<module>tomcat</module>
-        <!-- TODO: Commented out these project as they have third-party dependencies that might be problematic. -->
-		<!--module>websphere</module-->
-		<!--module>weblogic</module-->
-		<!--module>oracle</module-->
-	</modules>
+	<artifactId>flex-messaging-opt-oracle</artifactId>
 
 	<dependencies>
 		<dependency>
-            <groupId>org.apache.flex.blazeds</groupId>
-			<artifactId>flex-messaging-core</artifactId>
-			<version>${project.version}</version>
+			<groupId>com.oracle.oc4j</groupId>
+			<artifactId>oc4j-api</artifactId>
+			<version>10.0.3.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../../lib/oc4j-api.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
+			<groupId>com.oracle.oc4j</groupId>
+			<artifactId>jaas</artifactId>
+			<version>1.4</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../../lib/jazncore.jar</systemPath>
 		</dependency>
-    </dependencies>
+	</dependencies>
 
 </project>

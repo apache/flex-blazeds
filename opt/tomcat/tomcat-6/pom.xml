@@ -21,33 +21,30 @@ limitations under the License.
 
 	<parent>
         <groupId>org.apache.flex.blazeds</groupId>
-		<artifactId>flex-messaging</artifactId>
+		<artifactId>flex-messaging-opt</artifactId>
 		<version>4.8.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>flex-messaging-opt</artifactId>
-	<packaging>pom</packaging>
-
-	<modules>
-		<module>tomcat</module>
-        <!-- TODO: Commented out these project as they have third-party dependencies that might be problematic. -->
-		<!--module>websphere</module-->
-		<!--module>weblogic</module-->
-		<!--module>oracle</module-->
-	</modules>
+	<artifactId>flex-messaging-opt-tomcat-6</artifactId>
 
 	<dependencies>
 		<dependency>
-            <groupId>org.apache.flex.blazeds</groupId>
-			<artifactId>flex-messaging-core</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>6.0.26</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>catalina</artifactId>
+			<version>6.0.26</version>
 			<scope>provided</scope>
 		</dependency>
-    </dependencies>
+
+        <dependency>
+            <groupId>org.apache.flex.blazeds</groupId>
+            <artifactId>flex-messaging-opt-tomcat-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+	</dependencies>
 
 </project>
