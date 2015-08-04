@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<!--
+
+    Experimental Components
+
+-->
+<componentPackage>
+    <!-- Alert class and it's skin -->
+    <component id="Alert" class="spark.components.Alert"/>
+    <component id="AlertSkin" class="spark.skins.AlertSkin"/>
+    <!-- ColorPicker class and it's skins -->
+    <component id="ColorPicker" class="spark.components.ColorPicker"/>
+    <component id="ColorPickerSkin" class="spark.skins.ColorPickerSkin"/>
+    <component id="ColorButtonPickerSkin" class="spark.skins.ColorPickerButtonSkin"/>
+    <component id="ColorChangeEvent" class="spark.events.ColorChangeEvent"/>
+    <!-- Horizontal and Vertical dividers and their groups -->
+    <component id="Divider" class="spark.containers.Divider"/>
+    <component id="HDivider" class="spark.containers.HDivider"/>
+    <component id="VDivider" class="spark.containers.VDivider"/>
+    <component id="DividerGroup" class="spark.containers.DividedGroup"/>
+    <component id="HDividerGroup" class="spark.containers.HDividerGroup"/>
+    <component id="VDividerGroup" class="spark.containers.VDividerGroup"/>
+    <!-- Menu classes and skins -->
+    <component id="Menu" class="spark.components.Menu"/>
+    <component id="MenuEvent" class="spark.events.MenuEvent"/>
+    <component id="MenuSkin" class="spark.skins.MenuSkin"/>
+    <component id="MenuItemRenderer" class="spark.components.itemRenderers.MenuItemRenderer"/>
+    <component id="MenuBar" class="spark.components.MenuBar"/>
+    <component id="MenuBarSkin" class="spark.skins.MenuBarSkin"/>
+    <component id="MenuBarItemRenderer" class="spark.components.itemRenderers.MenuBarItemRenderer"/>
+    <component id="IListItemRenderer" class="spark.components.listClasses.IListItemRenderer"/>
+    <!-- ProgressBar classes and skins -->
+    <component id="ProgressBar" class="spark.components.ProgressBar"/>
+    <component id="ProgressBarSkin" class="spark.skins.ProgressBarSkin"/>
+</componentPackage>

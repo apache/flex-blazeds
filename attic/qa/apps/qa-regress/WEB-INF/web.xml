@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+    <display-name>Flex QA Web Application</display-name>
+    <description>Flex Presentation Server qa web application</description>
+    
+    <context-param>
+        <param-name>brokerURI</param-name>
+        <param-value>/WEB-INF/activemq.xml</param-value>
+    </context-param>
+
+    <!-- Http Flex Session attribute and binding listener support -->
+    <listener>
+        <listener-class>flex.messaging.HttpFlexSession</listener-class>
+    </listener>
+    
+    <!-- Active MQ Spring Context Listener-->
+    <listener>
+        <listener-class>org.apache.activemq.web.SpringBrokerContextListener</listener-class>
+    </listener>
+    
+    <!-- Spring Configuration. Uncomment if using Spring. 
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener> -->
+
+    <!-- MessageBroker Servlet -->
+    <servlet>
+        <servlet-name>MessageBrokerServlet</servlet-name>
+        <display-name>MessageBrokerServlet</display-name>
+        <servlet-class>flex.messaging.MessageBrokerServlet</servlet-class>
+        <init-param>
+            <param-name>services.configuration.file</param-name>
+            <param-value>/WEB-INF/flex/services-config.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>HttpXmlEchoService</servlet-name>
+        <display-name>HttpXmlEchoService</display-name>
+        <servlet-class>dev.httpservice.HttpXmlEchoService</servlet-class>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>AxisServlet</servlet-name>
+        <display-name>Apache-Axis Servlet</display-name>
+        <servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>AdminServlet</servlet-name>
+        <display-name>Axis Admin Servlet</display-name>
+        <servlet-class>
+            org.apache.axis.transport.http.AdminServlet
+        </servlet-class>
+        <load-on-startup>100</load-on-startup>
+    </servlet>
+
+    <!--- Add RDS servlets -->
+    <servlet>
+        <servlet-name>RDSDispatchServlet</servlet-name>
+        <display-name>RDSDispatchServlet</display-name>
+        <servlet-class>flex.rds.server.servlet.FrontEndServlet</servlet-class>
+        <init-param>
+            <param-name>useAppserverSecurity</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <!-- Must be loaded after MessageBrokerServlet -->        
+        <load-on-startup>10</load-on-startup>
+    </servlet>
+
+    <!-- Flex task Servlet -->
+    <servlet>
+       <servlet-name>QAAntTaskCompilerServlet</servlet-name>
+       <display-name>QAAntTaskCompilerServlet</display-name>
+       <servlet-class>qa.utils.mxml.MXMLCServlet</servlet-class>
+       <init-param>
+            <param-name>ant-debug</param-name>
+            <param-value>false</param-value>
+       </init-param>
+       <!-- use either absolute or relative path to the FLEX_HOME -->
+       <init-param>
+            <param-name>FLEX_HOME</param-name>
+            <param-value>../../..</param-value>
+       </init-param>
+    </servlet>
+
+    <servlet-mapping id="RDS_DISPATCH_MAPPING">
+        <servlet-name>RDSDispatchServlet</servlet-name>
+        <url-pattern>/CFIDE/main/ide.cfm</url-pattern>
+    </servlet-mapping> 
+    <!-- End Add RDS servlets -->
+
+    <servlet-mapping>
+        <servlet-name>AdminServlet</servlet-name>
+        <url-pattern>/servlet/AdminServlet</url-pattern>
+     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/axis/services/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/axis/servlet/AxisServlet</url-pattern>
+     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>*.jws</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>HttpXmlEchoService</servlet-name>
+        <url-pattern>/httpxmlechoservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>MessageBrokerServlet</servlet-name>
+        <url-pattern>/messagebroker/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>QAAntTaskCompilerServlet</servlet-name>
+        <url-pattern>*.mxml</url-pattern>
+    </servlet-mapping>
+    
+    <!-- for WebSphere deployment, please uncomment -->
+    <!--
+    <resource-ref>
+        <description>Flex Messaging WorkManager</description>
+        <res-ref-name>wm/MessagingWorkManager</res-ref-name>
+        <res-type>com.ibm.websphere.asynchbeans.WorkManager</res-type>
+        <res-auth>Container</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+    </resource-ref>
+    -->    
+     
+    <mime-mapping>
+        <extension>wsdl</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>
+  
+    <mime-mapping>
+        <extension>xsd</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>
+  
+    <mime-mapping>
+        <extension>xml</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>swf</extension>
+        <mime-type>application/x-shockwave-flash</mime-type>
+    </mime-mapping>
+    
+</web-app>
