@@ -1,0 +1,865 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<mx:Application  width='800' height='800' xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="setUp()">
+
+    <mx:RemoteObject destination="qa.echoservice.Echo" id="ro" invoke="addAsync()"/>
+
+    <mx:TraceTarget id="tt"/>
+    <mx:Script>
+    <![CDATA[
+        import mx.rpc.AsyncToken;
+        import qa.mxunit.*;
+        import mx.core.mx_internal;
+        import mx.messaging.ChannelSet;
+        import mx.messaging.config.ServerConfig;
+        import mx.messaging.channels.*;
+        import mx.collections.*;
+        import mx.rpc.events.*;
+
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Variables
+        //
+        ////////////////////////////////////////////////////////////////////////////        
+        [Bindable]
+        public var dotNet:String;
+        /**
+        *  Variable to hold singleton instance of the MXUnitManager.  
+        */
+        private var manager:MXUnitManager;
+
+        //amf channel which legacy-collection is true
+        private var amfChannel:ChannelSet;
+        //http channel which legacy-collection is true
+        private var httpChannel:ChannelSet;
+        //amf channel which legacy-collection is false
+        private var amfChannelac:ChannelSet;
+        //amf channel which legacy-collection is false
+        private var httpChannelac:ChannelSet;
+
+        private var expectedValue:Boolean = true;
+        private var expectedArray:Array = [true,false,false,true];
+        
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Setup method.
+        //
+        //////////////////////////////////////////////////////////////////////////// 
+        public function addAsync():void
+        {
+	    //Get runDotNet parameter from FlashVars or swf URL
+	    var paramObj:Object = LoaderInfo(this.root.loaderInfo).parameters;
+	    dotNet = paramObj["runDotNet"];
+
+            manager.currentTest.chain(ro, ["result", "fault"], testHandler);    
+        }
+        
+        /**
+        *  This setup method dynamically creates a series of tests, and 
+        *  creates different channelsets. Same data is going to test under different
+        *  channelSets
+        */
+        public function setUp():void
+        {
+            amfChannel = new ChannelSet();
+            amfChannel.addChannel(ServerConfig.getChannel("qa-amf"));
+            httpChannel = new ChannelSet();
+            httpChannel.addChannel(ServerConfig.getChannel("qa-http"));
+            amfChannelac = new ChannelSet();
+            amfChannelac.addChannel(ServerConfig.getChannel("qa-amf-ac"));
+            httpChannelac = new ChannelSet();
+            httpChannelac.addChannel(ServerConfig.getChannel("qa-http-ac"));
+       
+            //configure the MXUnitManager           
+            manager = MXUnitManager.getInstance();                                                                 
+
+            MXUnitManager.detectTests(this,20000);
+
+            //MXUnitManager.addTests(this,["testArrayCollectionEchoBooleanClassesAMF"],10000);
+        }
+        
+        
+        /**
+        *  Send a boolean value to server to echo it back using amfChannel,
+        *  assert the return value in testHandler. testHandler function
+        *  compare the event result with the token.expected. 
+        */
+        public function testEchoBooleanAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call: AsyncToken = ro.echoBoolean(expectedValue);
+            call.expected = expectedValue;
+        }
+        
+        /**
+        *  Send a boolean value to server to echo it back using httpChannel,
+        *  assert the return value in testHandler. testHandler function
+        *  compare the event result with the token.expected. 
+        */
+        public function testEchoBooleanHttp():void
+        {
+            ro.channelSet = httpChannel;
+            var call:AsyncToken = ro.echoBoolean(expectedValue);
+            call.expected = expectedValue;
+        }
+        
+
+        //boolean class
+        /**
+        *  Test Boolean using amf channel
+        **/
+        public function testEchoBooleanClassAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:AsyncToken = ro.echoBooleanClass(expectedValue);
+            call.expected = expectedValue;
+        }
+        
+        /**
+        *  Test Boolean using http channel
+        **/
+        public function testEchoBooleanClassHttp():void
+        {
+            ro.channelSet = httpChannel;
+            var call: AsyncToken = ro.echoBooleanClass(expectedValue);
+            call.expected = expectedValue;
+        }
+     
+
+
+        //boolean class with null as parameter
+        /**
+        *  Test Boolean with null value using amf channel
+        **/
+        public function testEchoBooleanClassNullAMF():void
+        {
+            ro.channelSet = amfChannel;
+	    if (dotNet == "true")
+	    {
+            	var call: AsyncToken = ro.echoBooleanClass(null);
+            	call.expected = false;
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoBooleanClass(null);
+            	call.expected = null;
+	    }
+        }
+        
+        /**
+        *  Test Boolean with null value using http channel
+        **/
+        public function testEchoBooleanClassNullHttp():void
+        {
+            ro.channelSet = httpChannel;
+	    if (dotNet == "true")
+	    {
+            	var call: AsyncToken = ro.echoBooleanClass(null);
+            	call.expected = false;
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoBooleanClass(null);
+            	call.expected = null;
+	    }
+        }
+       
+
+        //boolean[]
+        /**
+        *  Test boolean[] using amf channel
+        **/
+        public function testEchoBooleansAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call: AsyncToken = ro.echoBooleans(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        
+        /**
+        *  Test boolean[] using http channel
+        **/
+        public function testEchoBooleansHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call: AsyncToken = ro.echoBooleans(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        
+        /**
+        *  Test boolean[] using amf channel
+        **/
+        public function testEchoBooleansAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call: AsyncToken = ro.echoBooleans(expectedArray);
+            call.expected = expectedArray;
+        }
+        
+        /**
+        *  Test boolean[] using http channel
+        **/
+        public function testEchoBooleansHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call: AsyncToken = ro.echoBooleans(expectedArray);
+            call.expected = expectedArray;
+
+        }
+      
+
+        //boolean[] using empty []
+        /**
+        *  Test boolean[] with empty array using amf channel
+        **/
+        public function testEchoBooleansEmptyAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call: AsyncToken = ro.echoBooleans([]);
+            call.expected = [];
+
+        }
+        
+        /**
+        *  Test boolean[] with empty array using http channel
+        **/
+        public function testEchoBooleansEmptyHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call: AsyncToken = ro.echoBooleans([]);
+            call.expected = [];
+
+        }
+       
+        /**
+        *  Test boolean[] with empty array using amf channel
+        **/
+        public function testEchoBooleansEmptyAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call: AsyncToken = ro.echoBooleans([]);
+            call.expected = [];
+
+        }
+        
+        /**
+        *  Test boolean[] with empty array using http channel
+        **/
+        public function testEchoBooleansEmptyHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call: AsyncToken = ro.echoBooleans([]);
+            call.expected = [];
+
+        }
+       
+
+        //boolean[] -paremter null
+        /**
+        *  Test boolean[] with null using amf channel
+        **/
+        public function testEchoBooleansNullAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call: AsyncToken = ro.echoBooleans(null);
+            call.expected = null;
+
+        }
+        /**
+        *  Test boolean[] with null using http channel
+        **/
+        public function testEchoBooleansNullHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call: AsyncToken = ro.echoBooleans(null);
+            call.expected = null;
+
+        }
+        
+        /**
+        *  Test boolean[] with null using amf channel
+        **/
+        public function testEchoBooleansNullAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call: AsyncToken = ro.echoBooleans(null);
+            call.expected = null;
+
+        }
+        
+        /**
+        *  Test boolean[] with null using http channel
+        **/
+        public function testEchoBooleansNullHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call: AsyncToken = ro.echoBooleans(null);
+            call.expected = null;
+
+        }
+
+
+        //Boolean[]
+        /**
+        *  Test Boolean[] using amf channel
+        **/
+        public function testEchoBooleanClassesAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call: AsyncToken = ro.echoBooleanClasses(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        
+        /**
+        *  Test Boolean[] using http channel
+        **/
+        public function testEchoBooleanClassesHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call: AsyncToken = ro.echoBooleanClasses(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        
+        /**
+        *  Test Boolean[] using amf channel
+        **/
+        public function testEchoBooleanClassesAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call: AsyncToken = ro.echoBooleanClasses(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        
+        /**
+        *  Test Boolean[] using http channel
+        **/
+        public function testEchoBooleanClassesHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call: AsyncToken = ro.echoBooleanClasses(expectedArray);
+            call.expected = expectedArray;
+
+        }
+
+        //Boolean[] - using []
+        /**
+        *  Test Boolean[] with empty array using amf channel
+        **/
+        public function testEchoBooleanClassesEmptyAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call: AsyncToken = ro.echoBooleanClasses([]);
+            call.expected = [];
+
+        }
+        
+        /**
+        *  Test Boolean[] with empty array using http channel
+        **/
+        public function testEchoBooleanClassesEmptyHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call: AsyncToken = ro.echoBooleanClasses([]);
+            call.expected = [];
+
+        }
+        
+        /**
+        *  Test Boolean[] with empty array using amf channel
+        **/
+        public function testEchoBooleanClassesEmptyAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call: AsyncToken = ro.echoBooleanClasses([]);
+            call.expected = [];
+
+        }
+        
+        /**
+        *  Test Boolean[] with empty array using http channel
+        **/
+        public function testEchoBooleanClassesEmptyHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call: AsyncToken = ro.echoBooleanClasses([]);
+            call.expected = [];
+
+        }
+      
+        //Boolean[] - using ArrayCollection()
+        /**
+        *  Test Boolean[] with empty ArrayCollection using amf channel
+        **/
+        public function testACEchoBooleanClassesEmptyAMF():void
+        {
+            ro.channelSet = amfChannel;
+	    if (dotNet == "true")
+	    {
+	    	var parameters: ArrayCollection = new ArrayCollection([]);
+            	var call: AsyncToken = ro.echoBooleanClasses(parameters);
+            	call.expected = parameters;
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoBooleanClasses(new ArrayCollection([]));
+            	call.expected = [];
+	    }
+        }
+        
+        /**
+        *  Test Boolean[] with empty ArrayCollection using http channel
+        **/
+        public function testACEchoBooleanClassesEmptyHTTP():void
+        {
+            ro.channelSet = httpChannel;
+	    if (dotNet == "true")
+	    {
+	    	var parameters: ArrayCollection = new ArrayCollection([]);
+            	var call: AsyncToken = ro.echoBooleanClasses(parameters);
+            	call.expected = parameters;
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoBooleanClasses(new ArrayCollection([]));
+            	call.expected = [];
+	    }
+
+        }
+        
+        /**
+        *  Test Boolean[] with empty ArrayCollection using amf channel
+        **/
+        public function testACEchoBooleanClassesEmptyAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+	    if (dotNet == "true")
+	    {
+	    	var parameters: ArrayCollection = new ArrayCollection([]);
+            	var call: AsyncToken = ro.echoBooleanClasses(parameters);
+            	call.expected = parameters;
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoBooleanClasses(new ArrayCollection([]));
+            	call.expected = [];
+	    }
+
+        }
+        
+        /**
+        *  Test Boolean[] with empty ArrayCollection using http channel
+        **/
+        public function testACEchoBooleanClassesEmptyHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+	    if (dotNet == "true")
+	    {
+	    	var parameters: ArrayCollection = new ArrayCollection([]);
+            	var call: AsyncToken = ro.echoBooleanClasses(parameters);
+            	call.expected = parameters;
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoBooleanClasses(new ArrayCollection([]));
+            	call.expected = [];
+	    }
+
+        }
+       
+
+        //Boolean Classes - [null,null,true,false,null]
+        /**
+        *  Test Boolean[] with ArrayCollection contains nulls using amf channel
+        **/
+        public function testEchoBooleanClassesNullsAMF():void
+        {
+            ro.channelSet = amfChannel;
+	    if (dotNet == "true")
+	    {
+            	var call: AsyncToken = ro.echoBooleanClasses([null,null,true,false,null]);
+            	call.expected = [false,false,true,false,false];
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoBooleanClasses([null,null,true,false,null]);
+            	call.expected = [null,null,true,false,null];
+	    }
+        }
+        
+         /**
+        *  Test Boolean[] with ArrayCollection contains nulls using http channel
+        **/
+        public function testEchoBooleanClassesNullsHTTP():void
+        {
+            ro.channelSet = httpChannel;
+	    if (dotNet == "true")
+	    {
+            	var call: AsyncToken = ro.echoBooleanClasses([null,null,true,false,null]);
+            	call.expected = [false,false,true,false,false];
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoBooleanClasses([null,null,true,false,null]);
+            	call.expected = [null,null,true,false,null];
+	    }
+
+        }
+        
+         /**
+        *  Test Boolean[] with ArrayCollection contains nulls using amf channel
+        **/
+        public function testEchoBooleanClassesNullsAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+	    if (dotNet == "true")
+	    {
+            	var call: AsyncToken = ro.echoBooleanClasses([null,null,true,false,null]);
+            	call.expected = [false,false,true,false,false];
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoBooleanClasses([null,null,true,false,null]);
+            	call.expected = [null,null,true,false,null];
+	    }
+
+        }
+        
+         /**
+        *  Test Boolean[] with ArrayCollection contains nulls using http channel
+        **/
+        public function testEchoBooleanClassesNullsHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+	    if (dotNet == "true")
+	    {
+            	var call: AsyncToken = ro.echoBooleanClasses([null,null,true,false,null]);
+            	call.expected = [false,false,true,false,false];
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoBooleanClasses([null,null,true,false,null]);
+            	call.expected = [null,null,true,false,null];
+	    }
+
+        }
+       
+
+        //Java ArrayList
+              
+        /**
+        *  Test ArrayList with Boolean ArrayColletion using legacy collection(Collection -> Array ) amf channel
+        **/
+        public function testArrayAsListEchoBooleanClassesAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call: AsyncToken = ro.echoArrayList(new ArrayCollection(expectedArray));
+            call.expected = expectedArray;
+        }
+        
+        /**
+        *  Test ArrayList with Boolean ArrayColletion using amf channel (Collection -> ArrayCollection )
+        **/
+        public function testArrayCollectionEchoBooleanClassesAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call: AsyncToken = ro.echoArrayList(new ArrayCollection(expectedArray));
+            call.expected = new ArrayCollection(expectedArray);
+        }
+        
+        /**
+        *  Test ArrayList with Boolean ArrayColletion using legacy collection(Collection -> Array ) http channel
+        **/
+        public function testArrayAsListEchoBooleanClassesHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call: AsyncToken = ro.echoArrayList(new ArrayCollection(expectedArray));
+            call.expected = expectedArray;
+        }
+        
+        /**
+        *  Test ArrayList with Boolean ArrayColletion using http channel (Collection -> ArrayCollection )
+        **/
+        public function testArrayCollectionEchoBooleanClassesHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call: AsyncToken = ro.echoArrayList(new ArrayCollection(expectedArray));
+            call.expected = new ArrayCollection(expectedArray);
+        }
+        
+        /**
+        *  Test ArrayList with Boolean Array using legacy collection(Collection -> Array ) amf channel
+        **/        
+        public function testEchoArrayListAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call: AsyncToken = ro.echoArrayList(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        
+        /**
+        *  Test ArrayList with Boolean Array using legacy collection(Collection -> Array ) http channel
+        **/ 
+        public function testEchoArrayListHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call: AsyncToken = ro.echoArrayList(expectedArray);
+            call.expected = expectedArray;
+
+        }
+       
+       
+        //mixed types ArrayList
+        /**
+        *  Test ArrayList with mixed types using legacy collection(Collection -> Array ) amf channel
+        *  [null,1,true,"abc"]
+        **/ 
+        public function testEchoArrayListMixedAMF():void
+        {
+            ro.channelSet = amfChannel;
+	    if (dotNet == "true")
+	    {
+            	var call: AsyncToken = ro.echoArrayList([null,1,true,"abc"]);
+            	call.expected = [false,1,true,"abc"];
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoArrayList([null,1,true,"abc"]);
+            	call.expected = [null,1,true,"abc"];
+	    }
+
+        }
+        
+        /**
+        *  Test ArrayList with mixed types using legacy collection(Collection -> Array ) http channel
+        *  [null,1,true,"abc"]
+        **/ 
+        public function testEchoArrayListMixedHTTP():void
+        {
+            ro.channelSet = httpChannel;
+	    if (dotNet == "true")
+	    {
+            	var call: AsyncToken = ro.echoArrayList([null,1,true,"abc"]);
+            	call.expected = [false,1,true,"abc"];
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoArrayList([null,1,true,"abc"]);
+            	call.expected = [null,1,true,"abc"];
+	    }
+
+        }
+       
+        /**
+        *  Test ArrayList with mixed types using (Collection -> ArrayList ) http channel
+        *  [null,1,true,"abc"]
+        **/ 
+        public function testEchoArrayListMixedAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+	    if (dotNet == "true")
+	    {
+            	var call: AsyncToken = ro.echoArrayList(new ArrayCollection([null,1,true,"abc"]));
+            	call.expected = new ArrayCollection([false,1,true,"abc"]);
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoArrayList(new ArrayCollection([null,1,true,"abc"]));
+            	call.expected = new ArrayCollection([null,1,true,"abc"]);
+	    }
+
+        }
+        
+        /**
+        *  Test ArrayList with mixed types using (Collection -> ArrayList ) http channel
+        *  [null,1,true,"abc"]
+        **/ 
+        public function testEchoArrayListMixedHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+	    if (dotNet == "true")
+	    {
+            	var call: AsyncToken = ro.echoArrayList(new ArrayCollection([null,1,true,"abc"]));
+            	call.expected = new ArrayCollection([false,1,true,"abc"]);
+	    }
+	    else
+	    {
+            	var call: AsyncToken = ro.echoArrayList(new ArrayCollection([null,1,true,"abc"]));
+            	call.expected = new ArrayCollection([null,1,true,"abc"]);
+	    }
+
+        }
+      
+
+        //Java Vector
+        /**
+        *  Test Vector with Boolean Array using legacy collection(Collection -> Array ) amf channel
+        **/
+        public function testEchoVectorAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call: AsyncToken = ro.echoVector(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        
+        /**
+        *  Test Vector with Boolean Array using legacy collection(Collection -> Array ) http channel
+        **/
+        public function testEchoVectorHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call: AsyncToken = ro.echoVector(expectedArray);
+            call.expected = expectedArray;
+
+        }
+        
+        /**
+        *  Test Vector with Boolean Array using amf channel(Collection -> ArrayCollection )
+        **/
+        public function testEchoVectorAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call: AsyncToken = ro.echoVector(expectedArray);
+            call.expected = new ArrayCollection(expectedArray);
+
+        }
+        
+        /**
+        *  Test Vector with Boolean Array using http channel(Collection -> ArrayCollection )
+        **/
+        public function testEchoVectorHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call: AsyncToken = ro.echoVector(new ArrayCollection(expectedArray));
+            call.expected = new ArrayCollection(expectedArray);
+
+        }
+       
+        /**
+        *  Test HashSet with Boolean Array using legacy collection(Collection -> Array ) amf channel
+        **/
+        public function testHashSetAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call: AsyncToken = ro.echoHashSet([true]);
+            call.expected = [true];
+        }
+        
+        /**
+        *  Test HashSet with Boolean Array using legacy collection(Collection -> Array ) http channel
+        **/
+        public function testHashSetHTTP():void
+        {
+           ro.channelSet = httpChannel;
+           var call: AsyncToken = ro.echoHashSet([true]);
+           call.expected = [true];
+        }
+       
+        /**
+        *  Test HashSet with Boolean Array using amf channel(Collection -> ArrayCollection )
+        **/
+        public function testHashSetAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call: AsyncToken = ro.echoHashSet([true]);
+            call.expected = new ArrayCollection([true]);
+        }
+        
+        /**
+        *  Test HashSet with Boolean Array using http channel(Collection -> ArrayCollection )
+        **/
+        public function testHashSetHTTPAC():void
+        {
+           ro.channelSet = httpChannelac;
+           var call: AsyncToken = ro.echoHashSet([true]);
+           call.expected = new ArrayCollection([true]);
+        }
+      
+        /**
+        *  Test LinkedList with Boolean Array using legacy collection(Collection -> Array ) amf channel
+        **/
+        public function testEchoLinkedListAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call: AsyncToken = ro.echoLinkedList(expectedArray);
+            call.expected = expectedArray;
+        }
+        
+        /**
+        *  Test LinkedList with Boolean Array using legacy collection(Collection -> Array ) http channel
+        **/
+        public function testEchoLinkedListHTTP():void
+        {
+           ro.channelSet = httpChannel;
+           var call: AsyncToken = ro.echoLinkedList(expectedArray);
+            call.expected = expectedArray;
+        }
+       
+        /**
+        *  Test LinkedList with Boolean Array using legacy collection(Collection -> Array ) amf channel
+        **/
+        public function testEchoLinkedListAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call: AsyncToken = ro.echoLinkedList(new ArrayCollection(expectedArray));
+            call.expected = new ArrayCollection(expectedArray);
+        }
+        
+        /**
+        *  Test LinkedList with Boolean Array using legacy collection(Collection -> Array ) http channel
+        **/
+        public function testEchoLinkedListHTTPAC():void
+        {
+           ro.channelSet = httpChannelac;
+           var call: AsyncToken = ro.echoLinkedList(new ArrayCollection(expectedArray));
+            call.expected = new ArrayCollection(expectedArray);
+        }
+      
+
+
+        private function testHandler(e:Object):void
+        {
+            if (e is FaultEvent)
+            {
+                if ((e.token.expectFault))
+                {
+                    Assert.pass();    
+                }
+                else
+                {
+                    Assert.fail(e.faultEvent.faultString);
+                }
+            }
+            else
+            {
+                Assert.currentTest.doAssertEquals(e.token.expected,e.result);
+            }
+        }
+    ]]>
+    </mx:Script>
+
+</mx:Application>

@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" 
+    creationComplete="initApp()">
+    
+    <!-- 
+        The purpose of this test is to verify that multiple clients can send and receive messages over a secure AMF endpoint
+        (data-secure-polling-amf) without message loss, and using the polling properties defined in the "data-secure-polling-amf" endpoint.
+        Please run this test from  a secure URL: https://localhost:9400/qa-manual/rtPushOverHTTP/testamf_secure_destination.mxml
+    -->    
+    <mx:Panel id="mainPanel" title="Real-time Push over HTTP: test AMF destinations" height="100%" width="100%"  
+            paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10" >
+        <mx:List id="destList" selectedIndex="0" change="changeEvt(event)" width="50%" rowCount="4" >
+	        <mx:dataProvider>
+   	            <mx:String>AMFPollSecureDestination</mx:String>
+   	            <mx:String>HTTPPollSecureDestination</mx:String>   	            
+	        </mx:dataProvider>
+		</mx:List>
+        <mx:Button label="Send Foo{messageCounter} to {destList.selectedItem}" click="sendMessage()"/>
+        <mx:Button label="Poll {destList.selectedItem}" click="poll()"/>
+        <mx:Button label="Clear" click='ta.text = ""'/>
+        <mx:TextArea id="ta" width="100%" height="100%"/>         
+    </mx:Panel>
+    
+    
+	<mx:Script>	
+	  <![CDATA[
+	  	import mx.messaging.channels.HTTPChannel;
+	  	import mx.messaging.channels.AMFChannel;
+	  	import mx.messaging.channels.PollingChannel;
+	  	import mx.messaging.channels.SecureAMFChannel;
+	  	import mx.messaging.channels.SecureHTTPChannel;
+	    import mx.messaging.events.MessageFaultEvent;	    
+        import mx.messaging.events.MessageEvent;
+        import mx.messaging.events.MessageAckEvent;
+        import mx.messaging.messages.AsyncMessage;	    
+        import mx.messaging.Producer;
+        import mx.messaging.Consumer;
+        import mx.messaging.ChannelSet;
+        import mx.messaging.FlexClient;
+        import mx.controls.Alert;
+        import mx.logging.*;
+        import mx.logging.targets.*;
+                
+        public var producer:Producer;
+        public var consumer:Consumer;	  
+        public var channel:PollingChannel;
+        
+        [Bindable]
+        public var messageCounter:int = 1;
+        public var pollCounter:int = 1;
+		public var selectedDest:String;   
+		public var pollInterval:String = "0";
+        
+        private function initApp():void
+        {
+
+            var target:TraceTarget = new TraceTarget();
+            target.includeLevel = true;
+            target.filters = ["mx.messaging.*", "mx.rpc.*"];
+            Log.addTarget(target);        
+                                   
+            producer = new Producer();
+            
+            selectedDest = destList.selectedItem as String;
+			producer.destination = selectedDest;		
+			producer.addEventListener(MessageFaultEvent.FAULT, messageFaultHandler);
+				
+			consumer = new Consumer();
+			consumer.destination = selectedDest;				
+			consumer.addEventListener(MessageFaultEvent.FAULT, messageFaultHandler);				
+			consumer.addEventListener(MessageEvent.MESSAGE, messageHandler);
+            consumer.addEventListener(MessageAckEvent.ACKNOWLEDGE, messageAckHandler);  
+            
+            // Specify a runtime-configured channel to be able to ping the dynamic destination HTTPPollSecureDestination
+            if (selectedDest == "HTTPPollSecureDestination")
+            {
+   	            var cs:ChannelSet = new ChannelSet();
+      			var httpchannel:SecureHTTPChannel = new SecureHTTPChannel("data-secure-http-polling", "https://{server.name}:9400/qa-manual/messagebroker/securepollinghttp");
+      			// The following properties must be specified at the client instead of being runtime-time configured.
+      			httpchannel.pollingEnabled = true;
+      			httpchannel.pollingInterval = 4000;
+				cs.addChannel(httpchannel);
+				producer.channelSet = cs;
+				consumer.channelSet = cs;
+            }            
+			consumer.subscribe();    
+            var pcs:ChannelSet = consumer.channelSet;
+           	channel = PollingChannel(pcs.currentChannel);
+        }
+        
+        private function sendMessage():void
+        {
+            var message: AsyncMessage = new AsyncMessage();
+            message.body = "foo"+messageCounter;
+            producer.send(message);            
+            messageCounter++;            
+        }
+
+        private function messageHandler(event : MessageEvent) : void
+        {
+            ta.text += selectedDest + " received: " + event.message.body + " from Client " + event.message.clientId + "\n";
+        }
+        
+        private function messageFaultHandler(event : Object) : void
+        {
+            ta.text += "Consumer received fault: " + event.faultString + "\n";
+        }        
+
+        private function messageAckHandler(event : MessageAckEvent) : void
+        {
+            ta.text += "Consumer received ack \n"; 
+        }
+                
+        private function poll():void
+        {
+        	var isPolling:Boolean;
+			(channel is SecureAMFChannel)? isPolling = SecureAMFChannel(channel).polling : isPolling = SecureHTTPChannel(channel).polling;
+			
+           	//If not already polling, then poll
+            if (! isPolling ) 
+            {
+				ta.text += "*** Polling: " + pollCounter + "\n";
+            	channel.poll();
+                pollCounter++;            
+            }
+            else
+            {
+            	ta.text += "*** a polling request is pending, no poll issued " + pollCounter + "\n";
+            }
+        }
+        
+        public function changeEvt(event:Event):void 
+        {
+            producer.disconnect();
+            consumer.unsubscribe();
+            consumer.disconnect();            
+            initApp();
+        }
+       ]]>
+	</mx:Script>    
+</mx:Application>            

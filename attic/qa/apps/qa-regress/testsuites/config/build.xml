@@ -1,0 +1,401 @@
+<!--
+
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-->
+<project name="config-testsuite" default="main" basedir="../../../..">
+
+    <property environment="env"/>
+    <property name="ant-contrib.jar" location="${env.ANT_HOME}/lib/ant-contrib-1.0b2.jar"/>
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${ant-contrib.jar}"/>
+        
+    <property name="HOMEPATH" value="${env.HOMEDRIVE}${env.HOMEPATH}" />
+
+    <property name="qa.dir" value="${basedir}" />   
+    <property name="blazeds.dir" value="${qa.dir}/../" />
+    
+    <property file="${qa.dir}/local.properties"/>
+    <property file="${qa.dir}/build.properties"/>
+    
+    <!--  automation.build is passed on from automation.xml  -->    
+    <property name="automation.build" value="${qa.dir}/automation/appserver.xml"/>
+    
+    
+    <property name="blazeds.config.dir" value="${qa.dir}/apps/qa-regress/WEB-INF/flex" />
+    <property name="webapp.classes.dir" value="${qa.dir}/apps/qa-regress/WEB-INF/classes" />
+    
+    <property name="config.testsuite.dir" location="${qa.dir}/apps/qa-regress/testsuites/config" />
+    <property name="config.test.dir" location="${config.testsuite.dir}/tests" />
+    
+    <!-- location of mxunit testsuite -->
+    <property name="mxunit.testsuite.dir" value="${qa.dir}/apps/qa-regress/testsuites/mxunit"/>
+    
+    <property name="feature" value="full" />    
+    <property file="${qa.dir}/features/${feature}.properties" /> <!-- includes only feature -->
+    
+    <property name="config.test.includes" value="**/*Test"/>
+    <property name="config.test.excludes" value=""/>    
+
+    <property name="branch" value="mainline" />
+    <property name="product" value="server" />
+    <property name="appserver" value="tomcat"/>
+    <!-- With WebSphere 7.0 the appserver is websphere7 so we need to set appserver.name to websphere 
+         in the regression.properties file. For all other app servers, this will just be the same as the 
+         appserver property -->
+    <property name="appserver.name" value="${appserver}"/>
+
+    <!--set default value of appserver.dir -->
+    <property name="appserver.dir" value="${blazeds.dir}/servers/apache-tomcat-6.0.29"/>
+    <property name="tomcat.dir" value="${appserver.dir}"/>
+    <property name="tomcat.logs.dir" value="${appserver.dir}/logs"/>
+
+    <!--this property is passed in via regression.properties -->
+    <property name="http.url" value="http://localhost:8400"/>
+    <property name="appserver.baseurl" value="${http.url}"/>
+    
+    <property name="context.root" value="qa-regress"/>
+    
+    <!-- Where the qa reports will be created -->
+    <property name="qa.reports" value="${config.testsuite.dir}/reports"/>
+
+    <!-- used to specify output files from JUnit.  Value can be 'plain' or 'xml'. -->
+    <property name="qa.junit.format" value="xml"/>
+
+    <!-- extension to place on output file names -->
+    <property name="qa.junit.ext" value=".xml"/>
+    
+    <!-- set default value for junit.jar -->
+    <property name="junit.jar" value="${env.ANT_HOME}/lib/junit.jar"/>
+    
+    <!-- set default value for testng.jar -->
+    <property name="testng.jar" value="${qa.dir}/lib/testng-5.8-jdk15.jar"/>
+    
+    <if>
+        <isset property="env.PROGRAMFILES"/>
+        <then>
+            <!-- If running under cygwin -->
+            <property name="browserrpt" value="${env.PROGRAMFILES}/Internet Explorer/iexplore" />
+        </then>
+    <elseif>
+        <isset property="env.ProgramFiles"/>
+        <then>
+            <!-- If running from cmd.exe  -->
+            <property name="browserrpt" value="${env.ProgramFiles}/Internet Explorer/iexplore" />
+        </then>        
+    </elseif>
+    <else>
+        <!-- If not running on Windows you must explicitly override browser property -->
+        <property name="browserrpt" value=""/>
+    </else>
+    </if>
+    
+    
+    <taskdef resource="testngtasks" classpath="${testng.jar}"/>
+
+    <property name="buildURL" value="true" />
+
+    <path id="flex.qa.classpath">
+        <fileset dir="${qa.dir}/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${env.ANT_HOME}/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- only run unit tests if junit present -->
+    <condition property="junit.available">
+        <available file="${junit.jar}" />
+    </condition>
+
+    <target name="setup" description="--> set platform specific properties">
+        <fail unless="junit.available">Config testsuite test can not be run as junit.jar was not found at ${junit.jar}. See http://www.junit.org</fail>
+        <echo>automation=${automation}</echo> 
+    </target>
+
+
+    <target name="clean">        
+        <echo message="Deleting old results and files from previous testsuite build"/>
+        <delete dir="${qa.reports}" quiet="true"/>
+        <delete quiet="true"> 
+            <fileset dir="${config.test.dir}" includes="**/server-output.txt"/>
+        </delete>
+        <delete quiet="true">
+            <fileset dir="${config.test.dir}" includes="**/mergeGenerated/*"/>
+        </delete>
+        <delete quiet="true" includeemptydirs="true">
+            <fileset dir="${config.test.dir}" includes="**/mergeGenerated"/>
+        </delete>
+        <delete quiet="true" includeemptydirs="true">
+            <fileset dir="${config.test.dir}" includes="**/*.swf,**/*.output,**/*.html"/>
+        </delete>
+    </target>
+    
+    <target name="main" depends="clean,setup,run,report,viewreport"
+        description="Target for doing a full run based on class lists in full.properties.  Add -Dfeature=xx to point to a property file to include a subset of those lists OR specify -Dserver.flexunit.features if you know the name of a specific fileset." />
+
+    <target name="run" depends="stopserver">
+        <mkdir dir="${qa.reports}"/>        
+        <foreach param="fileset_name"
+                 target="autobuild_foreach_fileset"
+                 inheritall="true">
+            <path>
+                <dirset dir="${config.test.dir}">
+                    <include name="${config.test.includes}"/>
+                    <exclude name="${config.test.excludes}"/>
+                </dirset>
+            </path>     
+        </foreach>
+        <antcall target="runtests"/>
+        <antcall target="convertresults"/>
+    </target>
+    
+
+    
+
+    
+    <target name="autobuild_foreach_fileset">
+        <echo message="Fileset Name= ${fileset_name}"/>   
+        <if>
+            <length length="0">
+                <fileset id="error_fs" dir="${fileset_name}" includes="error.txt,error.regex"/>
+            </length>
+            <then>
+                <if>
+                    <length length="0">
+                        <fileset id="mxunit_fs" dir="${fileset_name}" includes="**/*.mxml"/>
+                    </length>
+                    <then>
+                        <fail message="No error.txt file or MXUnit tests for config test ${fileset_name}"/>
+                    </then>
+                </if>
+            </then>
+        </if>       
+        <taskdef name="MergeXML" classname="tools.ant.MergeXML">
+            <classpath refid="flex.qa.classpath"/>
+        </taskdef>
+        <delete dir="${fileset_name}/mergeGenerated" quiet="true"/>
+        <mkdir dir="${fileset_name}/mergeGenerated" />        
+        
+        <move todir="${fileset_name}/mergeGenerated" overwrite="true" failonerror="false">
+            <fileset dir="${blazeds.config.dir}">
+              <include name="*-config.xml"/>
+              <exclude name="flex-webtier-config.xml"/>
+              <exclude name="flex-config.xml"/>
+            </fileset>
+        </move>
+        
+        <copy todir="${blazeds.config.dir}" overwrite="true" failonerror="false">
+            <fileset dir="${fileset_name}">
+                <include name="*-config.xml"/>
+            </fileset>
+        </copy> 
+        
+        <antcall target="deletelogs"/>
+                                    
+        <antcall target="startserver"/>
+        
+        <antcall target="run.mxunit"/>
+        
+        <antcall target="stopserver"/>
+        
+        <antcall target="copylogs"/>
+        
+        <move todir="${blazeds.config.dir}" overwrite="true" failonerror="false">
+            <fileset dir="${fileset_name}/mergeGenerated">
+              <include name="*-config.xml"/>
+            </fileset>
+        </move>
+    </target>
+    
+    <target name="deletelogs">
+        <switch value="${appserver.name}">
+            <case value="tomcat">
+                <echo message="Deleting Tomcat log files..."/>
+                <delete quiet="false"> 
+                    <fileset dir="${tomcat.logs.dir}" includes="*.log"/>
+                </delete>                
+            </case>
+
+            <case value="jboss">
+                <echo message="Deleting JBoss log files..."/>
+                <delete quiet="false"> 
+                    <fileset dir="${jboss.logs.dir}" includes="*.log"/>
+                </delete>                               
+            </case>
+
+            <case value="websphere">
+                <echo message="Deleting WebSphere log files..."/>
+                <delete quiet="false"> 
+                    <fileset dir="${was.logs.dir}" includes="*.log"/>
+                </delete>                
+            </case>
+
+            <case value="weblogic">
+                <echo message="Deleting WebLogic log files..."/>
+                <delete quiet="false"> 
+                    <fileset dir="${weblogic.logs.dir}" includes="*.log*"/>
+                </delete>
+            </case>
+        </switch>
+    </target>
+    
+    <target name="copylogs">
+        <switch value="${appserver.name}">
+            <case value="tomcat">
+                <echo message="Copying Tomcat log files..."/>   
+                <copy tofile="${fileset_name}/server-output.txt">
+                    <fileset dir="${tomcat.logs.dir}" includes="localhost.*.log"/>
+                </copy>     
+            </case>
+
+            <case value="jboss">
+                <echo message="Copying JBoss log files..."/>  
+                <copy tofile="${fileset_name}/server-output.txt">
+                    <fileset dir="${jboss.logs.dir}" includes="server.log"/>
+                </copy>                             
+            </case>
+
+            <case value="websphere">
+                <echo message="Copying WebSphere log files..."/>
+                <copy tofile="${fileset_name}/server-output.txt">
+                    <fileset dir="${was.logs.dir}" includes="SystemOut.log"/>
+                </copy>            
+            </case>
+
+            <case value="weblogic">
+                <echo message="Copying WebLogic log files..."/>
+                <copy tofile="${fileset_name}/server-output.txt">
+                    <fileset dir="${weblogic.logs.dir}" includes="AdminServer.log"/>
+                </copy> 
+            </case>
+        </switch>
+    </target>
+    
+    <target name="runtests">
+        <echo message="${config.testsuite.dir}"/>
+        <testng classpathref="flex.qa.classpath" 
+                outputDir="${qa.reports}" 
+                haltOnfailure="false"> 
+            <xmlfileset dir="${config.testsuite.dir}" includes="testng.xml"/>
+            <sysproperty key="testDir" value="${config.test.dir}"/>
+            <sysproperty key="testIncludes" value="${config.test.includes}"/>
+            <sysproperty key="testExcludes" value="${config.test.excludes}"/>
+        </testng>
+    </target>
+    
+    <target name="convertresults" description="--> convert results from testng to junit format">
+        <echo message="converting results"/>
+        <java fork="true" classname="utils.TestNGToJunitXMLResult">
+            <jvmarg value="-Xms256m"/>
+            <jvmarg value="-Xmx1024m" />        
+            <classpath>
+                <path refid="flex.qa.classpath" />
+            </classpath>
+                        
+            <arg line="${qa.reports}/testng-results.xml ${qa.reports}"/>
+        </java>
+    </target>
+    
+    <target name="report" description="--> create html report">
+        <junitreport todir="${qa.reports}">
+            <fileset dir="${qa.reports}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="noframes" todir="${qa.reports}/html"/>
+        </junitreport>
+    </target>
+    
+    <target name="startserver">
+        <ant antfile="${automation.build}" target="appServer.start">
+            <property name="appserver" value="${appserver.name}"/>
+            <property name="tomcat.dir" value="${tomcat.dir}"/>           
+        </ant>
+    </target>
+
+    <target name="stopserver">
+        <ant antfile="${automation.build}" target="appServer.stop">
+            <property name="appserver" value="${appserver.name}"/>
+            <property name="tomcat.dir" value="${tomcat.dir}"/>            
+        </ant>
+    </target>
+    
+    <target name="waitforAppserverToStart" description="Wait for appserver to start">
+        <echo message="Waiting for appserver to start: requesting ${appserver.baseurl}/${context.root}"/>
+        <waitfor maxwait="120" maxwaitunit="second" checkevery="15" timeoutproperty="bTimeout">
+            <http url="${appserver.baseurl}/${context.root}"/>
+        </waitfor>
+        <switch value="${bTimeout}">
+            <case value="true">
+                <property name="bAppServerStarted" value="false"/>
+            </case>
+            <default>
+                <property name="bAppServerStarted" value="true"/>
+            </default>
+        </switch>
+        <echo>Flex has started: ${bAppServerStarted} ...continuing</echo>
+    </target>
+
+    <target name="viewreport" unless="nevershowreport" description="--> view the report in a browser">
+        <if>
+            <and>
+                <equals arg1="${alwaysshowreport}" arg2="false" />
+                <not>
+                    <equals arg1="${failed}" arg2="true" />
+                </not>
+            </and>
+            <then>
+                <echo>Skipping viewreport because alwaysshowreport=${alwaysshowreport} and failed=${failed}.</echo>
+            </then>
+            <else>
+               <echo message="execing browser"/>
+                <if>
+                    <os family="mac"/>
+                    <then>
+                        <exec executable="open" dir="${qa.reports}/html">
+                            <arg line="-n -a Safari ${qa.reports}/html/junit-noframes.html"/>
+                        </exec>    
+                    </then>
+                    <else>
+                        <exec executable="${browserrpt}" dir="${qa.reports}/html">
+                        <arg path="${qa.reports}/html/junit-noframes.html"/>
+                        </exec>
+                    </else>
+                </if>
+            </else>
+        </if>
+    </target>
+    
+    <target name="run.mxunit" description="--> Run mxunit tests for individual configuration.">
+        <path id="test.file">
+            <pathelement path="${fileset_name}"/>
+        </path>
+        <pathconvert property="prop" refid="test.file" dirsep="/">
+            <map from="${config.test.dir}/" to=''/>
+        </pathconvert>
+        <echo message="prop name= ${prop}"/>
+        <ant antfile="${mxunit.testsuite.dir}/build.xml" target="cleanswfs">
+            <property name="mxunit.testDir" value="${config.test.dir}/${prop}"/>       
+        </ant>
+        <ant antfile="${mxunit.testsuite.dir}/build.xml" target="compileandrun">
+            <property name="mxunit.testDir" value="${config.test.dir}"/>
+            <property name="mxunit.testurl" value="${appserver.baseurl}/${context.root}/testsuites/config/tests" />
+            <property name="mxunit.reports" value="${qa.reports}"/>   
+            <property name="mxunit.includes.all" value="${prop}/**/*.mxml"/>            
+        </ant>
+    </target>
+</project>
+

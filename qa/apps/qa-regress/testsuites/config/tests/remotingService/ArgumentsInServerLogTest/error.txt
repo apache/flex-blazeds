@@ -1,4 +1,0 @@
-    body = 
-    [
-      Look for this string in the body of the message in the server log.
-    ]

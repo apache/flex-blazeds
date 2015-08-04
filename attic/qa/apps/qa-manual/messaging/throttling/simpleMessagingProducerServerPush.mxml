@@ -1,0 +1,377 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="run()" >
+    <mx:Panel id="mainPanel" height="100%" width="100%">    
+        <mx:Form id="inputForm" defaultButton="{btnStart}" >
+            <mx:HBox>
+                    <mx:Label text="Producer" fontWeight="bold"/>
+                    <mx:HBox>
+                        <mx:VBox>
+                        <mx:Spacer width="500" height="30"/>
+                            <mx:FormItem>
+                                <mx:HBox>
+                                   <mx:Label toolTip="Specify destination to send messages to" text="Destination:"/>
+                                   <mx:ComboBox id="destination" width="300" selectedIndex="0"/>
+                                </mx:HBox>
+                            </mx:FormItem>
+                            <mx:Spacer width="500" height="10"/>
+                            <mx:FormItem>
+                                <mx:HBox>
+                                    <mx:Label toolTip="Specify number of records in message.  Adding more will increase the overall size of the message." text="Message Size"/>
+                                    <mx:ComboBox width="50" id="recordNumSelection" dataProvider="[1,5,25,50,75,100]" /> 
+                                    <mx:Label toolTip="Enter the suggested CPU time slices (runs) per second. 
+                                    E.g., setting it to a value of 5 lets the program know that each time the routine is entered that it should attempt to send the # msgs 5 times. 5x1=5. 5x5=25." 
+                                    text="CPU Passes per Second"/>
+                                    <mx:ComboBox width="50" id="suggestedPasses" dataProvider="[1,2,3,4,5]" /> 
+                                </mx:HBox>
+                            </mx:FormItem>
+                            <mx:Spacer width="500" height="10"/>
+                            <mx:FormItem>
+                               <mx:HBox>
+                                   <mx:Label toolTip="Filter 'destination' on key words" text="Destination Filter:"/>
+                                   <mx:ComboBox id="destinationCriteria" dataProvider="['Buffer','Error', 'Ignore', 'In', 'None', 'Out']" change="applyDestinationCriteria()" selectedIndex="0"/> 
+                               </mx:HBox>
+                            </mx:FormItem>
+                            <mx:Spacer width="500" height="10"/>
+                            <mx:FormItem>
+                                <mx:Label toolTip="Use the slider to choose the length of time in seconds to run the test for" text="Test Interval:"/>
+                                    <mx:HBox>
+                                        <mx:HSlider id="sendIntervalSlider" tickInterval="5" snapInterval="5" minimum="0" maximum="60" width="300"/> 
+                                        <mx:Label id="testInterval" text="" width="40" textAlign="right"/>
+                                        <mx:Label id="countDown" text="" width="40" textAlign="right" />
+                                    </mx:HBox>
+                            </mx:FormItem>
+                            <mx:FormItem>
+                                <mx:Label toolTip="Use the slider to choose the target message send rate per second" text="Send Rate:"/>
+                                    <mx:HBox>
+                                        <mx:HSlider id="targetSendRateSlider" tickInterval="5" snapInterval="5" minimum="5" maximum="200" width="300"/> 
+                                        <mx:Label id="txtTargetSendRate" width="40" textAlign="right" /> 
+                                    </mx:HBox>
+                            </mx:FormItem>
+                            <mx:Spacer width="500" height="10"/>
+                            <mx:FormItem>
+                                <mx:HBox>
+                                    <mx:Button id="btnStart" label="Start" click="startTest()" enabled="true" />
+                                    <mx:Spacer width="10" height="10"/>
+                                    <mx:CheckBox id="chkboxForceStop" enabled="{!btnStart.enabled}" label="Force Stop" click="forceStopSendMessages()" selected="false" toolTip="You'd only need this if you want to stop sending messages abrubtly" />
+                                    <mx:Button id="btnStop" label="Stop" click="stopTest()" enabled="false"  visible="false"/>
+                                </mx:HBox>
+                            </mx:FormItem>
+                            <mx:Spacer width="500" height="15"/>
+                            <mx:FormItem>
+                                <mx:HBox>
+                                    <mx:Label toolTip="Current Message Total" text="Current Message Total:"/>
+                                    <mx:Label id="currentMsgTotal" width="50" textAlign="right"/>    
+                                    <mx:Label toolTip="Elapsed Time in Seconds " text="Elapsed Time:"/>
+                                    <mx:Label id="elapsedTimeInSeconds" width="50" textAlign="right"/> 
+                                </mx:HBox>
+                            </mx:FormItem>
+                            <mx:Spacer width="500" height="15"/>
+                            <mx:FormItem>
+                                <mx:HBox>
+                                    <mx:Label toolTip="Dump Message Total to System.out" text="Log Message Total:"/>
+                                    <mx:Button id="btnMessageTotal" label="Get Message Total" click="getMessageTotal()" enabled="true" />
+                                </mx:HBox>
+                            </mx:FormItem>
+                        </mx:VBox>
+                    </mx:HBox>
+            </mx:HBox>
+        </mx:Form>
+    </mx:Panel>
+    <mx:Binding source="sendIntervalSlider.value" destination="beginCountDown"/>
+    <mx:Binding source="targetSendRateSlider.value" destination="targetSendRate"/>
+    <mx:RemoteObject id="roServerPush" destination="qa.messaging.throttle.ROPushServerMessage">
+            <mx:method name="getMsgTotal" result="totalResult(event)" fault="totalFault(event)"/>
+            <mx:method name="resetMsgTotal" result="resetMsgTotalResult(event)" fault="resetMsgTotalFault(event)"/>
+    </mx:RemoteObject>
+
+    <mx:Script>
+    <![CDATA[
+        import mx.events.StateChangeEvent;
+        import mx.events.PropertyChangeEvent;
+        import flash.utils.getTimer;
+        import mx.controls.List;
+        import mx.collections.SortField;
+        import mx.collections.Sort;
+        import mx.collections.XMLListCollection;
+        import mx.utils.ObjectUtil;
+        import mx.controls.Alert;
+        import mx.messaging.messages.*;
+        import mx.messaging.config.*;
+        import mx.messaging.events.*;
+	    import mx.rpc.events.*;
+        import mx.collections.ArrayCollection;
+        import qa.data.Address;
+        import qa.data.Company;
+        import flash.utils.Timer;
+        import flash.events.TimerEvent;
+
+        private var proFaultString:String = "";
+        private var producerTimer:Timer;
+        private var msgCountTimer:Timer;
+        private var testRunTimer:Timer;
+
+        private var ac:ArrayCollection = new ArrayCollection();
+        private var failureCount:int = 0;
+            
+	    private var xml:XML = ServerConfig.serverConfigData;
+	    private var sortDestinations:Sort = new Sort(); 
+	    private var sortChannels:Sort = new Sort();
+	    private var dest:String;
+	    private var msgCountArray:Array = new Array();
+
+	    private var elapsedTimeArray:Array = new Array();
+        private var startTimeMillis:Number = new Number();
+	    private var iClock:int = 0;
+	    private var _iCountDown:int = 0;
+	    private var bStart:Boolean = true;
+	    
+	    
+
+        /**
+        *  XMLListCollection to hold names of destinations that will be tested
+        */
+        [Bindable]
+        private var destinations:XMLListCollection;
+
+        private var aAddress:Address = new Address("", "600 Townsend Street", "San Francisco", "CA", "94103","");
+        private var aCompany:Company = new Company("Macromedia", true, "","Software and Technology", 1085, "http://www.Adobe.com");
+	    private var sBusinessSummary:String = "Macromedia, Inc. is a software company whose software enables business users, developers and designers to create and deliver experiences on the Internet, fixed media, wireless and digital devices. The Company provides three families of products to address this market opportunity: Macromedia MX Products, Information Convenience Products, and Mobile and Device Products. The Macromedia MX family of products provides client software, server and development tools for cost-effectively building Websites and Internet applications that offer highly effective end user experiences. Information Convenience Products enable non-technical business users to create and deliver information without intricate technical training. Mobile and Device Products are targeted at device manufacturers, carriers and media networks.";
+
+        
+        public function msgCountTimerHandler(e:TimerEvent):void
+        {
+            trace("msgCountTimerHandler " + _iCountDown.toString());
+            countDown.text = _iCountDown.toString();
+            //call method to get current total message count 
+            getMessageTotal();
+            elapsedTimeInSeconds.text = iClock.toString();
+            //testInterval.text = _iCountDown.toString();
+            //increment by 1 when streaming starts
+            
+            ++iClock;
+            //trace("counting down ..." + _iCountDown.toString() + " elapsed time: " + iClock.toString());
+
+            if(_iCountDown  <= 1)
+            {
+                sendIntervalSlider.value = _iCountDown;
+                elapsedTimeInSeconds.text = iClock.toString();
+                trace('<=1 ' + _iCountDown.toString());
+                _iCountDown = 0;
+            }
+
+            if(_iCountDown <= 0)
+            {
+                trace('<=0 - ' + _iCountDown.toString());
+                stopStreaming();
+                //sendIntervalSlider.value = _iCountDown;
+                elapsedTimeInSeconds.text = iClock.toString();
+                iClock = 0;
+                stopTest();
+                //_iCountDown = 0;
+                return;
+            }
+            
+            if(bStart)
+            {
+                // Send the array collection to the remote object: it will create the msg
+                trace("start streaming? " + bStart.toString());
+                startStreaming(dest, ac, txtTargetSendRate.text, suggestedPasses.selectedItem);
+                bStart = false;
+            }
+            --_iCountDown;
+        }
+        
+        public function set beginCountDown(value:Number):void
+        {
+            var val:Number
+            
+            if(value ==0)// slider is at default 
+            {
+                trace("01 value " + value.toString() + " -- " + _iCountDown.toString());
+                // set the time interval to at least 1 second
+                _iCountDown = 1;
+                //testInterval.text = "0";
+            }
+            else
+            {
+                _iCountDown = value;
+                testInterval.text = value.toString();
+            }
+        }        
+        public function set targetSendRate(value:Number):void
+        {
+            txtTargetSendRate.text = value.toString();
+        }        
+        public function buildRecords(howManyRecords:int):ArrayCollection
+        {
+            var arrayc:ArrayCollection = new ArrayCollection();
+            for (var i:int=0; i < howManyRecords ; i++) {
+                arrayc.addItem(aCompany);
+            }
+            return arrayc;
+        }
+        public function startStreaming(dest:String, msg:Object, targetSendRate:String, suggestedPasses:Object):void 
+        {
+            //begin test count down
+            //--_iCountDown;
+            //invoke method on RO
+            roServerPush.streamMessages(dest, msg, Number(targetSendRate), Number(suggestedPasses)); 
+            trace("startStreaming " + _iCountDown.toString()+ " tSR: " + targetSendRate + " sP: " + suggestedPasses.toString());
+        }
+        public function stopStreaming():void 
+        {
+            roServerPush.stopStreaming();
+            
+            //if force stop reset checkbox
+            if(chkboxForceStop.selected)
+            {
+                trace("stopped streaming; reset checkbox");
+                //reset time interval slider to 1
+                sendIntervalSlider.value = 1;
+                chkboxForceStop.selected = false;
+                //call main stop feature that will reset other properties
+                stopTest();
+            }
+        }
+        public function resetMsgTotalCounter():void 
+        {
+            roServerPush.resetMsgTotal(); 
+        }        
+        public function totalResult(e:ResultEvent):void
+        {
+            if (e.result != null)
+            {
+                //store values
+                msgCountArray.push(e.result.toString());
+                //display in ui
+                currentMsgTotal.text = msgCountArray[msgCountArray.length -1].toString();
+                trace("msg total: " + msgCountArray[msgCountArray.length -1].toString());
+            }
+        }
+        public function totalFault(e:FaultEvent):void
+        {
+            failureCount++; 
+            proFaultString = e.fault.faultString;
+            trace(e.fault.faultString);
+        }    
+        public function resetMsgTotalResult(e:ResultEvent):void
+        {
+            if (e.result != null)
+            {
+                trace("resetMsgTotalResult: " + e.result.toString());
+            }
+        }
+        public function resetMsgTotalFault(e:FaultEvent):void
+        {
+            failureCount++; 
+            proFaultString = e.fault.faultString;
+            trace(e.fault.faultString);
+        }
+        public function destinationsFilter(obj:Object):Boolean
+        {
+            var retval:Object;
+            // the search method returns an int when true and -1 when not.  So this looks backwards
+            if(String(ObjectUtil.toString(obj)).search(destinationCriteria.selectedItem.toString()) != -1)
+            {
+                retval = obj;
+            }
+            return (retval);
+        }
+        private function applyDestinationCriteria():void
+        {
+            //filter and sort destinations and channels
+            destinations.refresh();
+            //select first destination
+            destination.selectedIndex = 0;
+        }
+        private function forceStopSendMessages():void
+        {
+            stopStreaming();
+        }
+        private function stopTest():void
+        {
+            
+            msgCountTimer.stop();
+            //iClock = 1;
+            //_iCountDown =0 ;
+            msgCountArray = null;
+            msgCountArray = new Array();
+            recordNumSelection.enabled = true;
+            txtTargetSendRate.enabled = true;
+            suggestedPasses.enabled = true;
+            btnStart.enabled = true;
+            btnStop.enabled = false;
+            bStart = true;
+            trace("stopping test");
+            //call method to get current total message count 
+            getMessageTotal();
+            resetMsgTotalCounter();
+        }
+        private function startTest():void
+        {
+            elapsedTimeInSeconds.text = '';
+            // Get destination name from combo box
+            dest = destination.selectedItem.toString();
+            ac = buildRecords(new Number(recordNumSelection.selectedItem).valueOf());
+            //make sure total msg counter is cleared
+            //resetMsgTotalCounter();
+                        
+            recordNumSelection.enabled = false;
+            txtTargetSendRate.enabled = false;
+            suggestedPasses.enabled = false;
+            btnStart.enabled = false;
+            btnStop.enabled = true;
+            startTimeMillis = new Date().getTime();
+            // start elapsed time timer
+            msgCountTimer.start();
+
+        }
+        public function getMessageTotal():void
+        {
+            roServerPush.getMsgTotal();
+            
+        }
+        public function run():void 
+        {
+            msgCountTimer = new Timer(1000,0);
+            msgCountTimer.addEventListener(TimerEvent.TIMER, msgCountTimerHandler);
+            
+            //retrieve list of destinations
+            destinations = new XMLListCollection(new XMLList(xml.service.(@id == "message-service").destination.attribute("id")));
+            destination.dataProvider = destinations;
+            //filter and sort destinations
+            destinations.filterFunction = destinationsFilter;
+            sortDestinations.fields = [new SortField(null, true)];
+            destinations.sort = sortDestinations;
+            destinations.refresh();
+            
+            //Init company record
+            aCompany.address = aAddress;
+            aCompany.businessSummary = sBusinessSummary;
+            //make sure total msg counter is cleared
+            //resetMsgTotalCounter();
+            iClock = 0;
+        }
+
+    ]]>
+    </mx:Script>
+
+</mx:Application>

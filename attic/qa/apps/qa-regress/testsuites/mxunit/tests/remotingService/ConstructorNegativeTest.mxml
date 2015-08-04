@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="runTests()">
+    
+
+    <mx:Script>
+    <![CDATA[
+        /*
+         *    Test case for duplicate attribute-id setting in remote destination config
+         *    and also error handling when remote object throws RTE in the constructor
+         */
+    
+        import mx.rpc.AsyncToken;
+        import mx.rpc.events.FaultEvent;
+        import mx.rpc.events.ResultEvent;
+        import mx.rpc.remoting.RemoteObject;
+	    import qa.mxunit.*;
+
+        private var rs1:RemoteObject;
+        private var rs2:RemoteObject;
+        private var rs3:RemoteObject;
+            
+        private var manager:MXUnitManager = MXUnitManager.getInstance();
+
+	    public function runTests():void
+        {
+            rs1 = new RemoteObject("DupAttributeIDDest1");
+            rs1.addEventListener(ResultEvent.RESULT, handleResult);
+            rs1.addEventListener(FaultEvent.FAULT, handleFault);     
+	    
+	        rs2 = new RemoteObject("DupAttributeIDDest2");
+            rs2.addEventListener(ResultEvent.RESULT, handleResult);
+            rs2.addEventListener(FaultEvent.FAULT, handleFault);    
+            
+            rs3 = new RemoteObject("ConstructorNegativeTest");
+            rs3.addEventListener(ResultEvent.RESULT, handleResult);
+            rs3.addEventListener(FaultEvent.FAULT, handleFault);     
+
+            manager.addTests(this, ["testDuplicateAttributeId", "testConstructorFailure"], 5000);   
+        }
+        
+        public function testDuplicateAttributeId():void
+        {
+            var token:AsyncToken = rs1.getTemperature("02466");
+            token.op = "runDest1"; 
+        }
+        
+        public function testConstructorFailure():void
+        {
+            var token:AsyncToken = rs3.getTestName();
+            token.op = "runConstructorFailure"; 
+        }
+        
+        private function handleResult(event:ResultEvent):void
+        {
+            var op:String = "";
+            if(event.token.op != null)
+            {
+                op = event.token.op;
+                log("ResultEvent op=" + op);    
+               
+                switch (op)
+                {
+                    case "runDest1":
+                        var token1:AsyncToken = rs2.echoString("runDest2");
+                        token1.op = "runDest2";
+                        break;
+                    
+                    case "runDest2":
+            		    Assert.fail("we should not get any result from the second destination");  
+            		    Assert.hasPendingTest = false; 
+                        break;
+                        
+                    case "runConstructorFailure":
+                        Assert.fail("we should not get any result from the ConstructorNegativeTest destination" );  
+            		    Assert.hasPendingTest = false; 
+                        break;
+    		    }
+            }
+        }
+        
+        private function handleFault(event:FaultEvent):void
+        {   
+            var op:String = "";
+            if(event.token.op != null)
+            {
+                op = event.token.op;
+                log("FaultEvent op=" + op);    
+               
+                switch (op)
+                {
+                    case "runDest1":
+                        Assert.fail("there should be no fault for the destination #1 " + event.fault.faultString);
+                        break;
+                    
+                    case "runDest2":
+                        log("Expect a fault event for second destination with the same attribute-id " + event.fault.faultString);
+            		    Assert.pass();  
+            		    Assert.hasPendingTest = false; 
+                        break;
+                    
+                    case "runConstructorFailure":
+                        log("Expect a fault event for ConstructorNegativeTest destination " + event.fault.faultString);
+                        Assert.pass();                          
+            		    Assert.hasPendingTest = false; 
+                        break;
+    		    }
+            }
+        }
+        
+        private function log(s:String):void
+        {
+            ta.text += s + "\n";
+        }
+    ]]>
+    </mx:Script>
+
+    <mx:Button label="Reset" click="ta.text=''" />
+    <mx:TextArea id="ta" width="70%" height="50%" />
+</mx:Application>

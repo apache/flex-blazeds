@@ -1,0 +1,219 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<mx:Application  width='800' height='800' xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="setUp()">
+    <mx:RemoteObject destination="qa.echoservice.PreferVectors.Echo" id="ro" invoke="addAsync()"/>
+
+    <mx:TraceTarget id="tt"/>
+    <mx:Script>
+    <![CDATA[
+    	import qa.Utils;    
+        import qa.mxunit.*;
+        import mx.core.mx_internal;
+        import mx.messaging.ChannelSet;
+        import mx.messaging.Channel;
+        import mx.messaging.channels.*;
+        import mx.messaging.config.ServerConfig;
+        import mx.collections.*;
+        import mx.rpc.events.*;
+
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Variables
+        //
+        ////////////////////////////////////////////////////////////////////////////                          
+        
+        /**
+        *  Array to hold names of channels that will be tested
+        */       
+        public var channelNames:Array;
+        
+        /**
+        *  Name of test that is currently being executed. 
+        */
+        private var currentTest:String; 
+        
+        /**
+        *  Name of the destination to be used by the Producer and the Consumer. 
+        */
+        private var destination:String = "qa.echoservice.PreferVectors.Echo";                         
+        
+        /**
+        *  Index used to point to channel in the channelNames array for the currently executing test. 
+        */
+        public var index:int = 0; 
+        
+        /**
+        *  Variable to hold singleton instance of the MXUnitManager.  
+        */
+        private var manager:MXUnitManager;
+        
+        /**
+        *  Array of test names. Test name will be based on the channel 
+        */  
+        public var testNames:Array = new Array();
+		
+        private var testFunctions:Array= ["testEchoIntVector","testEchoUIntVector","testEchoDoubleVector","testEchoObjectVector",
+                                        "testEchoStringVector"];
+                                        
+        public function addAsync():void
+        {
+            manager.currentTest.chain(ro, ["result", "fault"], testHandler);    
+        }
+        
+        public function setUp():void
+        {
+            //get the list of channel names for the destination from ServerConfig 
+           channelNames = (ServerConfig.getChannelSet(destination) as ChannelSet).channelIds;                                                     
+           //create a new generic object to add test functions to
+           var testObj:Object = new Object();  
+                                           
+           /*
+            * Loop over the channel names and create a new test function for each channel. 
+            * Even though the test function will have a new name it just points to our generic 
+            * test function which will need to keep track of which test is being run. 
+            */
+            for (var x:int = 0; x < testFunctions.length; x++) 
+            {
+                var testFunc:String = testFunctions[x] as String; 
+                
+                for (var i:int = 0; i < channelNames.length; i++) 
+                {               
+	               var channel:Channel = ServerConfig.getChannel(channelNames[i]);               
+	               var testName:String = testFunc + "_" + channel.id;               
+	               testObj[testName] = this[testFunc];                    
+	               testNames.push(testName);                                 
+                }                                      	            	           	
+            }
+            //configure the MXUnitManager           
+            manager = MXUnitManager.getInstance();                                                                 
+               
+            //Call addTests giving it the object that contains all our test functions and an array of test names
+            MXUnitManager.addTests(testObj,testNames, 10000);
+        }
+		public function testEchoIntVector():void
+		{
+			setupChannel();
+			var vector:Vector.<int> = new Vector.<int>(5, true);
+			vector.fixed = false; 
+			for (var i:int = 0; i < 5; i++)
+				vector[i] = i;
+			var call:Object = ro.echoIntVector(vector);
+			call.expected = vector;
+		}
+		
+		public function testEchoUIntVector():void
+		{
+			setupChannel();
+			var expectedResult:Vector.<Object> = new Vector.<Object>(5, true);
+			expectedResult.fixed = false;
+			
+			var vector:Vector.<uint> = new Vector.<uint>(5, true);
+			vector.fixed = false; 
+			
+			for (var i:uint = 0; i < 5; i++)
+			{
+				vector[i] = uint.MAX_VALUE;
+				expectedResult[i] = uint.MAX_VALUE;
+			}
+			var call:Object = ro.echoUIntVector(vector);
+			call.expected = expectedResult;
+		}
+		
+		public function testEchoDoubleVector():void
+		{
+			setupChannel();
+			var vector:Vector.<Number> = new Vector.<Number>(5, true);
+			vector.fixed = false; 
+			
+			for (var i:int = 0; i < 5; i++)
+				vector[i] = Number(i);
+			var call:Object = ro.echoDoubleVector(vector);
+			call.expected = vector;
+		}
+		
+		public function testEchoObjectVector():void
+		{
+			setupChannel();
+			var vector:Vector.<Object> = new Vector.<Object>(5,true);
+			vector.fixed = false; 
+			
+			for (var i:int = 0; i < 5; i++)
+				vector[i] = "value" + i;
+			var call:Object = ro.echoObjectVector(vector);
+			call.expected = vector;
+		}
+		
+		public function testEchoStringVector():void
+		{
+			setupChannel();
+			var expectedResult:Vector.<Object> = new Vector.<Object>(5, true);
+			expectedResult.fixed = false;
+			
+			var vector:Vector.<String> = new Vector.<String>(5, true);
+			vector.fixed = false; 
+			
+			for (var i:int = 0; i < 5; i++)
+			{
+				vector[i] = "value" + i;
+				expectedResult[i] = "value" + i;
+			}
+			var call:Object = ro.echoStringVector(vector);
+			call.expected = expectedResult;
+		} 
+
+        private function testHandler(e:Object):void
+        {
+            if (e is FaultEvent)
+            {
+                if ((e.token.expectFault))
+                {
+                    Assert.pass();    
+                }
+                else
+                {
+                    Assert.fail(e.faultEvent.faultString);
+                }
+            }
+            else
+            {
+		        Assert.assertEquals( Utils.getClassName(e.token.expected), Utils.getClassName(e.result));
+                Assert.assertEquals(e.token.expected,e.result);
+            }
+        }
+        
+        private function setupChannel():void 
+        {
+            if (index == channelNames.length)
+                index = 0; 
+            //increment the counter to point to the next test
+            var pointer:uint = index++; 
+            //create a new channel using the next channel name in the list and add it to a new channelset
+            var channelName:String = channelNames[pointer]; 
+            currentTest = channelName;
+            var channel:Channel = ServerConfig.getChannel(channelName, false);      
+            var cs:ChannelSet = new ChannelSet();           
+            cs.addChannel(channel);
+            ro.channelSet = cs;	
+        }
+    ]]>
+    </mx:Script>
+
+</mx:Application>

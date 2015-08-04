@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%">
+    <mx:HDividedBox width="100%" height="100%">
+        <mx:VDividedBox height="100%" width="350">
+            <mx:DataGrid id="rtmpEndpointsList" width="100%">
+                <mx:columns>
+                    <mx:DataGridColumn headerText="RTMP Endpoints" dataField="label" />
+                </mx:columns>
+            </mx:DataGrid>
+            <mx:DataGrid id="httpEndpointsList" width="100%">
+                <mx:columns>
+                    <mx:DataGridColumn headerText="HTTP Endpoints" dataField="label" />
+                </mx:columns>
+            </mx:DataGrid>
+            <mx:DataGrid id="amfEndpointsList" width="100%">
+                <mx:columns>
+                    <mx:DataGridColumn headerText="AMF Endpoints" dataField="label" />
+                </mx:columns>
+            </mx:DataGrid>
+        </mx:VDividedBox>
+        <mx:VDividedBox height="100%">
+            <mx:HBox>
+                <mx:Label text="Selected Endpoint" />
+                <mx:Text id="selectedProperty" />
+            </mx:HBox>
+            <mx:DataGrid id="endpointAttributes" width="100%" height="50%" />
+            <mx:Label id="graphLabel" />
+            <mx:LineChart id="attrgraph" width="100%">
+                <mx:verticalAxis>
+                    <mx:LinearAxis id="attrgraphAxis" />
+                </mx:verticalAxis>
+                <mx:series>
+                    <mx:LineSeries id="attrgraphSeries" yField="Value" />
+                </mx:series>
+            </mx:LineChart>
+        </mx:VDividedBox>
+    </mx:HDividedBox>
+</mx:Box>

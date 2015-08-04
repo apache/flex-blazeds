@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+ <globalConfiguration>
+  <parameter name="adminPassword" value="admin"/>
+  <parameter name="attachments.Directory" value="C:\Apache Tomcat\webapps\axis\WEB-INF\attachments"/>
+  <parameter name="sendMultiRefs" value="true"/>
+  <parameter name="sendXsiTypes" value="true"/>
+  <parameter name="attachments.implementation" value="org.apache.axis.attachments.AttachmentsImpl"/>
+  <parameter name="sendXMLDeclaration" value="true"/>
+  <parameter name="axis.sendMinimizedElements" value="true"/>
+  <requestFlow>
+   <handler type="java:org.apache.axis.handlers.JWSHandler">
+    <parameter name="scope" value="session"/>
+   </handler>
+   <handler type="java:org.apache.axis.handlers.JWSHandler">
+    <parameter name="scope" value="request"/>
+    <parameter name="extension" value=".jwr"/>
+   </handler>
+  </requestFlow>
+ </globalConfiguration>
+ <handler name="LocalResponder" type="java:org.apache.axis.transport.local.LocalResponder"/>
+ <handler name="URLMapper" type="java:org.apache.axis.handlers.http.URLMapper"/>
+ <requestFlow name="checks">
+  <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>
+  <handler type="java:org.apache.axis.handlers.SimpleAuthorizationHandler"/>
+ </requestFlow>
+ <handler name="Authenticate" type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>
+ <service name="echoMissing" provider="java:RPC">
+  <operation name="echoDate" qname="ns1:echoDate" returnQName="return" returnType="xsd:date" xmlns:ns1="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputDate" type="xsd:date"/>
+  </operation>
+  <operation name="echoTime" qname="ns2:echoTime" returnQName="return" returnType="xsd:time" xmlns:ns2="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputTime" type="xsd:time"/>
+  </operation>
+  <operation name="echoGMonth" qname="ns3:echoGMonth" returnQName="return" returnType="xsd:gMonth" xmlns:ns3="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputGMonth" type="xsd:gMonth"/>
+  </operation>
+  <operation name="echoGYear" qname="ns4:echoGYear" returnQName="return" returnType="xsd:gYear" xmlns:ns4="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputGYear" type="xsd:gYear"/>
+  </operation>
+  <operation name="echoGDay" qname="ns5:echoGDay" returnQName="return" returnType="xsd:gDay" xmlns:ns5="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputGDay" type="xsd:gDay"/>
+  </operation>
+  <operation name="echoGMonthDay" qname="ns6:echoGMonthDay" returnQName="return" returnType="xsd:gMonthDay" xmlns:ns6="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputGMonthDay" type="xsd:gMonthDay"/>
+  </operation>
+  <operation name="echoGYearMonth" qname="ns7:echoGYearMonth" returnQName="return" returnType="xsd:gYearMonth" xmlns:ns7="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputGYearMonth" type="xsd:gYearMonth"/>
+  </operation>
+  <operation name="echoByte" qname="ns8:echoByte" returnQName="return" returnType="xsd:byte" xmlns:ns8="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputByte" type="xsd:byte"/>
+  </operation>
+  <operation name="echoShort" qname="ns9:echoShort" returnQName="return" returnType="xsd:short" xmlns:ns9="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputShort" type="xsd:short"/>
+  </operation>
+  <operation name="echoDouble" qname="ns10:echoDouble" returnQName="return" returnType="xsd:double" xmlns:ns10="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputDouble" type="xsd:double"/>
+  </operation>
+  <operation name="echoLong" qname="ns11:echoLong" returnQName="return" returnType="xsd:long" xmlns:ns11="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputLong" type="xsd:long"/>
+  </operation>
+  <operation name="echoDuration" qname="ns12:echoDuration" returnQName="return" returnType="xsd:duration" xmlns:ns12="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputDuration" type="xsd:duration"/>
+  </operation>
+  <operation name="echoAnyURI" qname="ns13:echoAnyURI" returnQName="return" returnType="xsd:anyURI" xmlns:ns13="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="input" type="xsd:anyURI"/>
+  </operation>
+  <operation name="echoName" qname="ns14:echoName" returnQName="return" returnType="xsd:Name" xmlns:ns14="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="input" type="xsd:Name"/>
+  </operation>
+  <operation name="echoQName" qname="ns15:echoQName" returnQName="return" returnType="xsd:QName" xmlns:ns15="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="input" type="xsd:QName"/>
+  </operation>
+  <operation name="echoNCName" qname="ns16:echoNCName" returnQName="return" returnType="xsd:NCName" xmlns:ns16="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="input" type="xsd:NCName"/>
+  </operation>
+  <operation name="echoLanguage" qname="ns17:echoLanguage" returnQName="return" returnType="xsd:language" xmlns:ns17="http://simple.schema.qa.royale/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="input" type="xsd:language"/>
+  </operation>
+  <parameter name="allowedMethods" value="echoGDay echoGYear echoByte echoDuration echoGYearMonth echoGMonthDay echoNCName echoName echoLanguage echoAnyURI echoShort echoLong echoTime echoDate echoQName echoDouble echoGMonth"/>
+  <parameter name="wsdlPortType" value="InteropTestSoapBindingImpl"/>
+  <parameter name="wsdlServicePort" value="echoMissing"/>
+  <parameter name="className" value="royale.qa.schema.simple.EchoSoapBindingImpl"/>
+  <parameter name="scope" value="Session"/>
+  <parameter name="wsdlTargetNamespace" value="http://simple.schema.qa.royale/"/>
+  <parameter name="wsdlServiceElement" value="InteropTestSoapBindingImplService"/>
+ </service>
+ <service name="IBMDocumentService" provider="java:MSG" style="message" use="literal">
+  <parameter name="allowedMethods" value="processEvent"/>
+  <parameter name="wsdl" value="/ibm.wsdl"/>
+  <parameter name="className" value="ibm.GenericDocumentService"/>
+ </service>
+ <service name="MessageService" provider="java:MSG" style="message" use="literal">
+  <parameter name="allowedMethods" value="echoElements"/>
+  <parameter name="className" value="samples.message.MessageService"/>
+  <parameter name="sendXsiTypes" value="false"/>
+  <parameter name="sendMultiRefs" value="false"/>
+ </service>
+ <service name="AdminService" provider="java:MSG">
+  <parameter name="allowedMethods" value="AdminService"/>
+  <parameter name="enableRemoteAdmin" value="false"/>
+  <parameter name="className" value="org.apache.axis.utils.Admin"/>
+  <namespace>http://xml.apache.org/axis/wsdd/</namespace>
+ </service>
+ <service name="echoB" provider="java:RPC">
+  <requestFlow>
+   <handler type="java:samples.echo.echoHeaderStringHandler"/>
+   <handler type="java:samples.echo.echoHeaderStructHandler"/>
+  </requestFlow>
+  <responseFlow>
+   <handler type="java:samples.echo.echoHeaderStringHandler"/>
+   <handler type="java:samples.echo.echoHeaderStructHandler"/>
+  </responseFlow>
+  <parameter name="allowedMethods" value="echoStructAsSimpleTypes          echoSimpleTypesAsStruct          echo2DStringArray          echoNestedStruct          echoNestedArray"/>
+  <parameter name="className" value="samples.echo.InteropTestSoapBindingImpl"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns18:SOAPStruct" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:samples.echo.SOAPStruct" xmlns:ns18="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns19:ArrayOfSOAPStruct" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:samples.echo.SOAPStruct[]" xmlns:ns19="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns20:SOAPStructStruct" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:samples.echo.SOAPStructStruct" xmlns:ns20="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns21:SOAPArrayStruct" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:samples.echo.SOAPArrayStruct" xmlns:ns21="http://soapinterop.org/xsd"/>
+  <namespace>http://soapinterop.org/</namespace>
+ </service>
+ <service name="echo" provider="java:RPC">
+  <operation name="echoString" returnQName="return" returnType="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputString" type="xsd:string"/>
+  </operation>
+  <operation name="echoStringArray" returnQName="return" returnType="ns22:ArrayOfstring" xmlns:ns22="http://soapinterop.org/xsd">
+   <parameter name="inputStringArray" type="ns22:ArrayOfstring"/>
+  </operation>
+  <operation name="echoInteger" returnQName="return" returnType="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputInteger" type="xsd:int"/>
+  </operation>
+  <operation name="echoIntegerArray" returnQName="return" returnType="ns23:ArrayOfint" xmlns:ns23="http://soapinterop.org/xsd">
+   <parameter name="inputIntegerArray" type="ns23:ArrayOfint"/>
+  </operation>
+  <operation name="echoFloat" returnQName="return" returnType="xsd:float" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputFloat" type="xsd:float"/>
+  </operation>
+  <operation name="echoFloatArray" returnQName="return" returnType="ns24:ArrayOffloat" xmlns:ns24="http://soapinterop.org/xsd">
+   <parameter name="inputFloatArray" type="ns24:ArrayOffloat"/>
+  </operation>
+  <operation name="echoStruct" returnQName="return" returnType="ns25:SOAPStruct" xmlns:ns25="http://soapinterop.org/xsd">
+   <parameter name="inputStruct" type="ns25:SOAPStruct"/>
+  </operation>
+  <operation name="echoStructArray" returnQName="return" returnType="ns26:ArrayOfSOAPStruct" xmlns:ns26="http://soapinterop.org/xsd">
+   <parameter name="inputStructArray" type="ns26:ArrayOfSOAPStruct"/>
+  </operation>
+  <operation name="echoVoid"/>
+  <operation name="echoBase64" returnQName="return" returnType="xsd:base64Binary" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputBase64" type="xsd:base64Binary"/>
+  </operation>
+  <operation name="echoDate" returnQName="return" returnType="xsd:dateTime" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputDate" type="xsd:dateTime"/>
+  </operation>
+  <operation name="echoHexBinary" returnQName="return" returnType="xsd:hexBinary" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputHexBinary" type="xsd:hexBinary"/>
+  </operation>
+  <operation name="echoDecimal" returnQName="return" returnType="xsd:decimal" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputDecimal" type="xsd:decimal"/>
+  </operation>
+  <operation name="echoBoolean" returnQName="return" returnType="xsd:boolean" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputBoolean" type="xsd:boolean"/>
+  </operation>
+  <operation name="echoStructAsSimpleTypes">
+   <parameter name="inputStruct" type="ns27:SOAPStruct" xmlns:ns27="http://soapinterop.org/xsd"/>
+   <parameter mode="out" name="outputString" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+   <parameter mode="out" name="outputInteger" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+   <parameter mode="out" name="outputFloat" type="xsd:float" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+  </operation>
+  <operation name="echoSimpleTypesAsStruct" returnQName="return" returnType="ns28:SOAPStruct" xmlns:ns28="http://soapinterop.org/xsd">
+   <parameter name="inputString" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+   <parameter name="inputInteger" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+   <parameter name="inputFloat" type="xsd:float" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+  </operation>
+  <operation name="echo2DStringArray" returnQName="return" returnType="ns29:ArrayOfString2D" xmlns:ns29="http://soapinterop.org/xsd">
+   <parameter name="input2DStringArray" type="ns29:ArrayOfString2D"/>
+  </operation>
+  <operation name="echoNestedStruct" returnQName="return" returnType="ns30:SOAPStructStruct" xmlns:ns30="http://soapinterop.org/xsd">
+   <parameter name="inputStruct" type="ns30:SOAPStructStruct"/>
+  </operation>
+  <operation name="echoNestedArray" returnQName="return" returnType="ns31:SOAPArrayStruct" xmlns:ns31="http://soapinterop.org/xsd">
+   <parameter name="inputStruct" type="ns31:SOAPArrayStruct"/>
+  </operation>
+  <operation name="echoMap" returnQName="return" returnType="ns32:Map" xmlns:ns32="http://xml.apache.org/xml-soap">
+   <parameter name="input" type="ns32:Map"/>
+  </operation>
+  <operation name="echoMapArray" returnQName="return" returnType="ns33:ArrayOf_apachesoap_Map" xmlns:ns33="http://soapinterop.org/">
+   <parameter name="input" type="ns33:ArrayOf_apachesoap_Map"/>
+  </operation>
+  <operation name="echoToken" qname="ns34:echoToken" returnQName="return" returnType="xsd:token" xmlns:ns34="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputToken" type="xsd:token"/>
+  </operation>
+  <operation name="echoNormalizedString" qname="ns35:echoNormalizedString" returnQName="return" returnType="xsd:normalizedString" xmlns:ns35="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputNormalizedString" type="xsd:normalizedString"/>
+  </operation>
+  <operation name="echoUnsignedLong" qname="ns36:echoUnsignedLong" returnQName="return" returnType="xsd:unsignedLong" xmlns:ns36="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputUnsignedLong" type="xsd:unsignedLong"/>
+  </operation>
+  <operation name="echoUnsignedInt" qname="ns37:echoUnsignedInt" returnQName="return" returnType="xsd:unsignedInt" xmlns:ns37="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputUnsignedInt" type="xsd:unsignedInt"/>
+  </operation>
+  <operation name="echoUnsignedShort" qname="ns38:echoUnsignedShort" returnQName="return" returnType="xsd:unsignedShort" xmlns:ns38="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputUnsignedShort" type="xsd:unsignedShort"/>
+  </operation>
+  <operation name="echoUnsignedByte" qname="ns39:echoUnsignedByte" returnQName="return" returnType="xsd:unsignedByte" xmlns:ns39="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputUnsignedByte" type="xsd:unsignedByte"/>
+  </operation>
+  <operation name="echoNonNegativeInteger" qname="ns40:echoNonNegativeInteger" returnQName="return" returnType="xsd:nonNegativeInteger" xmlns:ns40="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputNonNegativeInteger" type="xsd:nonNegativeInteger"/>
+  </operation>
+  <operation name="echoPositiveInteger" qname="ns41:echoPositiveInteger" returnQName="return" returnType="xsd:positiveInteger" xmlns:ns41="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputPositiveInteger" type="xsd:positiveInteger"/>
+  </operation>
+  <operation name="echoNonPositiveInteger" qname="ns42:echoNonPositiveInteger" returnQName="return" returnType="xsd:nonPositiveInteger" xmlns:ns42="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputNonPositiveInteger" type="xsd:nonPositiveInteger"/>
+  </operation>
+  <operation name="echoNegativeInteger" qname="ns43:echoNegativeInteger" returnQName="return" returnType="xsd:negativeInteger" xmlns:ns43="http://soapinterop.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputNegativeInteger" type="xsd:negativeInteger"/>
+  </operation>
+  <requestFlow>
+   <handler type="java:samples.echo.echoHeaderStringHandler"/>
+   <handler type="java:samples.echo.echoHeaderStructHandler"/>
+  </requestFlow>
+  <responseFlow>
+   <handler type="java:samples.echo.echoHeaderStringHandler"/>
+   <handler type="java:samples.echo.echoHeaderStructHandler"/>
+  </responseFlow>
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="className" value="samples.echo.InteropTestSoapBindingImpl"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns44:ArrayOfstring" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:java.lang.String[]" xmlns:ns44="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns45:ArrayOfString2D" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:java.lang.String[][]" xmlns:ns45="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns46:ArrayOfint" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:int[]" xmlns:ns46="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns47:ArrayOffloat" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:float[]" xmlns:ns47="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns48:SOAPStruct" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:samples.echo.SOAPStruct" xmlns:ns48="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns49:ArrayOfSOAPStruct" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:samples.echo.SOAPStruct[]" xmlns:ns49="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns50:ArrayOf_apachesoap_Map" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:java.util.HashMap[]" xmlns:ns50="http://soapinterop.org/"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns51:SOAPStructStruct" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:samples.echo.SOAPStructStruct" xmlns:ns51="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns52:SOAPArrayStruct" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:samples.echo.SOAPArrayStruct" xmlns:ns52="http://soapinterop.org/xsd"/>
+  <namespace>http://soapinterop.org/</namespace>
+ </service>
+ <service name="urn:xmltoday-delayed-quotes" provider="java:RPC">
+  <requestFlow name="checks">
+   <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>
+   <handler type="java:org.apache.axis.handlers.SimpleAuthorizationHandler"/>
+  </requestFlow>
+  <parameter name="allowedMethods" value="getQuote test"/>
+  <parameter name="allowedRoles" value="user1,user2"/>
+  <parameter name="className" value="samples.stock.StockQuoteService"/>
+  <parameter name="wsdlServicePort" value="GetQuote"/>
+ </service>
+ <service name="Bid" provider="java:RPC">
+  <parameter name="allowedMethods" value="RequestForQuote SimpleBuy Buy Ping"/>
+  <parameter name="className" value="samples.bidbuy.BidService"/>
+  <namespace>http://www.soapinterop.org/Bid</namespace>
+ </service>
+ <service name="ComponentServices" provider="java:RPC">
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="className" value="TempComponentServices"/>
+ </service>
+ <service name="BidRegistry" provider="java:RPC">
+  <parameter name="allowedMethods" value="Register Unregister Lookup LookupAsString"/>
+  <parameter name="className" value="samples.bidbuy.RegistryService"/>
+ </service>
+ <service name="urn:cominfo" provider="java:RPC">
+  <parameter name="allowedMethods" value="getInfo"/>
+  <parameter name="allowedRoles" value="user3"/>
+  <parameter name="className" value="samples.stock.ComInfoService"/>
+ </service>
+ <service name="Version" provider="java:RPC">
+  <parameter name="allowedMethods" value="getVersion"/>
+  <parameter name="className" value="org.apache.axis.Version"/>
+ </service>
+ <service name="MortgageSoap" provider="java:RPC" style="wrapped" use="literal">
+  <operation name="getMortgagePayment" qname="ns53:GetMortgagePayment" returnQName="ns53:GetMortgagePaymentResult" returnType="ns53:MortgageResults" xmlns:ns53="http://www.webserviceX.NET/">
+   <parameter qname="ns53:Years" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+   <parameter qname="ns53:Interest" type="xsd:double" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+   <parameter qname="ns53:LoanAmount" type="xsd:double" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+   <parameter qname="ns53:AnnualTax" type="xsd:double" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+   <parameter qname="ns53:AnnualInsurance" type="xsd:double" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+  </operation>
+  <parameter name="sendMultiRefs" value="false"/>
+  <parameter name="wsdlServicePort" value="MortgageSoap"/>
+  <parameter name="className" value="NET.webserviceX.www.MortgageSoapImpl"/>
+  <parameter name="allowedMethods" value="getMortgagePayment"/>
+  <parameter name="wsdlServiceElement" value="Mortgage"/>
+  <parameter name="wsdlTargetNamespace" value="http://www.webserviceX.NET/"/>
+  <parameter name="wsdlPortType" value="MortgageSoap"/>
+  <parameter name="scope" value="Session"/>
+  <parameter name="sendXsiTypes" value="false"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns54:MortgageResults" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:NET.webserviceX.www.MortgageResults" xmlns:ns54="http://www.webserviceX.NET/"/>
+ </service>
+ <service name="echoA" provider="java:RPC">
+  <operation name="echoString" returnQName="return" returnType="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputString" type="xsd:string"/>
+  </operation>
+  <operation name="echoStringArray" returnQName="return" returnType="ns55:ArrayOfstring" xmlns:ns55="http://soapinterop.org/xsd">
+   <parameter name="inputStringArray" type="ns55:ArrayOfstring"/>
+  </operation>
+  <operation name="echoInteger" returnQName="return" returnType="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputInteger" type="xsd:int"/>
+  </operation>
+  <operation name="echoIntegerArray" returnQName="return" returnType="ns56:ArrayOfint" xmlns:ns56="http://soapinterop.org/xsd">
+   <parameter name="inputIntegerArray" type="ns56:ArrayOfint"/>
+  </operation>
+  <operation name="echoFloat" returnQName="return" returnType="xsd:float" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputFloat" type="xsd:float"/>
+  </operation>
+  <operation name="echoFloatArray" returnQName="return" returnType="ns57:ArrayOffloat" xmlns:ns57="http://soapinterop.org/xsd">
+   <parameter name="inputFloatArray" type="ns57:ArrayOffloat"/>
+  </operation>
+  <operation name="echoStruct" returnQName="return" returnType="ns58:SOAPStruct" xmlns:ns58="http://soapinterop.org/xsd">
+   <parameter name="inputStruct" type="ns58:SOAPStruct"/>
+  </operation>
+  <operation name="echoStructArray" returnQName="return" returnType="ns59:ArrayOfSOAPStruct" xmlns:ns59="http://soapinterop.org/xsd">
+   <parameter name="inputStructArray" type="ns59:ArrayOfSOAPStruct"/>
+  </operation>
+  <operation name="echoVoid"/>
+  <operation name="echoBase64" returnQName="return" returnType="xsd:base64Binary" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputBase64" type="xsd:base64Binary"/>
+  </operation>
+  <operation name="echoDate" returnQName="return" returnType="xsd:dateTime" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputDate" type="xsd:dateTime"/>
+  </operation>
+  <operation name="echoHexBinary" returnQName="return" returnType="xsd:hexBinary" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputHexBinary" type="xsd:hexBinary"/>
+  </operation>
+  <operation name="echoDecimal" returnQName="return" returnType="xsd:decimal" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputDecimal" type="xsd:decimal"/>
+  </operation>
+  <operation name="echoBoolean" returnQName="return" returnType="xsd:boolean" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <parameter name="inputBoolean" type="xsd:boolean"/>
+  </operation>
+  <parameter name="allowedMethods" value="echoString          echoStringArray          echoInteger          echoIntegerArray          echoFloat          echoFloatArray          echoStruct          echoStructArray          echoVoid          echoBase64          echoHexBinary          echoDate          echoDecimal          echoBoolean"/>
+  <parameter name="className" value="samples.echo.InteropTestSoapBindingImpl"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns60:ArrayOfstring" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:java.lang.String[]" xmlns:ns60="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns61:ArrayOfString2D" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:java.lang.String[][]" xmlns:ns61="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns62:ArrayOfint" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:int[]" xmlns:ns62="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns63:ArrayOffloat" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:float[]" xmlns:ns63="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns64:SOAPStruct" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:samples.echo.SOAPStruct" xmlns:ns64="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns65:ArrayOfSOAPStruct" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:samples.echo.SOAPStruct[]" xmlns:ns65="http://soapinterop.org/xsd"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns66:ArrayOf_apachesoap_Map" serializer="org.apache.axis.encoding.ser.ArraySerializerFactory" type="java:java.util.HashMap[]" xmlns:ns66="http://soapinterop.org/"/>
+  <namespace>http://soapinterop.org/</namespace>
+ </service>
+ <service name="DocServices" provider="java:RPC">
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="className" value="remote.DocServices"/>
+ </service>
+ <service name="CompanyInfoService" provider="java:RPC">
+  <parameter name="className" value="perf.company.CompanyInfo"/>
+ </service>
+ <service name="AddressBook" provider="java:RPC">
+  <operation name="addEntry" qname="ns67:addEntry" xmlns:ns67="urn:AddressFetcher2">
+   <parameter name="name" type="ns68:string" xmlns:ns68="http://www.w3.org/1999/XMLSchema"/>
+   <parameter name="address" type="ns67:address"/>
+  </operation>
+  <operation name="getAddressFromName" qname="ns69:getAddressFromName" returnQName="address" returnType="ns69:address" xmlns:ns69="urn:AddressFetcher2">
+   <parameter name="name" type="ns70:string" xmlns:ns70="http://www.w3.org/1999/XMLSchema"/>
+  </operation>
+  <parameter name="allowedMethods" value="getAddressFromName addEntry"/>
+  <parameter name="wsdlPortType" value="AddressBook"/>
+  <parameter name="wsdlServicePort" value="AddressBook"/>
+  <parameter name="className" value="samples.addr.AddressBookSOAPBindingImpl"/>
+  <parameter name="scope" value="Session"/>
+  <parameter name="wsdlTargetNamespace" value="urn:AddressFetcher2"/>
+  <parameter name="wsdlServiceElement" value="AddressBookService"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns71:address" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:samples.addr.Address" xmlns:ns71="urn:AddressFetcher2"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns72:phone" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:samples.addr.Phone" xmlns:ns72="urn:AddressFetcher2"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns73:stateType" serializer="org.apache.axis.encoding.ser.EnumSerializerFactory" type="java:samples.addr.StateType" xmlns:ns73="urn:AddressFetcher2"/>
+ </service>
+ <service name="StockQuoteService" provider="java:RPC">
+  <parameter name="allowedMethods" value="getQuote test"/>
+  <parameter name="className" value="samples.stock.StockQuoteService"/>
+  <parameter name="wsdlServicePort" value="GetQuote"/>
+ </service>
+ <transport name="http">
+  <requestFlow>
+   <handler type="URLMapper"/>
+   <handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
+  </requestFlow>
+ </transport>
+ <transport name="local">
+  <responseFlow>
+   <handler type="LocalResponder"/>
+  </responseFlow>
+ </transport>
+ <beanMapping languageSpecificType="java:samples.bidbuy.PurchaseOrder" qname="ns74:PurchaseOrder" xmlns:ns74="http://www.soapinterop.org/Bid"/>
+ <beanMapping languageSpecificType="java:samples.bidbuy.Address" qname="ns75:Address" xmlns:ns75="http://www.soapinterop.org/Bid"/>
+ <beanMapping languageSpecificType="java:samples.bidbuy.LineItem" qname="ns76:LineItem" xmlns:ns76="http://www.soapinterop.org/Bid"/>
+ <beanMapping languageSpecificType="java:samples.bidbuy.Service" qname="ns77:Service" xmlns:ns77="http://www.soapinterop.org/Registry"/>
+ <beanMapping languageSpecificType="java:perf.company.Company" qname="ns78:CompanyInfo_Company" xmlns:ns78="http://aglosband2.allaire.com:8100/services/CompanyInfoService"/>
+ <beanMapping languageSpecificType="java:perf.company.Address" qname="ns79:Address" xmlns:ns79="http://aglosband2.allaire.com:8100/services/CompanyInfoService"/>
+</deployment>

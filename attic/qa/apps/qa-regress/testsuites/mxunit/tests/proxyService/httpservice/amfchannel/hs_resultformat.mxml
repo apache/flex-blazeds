@@ -1,0 +1,217 @@
+<?xml version="1.0" ?>
+<!--
+
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-->
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:qa="http://www.adobe.com/2006/flexqa" creationComplete="run()">
+	
+	<!-- resultFormat = e4x     -->
+	 <mx:HTTPService 
+	 	id="hsE4X" 
+		useProxy="true"
+    	destination="basic.xml_amf"  
+    	resultFormat = "e4x"
+    	result="onServiceResult_e4x(event)" 
+    	fault="onServiceFault(event)" >    
+   	 </mx:HTTPService>
+  
+    <!--resultFormat = flashvars -->
+    <mx:HTTPService 
+		id="hsFlashVars" 
+		useProxy="true"
+    	destination="echoParamsAsFlashvars_amf" 
+    	resultFormat = "flashvars"
+    	method = "POST"
+        result="onServiceResult_flashvars(event)" 
+        fault="onServiceFault(event)" >
+       
+        <mx:request>           
+                <mx:foo>foo</mx:foo>
+                <mx:bar>bar</mx:bar>           
+        </mx:request>
+    </mx:HTTPService>
+	
+	<!--resultFormat = object -->
+	<mx:HTTPService 
+	   	id="hsObject" 
+		useProxy="true"
+    	destination="basic.xml_amf"  
+	   	resultFormat = "object"
+        result="onServiceResult_object(event)"
+		fault="onServiceFault(event)"
+		makeObjectsBindable="false" />
+          
+    <!--resultFormat = array -->
+	<mx:HTTPService 
+	   	id="hsArray" 
+		useProxy="true"
+    	destination="basic.xml_amf"  
+	   	resultFormat = "array"
+        result="onServiceResult_array(event)"
+		fault="onServiceFault(event)"
+		makeObjectsBindable="false" />
+          
+    <!-- resultFormat = text  -->
+    <mx:HTTPService 
+		id="hsText" 
+		useProxy="true"
+    	destination="echoParamsAsFlashvars_amf" 
+	   	resultFormat = "text"
+    	method = "POST"
+        result="onServiceResult_text(event)"
+        fault="onServiceFault(event)" >
+       
+        <mx:request>          
+                <mx:foo>foo</mx:foo>
+                <mx:bar>bar</mx:bar>            
+        </mx:request>
+    </mx:HTTPService>
+   
+   	<!-- resultFormat = xml  -->
+   	<mx:HTTPService 
+   		id="hsXML" 
+ 		useProxy="true"
+    	destination="basic.xml_amf"  
+	   	resultFormat = "xml"
+        result="onServiceResult_xml(event)"
+        fault="onServiceFault(event)" />
+    
+	<mx:Script>	
+	<![CDATA[
+	    /****************************************************
+        *  HttpService resultFormat test
+        * **************************************************/
+
+		import qa.mxunit.*;
+		import mx.rpc.events.*;
+		import mx.utils.*;
+        
+		public var resultE4X:Object;
+		public var resultFlashVars:Object;
+		public var resultObject:Object;
+		public var resultArray:Array;
+		public var resultArrayObject:Object;
+		public var resultText:Object;
+		public var resultXML:Object;
+		
+
+		public var expected : XML = new XML("<basic><string>string</string><integer>123</integer><float>123.123</float>"+"<boolean>true</boolean><array>1</array><array>2</array><array>3</array><object><property>value</property></object></basic>");
+
+		public var expectedXML : XMLDocument = new XMLDocument();
+		
+
+       public function onServiceFault(event:FaultEvent):void {
+           		trace("service fault: " + event.fault.faultString);
+        }
+
+		public function onServiceResult_e4x(event:ResultEvent):void {
+            resultE4X = event.result;
+        }
+        
+        public function onServiceResult_flashvars(event:ResultEvent):void {
+            resultFlashVars = event.result;
+        }
+
+		public function onServiceResult_object(event:ResultEvent):void {
+            resultObject = event.result;
+        }
+        
+        public function onServiceResult_array(event:ResultEvent):void {
+            resultArray = event.result as Array;
+            resultArrayObject = event.result;
+        }
+        
+       public function onServiceResult_text(event:ResultEvent):void {
+            resultText = StringUtil.trim(String(event.result));
+        }
+        
+       public  function onServiceResult_xml(event:ResultEvent):void {
+            resultXML = event.result;
+        }
+ 
+		public function run():void {
+        	expectedXML.ignoreWhite = true;
+        	expectedXML.parseXML("<basic><string>string</string><integer>123</integer><float>123.123</float>"+"<boolean>true</boolean><array>1</array><array>2</array><array>3</array><object><property>value</property></object></basic>");
+
+			hsE4X.send();
+            hsFlashVars.send();
+            hsObject.send();
+            hsArray.send();
+            hsText.send();
+            hsXML.send();
+
+            MXUnitManager.delay = 6000;
+			MXUnitManager.addTests(this,["Test_e4x","Test_flashvars","Test_object","Test_array","Test_text","Test_xml"],10000);
+		}
+
+		public function Test_e4x():void {
+			Assert.isTrue(resultE4X.toString() == expected.toString(), "");
+		}
+		
+		public function Test_flashvars():void {
+			Assert.isTrue(resultFlashVars.bar == "bar", " result.bar should be 'bar'");
+            Assert.isTrue(resultFlashVars.foo == "foo", "result.foo should be 'foo'");
+		}
+	
+		public function Test_object():void {
+			Assert.isTrue(resultObject.basic != null, "first property should be not be null");
+			Assert.isTrue(resultObject.basic.string == "string", "result.basic.string should be string");
+			Assert.isTrue(resultObject.basic.string is String, "result.basic.string is String = true");
+			Assert.isTrue(resultObject.basic.integer == 123, "result.basic.integer should be 123");
+			Assert.isTrue(resultObject.basic.integer is int, "result.basic.integer is int = true");
+			Assert.isTrue(resultObject.basic.float == 123.123, "result.basic.float should be 123.123");
+			Assert.isTrue(resultObject.basic.float is Number, "result.basic.float is Number = true");
+			Assert.isTrue(resultObject.basic.boolean == true, "result.basic.boolean should be true");
+			Assert.isTrue(resultObject.basic.boolean is Boolean, "result.basic.boolean is Boolean = true");
+			Assert.isTrue(resultObject.basic.array.length == 3, "result.basic.array.lenght should be 3");
+			Assert.isTrue(resultObject.basic.array is Array, "result.basic.array is Array = true");
+			Assert.isTrue(resultObject.basic.array[0] == 1, "result.basic.array[0] should be 1");
+			Assert.isTrue(resultObject.basic.array[1] == 2, "result.basic.array[1] should be 2");
+			Assert.isTrue(resultObject.basic.array[2] == 3, "result.basic.array[2] should be 3");
+		}
+		
+		public function Test_array():void {
+		    Assert.isTrue(resultArrayObject is Array,"result should be an array");
+			Assert.isTrue(resultArray[0].basic != null, "first property should be not be null");
+			Assert.isTrue(resultArray[0].basic.string == "string", "result.basic.string should be string");
+			Assert.isTrue(resultArray[0].basic.string is String, "result.basic.string is String = true");
+			Assert.isTrue(resultArray[0].basic.integer == 123, "result.basic.integer should be 123");
+			Assert.isTrue(resultArray[0].basic.integer is int, "result.basic.integer is int = true");
+			Assert.isTrue(resultArray[0].basic.float == 123.123, "result.basic.float should be 123.123");
+			Assert.isTrue(resultArray[0].basic.float is Number, "result.basic.float is Number = true");
+			Assert.isTrue(resultArray[0].basic.boolean == true, "result.basic.boolean should be true");
+			Assert.isTrue(resultArray[0].basic.boolean is Boolean, "result.basic.boolean is Boolean = true");
+			Assert.isTrue(resultArray[0].basic.array.length == 3, "result.basic.array.lenght should be 3");
+			Assert.isTrue(resultArray[0].basic.array is Array, "result.basic.array is Array = true");
+			Assert.isTrue(resultArray[0].basic.array[0] == 1, "result.basic.array[0] should be 1");
+			Assert.isTrue(resultArray[0].basic.array[1] == 2, "result.basic.array[1] should be 2");
+			Assert.isTrue(resultArray[0].basic.array[2] == 3, "result.basic.array[2] should be 3");
+		}
+		
+	
+		public function Test_text():void {
+			Assert.isTrue(resultText == "bar=bar&foo=foo"  || resultText == "foo=foo&bar=bar", "result should be 'foo=foo&bar=bar'");
+		}		
+			
+		public function Test_xml():void {
+			Assert.isTrue(resultXML == expectedXML.toString(), "");
+		}
+
+	]]>
+	</mx:Script>
+</mx:Application>

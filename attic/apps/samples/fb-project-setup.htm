@@ -1,0 +1,67 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>BlazeDS Flex Builder Integration</title>
+<link href="main.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<h1>Opening the Samples Source Code in Flex Builder 3</h1>
+<h3>Unziping the samples source code </h3>
+<ol>
+  <li>Locate <strong>flex-src.zip</strong> in the <strong>WEB-INF\flex-src</strong> directory of the samples web application. For example, on a typical Windows installation using the Tomcat integrated server, flex-src.zip is located in C:\blazeds\tomcat\webapps\samples\WEB-INF\flex-src.</li>
+  <li>Unzip flex-src.zip to the root  folder of your Flex Builder workspace.</li>
+</ol>
+<h3>Creating Flex Builder projects </h3>
+<p>Create a Flex Builder project for each sample application you  are interested in. There are several approaches to create a Flex Builder project  for a Flex application that works with BlazeDS. We describe a simple approach here:</p>
+<ol>
+  <li>Select <strong>File&gt;New&gt;Project&hellip;</strong> in the Flex Builder menu.</li>
+  <li>    Expand Flex Builder, select <strong>Flex Project</strong> and click Next.</li>
+  <li>    Provide a project name. Use the exact name of the sample  folder. For example testdrive-httpservice.</li>
+  <li>    If you unzipped flex-src.zip in the root folder of your  Flex Builder workspace, keep the <strong>use default location</strong> checkbox checked.</li>
+  <li>    Select <strong>Web Application</strong> as the application type.</li>
+  <li>    Select <strong>Java</strong> as the application server type.</li>
+  <li>    Check use <strong>remote object access service</strong>.</li>
+  <li>    Uncheck Create combined Java/Flex project using WTP.  <strong>Note</strong> this checkbox will only exist if the Eclipse WTP feature is installed.</li>
+  <li> Click <strong>Next</strong>.</li>
+  <li>    Make sure the root folder for LiveCycle Data Services matches the root folder of your BlazeDS web application. If you are using the Tomcat integrated server on Windows, the settings should look similar  to this (you may need to adjust the exact folder based on your own  settings):</li>
+  <blockquote>
+    <p>Root Folder: C:\blazeds\tomcat\webapps\samples<br />
+      Root URL: <a href="http://localhost:8400/lcds-samples/">http://localhost:8400/samples/</a><br />
+    Context Root: /samples</p>
+    </blockquote>
+  <li>Click <strong>Validate Configuration</strong>, then <strong>Finish</strong>.</li>
+</ol>
+<h3>Adding a linked resource to the server configuration files</h3>
+<p>While working on the client-side of your applications, you may need to look at or change the BlazeDS server-side configuration. For example, you may need to look at existing destinations or create a new one. You can create a linked resource inside a Flex Builder project to make the BlazeDS configuration files easily accessible.</p>
+<p>To create a linked resource to the BlazeDS configuration files: </p>
+<ol>
+  <li>Right-click the project name in the project navigation view. </li>
+  <li>Select <strong>New&gt;Folder</strong> in the popup menu.</li>
+  <li>Specify the name of the folder as it will appear in the navigation view.  This     name can be different from the name of the folder in the file system. For example type <strong>server-config</strong>. </li>
+  <li>Click the <strong>Advanced</strong> button.</li>
+  <li>Check  <strong>Link to folder in the file system</strong>.</li>
+  <li>Click the <strong>Browse</strong> button and select the <strong>flex</strong> folder under the <strong>WEB-INF</strong> directory of your web application. For example, on a typical Windows installation using the Tomcat integrated server, select C:\blazeds\tomcat\webapps\samples\WEB-INF\flex. </li>
+  <li>Click <strong>Finish</strong>. The BlazeDS configuration files are now available in your Flex Builder project under the server-config folder. </li>
+</ol>
+
+<p>&nbsp;</p>
+</body>
+</html>

@@ -1,0 +1,486 @@
+<flex-remoting-service-mods>
+<!--
+
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-->
+    <!--
+     The contents of this file will be used to modify an existing remoting-config.xml file so
+     there is no need to maintain an entire config file.
+
+     Each child directly under the root has two extra attributes - parent and action.
+
+        parent - REQUIRED.  slash delimited path as to the parent node for the change
+        action - replace, add, delete.  Default is replace.
+
+    Local overrides are encouraged to be in remoting-config.mods.local.xml
+
+    THE BASE PARENT FOR flex-remoting-service is "service".
+    -->
+
+
+    <default-channels parent="service">
+        <channel ref="qa-amf"/>
+        <channel ref="qa-http"/>        
+        <channel ref="qa-amf-ac"/>
+        <channel ref="qa-http-ac"/>        
+        <channel ref="qa-secure-amf"/>
+    </default-channels>     
+
+    <destination channels="qa-amf-asobject-missingtypes,qa-amf-not-instantiate" id="InstantiationTest" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.InstantiationTest</source>
+        </properties>
+    </destination>
+
+    <destination channels="qa-amf" id="HSqlAssemblerTestHelper" parent="service">
+        <properties>
+            <source>db.hsql.Helper</source>
+        </properties>
+    </destination>
+    
+    <destination channels="qa-amf" id="HSqlAssemblerTestHelperN" parent="service">
+        <properties>
+            <source>db.hsql.HelperN</source>
+        </properties>
+    </destination>
+
+    <!-- This destination is used by AMFConnectionTest JUnit test -->
+    <destination id="amfConnectionTestService" channels="qa-amf" parent="service">
+        <properties>
+            <source>remoting.amfclient.AMFConnectionTestService</source>
+        </properties>
+    </destination>
+
+    <!-- Runtime management destination -->
+    <destination id="RuntimeManagement" channels="qa-amf" parent="service">
+        <properties>
+            <source>flex.management.jmx.MBeanServerGateway</source>
+        </properties>
+        <!-- uncomment when on Websphere with administrative security enabled 
+             should call setCrendentials("manager","manager1")   -->
+        <!--
+        <security>
+            <security-constraint ref="console"/>
+        </security>
+        -->
+    </destination>
+
+
+    <destination id="qa.remoting.InheritTest" parent="service">
+        <properties>
+            <source>dev.remoting.inherit.ChildClass</source>
+        </properties>
+    </destination>
+
+    <destination id="qa.amf.remoting.InheritTest" channels="qa-amf" parent="service">
+        <properties>
+            <source>dev.remoting.inherit.ChildClass</source>
+        </properties>
+    </destination>
+
+    <destination id="qa.http.remoting.InheritTest" channels="qa-http" parent="service">
+        <properties>
+            <source>dev.remoting.inherit.ChildClass</source>
+        </properties>
+    </destination>
+
+    <destination id="codecoverage.echoservice.Echo" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+            <network>
+                <!--<cluster ref="default-tcp-cluster"/>-->
+            </network>            
+        </properties>
+        
+    </destination>
+
+    <destination id="qa.echoservice.Echo" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+        </properties>
+    </destination>
+    
+    <destination id="qa.echoservice.PreferVectors.Echo" parent="service">
+        <channels>
+            <channel ref="qa-amf-prefervectors"/>
+            <channel ref="qa-amf-legacy-prefervectors"/>
+        </channels>
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+        </properties>
+    </destination>
+
+    <destination id="dev.echoservice.Echo" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+        </properties>
+    </destination>
+
+    <destination id="qa.amf.echoservice.Echo" channels="qa-amf" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+        </properties>
+    </destination>
+
+    <destination id="qa.http.echoservice.Echo" channels="qa-http" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+        </properties>
+    </destination>
+
+
+    <!-- negative test destination, no such class -->
+    <destination id="qa.echoservice.Echo2" parent="service">
+        <properties>
+            <source>dev.echoservice.Echo2</source>
+        </properties>
+    </destination>
+
+    <destination id="qa.amf.echoservice.Echo2" channels="qa-amf" parent="service">
+        <properties>
+            <source>dev.echoservice.Echo2</source>
+        </properties>
+    </destination>
+
+    <destination id="qa.http.echoservice.Echo2" channels="qa-http" parent="service">
+        <properties>
+            <source>dev.echoservice.Echo2</source>
+        </properties>
+    </destination>
+
+
+    <destination id="qa.remoting.Test" parent="service">
+        <properties>
+            <factory>remotingTestFactory</factory>
+            <source>blazeds.qa.remotingService.TestServices</source>
+            <scope>session</scope>
+        </properties>
+    </destination>
+
+    <destination id="qa.amf.remoting.Test" channels="qa-amf" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.TestServices</source>
+            <scope>session</scope>
+        </properties>
+    </destination>
+
+    <destination id="qa.http.remoting.Test" channels="qa-http" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.TestServices</source>
+            <scope>session</scope>
+        </properties>
+    </destination>
+
+    <destination id="qa.stateless.remoting.Test" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.TestServices</source>
+            <scope>request</scope>
+        </properties>
+    </destination>
+
+    <destination id="qa.amf.stateless.remoting.Test" channels="qa-amf" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.TestServices</source>
+            <scope>request</scope>
+        </properties>
+    </destination>
+
+    <destination id="qa.http.stateless.remoting.Test" channels="qa-http" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.TestServices</source>
+            <scope>request</scope>
+        </properties>
+    </destination>
+
+    <destination id="qa.secured.echoservice.Echo" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+            <scope>session</scope>
+        </properties>
+        <security>
+            <security-constraint ref="sample-users"/>
+        </security>
+    </destination>
+
+    <destination id="qa.amf.secured.echoservice.Echo" parent="service">
+        <channels>
+            <channel ref="qa-amf"/>
+        </channels>
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+            <scope>session</scope>
+        </properties>
+        <security>
+            <security-constraint ref="sample-users"/>
+        </security>
+    </destination>
+
+    <destination id="qa.http.secured.echoservice.Echo" parent="service">
+        <channels>
+            <channel ref="qa-http"/>
+        </channels>
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+            <scope>session</scope>
+        </properties>
+        <security>
+            <security-constraint ref="sample-users"/>
+        </security>
+    </destination>
+    <destination id="qa.http.secured.PCA.echoservice.Echo" parent="service">
+        <channels>
+            <channel ref="qa-http"/>
+        </channels>
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+            <scope>session</scope>
+        </properties>
+        <security>
+            <security-constraint ref="sample-users-per-client-authentication"/>
+        </security>
+    </destination>
+
+    <destination id="qa.secured.remoting.Test" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.TestServices</source>
+            <scope>session</scope>
+        </properties>
+        <security>
+            <security-constraint ref="sample-users"/>
+        </security>
+    </destination>
+
+    <destination id="qa.amf.secured.remoting.Test" channels="qa-amf" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.TestServices</source>
+            <scope>session</scope>
+        </properties>
+        <security>
+            <security-constraint ref="sample-users"/>
+        </security>
+    </destination>
+
+    <destination id="qa.http.secured.remoting.Test" channels="qa-http" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.TestServices</source>
+            <scope>session</scope>
+        </properties>
+        <security>
+            <security-constraint ref="sample-users"/>
+        </security>
+    </destination>
+    
+     <destination id="qa.secured.methodIncludes.echoservice.Echo" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+             <scope>session</scope>
+            <include-methods>
+                <method name="echoShort"></method>
+                <method name="echoInt" security-constraint="sample-users-basic"></method>
+                <method name="echoIntClass" security-constraint="sample-users"></method>
+                <method name="echoLong" security-constraint="sample-managers"></method>             
+            </include-methods>
+        </properties>
+    </destination>
+     <destination id="qa.secured.methodExcludes.echoservice.Echo" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+            <scope>request</scope>
+            <exclude-methods>
+                <method name="echoShort"/>
+                <method name="echoInt" />
+                <method name="echoIntClass" />
+                <method name="echoLong" />              
+            </exclude-methods>
+        </properties>
+    </destination>
+    <destination id="qa.secured.includeWin.echoservice.Echo" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+            <include-methods>
+                <method name="echoShort"/>
+                <method name="echoInt" security-constraint="sample-users-basic"/>
+                <method name="echoIntClass" security-constraint="sample-users"/>
+                <method name="echoLong" security-constraint="sample-managers"/>                 
+            </include-methods>
+            <exclude-methods>
+                <method name="echoShort"/>
+                <method name="echoInt" />
+                <method name="echoString" />
+            </exclude-methods>
+        </properties>
+    </destination>
+     <destination id="qa.secured.nestedConstraints.echoservice.Echo" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+            <scope>application</scope>
+            <include-methods>
+                <method name="echoShort"/>
+                <method name="echoInt"/>
+                <method name="echoIntClass"/>
+                <method name="echoLong" security-constraint="sample-managers"/>             
+            </include-methods>
+            <exclude-methods>
+                <method name="echoString" />
+            </exclude-methods>
+        </properties>
+        <security>
+            <security-constraint ref="sample-users"/>
+        </security>
+    </destination>
+
+     <destination id="qa.errorhandling" parent="service">
+        <properties>
+            <source>errorhandling.testException</source>
+        </properties>
+    </destination>
+
+    <destination id="WeatherService" parent="service">
+        <properties>
+            <source>dev.weather.WeatherService</source>
+        </properties>
+    </destination>
+
+    <destination id="qa.data.associations.CountryService" parent="service">
+        <properties>
+            <source>qa.data.associations.CountryService</source>
+        </properties>
+    </destination>
+
+
+    <destination id="ServerPush" parent="service">
+        <properties>
+            <source>qa.messaging.ROPushServerMessage</source>
+            <scope>request</scope>
+        </properties>
+    </destination>
+    
+    <destination id="ServerPush_OverlappingChannelSets" parent="service">
+        <properties>
+            <source>qa.messaging.ROPushServerMessage</source>
+            <scope>request</scope>
+        </properties>
+        <channels>            
+            <channel ref="qa-unreachable-amf"/>
+            <channel ref="qa-amf"/>         
+        </channels>
+    </destination>
+    
+    <destination id="ROMessageDestination" parent="service">
+       <properties>
+           <source>runtimeconfig.remoteobjects.ROMessageDestination</source>
+       </properties>
+    </destination>
+
+    
+    <destination id="RuntimeConfigurator" parent="service">
+        <properties>
+            <source>runtimeconfig.remoteobjects.RuntimeConfigurator</source>
+        </properties>
+    </destination>    
+
+    <destination id="remoting.enumtest" parent="service">
+        <properties>
+            <source>remoting.datatype.EnumTypeTest</source>
+        </properties>
+    </destination>
+
+    <destination id="remoting.maptest" parent="service">
+        <properties>
+            <source>remoting.datatype.MapTypeTest</source>
+        </properties>
+    </destination>
+
+     <destination id="MBeanObjectNameResolver" parent="service">
+        <properties>
+            <source>qa.management.MBeanObjectNameResolver</source>
+        </properties>
+        <!-- uncomment when on Websphere with administrative security enabled 
+             should call setCrendentials("manager","manager1")   -->
+        <!--
+        <security>
+            <security-constraint ref="console"/>
+        </security>
+        -->
+    </destination>
+    
+    <destination id="ImageSnapshotType" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.ImageSnapshotType</source>
+        </properties>
+    </destination>
+
+    <destination id="FlexSessionAttributeListenerTest" parent="service">
+        <properties>
+            <source>remoting.session.FlexSessionAttributeListenerTest</source>
+        </properties>
+    </destination>
+
+    <destination id="DupAttributeIDDest1" parent="service">
+        <properties>
+            <source>dev.weather.WeatherService</source>
+            <scope>session</scope>
+            <attribute-id>foo</attribute-id>
+        </properties>
+    </destination>
+    
+    <destination id="DupAttributeIDDest2" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+            <scope>session</scope>
+            <attribute-id>foo</attribute-id>
+        </properties>
+    </destination>
+
+    <destination id="ConstructorNegativeTest" parent="service">
+        <properties>
+            <source>remoting.ConstructorNegativeTest</source>
+            <scope>session</scope>
+        </properties>
+    </destination>
+
+    <destination id="filteredAck" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+        </properties>
+    </destination>
+
+    <destination id="filteredFault" parent="service">
+        <properties>
+            <source>blazeds.qa.remotingService.Echo</source>
+        </properties>
+    </destination>
+
+    <destination id="msgbrokertest-ro" channels="qa-amf" parent="service">
+        <properties>
+            <source>blazeds.qa.messagingService.filters.MessageFilterBrokerConfig</source>
+        </properties>        
+    </destination>
+
+    <destination id="validatorconfig-ro" channels="qa-amf" parent="service">
+        <properties>
+            <source>blazeds.qa.messagingService.validators.DeserializationValidatorBrokerConfig</source>
+        </properties>        
+    </destination>
+    
+    <destination id="SessionManager" channels="qa-amf" parent="service">
+        <properties>
+            <source>qa.messaging.SessionManager</source>
+        </properties>        
+    </destination>
+
+</flex-remoting-service-mods>

@@ -1,0 +1,262 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<mx:Application  width='800' height='800' xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="setUp()">
+
+    
+
+    <mx:Script>
+    <![CDATA[
+		import qa.utils.TestTaskEvent;
+		import qa.utils.TestTask;
+            import mx.messaging.messages.AsyncMessage;
+            import mx.messaging.messages.IMessage;
+            import mx.messaging.Producer;
+            import mx.messaging.events.MessageFaultEvent;
+            import mx.messaging.events.MessageEvent;
+            import mx.events.PropertyChangeEvent;
+            import mx.messaging.Consumer;
+            import qa.mxunit.Assert;
+            import mx.rpc.events.FaultEvent;
+            import mx.rpc.events.ResultEvent;
+            import mx.rpc.AsyncResponder;
+            import mx.messaging.Channel;
+            import mx.messaging.config.ServerConfig;
+            import mx.rpc.AsyncToken;
+            import mx.messaging.ChannelSet;
+            import qa.mxunit.MXUnitManager;
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Variables
+        //
+        ////////////////////////////////////////////////////////////////////////////                          
+        
+        /**
+        *  Array to hold names of channels that will be tested
+        */       
+        public var channelNames:Array;
+        
+        /**
+        * Consumer instance used in the test
+        */
+        private var con:Consumer = new Consumer(); 
+        
+        /**
+        * ChannelSet instance used in the test
+        */
+        private var cs:ChannelSet; 
+        
+        /**
+        *  Name of test that is currently being executed. 
+        */
+        private var currentTest:String; 
+        
+        /**
+        *  Name of the destination to be used by the Producer and the Consumer. 
+        */
+        private var destination:String = "jms_auth_send_and_subscribe";                         
+        
+        /**
+        * Async function used in the test. 
+        */         
+        private var handler:Function; 
+        
+        /**
+        *  Index used to point to channel in the channelNames array for the currently executing test. 
+        */
+        public var index:int = 0; 
+        
+        /**
+        *  Variable to hold singleton instance of the MXUnitManager.  
+        */
+        private var manager:MXUnitManager;
+        
+        private var mf:Object;
+        
+        /**
+        * Producer instance used in the test
+        */
+        private var pro:Producer = new Producer(); 
+        
+        /**
+        *  Array of test names. Test name will be based on the channel 
+        */  
+        public var testNames:Array = new Array();
+        
+        /**
+        *  Array of test methods in this test case 
+        */  
+        private var testFunctions:Array= ["testLoginLogout"];
+		
+		/**
+		 *  TestTask object to listen for test task events. 
+		 */ 
+		private var t:TestTask = new TestTask();
+		
+
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Methods
+        //
+        ////////////////////////////////////////////////////////////////////////////  
+        
+
+        //testLoginLogout 
+              
+        public function testLoginLogout():void
+        {
+            cs =  createChannelSet();
+            con.destination = destination;
+            pro.destination = destination; 
+            con.channelSet = cs;
+            pro.channelSet = cs; 
+            
+            var token:AsyncToken = cs.login("sampleuser", "samplepassword");
+            token.op = "login";  
+            handler = manager.currentTest.addAsync(loginLogoutHandler);
+            token.addResponder(new AsyncResponder(handler,handler,token)); 
+                
+        }
+        private function loginLogoutHandler(result:Object, token:AsyncToken, params:Object = null):void
+        {
+            var fe:FaultEvent; 
+            if (token.op == "login") 
+            {
+                if (result is ResultEvent) {
+                    trace("Login successful");                    
+                    manager.currentTest.chain(con,[MessageEvent.MESSAGE,MessageFaultEvent.FAULT],consumerEventHandler); 
+                    con.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, consumerEventHandler);                    
+                    con.addEventListener(MessageFaultEvent.FAULT,captureMessageFault);   
+                    con.subscribe();                                        
+                } else if (result is FaultEvent)
+                {
+                    fe = result as FaultEvent;
+                    Assert.fail("Login failed " + fe.fault.faultString);
+                }
+            } else if (token.op == "logout")
+            {
+                if (result is ResultEvent) {
+                    trace("Logout successful");
+                } else if (result is FaultEvent)
+                {
+                    fe = result as FaultEvent;
+                    Assert.fail("Logout failed " + fe.fault.faultDetail);
+                }   
+            }
+        }
+        /**
+         * @private
+         */
+        private function consumerEventHandler(e:Event):void {
+            if (e is PropertyChangeEvent) {
+                var pe:PropertyChangeEvent = e as PropertyChangeEvent;
+                if (pe.property == "subscribed" && pe.oldValue == false && pe.newValue == true) {                
+                    var msg:IMessage = new AsyncMessage();
+                    msg.body = "hello";
+                    pro.send(msg);                  
+                } else if (pe.property == "subscribed" && pe.oldValue == true && pe.newValue == false) {					
+					var token:AsyncToken = cs.logout();
+					mf= null;
+					manager.currentTest.delayAssertions(5000,faultOnLogout);                 
+					token.op = "logout";  
+					handler = manager.currentTest.addAsync(loginLogoutHandler);
+					token.addResponder(new AsyncResponder(handler,handler,token));
+					t.taskCompleted();
+				}
+            } else if (e is MessageFaultEvent) 
+            {
+                var mfe:MessageFaultEvent = e as MessageFaultEvent;
+                Assert.fail("Credentials were valid, shouldn't have received fault: " + mfe.faultCode);      
+            } else if (e is MessageEvent) 
+            {
+                var me:MessageEvent = e as MessageEvent;
+                Assert.assertEquals("Wrong message, should have been 'hello' but was " + me.message.body.toString(), "hello", me.message.body.toString());     
+				manager.currentTest.chain(t,[TestTaskEvent.COMPLETED, TestTaskEvent.FAILED],testTaskEventHandler);   
+				con.unsubscribe();
+            }                                      
+        }
+		public function testTaskEventHandler(e:TestTaskEvent):void 
+		{   						
+			/*
+			* If we are here because of a problem fail the test 
+			* otherwise do nothing             
+			*/
+			if (e.type == TestTaskEvent.FAILED) {
+				Assert.fail(e.message.faultString + ": " + e.message.faultDetail);     
+			} else {
+				//noop    
+			}                                          
+		}
+        private function captureMessageFault(event:MessageFaultEvent):void{
+        	mf = event.faultString;
+        } 
+        private function faultOnLogout(e:Object):void {
+        	if (mf!=null)
+        	{
+        		Assert.fail(mf.toString());
+        	}
+        }
+        //Utility Methods used for setup and getting channel to run the test over. 
+        private function setUp():void        
+        {
+            //get the list of channel names for the destination from ServerConfig 
+            channelNames = (ServerConfig.getChannelSet(destination) as ChannelSet).channelIds;                                                                 
+            //channelNames = ["qa-streaming-amf"];
+            //create a new generic object to add test functions to
+           var testObj:Object = new Object();  
+                                           
+           /*
+            * Loop over the channel names and create a new test function for each channel. 
+            * Even though the test function will have a new name it just points to our generic 
+            * test function which will need to keep track of which test is being run. 
+            */
+            for (var x:int = 0; x < testFunctions.length; x++) 
+            {
+                var testFunc:String = testFunctions[x] as String; 
+                
+                for (var i:int = 0; i < channelNames.length; i++) 
+                {               
+                   var channel:Channel = ServerConfig.getChannel(channelNames[i]);               
+                   var testName:String = testFunc + "_" + channel.id;               
+                   testObj[testName] = this[testFunc];                    
+                   testNames.push(testName);                                 
+                }                                                                   
+            }   
+            manager = MXUnitManager.getInstance();
+            manager.addTests(testObj,testNames, 10000);                        
+        }
+        private function createChannelSet():ChannelSet
+        {
+            if (index == channelNames.length)
+                index = 0; 
+            //increment the counter to point to the next test
+            var pointer:uint = index++; 
+            //create a new channel using the next channel name in the list and add it to a new channelset
+            var channelName:String = channelNames[pointer]; 
+            currentTest = channelName;
+            var channel:Channel = ServerConfig.getChannel(channelName, false);      
+            var cs:ChannelSet = new ChannelSet();           
+            cs.addChannel(channel);
+            return cs;
+        }              
+    ]]>
+    </mx:Script>
+
+</mx:Application>

@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" 
+    creationComplete="initApp()">
+    
+    <mx:Panel id="mainPanel" title="TextMessage"  height="100%" width="100%" 
+            paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+        <mx:Button label="Execute" click="sendChat()"/>
+        <mx:Button label="Clear" click='output.text = ""'/>
+        <mx:TextArea id="output" width="100%" height="100%"/>         
+    </mx:Panel>
+    
+    <mx:Script>
+        <![CDATA[
+        
+        import mx.messaging.ChannelSet;
+        import mx.messaging.Consumer;	    
+	    import mx.messaging.Producer;
+        import mx.messaging.channels.AMFChannel;
+        import mx.messaging.events.MessageFaultEvent;	    
+        import mx.messaging.events.MessageEvent;
+        import mx.messaging.messages.AsyncMessage;	            
+                           
+        public var producer:Producer;
+        public var consumer:Consumer;
+                   
+        private function initApp():void
+        {
+            /*
+            var target:TraceTarget = new TraceTarget();
+            target.includeLevel = true;
+            target.filters = ["mx.messaging.*", "mx.rpc.*"];
+            Log.addTarget(target);        
+            */                                
+            
+            var cs:ChannelSet = new ChannelSet();
+            cs.addChannel(new AMFChannel("my-amf-poll", "http://localhost:8400/team/messagebroker/myamfpoll"));
+            
+            producer = new Producer();
+			// producer.destination = "MyTransientTopic";		
+			producer.destination = "messaging_AMF_Poll";
+			producer.channelSet = cs;
+				
+			consumer = new Consumer();
+			consumer.destination = "messaging_AMF_Poll";
+			consumer.channelSet = cs;
+			consumer.addEventListener(MessageFaultEvent.FAULT, messageFaultHandler);				
+			consumer.addEventListener(MessageEvent.MESSAGE, messageHandler);  				
+			consumer.subscribe();    
+        }
+        
+        public function sendChat():void
+        {
+            if (!consumer.subscribed)
+            {
+                output.text += "***Consumer resubscribed \n";
+                consumer.subscribe();  
+            }   
+            var m:AsyncMessage = new AsyncMessage();        
+            var mbody:String = "Hello!";
+            m.body = mbody;
+            producer.send(m);            
+        }
+
+        private function messageHandler(event : MessageEvent) : void
+        {
+            output.text += "Consumer received message: "+ event.message.body + "\n";
+        }
+        
+        private function messageFaultHandler(event : Object) : void
+        {
+            output.text += "Consumer received fault: " + event.faultString + "\n";
+        }        
+                
+        ]]>
+    </mx:Script>
+        
+</mx:Application>

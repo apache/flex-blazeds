@@ -1,0 +1,50 @@
+<!--
+
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-->
+<!--
+    
+    Context configuration file for the LCDS qa-regress webapp
+    
+-->
+
+<Context docBase="${catalina.home}/../../qa/apps/qa-regress" privileged="true"
+    antiResourceLocking="false" antiJARLocking="false" reloadable="true">
+    <Resource name="jms/flex/TopicConnectionFactory"
+                type="org.apache.activemq.ActiveMQConnectionFactory"
+                description="JMS Connection Factory"
+                factory="org.apache.activemq.jndi.JNDIReferenceFactory"
+                brokerURL="vm://localhost"
+                brokerName="LocalActiveMQBroker"/>
+ 	<Resource name="jms/topic/flex/simpletopic"
+                type="org.apache.activemq.command.ActiveMQTopic"
+                description="my Topic"
+                factory="org.apache.activemq.jndi.JNDIReferenceFactory"
+                physicalName="FlexTopic"/>
+	<Resource name="jms/flex/QueueConnectionFactory"
+                type="org.apache.activemq.ActiveMQConnectionFactory"
+                description="JMS Connection Factory"
+                factory="org.apache.activemq.jndi.JNDIReferenceFactory"
+                brokerURL="vm://localhost"
+                brokerName="LocalActiveMQBroker"/>
+    <Resource name="jms/queue/flex/simplequeue"
+                type="org.apache.activemq.command.ActiveMQQueue"
+                description="my Queue"
+                factory="org.apache.activemq.jndi.JNDIReferenceFactory"
+                physicalName="FlexQueue"/>                
+    <Valve className="flex.messaging.security.TomcatValve"/>
+</Context>

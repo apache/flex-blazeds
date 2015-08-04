@@ -1,0 +1,1656 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<service class="flex.messaging.services.MessageService" id="message-service">
+
+    <adapters>
+        <adapter-definition class="flex.messaging.services.messaging.adapters.ActionScriptAdapter" default="true" id="actionscript"></adapter-definition>
+        <adapter-definition class="flex.messaging.services.messaging.adapters.JMSAdapter" id="jms"></adapter-definition>
+    <adapter-definition class="qa.messaging.DynamicDestinationAdapter" id="secured-actionscript"></adapter-definition>
+<adapter-definition class="qa.messaging.CustomMessagingAdapter" id="custom-adapter"></adapter-definition>
+</adapters>
+
+<destination id="MyTopic">
+        <properties>
+            <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>0</message-time-to-live>
+                <!-- options to make this a durable destination -->
+                <durable>false</durable>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf-ac"></channel>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>
+			<channel ref="qa-streaming-amf"></channel>			
+        </channels>
+    </destination>
+<destination id="MyTopic_NoProps">
+        <channels>            
+            <channel ref="qa-streaming-amf-no-props"></channel>		
+        </channels>
+    </destination>
+<destination id="MyTopic_StreamingHTTP">
+        <properties>
+            <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>0</message-time-to-live>
+                <!-- options to make this a durable destination -->
+                <durable>false</durable>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-streaming-http"></channel>                                 
+        </channels>
+    </destination>
+<destination id="MyTopic_MuliTopic">
+        <properties>
+            <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <allow-subtopics>true</allow-subtopics>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf-ac"></channel>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>
+            <channel ref="qa-streaming-amf"></channel>           
+        </channels>
+    </destination>
+<destination adapter="custom-adapter" id="MyTopic_CustomAdapter">
+        <properties>
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>5000</message-time-to-live>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf-ac"></channel>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>
+			<channel ref="qa-streaming-amf"></channel>				
+        </channels>
+    </destination>
+<destination id="MyTopicMPI">
+        <properties>
+            <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>0</message-time-to-live>
+
+                <!-- options to make this a durable destination -->
+                <durable>false</durable>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="mpi-polling-amf"></channel>
+			<channel ref="mpi-streaming-http"></channel> 
+        </channels>
+	</destination>
+<destination id="MyTopic_ENUM">
+        <properties>
+            <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>0</message-time-to-live>
+                <!-- options to make this a durable destination -->
+                <durable>false</durable>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf-ac"></channel>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>                      
+        </channels>
+    </destination>
+<destination id="MyTopic_ENUM_StreamingAMF">
+        <properties>
+            <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>0</message-time-to-live>
+                <!-- options to make this a durable destination -->
+                <durable>false</durable>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-streaming-amf"></channel>                                 
+        </channels>
+    </destination>
+<destination id="MyTopic_ENUM_StreamingHTTP">
+        <properties>
+            <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>0</message-time-to-live>
+                <!-- options to make this a durable destination -->
+                <durable>false</durable>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-streaming-http"></channel>                                 
+        </channels>
+    </destination>
+<destination id="MyTopic_MBean"> 
+       <channels>            
+            <channel ref="qa-streaming-amf"></channel>
+            <channel ref="qa-streaming-http"></channel> 
+            <channel ref="qa-polling-constraint-amf"></channel>
+            <channel ref="qa-http-polling"></channel>
+        </channels>
+    </destination>
+<destination id="MyHangingHTTPTopic">
+
+        <properties>
+
+            <network>
+                <session-timeout>0</session-timeout>
+            </network>
+
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>0</message-time-to-live>
+
+                <!-- options to make this a durable destination -->
+                <durable>false</durable>
+            </server>
+
+        </properties>
+
+        <channels>
+            <channel ref="qa-hanging-http"></channel>
+        </channels>
+
+    </destination>
+<destination id="MyHangingAMFTopic">
+
+        <properties>
+
+            <network>
+                <session-timeout>0</session-timeout>
+            </network>
+
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>0</message-time-to-live>
+
+                <!-- options to make this a durable destination -->
+                <durable>false</durable>
+            </server>
+
+        </properties>
+
+        <channels>
+            <channel ref="qa-hanging-amf"></channel>
+        </channels>
+
+    </destination>
+<destination id="MyTransientTopic">
+
+        <properties>
+
+            <network>
+                <session-timeout>0</session-timeout>
+            </network>
+
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>0</message-time-to-live>
+
+                <!-- options to make this a durable destination -->
+                <durable>false</durable>
+            </server>
+
+        </properties>
+
+        <channels>
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+
+    </destination>
+<destination id="MyJMSTopic">
+
+        <properties>
+         <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <durable>false</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+				<!-- add extra space, tab, line break to test blz-212.  pls reserve the format -->
+                <acknowledge-mode>
+						AUTO_ACKNOWLEDGE	   
+					
+				</acknowledge-mode>
+
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+
+            </jms>
+        </properties>
+
+        <channels>            
+           	<channel ref="qa-polling-amf-ac"></channel>  
+		   	<channel ref="qa-polling-amf"></channel> 
+			<channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>
+			<channel ref="qa-streaming-amf"></channel>
+        </channels>
+        <adapter ref="jms"></adapter>
+    </destination>
+<destination id="MyJMSTopicMPI">
+        <properties>
+         <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <durable>false</durable>
+            </server>
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+            </jms>
+        </properties>
+		<channels>            
+            <channel ref="mpi-polling-amf"></channel>
+            <channel ref="mpi-streaming-amf"></channel> 
+        </channels>
+        <adapter ref="jms"></adapter>
+    </destination>
+<destination id="JMSTopic_NO_ACKNOWLEDGE_MODE">
+        <properties>
+         <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <durable>false</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>                
+
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+
+            </jms>
+        </properties>
+
+        <channels>            
+           	<channel ref="qa-polling-amf-ac"></channel>  
+		   	<channel ref="qa-polling-amf"></channel> 
+			<channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>
+			<channel ref="qa-streaming-amf"></channel>
+        </channels>
+        <adapter ref="jms"></adapter>
+    </destination>
+<destination id="MyTopic_OverlappingChannelSets">
+        <channels>            
+            <channel ref="qa-unreachable-amf"></channel>
+            <channel ref="qa-rtpush-amf"></channel>			
+        </channels>
+    </destination>
+<destination id="MyJMSTopic_MISSING_CONNECTION_FACTORY">
+
+        <properties>
+         <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <durable>false</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory></connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+
+            </jms>
+        </properties>
+
+        <channels>            
+           	<channel ref="qa-polling-amf-ac"></channel>  
+		   	<channel ref="qa-polling-amf"></channel>
+			<channel ref="qa-streaming-http"></channel>
+        </channels>
+        <adapter ref="jms"></adapter>
+    </destination>
+<destination id="MyJMSTopic_MISSING_DESTINATION_JNDI_NAME">
+
+        <properties>
+         <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <durable>false</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name></destination-jndi-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+
+            </jms>
+        </properties>
+
+        <channels>            
+           	<channel ref="qa-polling-amf-ac"></channel>  
+		   	<channel ref="qa-polling-amf"></channel> 
+			<channel ref="qa-streaming-http"></channel>
+        </channels>
+
+        <adapter ref="jms"></adapter>
+
+    </destination>
+<destination id="MyJMSTopicAsync">
+
+        <properties>
+         <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <durable>false</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+
+                <!-- Optional message delivery settings. If not provided, JMSAdapter uses default delivery settings -->  
+                <delivery-settings>  
+                    <!-- The message delivery mode. This property is optional and defaults to sync. If async mode is specified but the app server cannot 
+                    listen for messages asynchronously (i.e. javax.jms.MessageConsumer.setMessageListener is restricted), or the app server cannot listen 
+                    for connection problems asynchronously (i.e. javax.jms.Connection.setExceptionListener is restricted), there will be a configuration 
+                    error asking the user to switch to sync mode. -->  
+                    <mode>async</mode>  
+                    <!-- If sync, additional props can be specified -->  
+                    <!-- The interval of the receive message calls. This property is optional and defaults to 100. -->  
+                    <sync-receive-interval-millis>100</sync-receive-interval-millis>  
+                    <!-- How long a JMS proxy waits for a message before returning. This property is optional and defaults to 0 (no wait). -->  
+                    <sync-receive-wait-millis>500</sync-receive-wait-millis>  
+                </delivery-settings>
+            </jms>
+        </properties>
+
+        <channels>            
+		   <channel ref="qa-polling-amf"></channel> 
+		   <channel ref="qa-streaming-http"></channel>
+		</channels>
+
+        <adapter ref="jms"></adapter>
+
+    </destination>
+<destination id="MyJMSTopicDeprecatedAttribs">
+
+        <properties>
+         <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <durable>false</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+                
+                <!-- DEPRECATED ATTRIBUTE -->
+                <destination-name>true</destination-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+
+                <!-- DEPRECATED ATTRIBUTE -->
+                <transacted-sessions>true</transacted-sessions>
+
+
+            </jms>
+        </properties>
+
+        <channels>            
+		   <channel ref="qa-polling-amf"></channel> 
+		   <channel ref="qa-streaming-http"></channel>
+		</channels>
+
+        <adapter ref="jms"></adapter>
+
+    </destination>
+<destination id="MyJMSTopicSync">
+
+        <properties>
+         <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <durable>false</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+                
+                <!-- DEPRECATED ATTRIBUTE -->
+                <destination-name>true</destination-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+
+                <!-- DEPRECATED ATTRIBUTE -->
+                <transacted-sessions>true</transacted-sessions>
+
+                <!-- Optional message delivery settings. If not provided, JMSAdapter uses default delivery settings -->  
+                <delivery-settings>  
+                    <!-- The message delivery mode. This property is optional and defaults to sync. If async mode is specified but the app server cannot 
+                    listen for messages asynchronously (i.e. javax.jms.MessageConsumer.setMessageListener is restricted), or the app server cannot listen 
+                    for connection problems asynchronously (i.e. javax.jms.Connection.setExceptionListener is restricted), there will be a configuration 
+                    error asking the user to switch to sync mode. -->  
+                    <mode>sync</mode>  
+                    <!-- If sync, additional props can be specified -->  
+                    <!-- The interval of the receive message calls. This property is optional and defaults to 100. -->  
+                    <sync-receive-interval-millis>100</sync-receive-interval-millis>  
+                    <!-- How long a JMS proxy waits for a message before returning. This property is optional and defaults to 0 (no wait). -->  
+                    <sync-receive-wait-millis>500</sync-receive-wait-millis>  
+                </delivery-settings>
+            </jms>
+        </properties>
+
+        <channels>            
+		   <channel ref="qa-polling-amf"></channel> 
+		   <channel ref="qa-streaming-http"></channel>
+		</channels>
+
+        <adapter ref="jms"></adapter>
+
+    </destination>
+<destination id="MyJMSTopicDurable">
+
+        <properties>
+         <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <durable>true</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+
+
+            </jms>
+        </properties>
+
+        <channels>            
+		   <channel ref="qa-polling-amf"></channel> 
+		   <channel ref="qa-streaming-amf"></channel>
+		</channels>
+
+        <adapter ref="jms"></adapter>
+
+    </destination>
+<destination id="MyJMSQueueDurable">
+
+        <properties>
+         <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <durable>true</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Queue</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/QueueConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/queue/flex/simplequeue</destination-jndi-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+
+
+            </jms>
+        </properties>
+
+        <channels>            
+		   <channel ref="qa-polling-amf"></channel> 
+		   <channel ref="qa-streaming-http"></channel>
+		</channels>
+
+        <adapter ref="jms"></adapter>
+
+    </destination>
+<destination id="MyJMSTopicPHFalse">
+
+        <properties>
+         <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <durable>true</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+                <!--
+                    This determines whether the adapter will preserve standard JMS headers from JMS
+                    messages to Flex messages. JMS headers are preserved on the Flex messages with
+                    the same names. This element is optional and defaults to true.
+                -->
+                <preserve-jms-headers>false</preserve-jms-headers>
+
+            </jms>
+        </properties>
+
+        <channels>            
+		   <channel ref="qa-polling-amf"></channel> 
+		   <channel ref="qa-streaming-http"></channel>
+		</channels>
+
+        <adapter ref="jms"></adapter>
+
+    </destination>
+<destination id="MyJMSTopicConCredentials">
+
+        <properties>
+         <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <durable>true</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+              	<!-- Optional. This is the username and password used while creating the
+            	     JMS connection. Use only if JMS connection level authentication 
+            	     is being used.             -->                    
+            	<connection-credentials password="samplepassword" username="sampleuser"></connection-credentials>            
+            	
+
+            </jms>
+        </properties>
+
+        <channels>            
+		   <channel ref="qa-polling-amf"></channel> 
+		   <channel ref="qa-streaming-http"></channel>
+		</channels>
+
+        <adapter ref="jms"></adapter>
+
+    </destination>
+<destination id="MyJMSObjectTopic">
+
+        <properties>
+            <server>
+                <durable>false</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.ObjectMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+
+            </jms>
+
+        </properties>
+
+        <channels>            
+            <channel ref="qa-polling-amf-ac"></channel>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>
+			<channel ref="qa-streaming-amf"></channel>
+        </channels>
+
+        <adapter ref="jms"></adapter>
+
+    </destination>
+<destination id="MyJMSQueue">
+
+        <properties>
+            <server>
+                <durable>false</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Queue</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/QueueConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/queue/flex/simplequeue</destination-jndi-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+
+            </jms>
+        </properties>
+
+        <channels>            
+            <channel ref="qa-polling-amf-ac"></channel>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>
+			<channel ref="qa-streaming-amf"></channel>
+        </channels>
+
+        <adapter ref="jms"></adapter>
+
+    </destination>
+<destination id="MyJMSObjectQueue">
+
+        <properties>
+            <server>
+                <durable>false</durable>
+            </server>
+
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Queue</destination-type>
+
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.ObjectMessage</message-type>
+
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/QueueConnectionFactory</connection-factory>
+
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/queue/flex/simplequeue</destination-jndi-name>
+
+                <!-- the JMS DeliveryMode for producers -->
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+
+                <!-- JMS priority for messages sent by Flash producers -->
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+
+                <!-- the JMS message acknowledgement mode -->
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+
+                <!-- the JMS session transaction mode -->
+                <transacted-sessions>false</transacted-sessions>
+
+            </jms>
+
+        </properties>
+
+        <channels>            
+            <channel ref="qa-polling-amf-ac"></channel>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>
+			<channel ref="qa-streaming-amf"></channel>
+        </channels>
+
+        <adapter ref="jms"></adapter>
+
+    </destination>
+<destination id="MySlowTopic">
+        <properties>
+            <network>
+                <session-timeout>1</session-timeout>
+            </network>
+        </properties>
+
+        <channels>
+            <channel ref="qa-slow-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination adapter="actionscript" id="DynamicDestinationAMFLegacy">
+        <properties>
+            <server>
+                <allow-subtopics>true</allow-subtopics>
+                <!-- <subtopic-separator>:</subtopic-separator>-->
+            </server>
+        </properties>
+
+        <channels>
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination adapter="actionscript" id="NonDynamicDestinationAMF">
+        <properties>
+            <server>
+                <!-- <allow-subtopics>false</allow-subtopics> -->
+                <!-- <subtopic-separator>.</subtopic-separator> -->
+            </server>
+        </properties>
+
+        <channels>
+            <channel ref="qa-polling-amf-ac"></channel>
+        </channels>
+    </destination>
+<destination adapter="actionscript" id="NonDynamicDestinationAllowSubtopicsFalseAMF">
+        <properties>
+            <server>
+                <allow-subtopics>false</allow-subtopics>
+                <!-- <subtopic-separator>.</subtopic-separator> -->
+            </server>
+        </properties>
+
+        <channels>
+            <channel ref="qa-polling-amf-ac"></channel>
+        </channels>
+    </destination>
+<destination adapter="actionscript" id="DynamicDestinationAMF">
+        <properties>
+            <server>
+                <allow-subtopics>true</allow-subtopics>
+                <!-- <subtopic-separator>:</subtopic-separator>-->
+            </server>
+        </properties>
+
+        <channels>
+            <channel ref="qa-polling-amf-ac"></channel>
+        </channels>
+    </destination>
+<destination adapter="actionscript" id="DynamicDestinationDefaultSeparatorAMF">
+        <properties>
+            <server>
+                <allow-subtopics>true</allow-subtopics>
+                <!-- <subtopic-separator>.</subtopic-separator> -->
+            </server>
+        </properties>
+
+        <channels>
+            <channel ref="qa-polling-amf-ac"></channel>
+        </channels>
+    </destination>
+<destination adapter="actionscript" id="DynamicDestinationColonSeparatorAMF">
+        <properties>
+            <server>
+                <allow-subtopics>true</allow-subtopics>
+                <subtopic-separator>:</subtopic-separator>
+            </server>
+        </properties>
+
+        <channels>
+            <channel ref="qa-polling-amf-ac"></channel>
+        </channels>
+    </destination>
+<destination adapter="secured-actionscript" id="SecuredDynamicDestinationSlashSeparatorAMF">
+        <properties>
+            <server>
+                <allow-subtopics>true</allow-subtopics>
+                <subtopic-separator>/</subtopic-separator>
+            </server>
+        </properties>
+
+        <channels>
+            <channel ref="qa-polling-amf-ac"></channel>
+        </channels>
+    </destination>
+<destination adapter="actionscript" id="DynamicDestinationServerPush">
+        <properties>
+            <server>
+                <allow-subtopics>true</allow-subtopics>
+            </server>
+        </properties>
+
+       <channels>            
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-http-polling"></channel>
+            <channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>
+            <channel ref="qa-streaming-amf"></channel>           
+        </channels>
+    </destination>
+<destination adapter="actionscript" id="DynamicDestinationHTTP">
+        <properties>
+            <server>
+                <allow-subtopics>true</allow-subtopics>
+            </server>
+        </properties>
+
+        <channels>
+            <channel ref="qa-http-polling"></channel>
+        </channels>
+    </destination>
+<destination adapter="actionscript" id="DynamicDestinationUnreachableAMF">
+        <properties>
+            <server>
+                <allow-subtopics>true</allow-subtopics>
+                <!-- <subtopic-separator>:</subtopic-separator>-->
+            </server>
+        </properties>
+
+        <channels>
+            <channel ref="qa-unreachable-amf"></channel>
+        </channels>
+    </destination>
+<destination adapter="actionscript" id="DynamicDestinationUnreachableHTTP">
+        <properties>
+            <server>
+                <allow-subtopics>true</allow-subtopics>
+                <!-- <subtopic-separator>:</subtopic-separator>-->
+            </server>
+        </properties>
+
+        <channels>
+            <channel ref="qa-unreachable-http"></channel>
+        </channels>
+    </destination>
+<destination adapter="actionscript" id="FLookDestination">
+        <channels>
+            <channel ref="qa-amf"></channel>
+        </channels>
+    </destination>
+<destination adapter="actionscript" id="FLookDestinationWithSubtopics">
+        <properties>
+            <server>
+                <allow-subtopics>true</allow-subtopics>
+                <subtopic-separator>.</subtopic-separator>
+            </server>
+        </properties>
+
+        <channels>
+            <channel ref="qa-amf"></channel>
+        </channels>
+    </destination>
+<destination id="topic_authentication">
+    	 <security>
+            <security-constraint ref="sample-users"></security-constraint>
+        </security>    
+        <properties>
+            <network>
+                <session-timeout>0</session-timeout>
+            </network>       
+        </properties>    
+        <channels>
+            <channel ref="qa-amf"></channel>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-http-polling"></channel>
+            <channel ref="qa-streaming-amf"></channel>
+            <channel ref="qa-streaming-http"></channel>
+            <channel ref="qa-polling-constraint-amf"></channel>
+        </channels>    
+    </destination>
+<destination id="topic_auth_send">   
+        <properties>			
+            <network>
+                <session-timeout>0</session-timeout>
+            </network>       
+			<server>
+				<send-security-constraint ref="sample-users"></send-security-constraint>
+			</server>
+        </properties>    
+        <channels>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-http-polling"></channel>
+            <channel ref="qa-streaming-amf"></channel>
+            <channel ref="qa-streaming-http"></channel>
+        </channels>    
+    </destination>
+<destination id="topic_auth_subscribe">
+		<properties>			
+			<network>
+                <session-timeout>0</session-timeout>
+            </network>
+			<server>
+				<allow-subtopics>true</allow-subtopics>
+				<subscribe-security-constraint ref="sample-users"></subscribe-security-constraint>
+			</server>       
+        </properties>    
+        <channels>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-http-polling"></channel>
+            <channel ref="qa-streaming-amf"></channel>
+            <channel ref="qa-streaming-http"></channel>
+        </channels>    
+    </destination>
+<destination id="topic_auth_send_and_subscribe">         
+        <properties>			
+            <network>
+                <session-timeout>0</session-timeout>
+            </network>
+			<server>
+				<send-security-constraint ref="sample-users"></send-security-constraint>
+				<subscribe-security-constraint ref="sample-users"></subscribe-security-constraint>
+			</server>       
+        </properties>    
+        <channels>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-http-polling"></channel>
+            <channel ref="qa-streaming-amf"></channel>
+            <channel ref="qa-streaming-http"></channel>
+        </channels>    
+    </destination>
+<destination id="topic_authentication_channelset_test">
+    	 <security>
+            <security-constraint ref="sample-users"></security-constraint>
+        </security>    
+        <properties>
+            <network>
+                <session-timeout>0</session-timeout>
+            </network>       
+        </properties>    
+        <channels>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-http-polling"></channel>
+            <channel ref="qa-streaming-amf"></channel>
+            <channel ref="qa-streaming-http"></channel>        
+        </channels>    
+    </destination>
+<destination id="jms_auth_send">
+		<properties>
+			<server>
+				<allow-subtopics>true</allow-subtopics>
+                <send-security-constraint ref="sample-users"></send-security-constraint>
+            </server>   
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+            </jms>
+        </properties>
+        <channels>            
+           <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-http-polling"></channel>
+            <channel ref="qa-streaming-amf"></channel>
+            <channel ref="qa-streaming-http"></channel>
+        </channels>
+        <adapter ref="jms"></adapter>
+    </destination>
+<destination id="jms_auth_subscribe">
+        <properties>
+            <server>
+                <subscribe-security-constraint ref="sample-users"></subscribe-security-constraint>
+            </server>   
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+            </jms>
+        </properties>
+        <channels>            
+           <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-http-polling"></channel>
+            <channel ref="qa-streaming-amf"></channel>
+            <channel ref="qa-streaming-http"></channel>
+        </channels>
+        <adapter ref="jms"></adapter>
+    </destination>
+<destination id="jms_auth_send_and_subscribe">
+        <properties>
+            <server>
+				<send-security-constraint ref="sample-users"></send-security-constraint>
+                <subscribe-security-constraint ref="sample-users"></subscribe-security-constraint>
+            </server>   
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+            </jms>
+        </properties>
+        <channels>            
+           <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-http-polling"></channel>
+            <channel ref="qa-streaming-amf"></channel>
+            <channel ref="qa-streaming-http"></channel>
+        </channels>
+        <adapter ref="jms"></adapter>
+    </destination>
+<destination id="jms_auth_send_and_subscribe_streaming">
+        <properties>
+            <server>
+				<send-security-constraint ref="sample-users"></send-security-constraint>
+                <subscribe-security-constraint ref="sample-users"></subscribe-security-constraint>
+            </server>   
+            <jms>
+                <!-- whether the adapter is performing topic (pub/sub) or queue (point-to-point) messaging -->
+                <!-- optional element, defaults to Topic -->
+                <destination-type>Topic</destination-type>
+                <!-- the javax.jms.Message type which the adapter should use for this destination -->
+                <message-type>javax.jms.TextMessage</message-type>
+                <!-- name of the JMS connection factory in JNDI -->
+                <connection-factory>java:comp/env/jms/flex/TopicConnectionFactory</connection-factory>
+                <!-- name of the destination in JNDI -->
+                <destination-jndi-name>java:comp/env/jms/topic/flex/simpletopic</destination-jndi-name>
+            </jms>
+        </properties>
+        <channels>            
+           <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-http-polling"></channel>
+            <channel ref="qa-streaming-amf"></channel>
+            <channel ref="qa-streaming-http"></channel>
+        </channels>
+        <adapter ref="jms"></adapter>
+    </destination>
+<destination id="MyTopicCustomMarshaller">
+        <properties>
+            <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+            </network>
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>0</message-time-to-live>
+
+                <!-- options to make this a durable destination -->
+                <durable>false</durable>
+
+                <!-- properties for durable file store manager, all optional -->
+                <!--
+                <file-store-root>/whereever</file-store-root>
+                <max-file-size>200K</max-file-size>
+                <batch-write-size>10</batch-write-size>
+                -->
+            </server>
+
+        </properties>
+
+        <channels>            
+            <channel ref="qa-streaming-http-custom-marshaller"></channel>
+            <channel ref="qa-streaming-amf-custom-marshaller"></channel>
+        </channels>
+
+    </destination>
+<destination id="MyTopic_Throttle_Inbound">
+        <properties>
+            <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+                <throttle-inbound max-frequency="2" policy="ERROR"></throttle-inbound>
+                <throttle-outbound max-frequency="0" policy="IGNORE"></throttle-outbound>
+            </network>
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>0</message-time-to-live>
+                <!-- options to make this a durable destination -->
+                <durable>false</durable>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf-ac"></channel>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>
+			<channel ref="qa-streaming-amf"></channel>			
+        </channels>
+    </destination>
+<destination id="MyTopic_Throttle_Outbound">
+        <properties>
+            <network>
+                <!-- idle time in minutes before a subscriber will be unsubscribed -->
+                <!-- '0' means don't force subscribers to unsubscribe automatically -->
+                <session-timeout>0</session-timeout>
+                <throttle-inbound max-frequency="0" policy="ERROR"></throttle-inbound>
+                <throttle-outbound max-frequency="2" policy="IGNORE"></throttle-outbound>
+            </network>
+            <server>
+                <!-- ttl of 0 means live forever -->
+                <message-time-to-live>0</message-time-to-live>
+                <!-- options to make this a durable destination -->
+                <durable>false</durable>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf-ac"></channel>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>
+			<channel ref="qa-streaming-amf"></channel>			
+        </channels>
+    </destination>
+<destination id="oqp_topic"> 
+       <channels>            
+            <channel ref="polling-amf-oqp"></channel>
+        </channels>
+    </destination>
+<destination id="filteredChat">
+        <channels>            
+            <channel ref="qa-polling-amf-ac"></channel>
+            <channel ref="qa-polling-amf"></channel>
+            <channel ref="qa-rtpush-http"></channel>
+            <channel ref="qa-rtpush-amf"></channel>
+			<channel ref="qa-streaming-amf"></channel>			
+        </channels>
+    </destination>
+<destination id="MyTopicPriority">
+        <channels>            
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination id="MyTopicDefaultPriority05">
+        <properties>
+            <server>
+                <!-- set a default priority to 5 -->
+                <message-priority>5</message-priority>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination id="MyTopicDefaultPriority03">
+        <properties>
+            <server>
+                <!-- set a default priority to 3 -->
+                <message-priority>3</message-priority>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination id="MyTopicDefaultPriority09">
+        <properties>
+            <server>
+                <!-- set a default priority to 9 -->
+                <message-priority>9</message-priority>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination id="MyTopicDefaultPriority00">
+        <properties>
+            <server>
+                <!-- set a default priority to 9 -->
+                <message-priority>0</message-priority>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination id="MyTopicDefaultPriorityNegative1">
+        <properties>
+            <server>
+                <!-- set a default priority to 9 -->
+                <message-priority>-1</message-priority>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination id="MyTopicDefaultPriority10">
+        <properties>
+            <server>
+                <!-- set a default priority to 9 -->
+                <message-priority>10</message-priority>
+            </server>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination id="ThrottleOutNoneMFTenMCFZero">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE"></throttle-inbound>
+                <throttle-outbound max-client-frequency="0" max-frequency="10" policy="NONE"></throttle-outbound>
+            </network>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination id="ThrottleOutNoneMFTenMCFFive">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE"></throttle-inbound>
+                <throttle-outbound max-client-frequency="5" max-frequency="10" policy="NONE"></throttle-outbound>
+            </network>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination id="ThrottleOutIgnoreMFTenMCFZero">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE"></throttle-inbound>
+                <throttle-outbound max-client-frequency="0" max-frequency="10" policy="IGNORE"></throttle-outbound>
+            </network>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination id="ThrottleOutIgnoreMFTenMCFFive">
+        <properties>
+            <network>
+                <throttle-inbound policy="NONE"></throttle-inbound>
+                <throttle-outbound max-client-frequency="5" max-frequency="10" policy="IGNORE"></throttle-outbound>
+            </network>
+        </properties>
+        <channels>            
+            <channel ref="qa-polling-amf"></channel>
+        </channels>
+    </destination>
+<destination id="ThrottleInNoneMFTenMCFZero">
+	        <properties>
+	            <network>
+	                <throttle-inbound max-client-frequency="0" max-frequency="10" policy="NONE"></throttle-inbound>
+	                <throttle-outbound policy="NONE"></throttle-outbound>
+	            </network>
+	        </properties>
+	        <channels>            
+	            <channel ref="qa-polling-amf"></channel>
+	        </channels>
+	    </destination>
+<destination id="ThrottleInNoneMFTenMCFFive">
+	        <properties>
+	            <network>
+	                <throttle-inbound max-client-frequency="5" max-frequency="10" policy="NONE"></throttle-inbound>
+	                <throttle-outbound policy="NONE"></throttle-outbound>
+	            </network>
+	        </properties>
+	        <channels>            
+	            <channel ref="qa-polling-amf"></channel>
+	        </channels>
+	    </destination>
+<destination id="ThrottleInIgnoreMFTenMCFZero">
+	        <properties>
+	            <network>
+	                <throttle-inbound max-client-frequency="0" max-frequency="10" policy="IGNORE"></throttle-inbound>
+	                <throttle-outbound policy="NONE"></throttle-outbound>
+	            </network>
+	        </properties>
+	        <channels>            
+	            <channel ref="qa-polling-amf"></channel>
+	        </channels>
+	    </destination>
+<destination id="ThrottleInIgnoreMFTenMCFFive">
+	        <properties>
+	            <network>
+	                <throttle-inbound max-client-frequency="5" max-frequency="10" policy="IGNORE"></throttle-inbound>
+	                <throttle-outbound policy="NONE"></throttle-outbound>
+	            </network>
+	        </properties>
+	        <channels>            
+	            <channel ref="qa-polling-amf"></channel>
+	        </channels>
+	    </destination>
+<destination id="ThrottleInErrorMFTenMCFZero">
+	        <properties>
+	            <network>
+	                <throttle-inbound max-client-frequency="0" max-frequency="10" policy="ERROR"></throttle-inbound>
+	                <throttle-outbound policy="NONE"></throttle-outbound>
+	            </network>
+	        </properties>
+	        <channels>            
+	            <channel ref="qa-polling-amf"></channel>
+	        </channels>
+	    </destination>
+<destination id="ThrottleInErrorMFTenMCFFive">
+	        <properties>
+	            <network>
+	                <throttle-inbound max-client-frequency="5" max-frequency="10" policy="ERROR"></throttle-inbound>
+	                <throttle-outbound policy="NONE"></throttle-outbound>
+	            </network>
+	        </properties>
+	        <channels>            
+	            <channel ref="qa-polling-amf"></channel>
+	        </channels>
+	    </destination>
+</service>

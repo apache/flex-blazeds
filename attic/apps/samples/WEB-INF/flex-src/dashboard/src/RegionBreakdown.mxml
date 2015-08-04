@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns="*">
+    <fx:Metadata>
+        [Event("regionChange")]
+    </fx:Metadata>
+    
+    <fx:Script>
+        <![CDATA[
+        import mx.charts.HitData;
+
+        public function set month(m:Object):void
+        {
+        	_month = m;
+        	this.title = "Regional Breakdown [" + _month.name + "]";
+    	}
+
+		[Bindable]
+		private var _month:Object;
+
+        private function getSliceLabel(item:Object, arg2:String, arg3:Number, arg4:Number):String
+        {
+            return item==null?"":item.name;
+        }
+
+		private var _selectedRegion:Object;
+		
+        public function get selectedRegion():Object
+        {
+            return _selectedRegion;
+        }
+        
+        public function set selectedRegion(item:Object):void
+        {
+            _selectedRegion = item;
+
+            var index:int = -1;
+            for (var i:int=0; i < _month.region.length && index == -1; i++)
+            {
+                if (_month.region[i].name == item.name)
+                    index = i;
+            }
+            //we only want to explode the selected region
+            var explodeData:Array = [];
+            explodeData[index] = 0.15;
+            pcRegion.series[0].perWedgeExplodeRadius = explodeData;
+        }
+        
+        private function regionChange(item:Object):void
+        {
+            selectedRegion = item;
+            dispatchEvent(new Event("regionChange"));
+        }
+
+        private function dataGridCurrencyFormat(item:Object, column:Object):String
+        {
+            return cf.format(item[column.dataField]);
+        }
+
+        private function formatDataTip(hitData:HitData):String
+        {
+            var name:String = hitData.item.name;
+            var revenue:Number = hitData.item.revenue;
+            return "<b>Region: "+name+"</b><br>Revenue: "+cf.format(revenue);
+        }
+
+        ]]>
+
+    </fx:Script>
+
+    <fx:Declarations>
+    	<mx:CurrencyFormatter id="cf"/>
+
+    	<mx:SeriesInterpolate id="interpolate" elementOffset="10"/>
+    </fx:Declarations>
+
+    <mx:ViewStack id="vs" width="100%" height="100%">
+    
+        <mx:VBox width="100%" height="100%"  icon="@Embed('icon_chart.png')" toolTip="View in Chart" 
+            hideEffect="Fade" showEffect="Fade">
+            <mx:PieChart id="pcRegion" dataProvider="{_month.region}" showDataTips="true" width="100%" height="100%"
+                itemClick="regionChange(event.hitData.item)"
+                dataTipFunction="formatDataTip">
+
+                <mx:series>
+                    <fx:Array>
+                        <mx:PieSeries field="revenue" nameField="name" labelPosition="callout"
+                                      labelFunction="getSliceLabel" showDataEffect="{interpolate}">
+                         <mx:fills>
+	                        <fx:Array>
+	                            <mx:RadialGradient>
+	                                <mx:entries>
+	                                    <fx:Array>
+	                                        <mx:GradientEntry color="#EF7651" ratio="0"/>
+	                                        <mx:GradientEntry color="#994C34" ratio="1"/>
+	                                    </fx:Array>
+	                                </mx:entries>
+	                            </mx:RadialGradient>
+	                            <mx:RadialGradient>
+	                                <mx:entries>
+	                                    <fx:Array>
+	                                        <mx:GradientEntry color="#E9C836" ratio="0"/>
+	                                        <mx:GradientEntry color="#AA9127" ratio="1"/>
+	                                    </fx:Array>
+	                                </mx:entries>
+	                            </mx:RadialGradient>
+	                            <mx:RadialGradient>
+	                                <mx:entries>
+	                                    <fx:Array>
+	                                        <mx:GradientEntry color="#6FB35F" ratio="0"/>
+	                                        <mx:GradientEntry color="#497B54" ratio="1"/>
+	                                    </fx:Array>
+	                                </mx:entries>
+	                            </mx:RadialGradient>
+	                            <mx:RadialGradient>
+	                                <mx:entries>
+	                                    <fx:Array>
+	                                        <mx:GradientEntry color="#A1AECF" ratio="0"/>
+	                                        <mx:GradientEntry color="#47447A" ratio="1"/>
+	                                    </fx:Array>
+	                                </mx:entries>
+	                            </mx:RadialGradient>
+	                            <mx:RadialGradient>
+	                                <mx:entries>
+	                                    <fx:Array>
+	                                        <mx:GradientEntry color="#BA9886" ratio="0"/>
+	                                        <mx:GradientEntry color="#AE775B" ratio="1"/>
+	                                    </fx:Array>
+	                                </mx:entries>
+	                            </mx:RadialGradient>
+	                        </fx:Array>
+	                    </mx:fills>
+	                    </mx:PieSeries>
+                    </fx:Array>
+                </mx:series>
+
+            </mx:PieChart>
+        </mx:VBox>
+
+        <mx:VBox width="100%" height="100%" icon="@Embed('icon_grid.png')" toolTip="View in Grid"
+            hideEffect="Fade" showEffect="Fade">
+            <mx:DataGrid dataProvider="{_month.region}" width="100%" height="100%"
+            	change="regionChange(DataGrid(event.target).selectedItem)">
+                <mx:columns>
+                    <fx:Array>
+                        <mx:DataGridColumn dataField="name" headerText="Region"/>
+                        <mx:DataGridColumn dataField="revenue" headerText="Revenue" labelFunction="dataGridCurrencyFormat" />
+                    </fx:Array>
+                </mx:columns>
+            </mx:DataGrid>
+        </mx:VBox>
+
+    </mx:ViewStack>
+
+    <mx:ControlBar>
+        <mx:ToggleButtonBar dataProvider="{vs}"/>
+    </mx:ControlBar>
+
+</mx:Panel>

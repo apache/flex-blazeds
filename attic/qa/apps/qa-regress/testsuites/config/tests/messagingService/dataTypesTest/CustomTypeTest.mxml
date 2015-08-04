@@ -1,0 +1,380 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<mx:Application  width='800' height='800' xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="setup()">
+
+    <mx:RemoteObject destination="qa.echoservice.Echo" id="ro"
+            result="resultHandler(event)" fault="faultHandler(event)"/>
+    <mx:Script>
+    <![CDATA[
+        import qa.mxunit.*;
+        import mx.rpc.events.*;
+        import mx.core.mx_internal;
+        import mx.messaging.ChannelSet;
+        import mx.messaging.channels.*;
+        import mx.messaging.config.ServerConfig;
+        import mx.collections.*;
+
+        
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Variables
+        //
+        ////////////////////////////////////////////////////////////////////////////        
+        //amf channel which legacy-collection is true
+        private var amfChannel:ChannelSet;
+        //http channel which legacy-collection is true
+        private var httpChannel:ChannelSet;
+        //amf channel which legacy-collection is false
+        private var amfChannelac:ChannelSet;
+        //amf channel which legacy-collection is false
+        private var httpChannelac:ChannelSet;
+        
+        private var b0:Book;
+        private var b1:Book;
+        private var b2:Book;
+        private var expectedArray:Array;
+        
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Setup method.
+        //
+        //////////////////////////////////////////////////////////////////////////// 
+        
+        /**
+        *  This setup method dynamically creates a series of tests, and 
+        *  creates different channelsets. Same data is going to test under different
+        *  channelSets
+        *  Create custom type objects for testing
+        */        
+        public function setup():void
+        {
+            amfChannel = new ChannelSet();
+            amfChannel.addChannel(ServerConfig.getChannel("qa-amf"));
+            httpChannel = new ChannelSet();
+            httpChannel.addChannel(ServerConfig.getChannel("qa-http"));
+            
+            amfChannelac = new ChannelSet();
+            amfChannelac.addChannel(ServerConfig.getChannel("qa-amf-ac"));
+            httpChannelac = new ChannelSet();
+            httpChannelac.addChannel(ServerConfig.getChannel("qa-http-ac"));
+            
+
+            b0 = new Book();
+            b1 = new Book();
+            b2 = new Book();
+
+            b0.title = "The Third Chimpanzee - The Evolution and Future of the Human Animal";
+            b0.titleCopy = b0.title;
+            b0.author = "Jared Diamond";
+            b0.published = new Date(1974,4,6);
+            b0.pages = 407;
+            b0.ISBN = "0060183071";
+
+            b1.title = "Guns, Germs and Steel - The Fates of Human Societies";
+            b1.titleCopy = b1.title;
+            b1.author = "Jared Diamond";
+            b1.published = new Date(1997,3,1);
+            b1.pages = 480;
+            b1.ISBN = "0393038912";
+
+            expectedArray = [b0,b1,b2];
+
+            MXUnitManager.detectTests(this,20000);
+        }
+
+        /**
+        *    Test Custom Class through amf channel
+        *    call echoBook(Book book)
+        **/
+        public function testEchoBookAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoBook(b0);
+            call.expected = b0;
+        }
+        
+        /**
+        *    Test Custom Class through amf channel
+        *    Call echoObject(Object object)
+        **/
+        public function testEchoObjectAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoObject(b1);
+            call.expected = b1;
+        }
+
+        /**
+        *    Test Custom Class Array in Book[] through amf channel
+        **/
+        public function testEchoBooksAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoBooks([b0,b1,b2]);
+            call.expected = [b0,b1,b2];
+        }
+        
+        /**
+        *    Test Custom Class Array in Object[] through amf channel
+        **/
+        public function testEchoObjectsAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoObjects([b0,b1,b2]);
+            call.expected = [b0,b1,b2];
+        }
+        
+        /**
+        *    Test Custom Class Array with some nulls through amf channel
+        **/
+        public function testEchoBooksNullsAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoBooks([b0,null,b1]);
+            call.expected = [b0,null,b1];
+        }
+        
+        /**
+        *    Test Custom Class ArrayList with some nulls through amf channel
+        *    send as Array
+        *    and verify the Custom Class get serialized as desired Class in Java
+        **/
+        public function testEchoArrayListAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoArrayList([b0,b1],"blazeds.qa.remotingService.Book");
+            call.expected = [b0,b1];
+        }
+        
+        /**
+        *    Test Custom Class ArrayList with some nulls through amf channel
+        *    Send as ArrayCollection
+        *    and verify the Custom Class get serialized as desired Class in Java
+        **/
+        public function testArrayCollectionEchoArrayListAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoArrayList(new ArrayCollection([b0,b1]),"blazeds.qa.remotingService.Book");
+            call.expected = [b0,b1];
+        }
+        
+        /**
+        *    Test Custom Class ArrayList with some nulls through amf channel
+        *    Send as ArrayCollection
+        *    and verify the Custom Class get serialized as desired Class in Java
+        **/
+        public function testArrayCollectionEchoArrayListAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoArrayList(new ArrayCollection([b0,b1]),"blazeds.qa.remotingService.Book");
+            call.expected = new ArrayCollection([b0,b1]);
+        }
+        
+        /**
+        *    Test Custom Class Vector with some nulls through amf channel
+        *    Send as Array
+        *    and verify the Custom Class get serialized as desired Class in Java
+        **/
+        public function testEchoVectorAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoVector(expectedArray);
+            call.expected = expectedArray;
+        }
+        
+        /**
+        *    Test Custom Class HashSet with some nulls through amf channel
+        *    Send as Array
+        *    and verify the Custom Class get serialized as desired Class in Java
+        **/
+        public function testEchoHashSetAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoHashSet([b0]);
+            call.expected = [b0];
+        }
+        
+         /**
+        *    Test Custom Class LinkedList with some nulls through amf channel
+        *    Send as Array
+        *    and verify the Custom Class get serialized as desired Class in Java
+        **/
+        public function testEchoLinkedListAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoLinkedList(expectedArray);
+            call.expected = expectedArray;
+        }
+
+
+
+
+
+        //http channels
+        /**
+        *    Test Custom Class through http channel
+        *    echoBook(Book book)
+        **/
+        public function testEchoBookHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoBook(b0);
+            call.expected = b0;
+        }
+        
+        /**
+        *    Test Custom Class through http channel
+        *    echoObject(Object object)
+        **/
+        public function testEchoObjectHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoObject(b1);
+            call.expected = b1;
+        }
+
+        /**
+        *    Test Custom Class in array through http channel
+        *    echoBooks(Book[] books)
+        **/
+        public function testEchoBooksHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoBooks([b0,b1,b2]);
+            call.expected = [b0,b1,b2];
+        }
+        
+        /**
+        *    Test Custom Class in array through http channel
+        *    echoBooks(Object[] books)
+        **/
+        public function testEchoObjectsHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoObjects([b0,b1,b2]);
+            call.expected = [b0,b1,b2];
+        }
+        
+        /**
+        *    Test Custom Class in array with some nulls through http channel
+        *    echoBooks(Book[] books)
+        **/
+        public function testEchoBooksNullsHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoBooks([b0,null,b1]);
+            call.expected = [b0,null,b1];
+        }
+        
+        /**
+        *    Test Custom Class ArrayList  through http channel
+        *    Send as Array
+        *    and verify the Custom Class get serialized as desired Class in Java
+        **/
+        public function testEchoArrayListHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoArrayList([b0,b1],"blazeds.qa.remotingService.Book");
+            call.expected = [b0,b1];
+        }
+        
+        /**
+        *    Test Custom Class ArrayList through http channel
+        *    Send as ArrayCollection
+        *    and verify the Custom Class get serialized as desired Class in Java
+        *    expect to return as Array of Books
+        **/
+        public function testArrayCollectionEchoArrayListHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoArrayList(new ArrayCollection([b0,b1]),"blazeds.qa.remotingService.Book");
+            call.expected = [b0,b1];
+        }
+        
+        /**
+        *    Test Custom Class ArrayList through http channel
+        *    Send as Array
+        *    and verify the Custom Class get serialized as desired Class in Java
+        *    expect to return as ArrayCollection of Books
+        **/
+        public function testArrayCollectionEchoArrayListHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoArrayList(new ArrayCollection([b0,b1]),"blazeds.qa.remotingService.Book");
+            call.expected = new ArrayCollection([b0,b1]);
+        }
+
+        /**
+        *    Test Custom Class Vector  through http channel
+        *    Send as Array
+        *    and verify the Custom Class get serialized as desired Class in Java
+        *    expect to return as Array of Books
+        **/
+        public function testEchoVectorHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoVector(expectedArray);
+            call.expected = expectedArray;
+        }
+        
+        /**
+        *    Test Custom Class HashSet through http channel
+        *    Send as Array
+        *    and verify the Custom Class get serialized as desired Class in Java
+        *    expect to return as Array of Books
+        **/
+        public function testEchoHashSetHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoHashSet([b0]);
+            call.expected = [b0];
+        }
+
+        /**
+        *    Test Custom Class LinkedList through http channel
+        *    Send as Array
+        *    and verify the Custom Class get serialized as desired Class in Java
+        *    expect to return as Array of Books
+        **/
+        public function testEchoLinkedListHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoLinkedList(expectedArray);
+            call.expected = expectedArray;
+        }
+
+
+
+       private function resultHandler(e:ResultEvent):void
+        {
+            Assert.currentTest.doAssertEquals(e.token.expected,e.result);
+        }
+
+        private function faultHandler(e:FaultEvent):void
+        {
+            Assert.currentTest.doFail(e.fault.faultString);
+        }
+
+
+    ]]>
+    </mx:Script>
+
+</mx:Application>

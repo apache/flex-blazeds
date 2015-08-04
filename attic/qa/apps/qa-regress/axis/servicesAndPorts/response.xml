@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <AccountLoginResponse xmlns="http://speakerheart.tennpac.com:24843/dataspeakerinprogress">
+      <AccountLoginResult>
+        <ArtistResponse>
+          <ResponseTitle>string</ResponseTitle>
+          <ArtistID>string</ArtistID>
+          <ArtistName>string</ArtistName>
+          <EmailAddress>string</EmailAddress>
+          <JoinDate>string</JoinDate>
+          <ExpiredDate>string</ExpiredDate>
+          <PayPalAccount>string</PayPalAccount>
+          <AccountType>string</AccountType>
+          <BandImage>string</BandImage>
+          <PrimaryGenreID>string</PrimaryGenreID>
+          <SecondaryGenreID>string</SecondaryGenreID>
+          <SHUrl>string</SHUrl>
+          <Location>string</Location>
+          <ITunes>string</ITunes>
+          <ResponseMessage>string</ResponseMessage>
+          <AccountUserName>string</AccountUserName>
+          <ServiceLevelID>string</ServiceLevelID>
+          <Confirmed>string</Confirmed>
+          <TotalTrackCount>string</TotalTrackCount>
+          <TotalAlbumCount>string</TotalAlbumCount>
+          <WantsMarketing>string</WantsMarketing>
+          <RoyaltyPayPal>string</RoyaltyPayPal>
+          <UserID>int</UserID>
+          <ZipCode>string</ZipCode>
+          <IsArtist>boolean</IsArtist>
+          <ItemCount>int</ItemCount>
+          <GenreCombo>string</GenreCombo>
+        </ArtistResponse>
+        <ArtistResponse>
+          <ResponseTitle>string</ResponseTitle>
+          <ArtistID>string</ArtistID>
+          <ArtistName>string</ArtistName>
+          <EmailAddress>string</EmailAddress>
+          <JoinDate>string</JoinDate>
+          <ExpiredDate>string</ExpiredDate>
+          <PayPalAccount>string</PayPalAccount>
+          <AccountType>string</AccountType>
+          <BandImage>string</BandImage>
+          <PrimaryGenreID>string</PrimaryGenreID>
+          <SecondaryGenreID>string</SecondaryGenreID>
+          <SHUrl>string</SHUrl>
+          <Location>string</Location>
+          <ITunes>string</ITunes>
+          <ResponseMessage>string</ResponseMessage>
+          <AccountUserName>string</AccountUserName>
+          <ServiceLevelID>string</ServiceLevelID>
+          <Confirmed>string</Confirmed>
+          <TotalTrackCount>string</TotalTrackCount>
+          <TotalAlbumCount>string</TotalAlbumCount>
+          <WantsMarketing>string</WantsMarketing>
+          <RoyaltyPayPal>string</RoyaltyPayPal>
+          <UserID>int</UserID>
+          <ZipCode>string</ZipCode>
+          <IsArtist>boolean</IsArtist>
+          <ItemCount>int</ItemCount>
+          <GenreCombo>string</GenreCombo>
+        </ArtistResponse>
+      </AccountLoginResult>
+    </AccountLoginResponse>
+  </soap:Body>
+</soap:Envelope>

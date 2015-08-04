@@ -1,0 +1,514 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application  width='800' height='800' xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="setUp()">
+
+    <mx:RemoteObject destination="qa.echoservice.Echo" id="ro"
+            result="testHandler(event,false)" fault="testHandler(event,true)"/>
+
+    <mx:TraceTarget id="tt"/>
+    <mx:Script>
+    <![CDATA[
+        import qa.mxunit.*;
+        import mx.core.mx_internal;
+        import mx.messaging.ChannelSet;
+        import mx.messaging.channels.*;
+        import mx.messaging.config.ServerConfig;
+        import mx.collections.*;
+        import mx.rpc.events.*;
+
+        import mx.messaging.config.ServerConfig;
+
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Variables
+        //
+        ////////////////////////////////////////////////////////////////////////////        
+        //amf channel which legacy-collection is true
+        private var amfChannel:ChannelSet;
+        //http channel which legacy-collection is true
+        private var httpChannel:ChannelSet;
+        //amf channel which legacy-collection is false
+        private var amfChannelac:ChannelSet;
+        //amf channel which legacy-collection is false
+        private var httpChannelac:ChannelSet;
+       
+
+        private var expectedValue:String = "?";
+        //echoChar[] returns String, expectedArray should have same order of elements in expectedString, or the test fails
+        private var expectedArray:Array = [">","/","<","&","g","t"];
+        private var expectedString:String = ">/<&gt";
+        private var expectedNullsString:String = "\u0000\u0000&a\u0000";
+        
+        ////////////////////////////////////////////////////////////////////////////
+        //
+        // Setup method.
+        //
+        //////////////////////////////////////////////////////////////////////////// 
+        
+        /**
+        *  This setup method dynamically creates a series of tests, and 
+        *  creates different channelsets. Same data is going to test under different
+        *  channelSets
+        */
+        private function setUp():void
+        {
+            amfChannel = new ChannelSet();
+            amfChannel.addChannel(ServerConfig.getChannel("qa-amf"));
+            httpChannel = new ChannelSet();
+            httpChannel.addChannel(ServerConfig.getChannel("qa-http"));
+            
+            amfChannelac = new ChannelSet();
+            amfChannelac.addChannel(ServerConfig.getChannel("qa-amf-ac"));
+            httpChannelac = new ChannelSet();
+            httpChannelac.addChannel(ServerConfig.getChannel("qa-http-ac"));
+           
+
+            MXUnitManager.detectTests(this,20000);
+
+            //MXUnitManager.addTests(this,["testACEchoCharacterClassesEmptyAMF"],20000);
+        }
+
+        //primitive Char
+        /**
+        *    Test Java char through amf channel
+        **/
+        public function testEchoCharAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoChar(expectedValue);
+            call.expected = expectedValue;
+        }
+        
+        /**
+        *    Test Java char through http channel
+        **/
+        public function testEchoCharHttp():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoChar(expectedValue);
+            call.expected = expectedValue;
+        }
+       
+        //Char class
+        /**
+        *    Test Java Char through amf channel
+        **/
+        public function testEchoCharacterClassAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoCharacterClass(expectedValue);
+            call.expected = expectedValue;
+        }
+        
+        /**
+        *    Test Java Char through http channel
+        **/
+        public function testEchoCharacterClassHttp():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoCharacterClass(expectedValue);
+            call.expected = expectedValue;
+        }
+        
+
+        //Char class with null as parameter
+        /**
+        *    Test Java Char with null as parameter through amf channel
+        **/
+        public function testEchoCharacterClassNullAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoCharacterClass(null);
+            call.expected = null;
+        }
+        
+        /**
+        *    Test Java Char with null as parameter through amf channel
+        **/
+        public function testEchoCharacterClassNullHttp():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoCharacterClass(null);
+            call.expected = null;
+        }
+       
+
+        //Char[]
+        /**
+        *    Test Java char[] through amf channel
+        **/
+        public function testEchoCharsAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoChars(expectedArray);
+            call.expected = expectedString;
+
+        }
+        
+        /**
+        *    Test Java char[] through http channel
+        **/
+        public function testEchoCharsHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoChars(expectedArray);
+            call.expected = expectedString;
+
+        }
+        
+        /**
+        *    Test Java char[] through amf channel
+        **/
+        public function testEchoCharsAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoChars(expectedArray);
+            call.expected = expectedString;
+
+        }
+        /**
+        *    Test Java char[] through http channel
+        **/
+        public function testEchoCharsHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoChars(expectedArray);
+            call.expected = expectedString;
+
+        }
+       
+        //Char[] using empty []
+        /**
+        *    Test Java char[] through amf channel
+        *    Array with no element
+        **/
+        public function testEchoCharsEmptyAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoChars([]);
+            call.expected = "";
+
+        }
+        
+        /**
+        *    Test Java char[] through http channel
+        *    Array with no element
+        **/
+        public function testEchoCharsEmptyHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoChars([]);
+            call.expected = "";
+
+        }
+       
+        /**
+        *    Test Java char[] through amf channel
+        *    Array with no element
+        **/
+        public function testEchoCharsEmptyAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoChars([]);
+            call.expected = "";
+
+        }
+        
+        /**
+        *    Test Java char[] through amf channel
+        *    Array with no element
+        **/
+        public function testEchoCharsEmptyHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoChars([]);
+            call.expected = "";
+
+        }
+       
+
+        //char[] -paremter null
+        /**
+        *    Test Java char[] with null through amf channel
+        *    echoChars(null)
+        **/
+        public function testEchoCharsNullAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoChars(null);
+            call.expected = null;
+
+        }
+        
+        /**
+        *    Test Java char[] with null through http channel
+        *    echoChars(null)
+        **/
+        public function testEchoCharsNullHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoChars(null);
+            call.expected = null;
+
+        }
+       
+        /**
+        *    Test Java char[] with null through amf channel
+        *    echoChars(null)
+        **/
+        public function testEchoCharsNullAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoChars(null);
+            call.expected = null;
+
+        }
+        
+        /**
+        *    Test Java char[] with null through http channel
+        *    echoChars(null)
+        **/
+        public function testEchoCharsNullHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoChars(null);
+            call.expected = null;
+
+        }
+        
+
+
+
+        //Char[]
+        /**
+        *    Test Java Char[]  through amf channel
+        **/
+        public function testEchoCharacterClassesAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoCharacterClasses(expectedArray);
+            call.expected = expectedString;
+
+        }
+        
+        /**
+        *    Test Java Char[]  through http channel
+        **/
+        public function testEchoCharacterClassesHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoCharacterClasses(expectedArray);
+            call.expected = expectedString;
+
+        }
+        
+        /**
+        *    Test Java Char[]  through amf channel
+        **/
+        public function testEchoCharacterClassesAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoCharacterClasses(expectedArray);
+            call.expected = expectedString;
+
+        }
+        
+        /**
+        *    Test Java Char[]  through http channel
+        **/
+        public function testEchoCharacterClassesHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoCharacterClasses(expectedArray);
+            call.expected = expectedString;
+
+        }
+        
+        //Char[] - using []
+        /**
+        *    Test Java Char[] with empty array through amf channel
+        *    expect: ""
+        **/
+        public function testEchoCharacterClassesEmptyAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoCharacterClasses([]);
+            call.expected = "";
+
+        }
+        
+        /**
+        *    Test Java Char[] with empty array through http channel
+        *    expect: ""
+        **/
+        public function testEchoCharacterClassesEmptyHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoCharacterClasses([]);
+            call.expected = "";
+
+        }
+       
+        /**
+        *    Test Java Char[] with empty array through amf channel
+        *    expect: ""
+        **/    
+        public function testEchoCharacterClassesEmptyAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoCharacterClasses([]);
+            call.expected = "";
+
+        }
+        
+        /**
+        *    Test Java Char[] with empty array through http channel
+        *    expect: ""
+        **/
+        public function testEchoCharacterClassesEmptyHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoCharacterClasses([]);
+            call.expected = "";
+
+        }
+        
+
+        //Char[] - using ArrayCollection()
+        /**
+        *    Test Java Char[] with empty ArrayCollection through amf channel
+        *    expect: ""
+        **/
+       public function testACEchoCharacterClassesEmptyAMF():void
+       {
+           ro.channelSet = amfChannel;
+           var call:Object = ro.echoCharacterClasses(new ArrayCollection([]));
+           call.expected = "";
+
+       }
+       
+       /**
+        *    Test Java Char[] with empty ArrayCollection through http channel
+        *    expect: ""
+        **/
+       public function testACEchoCharacterClassesEmptyHTTP():void
+       {
+           ro.channelSet = httpChannel;
+           var call:Object = ro.echoCharacterClasses(new ArrayCollection([]));
+           call.expected = "";
+
+       }
+        
+        /**
+        *    Test Java Char[] with empty ArrayCollection through amf channel
+        *    expect: ""
+        **/
+        public function testACEchoCharacterClassesEmptyAMFAC():void
+        {
+           ro.channelSet = amfChannelac;
+           var call:Object = ro.echoCharacterClasses(new ArrayCollection([]));
+           call.expected = "";
+
+        }
+        
+        /**
+        *    Test Java Char[] with empty ArrayCollection through http channel
+        *    expect: ""
+        **/
+        public function testACEchoCharacterClassesEmptyHTTPAC():void
+        {
+           ro.channelSet = httpChannelac;
+           var call:Object = ro.echoCharacterClasses(new ArrayCollection([]));
+           call.expected = "";
+
+        }
+     
+
+
+        //Char Classes - [null,null,"&","a",null]
+        /**
+        *    Test Java Char[] with array which contains some nulls through amf channel
+        *    expect: "\u0000\u0000&a\u0000"
+        **/
+        public function testEchoCharacterClassesNullsHTTP():void
+        {
+            ro.channelSet = httpChannel;
+            var call:Object = ro.echoCharacterClasses([null,null,"&","a",null]);
+            call.expected = expectedNullsString;
+        }
+        
+        /**
+        *    Test Java Char[] with array which contains some nulls through http channel
+        *    expect: "\u0000\u0000&a\u0000"
+        **/
+        public function testEchoCharacterClassesNullsAMF():void
+        {
+            ro.channelSet = amfChannel;
+            var call:Object = ro.echoCharacterClasses([null,null,"&","a",null]);
+            call.expected = expectedNullsString;
+
+        }
+      
+        /**
+        *    Test Java Char[] with array which contains some nulls through amf channel
+        *    expect: "\u0000\u0000&a\u0000"
+        **/
+        public function testEchoCharacterClassesNullsAMFAC():void
+        {
+            ro.channelSet = amfChannelac;
+            var call:Object = ro.echoCharacterClasses([null,null,"&","a",null]);
+            call.expected = expectedNullsString;
+
+        }
+        
+        /**
+        *    Test Java Char[] with array which contains some nulls through http channel
+        *    expect: "\u0000\u0000&a\u0000"
+        **/
+        public function testEchoCharacterClassesNullsHTTPAC():void
+        {
+            ro.channelSet = httpChannelac;
+            var call:Object = ro.echoCharacterClasses([null,null,"&","a",null]);
+            call.expected = expectedNullsString;
+
+        }
+       
+        private function testHandler(e:Object, fromFault:Boolean):void
+        {
+            if (e.token.expectFault)
+            {
+                Assert.currentTest.doPass(e.fault.faultString);
+            }
+            else if (fromFault)
+            {
+                Assert.currentTest.doFail(e.fault.faultString);
+            }
+            else
+            {
+                Assert.currentTest.doAssertEquals(e.result, e.token.expected);
+            }
+        }
+
+
+
+    ]]>
+    </mx:Script>
+
+</mx:Application>

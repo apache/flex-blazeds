@@ -1,0 +1,1 @@
+Invalid The outgoing client frequency for destination 'MyTopic'. The outgoing client frequency '101' cannot be more than the outgoing destination frequency '100'.

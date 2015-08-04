@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<project name="Package AppServer" default="main" basedir="../..">
+
+    <property name="dist.dir" value="${basedir}/dist"/>
+
+    <target name="main" depends=""/>
+    
+    <target name="package" depends="clean" description="--> packages for install">
+        <mkdir dir="${dist.dir}/tomcat/"/>
+        <copy todir="${dist.dir}/tomcat">
+            <fileset dir="${appserver.dir}" excludes="build.xml,conf/Catalina/localhost/*.xml,conf/tomcat-users.xml,conf/localhost.keystore,logs/*.log"/>
+        </copy>
+        <move file="${dist.dir}/tomcat/conf/Catalina/localhost/blazeds.xml.install" tofile="${dist.dir}/tomcat/conf/Catalina/localhost/blazeds.xml"/>
+        <move file="${dist.dir}/tomcat/conf/Catalina/localhost/blazeds-spring.xml.install" tofile="${dist.dir}/tomcat/conf/Catalina/localhost/blazeds-spring.xml"/>
+        <move file="${dist.dir}/tomcat/conf/Catalina/localhost/ds-console.xml.install" tofile="${dist.dir}/tomcat/conf/Catalina/localhost/ds-console.xml"/>
+        <move file="${dist.dir}/tomcat/conf/Catalina/localhost/samples.xml.install" tofile="${dist.dir}/tomcat/conf/Catalina/localhost/samples.xml"/>
+        <move file="${dist.dir}/tomcat/conf/Catalina/localhost/samples-spring.xml.install" tofile="${dist.dir}/tomcat/conf/Catalina/localhost/samples-spring.xml"/>
+        <move file="${dist.dir}/tomcat/conf/tomcat-users.xml.install" tofile="${dist.dir}/tomcat/conf/tomcat-users.xml"/>
+        <fixcrlf eol="lf" srcdir="${dist.dir}/tomcat/bin" includes="*.sh" preservelastmodified="true"/>
+    
+        <!-- comment out ssl connector used for internal testing -->
+        <replace file="${dist.dir}/tomcat/conf/server.xml">
+            <replacetoken><![CDATA[<Connector port="9400" protocol="HTTP/1.1" SSLEnabled="true"
+               maxThreads="150" scheme="https" secure="true"
+               keystoreFile="conf/localhost.keystore" keystorePass="changeit"
+               clientAuth="false" sslProtocol="TLS" />]]></replacetoken>
+            <replacevalue><![CDATA[<!--<Connector port="9400" protocol="HTTP/1.1" SSLEnabled="true"
+               maxThreads="150" scheme="https" secure="true"
+               keystoreFile="conf/localhost.keystore" keystorePass="changeit"
+               clientAuth="false" sslProtocol="TLS" />-->]]></replacevalue>
+        </replace>
+    </target>
+
+    <target name="clean">
+        <delete dir="${dist.dir}/tomcat" failonerror="false" quiet="true"/>
+    </target>
+</project>

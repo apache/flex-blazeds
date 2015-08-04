@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+                xmlns:qa="http://www.adobe.com/2006/flexqa"
+                creationComplete="run()">
+    
+    <!-- 
+        This test uses a dynamic Messaging destination that is unmanaged by the Message Service.
+        It also specifies channels using the AS API, instead of mxml tags.
+    -->
+    <mx:Script>
+    <![CDATA[        
+        import mx.events.PropertyChangeEvent;
+	    import mx.messaging.events.MessageFaultEvent;	    
+        import mx.messaging.events.MessageEvent;
+        import mx.messaging.events.MessageAckEvent;
+        import mx.messaging.messages.AsyncMessage;
+        import mx.messaging.channels.AMFChannel;
+        import mx.messaging.ChannelSet;
+        import mx.messaging.Consumer;
+        import mx.messaging.Producer;
+        import qa.mxunit.MXUnitManager;
+        import qa.mxunit.Assert;
+        import mx.rpc.remoting.RemoteObject;
+        import mx.rpc.events.ResultEvent;
+        import mx.rpc.events.FaultEvent;
+        import mx.rpc.Fault;
+        import mx.rpc.AsyncToken;
+        import mx.utils.ObjectUtil;
+
+        private var msgString:String = "hello unmanaged world";
+        private var pro:Producer = new Producer();
+        private var con:Consumer = new Consumer();
+        
+        private var nameResolver:RemoteObject;
+        private var MBeanObjectName:String;
+                
+        private function run():void
+        {
+            // This destination is created at startup by runtimeconfig.components.untimeUnmanagedMessageDestination java class
+            // This destination has msgDest.setManaged(false) - which switches off management, meaning no MBean is created
+            // for this destination
+            pro.destination = "MessageDest_Unmanaged_startup";
+            con.destination = "MessageDest_Unmanaged_startup";
+			// Specify channel to ping with via AS
+			var cs:ChannelSet = new ChannelSet();
+            cs.addChannel(new AMFChannel("someid", "http://{server.name}:{server.port}/qa-regress/messagebroker/amfpolling"));
+            con.channelSet = cs;
+            pro.channelSet = cs;
+            con.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, consumerSubscribed);
+            con.subscribe(); 
+        }
+
+        private function consumerSubscribed(event:PropertyChangeEvent):void
+        {
+            if (event.property == "subscribed")
+            {
+                if (event.oldValue == false && event.newValue == true)
+                {
+                    MXUnitManager.addTests(this,["unmanagedDestRuntimeTest"], 5000);
+                }
+            }                
+        }
+
+        public function unmanagedDestRuntimeTest():void
+        {
+            var msg:AsyncMessage = new AsyncMessage();
+            msg.body = msgString;
+			MXUnitManager.getInstance().currentTest.chain(con, [MessageEvent.MESSAGE, MessageFaultEvent.FAULT], conHandler);
+			MXUnitManager.getInstance().currentTest.chain(pro, [MessageAckEvent.ACKNOWLEDGE, MessageFaultEvent.FAULT], proHandler);
+            pro.send(msg);      
+        }
+
+        private function proHandler(event:Event):void 
+        {
+            if (event is MessageAckEvent)
+            {
+		        Assert.assertTrue(true);               
+            }
+            else
+            {
+                Assert.fail("Message producer faulted: " + MessageFaultEvent(event).faultDetail);  
+            }
+        }
+        
+        private function conHandler(event:Event):void
+        {
+            if (event is MessageEvent) {
+		        Assert.assertEquals("Message received should be: " + msgString, msgString, MessageEvent(event).message.body.toString());
+		        out.text += "Message received by consumer: " + MessageEvent(event).message.body.toString() + "\n";    
+		        checkMBeanExists();          
+            }
+            else
+            {
+                Assert.fail("Message consumer faulted: " + MessageFaultEvent(event).faultDetail);  
+            }
+        }
+        
+        /**
+        * This method asks the MBeanObjectNameResolver for the MBean Object Name of the "MessageDest_Unmanaged_startup" destination.
+        * Since this destination is unmanaged, this method call should return NULL, as no MBean should exist for this destination.
+        */ 
+         
+        private function checkMBeanExists():void 
+        {
+            nameResolver = new RemoteObject("MBeanObjectNameResolver");
+	    	nameResolver.setCredentials("manager","manager1");
+    	    var token:AsyncToken = nameResolver.getObjectNameForDestination("message-service", "MessageDest_Unmanaged_startup");
+    	    MXUnitManager.getInstance().currentTest.chain(nameResolver, [ResultEvent.RESULT, FaultEvent.FAULT], nameResolverHandler);
+        }
+        
+        public function nameResolverHandler(event:Object = null):void {
+            if (event is ResultEvent)
+            {
+                  out.text += "\n Should not return a valid MBean object name.  nameResolver result: " + ObjectUtil.toString(event.result) + "\n";
+                  
+                  Assert.fail("Should not return a valid MBean object name");  
+            }
+            
+            else
+            {  
+         	   out.text += "NameResolver failed as expected" + ObjectUtil.toString(event.fault); 
+         	   Assert.assertEquals("Should return null pointer: ", "java.lang.NullPointerException : null", event.fault.faultString ); 	   
+            }
+        }
+
+    ]]>
+    </mx:Script>  
+    <mx:TextArea id="out" width="90%" height="250"/>
+	     
+</mx:Application>

@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" 
+    creationComplete="initApp()">
+
+    <!--
+        The purpose of this test is to verify that:
+        1. Real-time push works the same with HTTP endpoint as with AMF endpoint when sending messages constantly.
+        2. Properties specified at the client level (pollingInterval, pollingEnabled) have the same effect as when specified on an static endpoint. 
+    -->      
+    <mx:Panel id="mainPanel" title="HTTP Push testing"  height="100%" width="100%" 
+            paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+        <mx:List id="destList" selectedIndex="0" change="changeEvt(event)" height="50">
+	        <mx:dataProvider>
+	            <mx:String>AMFLongPollDestination</mx:String>
+	            <mx:String>HTTPLongPollDestination</mx:String>
+	        </mx:dataProvider>
+        </mx:List>
+        <mx:Button label="Send Foo{messageCounter} to selected destination" click="sendMessage()"/>
+        <mx:Button label="Poll selected destination" click="poll()"/>
+        <mx:Button label="Clear" click='ta.text = ""'/>
+        <mx:TextArea id="ta" width="100%" height="100%"/>         
+    </mx:Panel>
+    
+	<mx:Script>	
+	  <![CDATA[
+	    import mx.messaging.events.ChannelEvent;
+	    import mx.messaging.events.MessageFaultEvent;	    
+        import mx.messaging.events.MessageEvent;
+        import mx.messaging.events.MessageAckEvent;
+        import mx.messaging.messages.AsyncMessage;	    
+        import mx.messaging.Producer;
+        import mx.messaging.Consumer;
+        import mx.messaging.ChannelSet;
+        import mx.messaging.channels.*;
+        import flash.utils.Timer;
+                
+        import mx.logging.*;
+        import mx.logging.targets.*;
+                
+        public var producer:Producer;
+        public var consumer:Consumer;	  
+        public var channel:PollingChannel;
+        
+        public var _timer:Timer;
+        
+        [Bindable]
+        public var messageCounter:int = 1;
+        public var pollCounter:int = 1;
+		public var selectedDest:String;  
+		public var cs:ChannelSet;       
+        
+        private function initApp():void
+        {
+
+            var target:TraceTarget = new TraceTarget();
+            target.includeLevel = true;
+            target.filters = ["mx.messaging.*", "mx.rpc.*"];
+            Log.addTarget(target);        
+
+            selectedDest = destList.selectedItem as String;
+            producer = new Producer();
+			producer.destination = selectedDest;		
+			producer.addEventListener(MessageFaultEvent.FAULT, messageFaultHandler);
+				
+			consumer = new Consumer();
+			consumer.destination = selectedDest;				
+			consumer.addEventListener(MessageFaultEvent.FAULT, messageFaultHandler);				
+			consumer.addEventListener(MessageEvent.MESSAGE, messageHandler);  
+            consumer.addEventListener(MessageAckEvent.ACKNOWLEDGE, messageAckHandler);				
+
+            // Specify a runtime-configured channel to be able to ping the dynamic destination data-testhttp1
+            if (selectedDest == "HTTPLongPollDestination")
+            {
+   	            cs = new ChannelSet();
+      			var httpchannel:HTTPChannel = new HTTPChannel("data-http-long-poll", "http://{server.name}:{server.port}/qa-manual/messagebroker/httplongpoll");
+      			// The following properties must be specified at the client instead of being runtime-time configured.
+      			httpchannel.pollingEnabled = true;
+      			httpchannel.pollingInterval = 0;
+				cs.addChannel(httpchannel);
+				producer.channelSet = cs;
+				consumer.channelSet = cs;
+            }
+				
+			consumer.subscribe();    
+            var pcs:ChannelSet = consumer.channelSet;
+            channel = PollingChannel(pcs.currentChannel);	
+ 
+            // Send a message every 2 seconds.
+            _timer = new Timer(2000);
+            _timer.addEventListener(TimerEvent.TIMER, sendMessageAutomatic);    
+            _timer.start();                   
+        }
+        
+        public function sendMessageAutomatic(event:Event=null):void
+        {
+            sendMessage();
+        }
+            
+        public function sendMessage():void
+        {
+            var message: AsyncMessage = new AsyncMessage();
+            message.body = "foo" + messageCounter;
+            producer.send(message);            
+            messageCounter++;            
+        }
+
+        private function messageHandler(event : MessageEvent) : void
+        {
+            ta.text += selectedDest + " received: " + event.message.body + "\n";
+        }
+        
+        private function messageFaultHandler(event : Object) : void
+        {
+            ta.text += "Consumer received fault: " + event.faultString + "\n";
+        }        
+
+        private function messageAckHandler(event : MessageAckEvent) : void
+        {
+            ta.text += "Consumer received ack \n"; 
+        }
+                
+        private function poll():void
+        {
+        	var isPolling:Boolean;
+			(channel is AMFChannel)? isPolling = AMFChannel(channel).polling : isPolling = HTTPChannel(channel).polling;
+			
+           	//If not already polling, then poll
+            if (! isPolling ) 
+            {
+				ta.text += "*** Polling: " + pollCounter + "\n";
+            	channel.poll();
+                pollCounter++;            
+            }
+            else
+            {
+            	ta.text += "*** a polling request is pending, no poll issued " + pollCounter + "\n";
+            }          
+        }
+        
+        public function changeEvt(event:Event):void {
+            _timer.stop();
+            producer.disconnect();
+            consumer.unsubscribe();
+            consumer.disconnect();
+            initApp();
+        }
+       ]]>
+	</mx:Script>    
+</mx:Application>            

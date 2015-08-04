@@ -1,0 +1,957 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" width="600" height="600" initialize="initTest()">
+    <mx:Script>
+        <![CDATA[
+
+        [Bindable]
+        var testRows:Array = new Array();
+        var allButtons:Array = new Array();
+        public function initTest()
+        {
+            var testColumns:Array;
+            //index 0 boolean
+            testColumns = new Array();
+            testRows.push(testColumns);
+            testColumns[0] = new Object();
+            testColumns[0].testname = "boolean";
+            testColumns[0].testCall = "echoBoolean";
+            testColumns[0].testArgs =  true;
+            testColumns[0].testExpectedResult = true;
+
+            testColumns[1] = new Object();
+            testColumns[1].testname = "booleanClass";
+            testColumns[1].testCall = "echoBooleanClass";
+            testColumns[1].testArgs =  false;
+            testColumns[1].testExpectedResult = false;
+
+            testColumns[2] = new Object();
+            testColumns[2].testname = "booleans";
+            testColumns[2].testCall = "echoBooleans";
+            testColumns[2].testArgs =  [false,true,false];
+            testColumns[2].testExpectedResult = [false,true,false];
+
+            testColumns[3] = new Object();
+            testColumns[3].testname = "booleanClasses";
+            testColumns[3].testCall = "echoBooleanClasses";
+            testColumns[3].testArgs =  [true,false,true];
+            testColumns[3].testExpectedResult = [true,false,true];
+
+            testColumns[4] = new Object();
+            testColumns[4].testname = "booleanArrayList";
+            testColumns[4].testCall = "echoArrayList";
+            testColumns[4].testArgs =  [true,false,true];
+            testColumns[4].testExpectedResult = [true,false,true];
+
+            testColumns[5] = new Object();
+            testColumns[5].testname = "booleanList";
+            testColumns[5].testCall = "echoLinkedList";
+            testColumns[5].testArgs =  [true,false,true];
+            testColumns[5].testExpectedResult = [true,false,true];
+
+            testColumns[6] = new Object();
+            testColumns[6].testname = "booleanVector";
+            testColumns[6].testCall = "echoVector";
+            testColumns[6].testArgs =  [false,true,false];
+            testColumns[6].testExpectedResult = [false,true,false];
+
+            testColumns[7] = new Object();
+            testColumns[7].testname = "booleanHashSet";
+            testColumns[7].testCall = "echoHashSet";
+            testColumns[7].testArgs =  [false];
+            testColumns[7].testExpectedResult = [false];
+            //index 1 integer
+            testColumns = new Array();
+            testRows.push(testColumns);
+            testColumns[0] = new Object();
+            testColumns[0].testname = "int";
+            testColumns[0].testCall = "echoInt";
+            testColumns[0].testArgs =  99;
+            testColumns[0].testExpectedResult = 99;
+
+            testColumns[1] = new Object();
+            testColumns[1].testname = "IntClass";
+            testColumns[1].testCall = "echoIntClass";
+            testColumns[1].testArgs =  99;
+            testColumns[1].testExpectedResult = 99;
+
+            testColumns[2] = new Object();
+            testColumns[2].testname = "Ints";
+            testColumns[2].testCall = "echoInts";
+            testColumns[2].testArgs =  [3,2,1];
+            testColumns[2].testExpectedResult = [3,2,1];
+
+            testColumns[3] = new Object();
+            testColumns[3].testname = "IntClasses";
+            testColumns[3].testCall = "echoIntClasses";
+            testColumns[3].testArgs =  [4,5,6];
+            testColumns[3].testExpectedResult = [4,5,6];
+
+            testColumns[4] = new Object();
+            testColumns[4].testname = "intArrayList";
+            testColumns[4].testCall = "echoArrayList";
+            testColumns[4].testArgs =  [4,5,6];
+            testColumns[4].testExpectedResult = [4,5,6];
+
+            testColumns[5] = new Object();
+            testColumns[5].testname = "intList";
+            testColumns[5].testCall = "echoLinkedList";
+            testColumns[5].testArgs =  [7,8,9];
+            testColumns[5].testExpectedResult = [7,8,9];
+
+            testColumns[6] = new Object();
+            testColumns[6].testname = "intVector";
+            testColumns[6].testCall = "echoVector";
+            testColumns[6].testArgs =  [11,23,12];
+            testColumns[6].testExpectedResult = [11,23,12];
+
+            testColumns[7] = new Object();
+            testColumns[7].testname = "intHashSet";
+            testColumns[7].testCall = "echoHashSet";
+            testColumns[7].testArgs =  [44];
+            testColumns[7].testExpectedResult = [44];
+            //index 2
+            testColumns = new Array();
+            testRows.push(testColumns);
+            testColumns[0] = new Object();
+            testColumns[0].testname = "byte";
+            testColumns[0].testCall = "echoByte";
+            testColumns[0].testArgs =  99;
+            testColumns[0].testExpectedResult = 99;
+
+            testColumns[1] = new Object();
+            testColumns[1].testname = "ByteClass";
+            testColumns[1].testCall = "echoByteClass";
+            testColumns[1].testArgs =  99;
+            testColumns[1].testExpectedResult = 99;
+
+            testColumns[2] = new Object();
+            testColumns[2].testname = "Bytes";
+            testColumns[2].testCall = "echoBytes";
+            testColumns[2].testArgs =  [3,2,1];
+            testColumns[2].testExpectedResult = [3,2,1];
+
+            testColumns[3] = new Object();
+            testColumns[3].testname = "ByteClasses";
+            testColumns[3].testCall = "echoByteClasses";
+            testColumns[3].testArgs =  [4,5,6];
+            testColumns[3].testExpectedResult = [4,5,6];
+
+            testColumns[4] = new Object();
+            testColumns[4].testname = "byteArrayList";
+            testColumns[4].testCall = "echoArrayList";
+            testColumns[4].testArgs =  [4,5,6];
+            testColumns[4].testExpectedResult = [4,5,6];
+
+            testColumns[5] = new Object();
+            testColumns[5].testname = "byteList";
+            testColumns[5].testCall = "echoLinkedList";
+            testColumns[5].testArgs =  [7,8,9];
+            testColumns[5].testExpectedResult = [7,8,9];
+
+            testColumns[6] = new Object();
+            testColumns[6].testname = "byteVector";
+            testColumns[6].testCall = "echoVector";
+            testColumns[6].testArgs =  [11,23,12];
+            testColumns[6].testExpectedResult = [11,23,12];
+
+            testColumns[7] = new Object();
+            testColumns[7].testname = "byteHashSet";
+            testColumns[7].testCall = "echoHashSet";
+            testColumns[7].testArgs =  [44];
+            testColumns[7].testExpectedResult = [44];
+            //index 3
+            testColumns = new Array();
+            testRows.push(testColumns);
+            testColumns[0] = new Object();
+            testColumns[0].testname = "short";
+            testColumns[0].testCall = "echoShort";
+            testColumns[0].testArgs =  99;
+            testColumns[0].testExpectedResult = 99;
+
+            testColumns[1] = new Object();
+            testColumns[1].testname = "ShortClass";
+            testColumns[1].testCall = "echoShortClass";
+            testColumns[1].testArgs =  99;
+            testColumns[1].testExpectedResult = 99;
+
+            testColumns[2] = new Object();
+            testColumns[2].testname = "Shorts";
+            testColumns[2].testCall = "echoShorts";
+            testColumns[2].testArgs =  [3,2,1];
+            testColumns[2].testExpectedResult = [3,2,1];
+
+            testColumns[3] = new Object();
+            testColumns[3].testname = "ShortClasses";
+            testColumns[3].testCall = "echoShortClasses";
+            testColumns[3].testArgs =  [4,5,6];
+            testColumns[3].testExpectedResult = [4,5,6];
+
+            testColumns[4] = new Object();
+            testColumns[4].testname = "shortArrayList";
+            testColumns[4].testCall = "echoArrayList";
+            testColumns[4].testArgs =  [4,5,6];
+            testColumns[4].testExpectedResult = [4,5,6];
+
+            testColumns[5] = new Object();
+            testColumns[5].testname = "shortList";
+            testColumns[5].testCall = "echoLinkedList";
+            testColumns[5].testArgs =  [7,8,9];
+            testColumns[5].testExpectedResult = [7,8,9];
+
+            testColumns[6] = new Object();
+            testColumns[6].testname = "shortVector";
+            testColumns[6].testCall = "echoVector";
+            testColumns[6].testArgs =  [11,23,12];
+            testColumns[6].testExpectedResult = [11,23,12];
+
+            testColumns[7] = new Object();
+            testColumns[7].testname = "shortHashSet";
+            testColumns[7].testCall = "echoHashSet";
+            testColumns[7].testArgs =  [44];
+            testColumns[7].testExpectedResult = [44];
+
+            //index 4
+            testColumns = new Array();
+            testRows.push(testColumns);
+            testColumns[0] = new Object();
+            testColumns[0].testname = "long";
+            testColumns[0].testCall = "echoLong";
+            testColumns[0].testArgs =  99;
+            testColumns[0].testExpectedResult = 99;
+
+            testColumns[1] = new Object();
+            testColumns[1].testname = "LongClass";
+            testColumns[1].testCall = "echoLongClass";
+            testColumns[1].testArgs =  99;
+            testColumns[1].testExpectedResult = 99;
+
+            testColumns[2] = new Object();
+            testColumns[2].testname = "Longs";
+            testColumns[2].testCall = "echoLongs";
+            testColumns[2].testArgs =  [3,2,1];
+            testColumns[2].testExpectedResult = [3,2,1];
+
+            testColumns[3] = new Object();
+            testColumns[3].testname = "LongClasses";
+            testColumns[3].testCall = "echoLongClasses";
+            testColumns[3].testArgs =  [4,5,6];
+            testColumns[3].testExpectedResult = [4,5,6];
+
+            testColumns[4] = new Object();
+            testColumns[4].testname = "longArrayList";
+            testColumns[4].testCall = "echoArrayList";
+            testColumns[4].testArgs =  [4,5,6];
+            testColumns[4].testExpectedResult = [4,5,6];
+
+            testColumns[5] = new Object();
+            testColumns[5].testname = "longList";
+            testColumns[5].testCall = "echoLinkedList";
+            testColumns[5].testArgs =  [7,8,9];
+            testColumns[5].testExpectedResult = [7,8,9];
+
+            testColumns[6] = new Object();
+            testColumns[6].testname = "longVector";
+            testColumns[6].testCall = "echoVector";
+            testColumns[6].testArgs =  [11,23,12];
+            testColumns[6].testExpectedResult = [11,23,12];
+
+            testColumns[7] = new Object();
+            testColumns[7].testname = "longHashSet";
+            testColumns[7].testCall = "echoHashSet";
+            testColumns[7].testArgs =  [44];
+            testColumns[7].testExpectedResult = [44];
+            //index 5
+            testColumns = new Array();
+            testRows.push(testColumns);
+            testColumns[0] = new Object();
+            testColumns[0].testname = "float";
+            testColumns[0].testCall = "echoFloat";
+            testColumns[0].testArgs =  99;
+            testColumns[0].testExpectedResult = 99;
+
+            testColumns[1] = new Object();
+            testColumns[1].testname = "FloatClass";
+            testColumns[1].testCall = "echoFloatClass";
+            testColumns[1].testArgs =  99;
+            testColumns[1].testExpectedResult = 99;
+
+            testColumns[2] = new Object();
+            testColumns[2].testname = "Floats";
+            testColumns[2].testCall = "echoFloats";
+            testColumns[2].testArgs =  [3,2,1];
+            testColumns[2].testExpectedResult = [3,2,1];
+
+            testColumns[3] = new Object();
+            testColumns[3].testname = "FloatClasses";
+            testColumns[3].testCall = "echoFloatClasses";
+            testColumns[3].testArgs =  [4,5,6];
+            testColumns[3].testExpectedResult = [4,5,6];
+
+            testColumns[4] = new Object();
+            testColumns[4].testname = "floatArrayList";
+            testColumns[4].testCall = "echoArrayList";
+            testColumns[4].testArgs =  [4,5,6];
+            testColumns[4].testExpectedResult = [4,5,6];
+
+            testColumns[5] = new Object();
+            testColumns[5].testname = "floatList";
+            testColumns[5].testCall = "echoLinkedList";
+            testColumns[5].testArgs =  [7,8,9];
+            testColumns[5].testExpectedResult = [7,8,9];
+
+            testColumns[6] = new Object();
+            testColumns[6].testname = "floatVector";
+            testColumns[6].testCall = "echoVector";
+            testColumns[6].testArgs =  [11,23,12];
+            testColumns[6].testExpectedResult = [11,23,12];
+
+            testColumns[7] = new Object();
+            testColumns[7].testname = "floatHashSet";
+            testColumns[7].testCall = "echoHashSet";
+            testColumns[7].testArgs =  [44];
+            testColumns[7].testExpectedResult = [44];
+
+            //index 6
+            testColumns = new Array();
+            testRows.push(testColumns);
+            testColumns[0] = new Object();
+            testColumns[0].testname = "double";
+            testColumns[0].testCall = "echoDouble";
+            testColumns[0].testArgs =  99;
+            testColumns[0].testExpectedResult = 99;
+
+            testColumns[1] = new Object();
+            testColumns[1].testname = "DoubleClass";
+            testColumns[1].testCall = "echoDoubleClass";
+            testColumns[1].testArgs =  99;
+            testColumns[1].testExpectedResult = 99;
+
+            testColumns[2] = new Object();
+            testColumns[2].testname = "Doubles";
+            testColumns[2].testCall = "echoDoubles";
+            testColumns[2].testArgs =  [3,2,1];
+            testColumns[2].testExpectedResult = [3,2,1];
+
+            testColumns[3] = new Object();
+            testColumns[3].testname = "DoubleClasses";
+            testColumns[3].testCall = "echoDoubleClasses";
+            testColumns[3].testArgs =  [4,5,6];
+            testColumns[3].testExpectedResult = [4,5,6];
+
+            testColumns[4] = new Object();
+            testColumns[4].testname = "doubleArrayList";
+            testColumns[4].testCall = "echoArrayList";
+            testColumns[4].testArgs =  [4,5,6];
+            testColumns[4].testExpectedResult = [4,5,6];
+
+            testColumns[5] = new Object();
+            testColumns[5].testname = "doubleList";
+            testColumns[5].testCall = "echoLinkedList";
+            testColumns[5].testArgs =  [7,8,9];
+            testColumns[5].testExpectedResult = [7,8,9];
+
+            testColumns[6] = new Object();
+            testColumns[6].testname = "doubleVector";
+            testColumns[6].testCall = "echoVector";
+            testColumns[6].testArgs =  [11,23,12];
+            testColumns[6].testExpectedResult = [11,23,12];
+
+            testColumns[7] = new Object();
+            testColumns[7].testname = "doubleHashSet";
+            testColumns[7].testCall = "echoHashSet";
+            testColumns[7].testArgs =  [44];
+            testColumns[7].testExpectedResult = [44];
+
+            //index 7
+            testColumns = new Array();
+            testRows.push(testColumns);
+            testColumns[0] = new Object();
+            testColumns[0].testname = "char";
+            testColumns[0].testCall = "echoChar";
+            testColumns[0].testArgs =  "1";
+            testColumns[0].testExpectedResult = "1";
+
+            testColumns[1] = new Object();
+            testColumns[1].testname = "CharClass";
+            testColumns[1].testCall = "echoCharacterClass";
+            testColumns[1].testArgs =  "2";
+            testColumns[1].testExpectedResult = "2";
+
+            testColumns[2] = new Object();
+            testColumns[2].testname = "Chars";
+            testColumns[2].testCall = "echoChars";
+            testColumns[2].testArgs =  ["2","a","f"];
+            testColumns[2].testExpectedResult = "2af";
+
+            testColumns[3] = new Object();
+            testColumns[3].testname = "CharClasses";
+            testColumns[3].testCall ="echoCharacterClasses";
+            testColumns[3].testArgs =  ["2","a","f"];
+            testColumns[3].testExpectedResult = "2af";
+
+            testColumns[4] = new Object();
+            testColumns[4].testname = "charArrayList";
+            testColumns[4].testCall = "echoArrayList";
+            testColumns[4].testArgs =  ["2","a","f"];
+            testColumns[4].testExpectedResult = ["2","a","f"];
+
+            testColumns[5] = new Object();
+            testColumns[5].testname = "charList";
+            testColumns[5].testCall = "echoLinkedList";
+            testColumns[5].testArgs =  ["2","a","f"];
+            testColumns[5].testExpectedResult = ["2","a","f"];
+
+            testColumns[6] = new Object();
+            testColumns[6].testname = "charVector";
+            testColumns[6].testCall = "echoVector";
+            testColumns[6].testArgs =  ["2","a","f"];
+            testColumns[6].testExpectedResult = ["2","a","f"];
+
+            testColumns[7] = new Object();
+            testColumns[7].testname = "charHashSet";
+            testColumns[7].testCall = "echoHashSet";
+            testColumns[7].testArgs =  ["2","a","f"];
+            testColumns[7].testExpectedResult = ["2","a","f"];
+
+            //index 8
+            testColumns = new Array();
+            testRows.push(testColumns);
+            testColumns[0] = new Object();
+            testColumns[0].testname = "String";
+
+            testColumns[1] = new Object();
+            testColumns[1].testname = "StringClass";
+            testColumns[1].testCall = "echoString";
+            testColumns[1].testArgs =  "abc";
+            testColumns[1].testExpectedResult = "abc";
+
+            testColumns[3] = new Object();
+            testColumns[3].testname = "StringClasses";
+            testColumns[3].testCall ="echoStrings";
+            testColumns[3].testArgs =  ["Hello","Word","!"];
+            testColumns[3].testExpectedResult = ["Hello","Word","!"];
+
+            testColumns[4] = new Object();
+            testColumns[4].testname = "stringArrayList";
+            testColumns[4].testCall = "echoArrayList";
+            testColumns[4].testArgs =  ["Hello","Word","!"];
+            testColumns[4].testExpectedResult = ["Hello","Word","!"];
+
+            testColumns[5] = new Object();
+            testColumns[5].testname = "stringList";
+            testColumns[5].testCall = "echoLinkedList";
+            testColumns[5].testArgs =  ["Hello","Word","!"];
+            testColumns[5].testExpectedResult = ["Hello","Word","!"];
+
+            testColumns[6] = new Object();
+            testColumns[6].testname = "stringVector";
+            testColumns[6].testCall = "echoVector";
+            testColumns[6].testArgs =  ["Hello","Word","!"];
+            testColumns[6].testExpectedResult = ["Hello","Word","!"];
+
+            testColumns[7] = new Object();
+            testColumns[7].testname = "stringHashSet";
+            testColumns[7].testCall = "echoHashSet";
+            testColumns[7].testArgs =  ["Hello"];
+            testColumns[7].testExpectedResult = ["Hello"];
+
+            //index 9
+            testColumns = new Array();
+            testRows.push(testColumns);
+            testColumns[0] = new Object();
+            testColumns[0].testname = "Date";
+
+            testColumns[1] = new Object();
+            testColumns[1].testname = "DateClass";
+            testColumns[1].testCall = "echoDate";
+            testColumns[1].testArgs =  new Date(2004,3,2);
+            testColumns[1].testExpectedResult = new Date(2004,3,2);;
+
+            testColumns[3] = new Object();
+            testColumns[3].testname = "DateClasses";
+            testColumns[3].testCall ="echoDates";
+            testColumns[3].testArgs =  [new Date()];
+            testColumns[3].testExpectedResult = [new Date()];
+
+            testColumns[4] = new Object();
+            testColumns[4].testname = "dateArrayList";
+            testColumns[4].testCall = "echoArrayList";
+            testColumns[4].testArgs =  [new Date()];
+            testColumns[4].testExpectedResult = [new Date()];
+
+            testColumns[5] = new Object();
+            testColumns[5].testname = "dateList";
+            testColumns[5].testCall = "echoLinkedList";
+            testColumns[5].testArgs =  [new Date()];
+            testColumns[5].testExpectedResult = [new Date()];
+
+            testColumns[6] = new Object();
+            testColumns[6].testname = "dateVector";
+            testColumns[6].testCall = "echoVector";
+            testColumns[6].testArgs =  [new Date()];
+            testColumns[6].testExpectedResult = [new Date()];
+
+            testColumns[7] = new Object();
+            testColumns[7].testname = "dateHashSet";
+            testColumns[7].testCall = "echoHashSet";
+            testColumns[7].testArgs =  [new Date()];
+            testColumns[7].testExpectedResult = [new Date()];
+        }
+
+        public function isEqual(actual, expected):Boolean
+        {
+            if (actual == null || expected == null || actual instanceof Number || actual instanceof String || actual instanceof Boolean)
+            {
+                return actual == expected;
+            }
+            else if (actual instanceof Date || expected instanceof Date)
+            {
+                return actual.toString() == expected.toString();
+            }
+            else if (actual instanceof Array && expected instanceof Array)
+            {
+                if (actual.length != expected.length)
+                {
+                    return false;
+                }
+                else
+                {
+                    for (var i:uint=0;i<actual.length;i++)
+                    {
+                        if (!isEqual(actual[i],expected[i]))
+                            return false;
+                    }
+                    return true;
+                }
+            }
+            else
+            {
+                if (typeof(actual) != typeof(expected))
+                    return false;
+                for (var prop in actual)
+                {
+                    if(!isEqual(actual[prop],expected[prop]))
+                        return false;
+                }
+                for (var prop2 in expected) //this loops is used to ensure that two objects have same number of props
+                {
+                    if(!isEqual(actual[prop2],expected[prop2]))
+                        return false;
+                }
+                return true;
+            }
+        }
+
+        public function resultHandler(result,source):Void
+        {
+            source.result = result;
+            if (isEqual(result,source.testExpectedResult))
+            {
+                source.button.label = "Pass";
+            }
+            else
+            {
+                source.button.label = "Fail";
+                //source.button.color = "Red";
+            }
+            source.button.enabled = true
+        }
+
+        public function faultHandler(fault,source):Void
+        {
+            source.button.label = "Error";
+            //source.button.color = "Red";
+            source.button.enabled = true;
+            source.error = fault.faultstring;
+        }
+
+        public function buttonAction(source):Void
+        {
+            trace("where is the undefined property?");
+            if (source.button.label != "Pass" && source.button.label != "Fail" && source.button.label != "Error")
+            {
+                var testName = source.testCall;
+                var testArgs = [source.testArgs];
+                var call = ro[testName].apply(ro,testArgs);
+                call.source = source;
+                source.button.enabled = false;
+            }
+            else
+            {
+                var details:String ="";
+                if (source.error == null || source.error == undefined)
+                {
+                    details += "Expected: " + source.testExpectedResult +"\n";
+                    details += "Actual:" + source.result + "\n";
+                }
+                else
+                {
+                    details += "Fault: " + source.error;
+                }
+                alert(details,source.testname);
+            }
+        }
+
+        public function runAll()
+        {
+            var testBtn:Object;
+            while (allButtons.length > 0)
+            {
+                testBtn = allButtons.pop();
+                testBtn.dispatchEvent(new MouseEvent('click'));
+            }
+        }
+        ]]>
+    </mx:Script>
+    <mx:Button click="runAll()"/>
+    <mx:RemoteObject id="ro" destination="dev.echoservice.Echo"
+        result="resultHandler(event.result,event.token.source)" fault="faultHandler(event.fault,event.token.source)"/>
+    <mx:Grid id="allTests" width="100%" height="100%">
+        <mx:GridRow width="100%">
+             <mx:GridItem/>
+            <mx:GridItem>
+                <mx:Label text="Primitive"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Label text="Class"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Label text="Primitive[]"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Label text="Class[]"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Label text="ArrayList"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Label text="List"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Label text="Vector"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Label text="HashSet"/>
+            </mx:GridItem>
+        </mx:GridRow>
+
+        <mx:GridRow width="100%">
+            <mx:GridItem>
+                <mx:Label text="{testRows[0][0].testname}"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn00" creationComplete="allButtons.push(btn00)" label="{testRows[0][0].testname}" click="testRows[0][0].button=btn00;buttonAction(testRows[0][0])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn01" creationComplete="allButtons.push(btn01)" label="{testRows[0][1].testname}" click="testRows[0][1].button=btn01;buttonAction(testRows[0][1])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn02" creationComplete="allButtons.push(btn02)" label="{testRows[0][2].testname}" click="testRows[0][2].button=btn02;buttonAction(testRows[0][2])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn03" creationComplete="allButtons.push(btn03)" label="{testRows[0][3].testname}" click="testRows[0][3].button=btn03;buttonAction(testRows[0][3])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn04" creationComplete="allButtons.push(btn04)" label="{testRows[0][4].testname}" click="testRows[0][4].button=btn04;buttonAction(testRows[0][4])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn05" creationComplete="allButtons.push(btn05)" label="{testRows[0][5].testname}" click="testRows[0][5].button=btn05;buttonAction(testRows[0][5])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn06" creationComplete="allButtons.push(btn06)" label="{testRows[0][6].testname}" click="testRows[0][6].button=btn06;buttonAction(testRows[0][6])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn07" creationComplete="allButtons.push(btn07)" label="{testRows[0][7].testname}" click="testRows[0][7].button=btn07;buttonAction(testRows[0][7])"/>
+            </mx:GridItem>
+        </mx:GridRow>
+
+        <mx:GridRow width="100%">
+            <mx:GridItem>
+                <mx:Label text="{testRows[1][0].testname}"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn10" creationComplete="allButtons.push(btn10)" label="{testRows[1][0].testname}" click="testRows[1][0].button=btn10;buttonAction(testRows[1][0])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn11" creationComplete="allButtons.push(btn11)" label="{testRows[1][1].testname}" click="testRows[1][1].button=btn11;buttonAction(testRows[1][1])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn12" creationComplete="allButtons.push(btn12)" label="{testRows[1][2].testname}" click="testRows[1][2].button=btn12;buttonAction(testRows[1][2])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn13" creationComplete="allButtons.push(btn13)" label="{testRows[1][3].testname}" click="testRows[1][3].button=btn13;buttonAction(testRows[1][3])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn14" creationComplete="allButtons.push(btn14)" label="{testRows[1][4].testname}" click="testRows[1][4].button=btn14;buttonAction(testRows[1][4])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn15" creationComplete="allButtons.push(btn15)" label="{testRows[1][5].testname}" click="testRows[1][5].button=btn15;buttonAction(testRows[1][5])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn16" creationComplete="allButtons.push(btn16)" label="{testRows[1][6].testname}" click="testRows[1][6].button=btn16;buttonAction(testRows[1][6])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn17" creationComplete="allButtons.push(btn17)" label="{testRows[1][7].testname}" click="testRows[1][7].button=btn17;buttonAction(testRows[1][7])"/>
+            </mx:GridItem>
+        </mx:GridRow>
+
+        <mx:GridRow width="100%">
+            <mx:GridItem>
+                <mx:Label text="{testRows[2][0].testname}"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn20" creationComplete="allButtons.push(btn20)" label="{testRows[2][0].testname}" click="testRows[2][0].button=btn20;buttonAction(testRows[2][0])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn21" creationComplete="allButtons.push(btn21)" label="{testRows[2][1].testname}" click="testRows[2][1].button=btn21;buttonAction(testRows[2][1])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn22" creationComplete="allButtons.push(btn22)" label="{testRows[2][2].testname}" click="testRows[2][2].button=btn22;buttonAction(testRows[2][2])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn23" creationComplete="allButtons.push(btn23)" label="{testRows[2][3].testname}" click="testRows[2][3].button=btn23;buttonAction(testRows[2][3])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn24" creationComplete="allButtons.push(btn24)" label="{testRows[2][4].testname}" click="testRows[2][4].button=btn24;buttonAction(testRows[2][4])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn25" creationComplete="allButtons.push(btn25)" label="{testRows[2][5].testname}" click="testRows[2][5].button=btn25;buttonAction(testRows[2][5])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn26" creationComplete="allButtons.push(btn26)" label="{testRows[2][6].testname}" click="testRows[2][6].button=btn26;buttonAction(testRows[2][6])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn27" creationComplete="allButtons.push(btn27)" label="{testRows[2][7].testname}" click="testRows[2][7].button=btn27;buttonAction(testRows[2][7])"/>
+            </mx:GridItem>
+        </mx:GridRow>
+
+        <mx:GridRow width="100%">
+            <mx:GridItem>
+                <mx:Label text="{testRows[3][0].testname}"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn30" creationComplete="allButtons.push(btn30)" label="{testRows[3][0].testname}" click="testRows[3][0].button=btn30;buttonAction(testRows[3][0])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn31" creationComplete="allButtons.push(btn31)" label="{testRows[3][1].testname}" click="testRows[3][1].button=btn31;buttonAction(testRows[3][1])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn32" creationComplete="allButtons.push(btn32)" label="{testRows[3][2].testname}" click="testRows[3][2].button=btn32;buttonAction(testRows[3][2])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn33" creationComplete="allButtons.push(btn33)" label="{testRows[3][3].testname}" click="testRows[3][3].button=btn33;buttonAction(testRows[3][3])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn34" creationComplete="allButtons.push(btn34)" label="{testRows[3][4].testname}" click="testRows[3][4].button=btn34;buttonAction(testRows[3][4])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn35" creationComplete="allButtons.push(btn35)" label="{testRows[3][5].testname}" click="testRows[3][5].button=btn35;buttonAction(testRows[3][5])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn36" creationComplete="allButtons.push(btn36)" label="{testRows[3][6].testname}" click="testRows[3][6].button=btn36;buttonAction(testRows[3][6])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn37" creationComplete="allButtons.push(btn37)" label="{testRows[3][7].testname}" click="testRows[3][7].button=btn37;buttonAction(testRows[3][7])"/>
+            </mx:GridItem>
+        </mx:GridRow>
+
+        <mx:GridRow width="100%">
+            <mx:GridItem>
+                <mx:Label text="{testRows[4][0].testname}"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn40" creationComplete="allButtons.push(btn40)" label="{testRows[4][0].testname}" click="testRows[4][0].button=btn40;buttonAction(testRows[4][0])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn41" creationComplete="allButtons.push(btn41)" label="{testRows[4][1].testname}" click="testRows[4][1].button=btn41;buttonAction(testRows[4][1])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn42" creationComplete="allButtons.push(btn42)" label="{testRows[4][2].testname}" click="testRows[4][2].button=btn42;buttonAction(testRows[4][2])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn43" creationComplete="allButtons.push(btn43)" label="{testRows[4][3].testname}" click="testRows[4][3].button=btn43;buttonAction(testRows[4][3])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn44" creationComplete="allButtons.push(btn44)" label="{testRows[4][4].testname}" click="testRows[4][4].button=btn44;buttonAction(testRows[4][4])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn45" creationComplete="allButtons.push(btn45)" label="{testRows[4][5].testname}" click="testRows[4][5].button=btn45;buttonAction(testRows[4][5])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn46" creationComplete="allButtons.push(btn46)" label="{testRows[4][6].testname}" click="testRows[4][6].button=btn46;buttonAction(testRows[4][6])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn47" creationComplete="allButtons.push(btn47)" label="{testRows[4][7].testname}" click="testRows[4][7].button=btn47;buttonAction(testRows[4][7])"/>
+            </mx:GridItem>
+        </mx:GridRow>
+
+        <mx:GridRow width="100%">
+            <mx:GridItem>
+                <mx:Label text="{testRows[5][0].testname}"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn50" creationComplete="allButtons.push(btn50)" label="{testRows[5][0].testname}" click="testRows[5][0].button=btn50;buttonAction(testRows[5][0])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn51" creationComplete="allButtons.push(btn51)" label="{testRows[5][1].testname}" click="testRows[5][1].button=btn51;buttonAction(testRows[5][1])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn52" creationComplete="allButtons.push(btn52)" label="{testRows[5][2].testname}" click="testRows[5][2].button=btn52;buttonAction(testRows[5][2])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn53" creationComplete="allButtons.push(btn53)" label="{testRows[5][3].testname}" click="testRows[5][3].button=btn53;buttonAction(testRows[5][3])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn54" creationComplete="allButtons.push(btn54)" label="{testRows[5][4].testname}" click="testRows[5][4].button=btn54;buttonAction(testRows[5][4])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn55" creationComplete="allButtons.push(btn55)" label="{testRows[5][5].testname}" click="testRows[5][5].button=btn55;buttonAction(testRows[5][5])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn56" creationComplete="allButtons.push(btn56)" label="{testRows[5][6].testname}" click="testRows[5][6].button=btn56;buttonAction(testRows[5][6])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn57" creationComplete="allButtons.push(btn57)" label="{testRows[5][7].testname}" click="testRows[5][7].button=btn57;buttonAction(testRows[5][7])"/>
+            </mx:GridItem>
+        </mx:GridRow>
+
+        <mx:GridRow width="100%">
+            <mx:GridItem>
+                <mx:Label text="{testRows[6][0].testname}"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn60" creationComplete="allButtons.push(btn60)" label="{testRows[6][0].testname}" click="testRows[6][0].button=btn60;buttonAction(testRows[6][0])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn61" creationComplete="allButtons.push(btn61)" label="{testRows[6][1].testname}" click="testRows[6][1].button=btn61;buttonAction(testRows[6][1])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn62" creationComplete="allButtons.push(btn62)" label="{testRows[6][2].testname}" click="testRows[6][2].button=btn62;buttonAction(testRows[6][2])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn63" creationComplete="allButtons.push(btn63)" label="{testRows[6][3].testname}" click="testRows[6][3].button=btn63;buttonAction(testRows[6][3])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn64" creationComplete="allButtons.push(btn64)" label="{testRows[6][4].testname}" click="testRows[6][4].button=btn64;buttonAction(testRows[6][4])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn65" creationComplete="allButtons.push(btn65)" label="{testRows[6][5].testname}" click="testRows[6][5].button=btn65;buttonAction(testRows[6][5])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn66" creationComplete="allButtons.push(btn66)" label="{testRows[6][6].testname}" click="testRows[6][6].button=btn66;buttonAction(testRows[6][6])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn67" creationComplete="allButtons.push(btn67)" label="{testRows[6][7].testname}" click="testRows[6][7].button=btn67;buttonAction(testRows[6][7])"/>
+            </mx:GridItem>
+        </mx:GridRow>
+
+        <mx:GridRow width="100%">
+            <mx:GridItem>
+                <mx:Label text="{testRows[7][0].testname}"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn70" creationComplete="allButtons.push(btn70)" label="{testRows[7][0].testname}" click="testRows[7][0].button=btn70;buttonAction(testRows[7][0])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn71" creationComplete="allButtons.push(btn71)" label="{testRows[7][1].testname}" click="testRows[7][1].button=btn71;buttonAction(testRows[7][1])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn72" label="{testRows[7][2].testname}" click="testRows[7][2].button=btn72;buttonAction(testRows[7][2])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn73" creationComplete="allButtons.push(btn73)" label="{testRows[7][3].testname}" click="testRows[7][3].button=btn73;buttonAction(testRows[7][3])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn74" creationComplete="allButtons.push(btn74)" label="{testRows[7][4].testname}" click="testRows[7][4].button=btn74;buttonAction(testRows[7][4])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn75" creationComplete="allButtons.push(btn75)" label="{testRows[7][5].testname}" click="testRows[7][5].button=btn75;buttonAction(testRows[7][5])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn76" creationComplete="allButtons.push(btn76)" label="{testRows[7][6].testname}" click="testRows[7][6].button=btn76;buttonAction(testRows[7][6])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn77" creationComplete="allButtons.push(btn77)" label="{testRows[7][7].testname}" click="testRows[7][7].button=btn77;buttonAction(testRows[7][7])"/>
+            </mx:GridItem>
+        </mx:GridRow>
+
+        <mx:GridRow width="100%">
+            <mx:GridItem>
+                <mx:Label text="{testRows[8][0].testname}"/>
+            </mx:GridItem>
+            <mx:GridItem>
+
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn81" creationComplete="allButtons.push(btn81)" label="{testRows[8][1].testname}" click="testRows[8][1].button=btn81;buttonAction(testRows[8][1])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn83" creationComplete="allButtons.push(btn83)" label="{testRows[8][3].testname}" click="testRows[8][3].button=btn83;buttonAction(testRows[8][3])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn84" creationComplete="allButtons.push(btn84)" label="{testRows[8][4].testname}" click="testRows[8][4].button=btn84;buttonAction(testRows[8][4])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn85" creationComplete="allButtons.push(btn85)" label="{testRows[8][5].testname}" click="testRows[8][5].button=btn85;buttonAction(testRows[8][5])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn86" creationComplete="allButtons.push(btn86)" label="{testRows[8][6].testname}" click="testRows[8][6].button=btn86;buttonAction(testRows[8][6])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn87" creationComplete="allButtons.push(btn87)" label="{testRows[8][7].testname}" click="testRows[8][7].button=btn87;buttonAction(testRows[8][7])"/>
+            </mx:GridItem>
+        </mx:GridRow>
+
+        <mx:GridRow width="100%">
+            <mx:GridItem>
+                <mx:Label text="{testRows[9][0].testname}"/>
+            </mx:GridItem>
+            <mx:GridItem>
+
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn91" creationComplete="allButtons.push(btn91)" label="{testRows[9][1].testname}" click="testRows[9][1].button=btn91;buttonAction(testRows[9][1])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn93" creationComplete="allButtons.push(btn93)" label="{testRows[9][3].testname}" click="testRows[9][3].button=btn93;buttonAction(testRows[9][3])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn94" creationComplete="allButtons.push(btn94)" label="{testRows[9][4].testname}" click="testRows[9][4].button=btn94;buttonAction(testRows[9][4])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn95" creationComplete="allButtons.push(btn95)" label="{testRows[9][5].testname}" click="testRows[9][5].button=btn95;buttonAction(testRows[9][5])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn96" creationComplete="allButtons.push(btn96)" label="{testRows[9][6].testname}" click="testRows[9][6].button=btn96;buttonAction(testRows[9][6])"/>
+            </mx:GridItem>
+            <mx:GridItem>
+                <mx:Button id="btn97" creationComplete="allButtons.push(btn97)" label="{testRows[9][7].testname}" click="testRows[9][7].button=btn97;buttonAction(testRows[9][7])"/>
+            </mx:GridItem>
+        </mx:GridRow>
+    </mx:Grid>
+
+</mx:Application>

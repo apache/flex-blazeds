@@ -1,0 +1,259 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="startup()">
+    <!-- Destination Definition -->
+    <!--
+    <destination id="qa.secured.methodIncludes.echoservice.Echo">
+        <properties>
+            <source>dev.echoservice.Echo</source>
+            <include-methods>
+            	<method name="echoShort"/>
+            	<method name="echoInt" security-constraint="sample-users-basic"/>
+            	<method name="echoIntClass" security-constraint="sample-users"/>           	
+            </include-methods>
+        </properties>
+    </destination>
+    -->
+
+    <mx:RemoteObject id="ro" destination="qa.secured.methodIncludes.echoservice.Echo"
+        result="event.token.resultHandler(event)" fault="event.token.faultHandler(event)"/>
+    <mx:Script>
+        <![CDATA[
+            
+            import qa.mxunit.*;
+            import mx.rpc.events.*;
+            import mx.rpc.AsyncToken;
+
+            private function startup():void
+            {
+                //these tests have order dependency, please don't change
+                var tests:Array = new Array();
+                tests.push("testMethodIn");
+                tests.push("testMethodNotIn");
+                tests.push("testMethodRequiredAuthenticationFault");
+                tests.push("testMethodRequiredAuthWithBadCredentials");
+                tests.push("testMethodRequiredAuthWithCredentials");
+                tests.push("testMethodInDiffSecurityConstraint");
+                //comment out since there is application exception which prevent the app continue to run
+                //tests.push("testLoginAsDifferentUserWithoutLogout");
+                tests.push("testPreviousUnAuthorizationNotDestroyAuthenticatedUser");
+                tests.push("testLogoutAuthenticatedUser");
+                tests.push("testMethodInAfterLogout");
+                MXUnitManager.addTests(this, tests, 10000);   
+            }
+            /**
+            *    Test included method, should have result
+            **/
+            public function testMethodIn():void
+            {
+                var expected:uint = 2;
+                var token:AsyncToken = ro.echoShort(expected);
+                Assert.assertNotNull("Unable to invoke remoteobject call", token);
+                var handler:Function = MXUnitManager.getInstance().currentTest.addAsync(expectResultHandler);
+                token.expected = expected;
+                token.resultHandler = handler;
+                token.faultHandler = handler;
+            }
+            /**
+            *    Test not included method, should have fault
+            **/
+            public function testMethodNotIn():void
+            {
+                var token:AsyncToken = ro.echoShortClass(2);
+                Assert.assertNotNull("Unable to invoke remoteobject call", token);
+                var handler:Function = MXUnitManager.getInstance().currentTest.addAsync(expectFaultHandler);
+                token.expected = "Server.ResourceUnavailable";
+                token.resultHandler = handler;
+                token.faultHandler = handler;
+            }
+            /**
+            *    Test included method with security constraint, should have "Client.Authentication" fault
+            **/
+            public function testMethodRequiredAuthenticationFault():void
+            {
+                var token:AsyncToken = ro.echoIntClass(2);
+                Assert.assertNotNull("Unable to invoke remoteobject call", token);
+                var handler:Function = MXUnitManager.getInstance().currentTest.addAsync(expectFaultHandler);
+                token.expected = "Client.Authentication";
+                token.resultHandler = handler;
+                token.faultHandler = handler;
+            }
+            
+            /**
+            *    Test included method with security constraint and bad credentials
+            **/
+            public function testMethodRequiredAuthWithBadCredentials():void
+            {
+                var expected:uint = 2;
+                ro.setCredentials("baduser", "badpassword");
+                var token:AsyncToken = ro.echoIntClass(expected);
+                Assert.assertNotNull("Unable to invoke remoteobject call", token);
+                var handler:Function = MXUnitManager.getInstance().currentTest.addAsync(expectFaultHandler);
+                token.expected = "Channel.Authentication.Error";
+                token.resultHandler = handler;
+                token.faultHandler = handler;
+            }
+            
+            /**
+            *    Test included method with security constraint and good credentials
+            **/
+            public function testMethodRequiredAuthWithCredentials():void
+            {
+                var expected:uint = 2;
+                ro.setCredentials("sampleuser", "samplepassword");
+                var token:AsyncToken = ro.echoIntClass(expected);
+                Assert.assertNotNull("Unable to invoke remoteobject call", token);
+                var handler:Function = MXUnitManager.getInstance().currentTest.addAsync(expectResultHandler);
+                token.expected = expected;
+                token.resultHandler = handler;
+                token.faultHandler = handler;
+            }
+            
+            /**
+            *    Test included method with different security constraint from the logged in user
+            **/
+            public function testMethodInDiffSecurityConstraint():void
+            {
+                var token:AsyncToken = ro.echoLong(2);
+                Assert.assertNotNull("Unable to invoke remoteobject call", token);
+                var handler:Function = MXUnitManager.getInstance().currentTest.addAsync(expectFaultHandler);
+                token.expected = "Client.Authorization";
+                token.resultHandler = handler;
+                token.faultHandler = handler;
+            }
+            
+            /**
+            *    Test included method with different security constraint from the logged in user
+            *    and login before logout, should not allow
+            **/
+            public function testLoginAsDifferentUserWithoutLogout():void
+            {
+                var token:AsyncToken = ro.echoLong(2);
+                ro.setCredentials("samplemanager", "samplepassword");
+                Assert.assertNotNull("Unable to invoke remoteobject call", token);
+                var handler:Function = MXUnitManager.getInstance().currentTest.addAsync(expectFaultHandler);
+                token.expected = "Client.Authorization";
+                token.resultHandler = handler;
+                token.faultHandler = handler;
+            }
+            
+            /**
+            *    Test included method with different security constraint from the logged in user
+            *    and login before logout, should not allow. However, the previous logged in user
+            *    is still valid
+            **/
+            public function testPreviousUnAuthorizationNotDestroyAuthenticatedUser():void
+            {
+                var expected:uint = 2;
+                var token:AsyncToken = ro.echoIntClass(expected);
+                Assert.assertNotNull("Unable to invoke remoteobject call", token);
+                var handler:Function = MXUnitManager.getInstance().currentTest.addAsync(expectResultHandler);
+                token.expected = expected;
+                token.resultHandler = handler;
+                token.faultHandler = handler;
+            }
+            
+            /**
+            *    Test included method with different security constraint from the logged in user
+            *    and login after logout, should  allow. 
+            **/
+            public function testLogoutAuthenticatedUser():void
+            {
+                var expected:uint = 2;
+                ro.logout();
+                var timer:Timer = new Timer(2000, 1);
+                timer.start();
+                var handler:Function = MXUnitManager.getInstance().currentTest.addAsync(logoutHandler);
+                timer.addEventListener(TimerEvent.TIMER, handler);
+            }
+            
+            //Dedicated Handlers for particular tests (one-to-one)
+            private function logoutHandler(event: Event):void
+            {
+                var token:AsyncToken = ro.echoIntClass(2);
+                Assert.assertNotNull("Unable to invoke remoteobject call", token);
+                var handler:Function = MXUnitManager.getInstance().currentTest.addAsync(afterLogoutInvokeMethodHasConstraintHandler);
+                token.resultHandler = handler;
+                token.faultHandler = handler;     
+            }
+            
+            private function afterLogoutInvokeMethodHasConstraintHandler(event: Object): void
+            {
+                if (event is FaultEvent)
+                {
+                    Assert.assertEquals( "Client.Authentication", event.fault.faultCode);
+                }
+                else
+                {
+                    Assert.fail("Should not have result. Security enforced");
+                }    
+            }
+            
+            /**
+            *    Test included method with security constraint after logout
+            **/
+            public function testMethodInAfterLogout():void
+            {
+                var expected:uint = 2;
+                var token:AsyncToken = ro.echoShort(expected);
+                Assert.assertNotNull("Unable to invoke remoteobject call", token);
+                var handler:Function = MXUnitManager.getInstance().currentTest.addAsync(expectResultHandler);
+                token.expected = expected;
+                token.resultHandler = handler;
+                token.faultHandler = handler;
+            }
+            
+            
+            
+            //General Result and Fault Handlers (many-to-one)
+            
+            private function expectResultHandler(event: Object):void
+            {
+                if (event is FaultEvent)
+                {
+                    Assert.fail(event.fault.faultString);
+                }
+                else
+                {
+                    Assert.assertEquals(event.result, event.token.expected);
+                }
+            }
+            
+            private function expectFaultHandler(event: Object):void
+            {
+                if (event is FaultEvent)
+                {
+                    //Seth advise not checking faultCode at this time.
+                    //
+                    //just test that you got a fault in your security-constraint tests. 
+                    //there are lots of problems with these codes and they may need to change when authentication/authorization is fixed. 
+                    //Probably best not to make these tests directly dependent on that.
+                    //Assert.assertEquals( event.token.expected, event.fault.faultCode);
+                }
+                else
+                {
+                    Assert.fail("Should not have result. Security enforced");
+                }
+            }
+            
+            
+        ]]>
+    </mx:Script>
+</mx:Application>

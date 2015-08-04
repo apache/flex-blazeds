@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application 
+		xmlns:mx="http://www.adobe.com/2006/mxml" 
+		xmlns:qa="http://www.adobe.com/2006/flexqa"
+		creationComplete="run()"
+		>
+		
+	<!-- xmlEncode -->
+	<mx:HTTPService 
+	 	id="hsXMLEncode0" 
+		useProxy="true"
+		contentType="application/xml"
+    	destination="echoXml_http"
+        method = "POST"
+        resultFormat = "e4x"
+        result="onServiceResult0(event)"
+        fault="onServiceFault0(event)" >
+    </mx:HTTPService>
+			
+	<!-- xmlEncode -->
+	<mx:HTTPService 
+	 	id="hsXMLEncode1" 
+		useProxy="true"
+		contentType="application/xml"
+    	destination="echoXml_http"
+        method = "POST"
+        resultFormat = "e4x"
+        result="onServiceResult1(event)"
+        fault="onServiceFault1(event)" >
+    </mx:HTTPService>
+
+	<!-- xmlEncode -->
+	<mx:HTTPService 
+	 	id="hsXMLEncode2" 
+		useProxy="true"
+		contentType="application/xml"
+    	destination="echoXml_http"
+        method = "POST"
+        resultFormat = "e4x"
+        result="onServiceResult2(event)"
+        fault="onServiceFault2(event)" >
+       
+    </mx:HTTPService>
+	
+						
+	<mx:Script>
+    	<![CDATA[
+    		import qa.mxunit.*;
+    		import mx.rpc.events.*;
+    		import mx.utils.ObjectUtil;
+    
+    		public var myXML:Array = new Array();
+            public var results:Array = new Array();
+            
+      	        
+            public function onServiceFault0(event:FaultEvent):void {
+                trace("service fault: " + event.fault.faultString);
+            }
+      		public function onServiceResult0(event:ResultEvent):void {
+      		    
+      		    output.text += "-> XML: " + myXML[0].toXMLString()+ ".\n";
+    			results[0] = XML(event.result).toXMLString();
+    		}
+            public function onServiceFault1(event:FaultEvent):void {
+                trace("service fault: " + event.fault.faultString);
+            }
+  
+      		public function onServiceResult1(event:ResultEvent):void {
+      		    output.text += "-> XML: " + myXML[1].toXMLString() + ".\n";
+    			results[1] = XML(event.result).toXMLString();
+    		}
+            public function onServiceFault2(event:FaultEvent):void {
+                trace("service fault: " + event.fault.faultString);
+            }
+  
+      		public function onServiceResult2(event:ResultEvent):void {
+      		    output.text += "-> XML: " + myXML[2].toXMLString()+ ".\n";
+    			results[2] = XML(event.result).toXMLString();
+    		}
+    		public function run():void {
+                results[0] = new Object;
+    		    results[1] = new Object;
+                results[2] = new Object;
+            
+                myXML[0] = <value/>;
+                myXML[1] = <value></value>;
+                myXML[2] = <value>X</value>;
+    		    
+    		    hsXMLEncode0.send(myXML[0]);
+    		    hsXMLEncode1.send(myXML[1]);
+    		    hsXMLEncode2.send(myXML[2]);
+                
+                MXUnitManager.delay = 6000;
+    			MXUnitManager.addTests(this,["Test_XML0", "Test_XML1", "Test_XML2"],10000);
+    		}
+    		public function Test_XML0():void {
+                output.text += "-> Result: " + results[0] + "\n";
+    			Assert.isTrue(results[0] == "<value/>", "should be <value/>");
+    		}		
+   		    public function Test_XML1():void {
+                output.text += "-> Result: " + results[1]+ "\n";
+    			Assert.isTrue(results[1] == "<value/>", "should be <value/>");
+    		}		
+   		    public function Test_XML2():void {
+                output.text += "-> Result: " + results[2]+ "\n";
+    			Assert.isTrue(results[2] == "<value>X</value>", "should be <value>X</value>");
+    		}		    		    		
+    	]]>
+	</mx:Script>
+    <mx:TextArea id="output" height="200" percentWidth="80" />
+    <mx:TraceTarget level="8"/>
+</mx:Application>

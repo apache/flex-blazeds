@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<service id="message-service" class="flex.messaging.services.MessageService">
+
+    <!-- Example messaging-config.xml -->
+
+    <adapters>
+        <!--
+           id: a unique id specifying the adapter
+           class: the BlazeDS class which implements the adapter
+             possible values: flex.messaging.services.messaging.adapters.ActionScriptAdapter
+                              flex.messaging.services.messaging.adapters.JMSAdapter
+                              coldfusion.flex.CFEventGatewayAdapter
+           default: an optional attribute identifying the adapter to use when none is specified
+        -->
+        <adapter-definition id="actionscript" class="flex.messaging.services.messaging.adapters.ActionScriptAdapter" default="true" />
+        <adapter-definition id="jms" class="flex.messaging.services.messaging.adapters.JMSAdapter"/>
+        <adapter-definition id="cfgateway" class="coldfusion.flex.CFEventGatewayAdapter"/>
+
+        <!--
+           Adapters may be broken in to their own file
+           To collect multiple adapter-definitions in a single file, wrap them in an <adapters> tag
+        -->
+        <adapter-include file-path="my-adapter.xml"/>
+        <!-- This will include all *.xml files in the directory 'my-adapters'. -->
+        <adapter-include directory-path="my-adapters"/>
+    </adapters>
+
+    <!-- Multiple destinations may be specified either in this file or they could be broken
+         into their own file.
+    -->
+
+    <!-- An example of a destination defined in another file -->
+    <destination-include file-path="my-jms-destination-config.xml" />
+
+    <!-- An example of destinations defined in a directory of XML files 
+         The directory is relative to the location of this file. 
+         This will include any *.xml files contained in 'messaging-destinations' in the current config directory.
+    -->
+    <destination-include directory-path="messaging-destinations" />
+
+    <!-- Example ActionScriptAdapter destination -->
+    <destination id="MyTopic">
+        <properties>
+            <network>
+                <!--
+                   Idle time in minutes for a subscriber to receive no messages
+                   that triggers it to be automatically unsubscribed.
+                   0 means don't force subscribers to unsubscribe automatically.
+                   Default value is 0.
+                -->
+                <subscription-timeout-minutes>0</subscription-timeout-minutes>
+            </network>
+
+            <server>
+                <!--
+                    Sets the time to live for messages sent to this destination. This is the number of milliseconds
+                    beyond the message timestamp that the message will be considered valid and deliverable.
+                -->
+                <message-time-to-live>0</message-time-to-live>
+
+                <!--
+                   The subtopic feature lets you divide the messages that a Producer component sends to a destination
+                   into specific categories at the destination.  You can configure a Consumer component that subscribes to
+                   the destination to receive only messages sent to a specific subtopic or set of subtopics.  You use
+                   wildcard characters (*) to send or receive messages from more than one subtopic.  The subtopic-separator
+                   element is optional; the default value is period
+                -->
+                <allow-subtopics>true</allow-subtopics>
+                <subtopic-separator>.</subtopic-separator>
+
+                <!-- Optional. Default is false. This option determines whether the wildcard characters (*) to receive
+                     messages from more than one subtopic are disallowed.
+                <disallow-wildcard-subtopics>false</disallow-wildcard-subtopics>
+                -->
+
+                <!--
+                    Used to choose the algorithm for routing messages in a cluster.
+                    When set to server-to-server (the default), subscriptions are
+                    broadcast through the cluster to ensure each server knows which
+                    destinations, subtopics, and selector expressions define subscriptions
+                    for clients connected to other servers.  When a data message
+                    arrives, it is then only sent to servers who have clients interested
+                    in that message.  Another value for this setting "broadcast"
+                    will simply broadcast all data messages to all servers.  In this
+                    mode, subscribe/unsubscribe messages are not sent across the cluster.
+					The third possible value for this is "none". In this mode, no messages
+					are sent across the cluster for that destination.
+                -->
+                <cluster-message-routing>server-to-server</cluster-message-routing>
+
+                <!--
+                    Optional. Security constraints apply to the operations performed
+                    by the messaging adapter. Send security constraint applies
+                    to send operations, subscribe security constraint applies to
+                    subscribe, multi-subscribe, and unsubscribe operations.
+                <send-security-constraint ref="sample-users"/>
+                <subscribe-security-constraint ref="sample-users"/>
+                -->
+
+            </server>
+        </properties>
+
+        <channels>
+            <!--
+               Set the ref id of the default channels to use as transport for this service.
+               The channel is defined elsewhere using the channel-definition tag.
+            -->
+            <channel ref="my-polling-amf"/>
+        </channels>
+    </destination>
+
+    <!-- A messaging destination that uses JMSAdapter to talk to a JMS destination -->
+    <destination id="MyJMSTopic">
+        <adapter ref="jms"/>
+        <properties>
+            <server>
+                <!-- Optional. Default is false. This option is currently only used by JMS
+                     adapter when the destination-type is Topic. In that case, durable JMS
+                     consumers will be used by the JMS adapter. Note that this does not
+                     guarantee durability between Flex clients and JMS adapter but rather
+                     between JMS adapter and JMS server.
+                <durable>false</durable>
+                -->
+                <!--
+                    Optional. Security constraints apply to the operations performed
+                    by the messaging adapter.
+                <send-security-constraint ref="sample-users"/>
+                <subscribe-security-constraint ref="sample-users"/>
+                -->
+            </server>
+
+            <!-- JMS related configuration. For specifics on JMS, please reference
+                 the Java Message Service specification or your J2EE server documentation.
+            -->
+            <jms>
+                <!--
+                   Optional and defaults to AUTO_ACKNOWLEDGE. The message acknowledgement mode for the JMS adapter
+                   None of these modes require any action on the part of the Flex messaging client.
+                   Supported modes are:
+                     AUTO_ACKNOWLEDGE - the JMS provider client runtime automatically acknowledges the messages
+                     DUPS_OK_ACKNOWLEDGE - auto-acknowledgement of the messages is not required
+                     CLIENT_ACKNOWLEDGE - the JMS adapter should acknowledge that the message was received
+                <acknowledge-mode>AUTO_ACKNOWLEDGE</acknowledge-mode>
+                -->
+
+                <!-- Optional. This is the username and password used while creating the
+                     JMS connection. Use only if JMS connection level authentication is being used.
+                <connection-credentials username="sampleuser" password="samplepassword"/>
+                -->
+
+                <!-- The name of the JMS connection factory in JNDI -->
+                <connection-factory>jms/flex/TopicConnectionFactory</connection-factory>
+
+                <!-- Optional and defaults to delivery settings specified below. -->
+                <delivery-settings>
+                    <!--
+                       Optional and default to sync. This message delivery mode used
+                       in delivery messages from JMS server. If async mode is specified
+                       but the app server cannot listen for messages asynchronously
+                       (i.e. javax.jms.MessageConsumer.setMessageListener is restricted),
+                       or the app server cannot listen for connection problems asynchronously
+                       (i.e. javax.jms.Connection.setExceptionListener is restricted),
+                       there will be a configuration error asking the user to switch to sync mode.
+                    <mode>sync|async</mode>
+                    -->
+                    <!-- If sync, additional props can be specified -->
+                    <!-- Optional and defaults to 100. The interval of the receive message calls.
+                    <sync-receive-interval-millis>100</sync-receive-interval-millis>
+                    -->
+                    <!--
+                        Optional and defaults to 0 (not wait). Determines how long a JMS proxy
+                        waits for a message before returning.
+                    <sync-receive-wait-millis>500</sync-receive-wait-millis>
+                    -->
+                </delivery-settings>
+
+                <!--
+                     Optional and defaults to DEFAULT_DELIVERY_MODE. The JMS delivery mode for producers.
+                     Supported modes are DEFAULT_DELIVERY_MODE, PERSISTENT, and NON_PERSISTENT.
+                <delivery-mode>NON_PERSISTENT</delivery-mode>
+                -->
+
+                <!-- The name of the destination in JNDI -->
+                <destination-jndi-name>jms/topic/flex/simpletopic</destination-jndi-name>
+
+                <!--
+                   Optional and defaults to Topic. This determines whether the adapter is
+                   performing topic (pub/sub) or queue (point-to-point) messaging.
+                <destination-type>Topic</destination-type>
+                -->
+
+                <!--
+                   The javax.jms.Message type which the adapter should use for this destination.
+                   Supported types are javax.jms.TextMessage, javax.jms.MapMessage and javax.jms.ObjectMessage.
+                -->
+                <message-type>javax.jms.TextMessage</message-type>
+
+                <!--
+                   Optional and defaults to DEFAULT_PRIORITY. The JMS priority for messages sent by Flex producers
+                   Supported modes are DEFAULT_PRIORITY or a number indicating the message priority.
+                <message-priority>DEFAULT_PRIORITY</message-priority>
+                -->
+
+                <!--
+                   Optional and defaults to true. This determines whether the adapter
+                   will preserve standard JMS headers from JMS messages to Flex messages.
+                   <preserve-jms-headers>true</preserve-jms-headers>
+                -->
+
+                <!--
+                    Optional and defaults to 1. This is the maximum number of producer proxies that
+                    this destination should use when communicating with the JMS Server.
+                    The default is 1 which implies all clients using this destinatin will
+                    share the same connection to the JMS server.
+                <max-producers>1</max-producers>
+                -->
+
+                <!-- Optional JNDI environment. Use when using JMS on a remote JNDI server.
+                     Used to specify the JNDI environment to access an external JMS provider.
+                <initial-context-environment>
+                    <property>
+                        <name>Context.SECURITY_PRINCIPAL</name>
+                        <value>anonymous</value>
+                    </property>
+                    <property>
+                        <name>Context.SECURITY_CREDENTIALS</name>
+                        <value>anonymous</value>
+                    </property>
+                    <property>
+                        <name>Context.PROVIDER_URL</name>
+                        <value>http://localhost:1856</value>
+                    </property>
+                    <property>
+                        <name>Context.INITIAL_CONTEXT_FACTORY</name>
+                        <value>fiorano.jms.runtime.naming.FioranoInitialContextFactory</value>
+                    </property>
+                </initial-context-environment>
+                -->
+            </jms>
+            <network>
+                <!-- add the destination to the cluster defined in the service-config.xml. The shared-backend
+                    defaults to false. If it is set to true, the destination sends the message to the backend
+                    system, such as an external JMS server, only once. Other cluster members won't broadcast
+                    the same message to the backend system any more.
+                -->
+                <cluster ref="default-cluster" shared-backend="false" />
+            </network>
+        </properties>
+
+        <channels>
+            <channel ref="my-polling-amf"/>
+        </channels>
+
+        <!--
+            This destination-level security constraint will be checked on every client interaction
+            with the destination (publishing/subscribing/etc.).
+            It may be used in tandem with the finer-grained 'send-security-constraint' and
+            'subscribe-security-constraint' defined above for this destination; the fine-grained
+            constraints are checked only for those specific actions and only after this top level
+            constraint has been satisfied.
+        -->
+        <security>
+            <security-constraint ref="sample-users"/>
+        </security>
+
+    </destination>
+
+    <!--
+        A messaging destination with inbound and outbound throttling which
+        is used to limit the frequency of inbound and outbound messages. Throttling
+        can be set up destination wide (max-frequency) or per destination-client
+        (max-client-frequency) with different inbound and outbound policies to
+        determine what happens when limit is reached. All throttling frequency values
+        are considered to be the maximum allowed messages per second with zero
+        frequency disabling throttling.
+    -->
+    <destination id="MyTopic_Throttled">
+        <properties>
+            <network>
+                <!--
+                    Optional. Inbound throttling policy can be NONE, ERROR, or IGNORE.
+                    NONE means throttling is disabled (same as zero frequency). In ERROR,
+                    when the limit is reached, the message is dropped, and the client
+                    is notified about it with an error message. In IGNORE, when the limit
+                    is reached, the message is simply dropped without notifying the client.
+                <throttle-inbound policy="ERROR" max-frequency="0" max-client-frequency="0"/>
+                -->
+                <!--
+                    Optional. Outbound throttling policy can be NONE or IGNORE.
+                    NONE means throttling is disabled (same as zero frequency). In IGNORE,
+                    when the limit is reached, the message is simply dropped without
+                    notifying the client.
+                <throttle-outbound policy="IGNORE" max-frequency="0" max-client-frequency="0"/>
+                -->
+            </network>
+        </properties>
+        <channels>
+            <channel ref="my-polling-amf"/>
+        </channels>
+    </destination>
+
+    <!-- ======================================== -->
+    <!--  ColdFusion Messaging Gateway            -->
+    <!-- ======================================== -->
+    <destination id="ColdFusionGateway">
+        <adapter ref="cfgateway" />
+        <properties>
+            <!--
+                Star ('*') means gatewayid is found in the 'gatewayid' message header.
+                To restrict this destination to a specific gateway, enter its ID here
+            -->
+            <gatewayid>*</gatewayid>
+
+            <!--
+                If ColdFusion is running on a different host, enter that here.
+                Default is to look for ColdFusion on this computer.
+
+            <gatewayhost>10.1.1.1</gatewayhost>
+            -->
+
+            <!--
+                List the IP addresses of CF machines allowed to send messages to this destination
+                If not set, the default is to allow only this computer to connect.
+
+            <allowedIPs>10.1.1.1,10.2.2.2</allowedIPs>
+            -->
+
+            <!--
+                Credentials to pass along in the headers as CFUsername/CFPassword.
+                It is generally better to use setRemoteCredentials() API on client.
+
+            <remote-username></remote-username>
+            <remote-password></remote-password>
+            -->
+
+            <!--
+                You can add general Flex Messaging network and server properties here.
+             -->
+
+        </properties>
+        <!--
+            These channels will work unless you want to pass value objects
+            (objects that get translated to and from CFCs) in your messages.
+            In that case, use the "cf-dataservice-rtmp" and "cf-polling-amf channels".
+        -->
+        <channels>
+            <channel ref="my-polling-amf"/>
+        </channels>
+    </destination>
+</service>

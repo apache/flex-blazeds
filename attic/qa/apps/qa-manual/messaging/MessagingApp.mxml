@@ -1,0 +1,416 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" width="1000" height="900" creationComplete="run()">
+    <mx:Script>
+        <![CDATA[
+	       
+        	import mx.collections.ArrayCollection;        
+            import mx.utils.ArrayUtil;
+            import mx.events.ListEvent;
+            import mx.events.PropertyChangeEvent;
+            import mx.messaging.*;
+            import mx.messaging.messages.*;
+            import mx.messaging.events.*;
+            import mx.messaging.errors.*;
+            import mx.messaging.channels.*
+            import mx.messaging.config.*;
+            import mx.controls.Alert;
+	        /*************************************************************************************
+			*   This is a general purpose app for testing messaging destinations and channels. 
+			*   The app gets the list of messaging destinations from the ServerConfig objects and 
+			*   diplays them in a drop down. When a destination is selected the list of channels 
+			*   that are available for that destination are used to populate the channel drop downs 
+			*   for the producer and the consumer. By selecting a channel for the producer and consumer
+			*   you can then send and receive messages over the selected channels. The consumer can 
+			*   can use a list of channels rather than a single channel to test failover scenarios. 
+			**************************************************************************************/
+	        ////////////////////////////////////////////////////////////////////////////
+	        //
+	        // Variables
+	        //
+	        ////////////////////////////////////////////////////////////////////////////             
+            [Bindable]
+            /**
+            * Used to store the list of channels available for the selected destination.
+            */ 
+            public var availableChannels:Array = new Array();
+
+            [Bindable]
+            /**
+            * Consumer instance used to receive messages from the selected destination. 
+            */  
+            public var con:Consumer = new Consumer();
+            [Bindable]
+            /**
+            * Used to store channels used by the consumer. Consumer can have multiple channels
+            * to test failover rather that just using the selected cheannel in the channels drop down.
+            */ 
+            private var conChannels:ArrayCollection = new ArrayCollection(); 
+            /**
+            * Default destination to have selected in the destinations drop down. 
+            */ 
+            public var defaultDestination:String = "MyTopic"; 
+            [Bindable]
+            /**
+            * List of messaging destination retrieved from ServerConfig
+            */
+            public var destinations:XMLList;   
+            /**
+            * Keeps track of the last selected destination in the destinations drop down. 
+            */ 
+            public var lastSelected:int;
+            /**
+            * Number of messages received by the Consumer. 
+            */  
+            public var messageCount:int = 0; 
+            /**
+            * When sending a burst of messages, this is the number of messages that have been sent.  
+            */
+            public var messageIterator:int = 0;
+            /**
+            * Number of messages to have the producer send in a burst. Messages are sent at the interval 
+            * used by the timer sendTimer 
+            */
+            public var numMessages:int = 1000;
+            [Bindable]
+            /**
+            * Producer used to send messages to the selected destination
+            */
+            public var pro:Producer = new Producer;
+            /**
+            * Timer used when sending a burst of messages. 
+            */   
+            public var sendTimer:Timer = new Timer(10);
+	        ////////////////////////////////////////////////////////////////////////////
+	        //
+	        // Methods
+	        //
+	        ////////////////////////////////////////////////////////////////////////////             
+	        /**
+	        * Initialize the app by retrieving the list of messaging destinations from the ServerConfig
+	        * object and setting up event handlers for the producer and consumer.  
+	        */
+            public function run():void {
+                sendTimer.addEventListener(TimerEvent.TIMER, messageTimerHandler); 
+                availableChannels = (ServerConfig.getChannelSet(defaultDestination) as ChannelSet).channelIds;  
+                var xml:XML = ServerConfig.serverConfigData;                
+                destinations = xml.service.(@id == "message-service").destination.attribute("id");                                       
+                con.destination = defaultDestination;
+                pro.destination = defaultDestination;
+                
+                var destArray:Array = ArrayUtil.toArray(destinations_cb.dataProvider); 
+                for (var i:int = 0; i < destArray[0].length; i++) 
+                {
+                    if (destArray[0][i].toString() == defaultDestination) 
+                    {
+                        destinations_cb.selectedIndex = i;  
+                        lastSelected = i;  
+                        break;
+                    }                                
+                }
+                                
+                pro.addEventListener(MessageAckEvent.ACKNOWLEDGE, producerEventHandler);
+                pro.addEventListener(MessageFaultEvent.FAULT,producerEventHandler);             
+                pro.addEventListener(ChannelFaultEvent.FAULT,producerEventHandler);
+                
+                con.addEventListener(MessageAckEvent.ACKNOWLEDGE, consumerEventHandler);
+                con.addEventListener(MessageEvent.MESSAGE,consumerEventHandler);
+                con.addEventListener(MessageFaultEvent.FAULT,consumerEventHandler);
+                con.addEventListener(ChannelFaultEvent.FAULT,consumerEventHandler);
+				con.addEventListener(ChannelEvent.DISCONNECT, consumerEventHandler);
+                
+
+            }
+            /**
+            * Subscribe the consumer 
+            */  
+            public function createConsumer():void
+            {
+                if (con.subscribed) {
+                    Alert.show("Consumer is already subsribed");                 
+                } else {
+                    var channelStr:String = con_channels_cb.selectedItem as String;
+                    
+                    if (con.channelSet == null || (con.channelSet.currentChannel != null && con.channelSet.currentChannel.id != channelStr) ) { 
+                        var channelSet:ChannelSet = new ChannelSet();    
+                        var channel:Channel = ServerConfig.getChannel(channelStr);
+                        channelSet.addChannel(channel);                                
+                        con.channelSet = channelSet;    
+                    } 
+					if (resubscribeAttempts.text != "" && resubscribeAttempts != null)
+					{
+						con.resubscribeAttempts = parseInt(resubscribeAttempts.text); 		
+					}
+                    if (subscriber_field.text != "" && subscriber_field != null) {
+                        con.subscribe(subscriber_field.text);
+                    } else {
+                        con.subscribe();    
+                    }                   
+                }              
+            }
+            /**
+            * Add a channel to the consumer's ChannelSet. If the consumer 
+            * doesn't have a ChannelSet yet, create one.
+            */ 
+            public function addChannel():void
+            {
+            	if (con.channelSet == null) 
+            	{
+            		con.channelSet = new ChannelSet();  
+            	}
+            	var channelStr:String = con_channels_cb.selectedItem as String;
+            	var channel:Channel = ServerConfig.getChannel(channelStr);
+            	con.channelSet.addChannel(channel);             	
+            	conChannels.addItem(channel); 
+            }
+			/**
+            * Reset the ChannelSet for the Consumer. 
+            */ 
+            public function clearChannelSet():void 
+            {
+                if (con.channelSet != null)
+                {
+                    con.channelSet = null;
+                    conChannels = new ArrayCollection();
+                }
+            }
+            /**
+            * Call connect on the consumer's ChannelSet.
+            */ 
+            public function channelConnect():void 
+            {
+            	if (con.connected) {
+                    Alert.show("Already connected"); 		
+            	} else {
+            	    var channelStr:String = con_channels_cb.selectedItem as String;
+                    var channelSet:ChannelSet = new ChannelSet();                    
+                    if (con.channelSet == null || con.channelSet.currentChannel.id != channelStr) {                             
+                        var channel:Channel = ServerConfig.getChannel(channelStr);
+                        channelSet.addChannel(channel);                                
+                        con.channelSet = channelSet;    
+                    } 
+                   channelSet.connect(con);     	
+            	}
+            }
+			/**
+			 * Have the producer send a message. 
+			 */ 
+            public function sendMessage():void
+            {
+                var channelStr:String = pro_channels_cb.selectedItem as String;
+                
+                if (pro.channelSet == null || pro.channelSet.currentChannel.id != channelStr) {
+                    var channelSet:ChannelSet = new ChannelSet();                
+                    var channel:Channel = ServerConfig.getChannel(channelStr);
+                    channelSet.addChannel(channel);       
+                    pro.channelSet = channelSet;                             
+                }
+                var msg:AsyncMessage = new AsyncMessage();
+                msg.body = message_field.text;                   
+                pro.send(msg);
+            }
+            /**
+			 * Handle events on the consumer.
+			 */             
+            public function consumerEventHandler(e:Event):void
+            {                
+                if (e is ChannelFaultEvent) 
+                {
+                    var cfe:ChannelFaultEvent = e as ChannelFaultEvent;
+                    logConsumer("Consumer channel faulted: " + cfe.faultDetail);
+                } else if (e is MessageFaultEvent) 
+                {
+                    var mfe:MessageFaultEvent = e as MessageFaultEvent;
+                    logConsumer("Consumer received message fault: " + mfe.faultString);
+					logConsumer("Fault code: " + mfe.faultCode); 
+					logConsumer("Fault Detail: " + mfe.faultDetail);
+                } else if (e is MessageAckEvent) 
+                {
+                    var mae:MessageAckEvent = e as MessageAckEvent;
+                    logConsumer("Consumer received ack.");     
+                }  else if (e is MessageEvent) 
+                {
+                    var me:MessageEvent = e as MessageEvent;
+                    var headers:Object = me.message.headers;
+                   
+                    messageCount++;
+                    logConsumer("Received Message on "+ new Date());                
+                    //log(e.message.headers.displayText);
+                    logConsumer(me.message.body.toString());
+                    logConsumer("Current message count= " + messageCount); 
+                } else if (e is ChannelEvent) 
+				{
+					if(resubscribeOnDisconnect.selected)
+						con.subscribe();
+				}        
+            }
+            /**
+			 * Handle events on the producer 
+			 */ 
+            public function producerEventHandler(e:Event):void
+            {                
+                if (e is ChannelFaultEvent) 
+                {
+                    var cfe:ChannelFaultEvent = e as ChannelFaultEvent;
+                    logProducer("Producer channel faulted: " + cfe.faultDetail);
+                } else if (e is MessageFaultEvent) 
+                {
+                    var mfe:MessageFaultEvent = e as MessageFaultEvent;
+                    logProducer("Producer received message fault: " + mfe.faultDetail);
+                } else if (e is MessageAckEvent) 
+                {
+                    logProducer("Received Message ack "+ new Date());                                     
+                }            
+            }
+            /**
+            * Used to log messages to the consumer log text field 
+            */ 
+            public function logConsumer(m:String):void
+            {
+                consumer_out.text += m+ "\n";
+            }
+            /**
+			 * Used to log messages to the producer log text field 
+			 */ 
+            public function logProducer(m:String):void 
+            {
+                producer_out.text += m+ "\n";
+            }
+            /**
+            * Timer event handler used when sending a burst of messages.
+            */ 
+            public function messageTimerHandler(event:TimerEvent):void {
+                if (numMessages > messageIterator) {
+                    messageIterator++;
+                    sendMessage();    
+                    logProducer("send count=" + messageIterator);
+                } else {
+                    sendTimer.stop();    
+                    messageIterator = 0;
+                }
+                
+            }
+            /**
+            * Reset the count of the number of messages received by the consumer.
+            */ 
+            public function resetMessageCount():void {
+                messageCount = 0;     
+            }
+            /**
+            * Called when the destination drop down changes. If the consumer or the producer
+            * is still connected trying to change the destination will result in an error. 
+            */ 
+            public function destinationChanged(event:ListEvent):void {
+                if (con.destination != destinations_cb.selectedLabel || pro.destination != destinations_cb.selectedLabel) 
+                {
+                    var destination:String = event.currentTarget.selectedLabel;
+                    
+                    if (con.subscribed || pro.connected) {
+                        Alert.show("You must disconnect both the Consumer and Producer to change the destination");
+                        event.currentTarget.selectedIndex = lastSelected;
+                           
+                    } else { 
+                        lastSelected = event.currentTarget.selectedIndex;                
+                        con.destination = destination;
+                        pro.destination = destination;    
+                        availableChannels = (ServerConfig.getChannelSet(destination) as ChannelSet).channelIds;
+                    }
+                }    
+            }
+
+
+        ]]>
+    </mx:Script>
+    <mx:Label text="Messaging Test" fontSize="16"/>
+    <mx:ComboBox dataProvider="{destinations}" id="destinations_cb" change="destinationChanged(event)"/>
+    <mx:HBox>
+        <mx:VBox borderStyle="solid" borderThickness="2">
+            <mx:Label text="Consumer"/>
+                <mx:HBox>
+                    <mx:TextArea width="300" height="300" id="consumer_out"/>
+                    <mx:Button label="clear" click="consumer_out.text=''"/>    
+                </mx:HBox>
+                
+            <mx:HBox>
+                <mx:Label text="channels:"/>
+                <mx:ComboBox id="con_channels_cb" dataProvider="{availableChannels}"/>
+            </mx:HBox>
+             <mx:HBox>
+                <mx:Label text="Subscriber ID"/>
+                <mx:TextInput id="subscriber_field"/>        
+            </mx:HBox> 
+            <mx:HBox>
+                <mx:Button label="Subscribe" click="createConsumer()" enabled="{!con.subscribed}"/>
+                <mx:Button label="Unsubscribe" click="con.unsubscribe()" enabled="{con.subscribed}"/>  
+				<mx:CheckBox label="resubscribe on disconnect" id="resubscribeOnDisconnect"/>                   
+            </mx:HBox>  
+            <mx:HBox>
+                <mx:Button label="Connect" click="channelConnect()" enabled="{!con.connected}"/>
+                <mx:Button label="Disconnect" click="con.disconnect();" enabled="{con.connected}"/>
+                <mx:Button label="Add Channel" click="addChannel()"/>   
+                <mx:Button label="Clear ChannelSet" click="clearChannelSet()"/>                                  
+            </mx:HBox>    
+			<mx:HBox>
+				<mx:Label text="resubscribeAttempts"/>
+				<mx:TextInput id="resubscribeAttempts" enabled="{!con.connected}"/>
+			</mx:HBox>
+            <mx:DataGrid id="channelsGrid" dataProvider="{conChannels}" width="600">
+			    <mx:columns>
+			      <mx:Array>
+			        <mx:DataGridColumn headerText="endpoint" dataField="endpoint" visible="true" />
+			        <mx:DataGridColumn headerText="connected" dataField="connected" visible="true" />
+			        <mx:DataGridColumn headerText="authed" dataField="authed" visible="true" />        
+			        <mx:DataGridColumn headerText="pollingEnabled" dataField="pollingEnabled" visible="true" />     
+				<mx:DataGridColumn headerText="pollingInterval" dataField="pollingInterval" visible="true" />     
+			       </mx:Array>
+			    </mx:columns>    
+            </mx:DataGrid>
+            <mx:HBox>                               
+                <mx:Button click="logConsumer('messageCount='+messageCount)" label="printMessageCount"/>
+                <mx:Button click="messageCount=0;" label="resetMessageCount"/>
+            </mx:HBox>
+        </mx:VBox>
+        <mx:VBox borderStyle="solid" borderThickness="2">
+            <mx:Label text="Producer"/>
+            <mx:HBox>
+                <mx:TextArea width="300" height="300" id="producer_out"/>
+                <mx:Button label="clear" click="producer_out.text=''"/>    
+            </mx:HBox>
+            
+            <mx:HBox>
+                <mx:Label text="channels:"/>
+                <mx:ComboBox id="pro_channels_cb" dataProvider="{availableChannels}"/>
+            </mx:HBox>
+            <mx:HBox>
+                <mx:Label text="message"/>
+                <mx:TextInput id="message_field" width="200"/>           
+            </mx:HBox>
+            <mx:HBox>
+                <mx:Button click="sendMessage()" label="sendMessage"/>
+                <mx:Button click="sendTimer.start();" label="sendMessages(1000)"/>                                   
+            </mx:HBox>
+            <mx:HBox>
+                <mx:Button label="Disconnect" click="pro.disconnect()" enabled="{pro.connected}"/>                                     
+            </mx:HBox>
+        </mx:VBox>
+    </mx:HBox>
+           
+    <mx:TraceTarget level="0"/>
+</mx:Application>

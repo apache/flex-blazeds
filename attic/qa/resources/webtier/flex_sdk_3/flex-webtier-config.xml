@@ -1,0 +1,147 @@
+<!--
+
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-->
+<flex-webtier-config>
+    <!-- When production-mode is true: all debugging options are set to false and
+          compiler dependency check is turned off so apps will not automatically
+          be recompiled when source files are modified. -->
+    <production-mode>false</production-mode>
+
+    <!-- specifies whether or not to use incremental compile -->
+    <!-- with incremental compile is true, when an mxml document is requested,
+         only that file and dependent files which have changed will recompiled.
+         with incremental compile is false, when an mxml document is requested,
+         that file and all dependent files are recompiled.  -->
+    <incremental-compile>false</incremental-compile>
+
+    <debugging>
+        <!-- allow override of values in debugging section via
+             query parameter on a per-request basis, if applicable -->
+        <process-debug-query-params>true</process-debug-query-params>
+
+        <!-- write generated swfs/swds to disk -->
+        <keep-generated-swfs>true</keep-generated-swfs>
+
+        <!-- show all compiler warnings -->
+        <!-- query parameter override - ?showAllWarnings=true/?showAllWarnings=false -->
+        <show-all-warnings>true</show-all-warnings>
+
+        <!-- When show-all-warnings is true, this value controls whether or not
+             compiler override warnings are shown. When show-all-warnings is false,
+             this value will have no effect. -->
+        <show-override-warnings>true</show-override-warnings>
+
+        <!-- display stack traces in browser error messages -->
+        <!--<show-stacktraces-in-browser>true</show-stacktraces-in-browser>-->
+
+        <!-- if true, source code context lines will be shown in the error pages -->
+        <show-source-in-compiler-errors>true</show-source-in-compiler-errors>
+
+        <!-- if true, compiler errors are logged to the Logger as errors -->
+        <log-compiler-errors>true</log-compiler-errors>
+
+    </debugging>
+
+    <cache>
+        <!-- content cache for SWFs, number of entries -->
+        <content-size>10</content-size>
+        <!-- source cache for inline content JSP tag library, number of entries -->
+        <jsp-source-cache-size>20</jsp-source-cache-size>
+        <!-- force a check for validation of page freshness every XX seconds -->
+        <http-maximum-age>1</http-maximum-age>
+        <!-- check for changes to dependent files on disk if it hasn't been checked in XX seconds -->
+        <!-- when production-mode is true, the dependent files are only checked once -->
+        <file-watcher-interval>1</file-watcher-interval>
+    </cache>
+
+    <!-- enable history management (back button) -->
+    <use-history-management>true</use-history-management>
+
+    <flash-player>
+        <!-- enable/disable player detection -->
+        <use-player-detection>true</use-player-detection>
+
+        <!-- enable seamless upgrade of the player via Flash Player Download site at Adobe -->
+        <use-express-install>true</use-express-install>
+
+        <!-- require 10.0.0 -->
+        <!-- required major player version -->
+        <required-major-version>9</required-major-version>
+        <!-- 'dot' release of the required player -->
+        <required-minor-version>0</required-minor-version>
+        <!-- minor version revision number of the required player -->
+        <required-version-revision>0</required-version-revision>
+
+        <!--
+        With use-express-install=true, the alternate content is shown when there is no Flash Player installed or
+        when the Flash Player version is less than v6.0.65 and express install can't run.
+
+        With use-express-install=false, the alternate content is shown when there is no Flash Player installed or
+        when the installed version is less than the required version.
+
+        If you specify both alternate-content-page and alternate-content-include, 
+        alternate-content-page will be used and alternate-content-include will be ignored.
+
+        alternate-content-page - alternate content page to display
+        alternate-content-include - alternate content to be included in doc.write("my alternate content");
+        
+        The following are used to specify secure versions of the above settings.
+        When the original request is an https request, the secure configuration is used.
+        If no secure settings are specified, an internal default secure settings is used.
+        
+        secure-alternate-content-page - alternate content page to display
+        secure-alternate-content-include - alternate content to be included in doc.write("my alternate content");
+
+        -->
+        <!--
+        <alternate-content-page>http://www.adobe.com/go/getflashplayer</alternate-content-page>
+        -->
+        
+        <alternate-content-include><![CDATA[This content requires the Adobe Flash Player 9. <a href=http://www.adobe.com/go/getflashplayer/>Get Flash</a>]]></alternate-content-include>
+        
+        <secure-alternate-content-include><![CDATA[This content requires the Adobe Flash Player 9. <a href=https://www.adobe.com/go/getflashplayer/>Get Flash</a>]]></secure-alternate-content-include>
+
+    </flash-player>
+
+    <logging>
+        <!-- level of logging - error, warn, info, debug -->
+        <level>info</level>
+        <!-- console messages are logged to System.out -->
+        <console>
+            <!-- enable/disable console logging -->
+            <enable>true</enable>
+        </console>
+
+        <!-- file messages are logged to the specified file name -->
+        <file>
+            <!-- enable/disable file logging -->
+            <enable>true</enable>
+            <!-- log file location -->
+            <!-- location may be an absolute path -->
+            <!-- or, location may start with '/' and specify a virtual path which can be resolved by the getRealPath method of the ServletContext -->
+            <file-name>/WEB-INF/flex/logs/flex.log</file-name>
+            <!-- maximum log file size -->
+            <maximum-size>200KB</maximum-size>
+            <!-- maximum number of backup log files to maintain -->
+            <maximum-backups>3</maximum-backups>
+        </file>
+    </logging>
+
+    <flex-config file-path="flex-config.xml" />
+
+</flex-webtier-config>

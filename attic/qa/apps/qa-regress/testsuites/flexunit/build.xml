@@ -1,0 +1,376 @@
+<!--
+
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-->
+<project name="flexunit-enterprise" default="main" basedir="../../../..">
+
+	<property environment="env"/>
+    <property name="ant-contrib.jar" location="${env.ANT_HOME}/lib/ant-contrib-1.0b2.jar"/>
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${ant-contrib.jar}"/>
+	    
+	<property name="HOMEPATH" value="${env.HOMEDRIVE}${env.HOMEPATH}" />
+
+    <property name="qa.dir" value="${basedir}" />	
+	<!--  automation.build is passed on from automation.xml  -->	
+	<property name="automation.build" value="${qa.dir}/build.xml"/>
+	
+    <property name="blazeds.dir" value="${qa.dir}/../" />
+
+	<property name="compiler.type" value="mxmlc"/>	
+	<property name="frameworks.dir" value="${blazeds.dir}/frameworks" />
+	
+	<property name="flexunit.test.dir" location="${qa.dir}/apps/qa-regress/testsuites/flexunit" />	
+    <property name="flexunit.gen.dir" value="${flexunit.test.dir}/gen" />
+
+    <property name="branch" value="mainline" />
+    <property name="product" value="server" />
+	<property name="appserver" value="tomcat"/>
+	<!--set default value of appserver.dir -->
+	<property name="appserver.dir" value="${blazeds.dir}/servers/apache-tomcat-6.0.29"/>
+	<property name="tomcat.dir" value="${appserver.dir}"/>
+
+	
+    <property name="mxmlc.dir" value="${blazeds.dir}/bin" />
+    <property name="mxmlc.timeout" value="300" />
+
+    <!-- indicates whether report should be shown always or only on errors -->
+    <property name="alwaysshowreport" value="true" />
+
+    <if>
+        <isset property="env.PROGRAMFILES"/>
+        <then>
+            <!-- If running under cygwin -->
+            <property name="browser" value="${env.PROGRAMFILES}/Internet Explorer/iexplore" />
+        </then>
+    <elseif>
+    	<isset property="env.ProgramFiles"/>
+    	<then>
+            <!-- If running from cmd.exe  -->
+            <property name="browser" value="${env.ProgramFiles}/Internet Explorer/iexplore" />
+        </then>        
+    </elseif>
+    <elseif>
+        <os family="mac"/>
+        <then>
+            <property name="browser" value="MacSafari" />
+        </then>
+    </elseif>
+    <else>
+    	<!-- If not running on Windows you must explicitly override browser property -->
+    	<property name="browser" value=""/>
+    </else>
+    </if>
+
+    <property name="result.socket" value="http://localhost:8085/sendReport.xml" />
+    <property name="browserType" value="ie" />
+	<property name="browserServer" value="" />
+	<property name="browserServerPort" value="7777" />
+
+	<property name="timeout" value="240" />
+    
+    <property name="feature" value="full" />    
+
+    <property file="${qa.dir}/features/${feature}.properties" /> <!-- includes only feature -->
+    <property file="${qa.dir}/features/full.properties" />       <!-- includes all filesets -->
+
+    <property name="filename" value="${feature}_runner" />
+	
+	<!--this property is passed in via regression.properties -->
+	<property name="http.url" value="http://localhost:8400"/>
+    <property name="appserver.baseurl" value="${http.url}"/>	
+	<property name="appserver.qa.contextroot" value="qa-regress"/>
+    <property name="webapp_url" value="${appserver.baseurl}/${appserver.qa.contextroot}" />
+    <property name="swf_url" value="${webapp_url}/testsuites/flexunit"/>
+
+    <!-- Where the qa reports will be created -->
+    <property name="qa.reports" value="${flexunit.test.dir}/reports"/>
+
+    <!-- used to specify output files from JUnit.  Value can be 'plain' or 'xml'. -->
+    <property name="qa.junit.format" value="xml"/>
+
+    <!-- extension to place on output file names -->
+    <property name="qa.junit.ext" value=".xml"/>
+	
+	<!-- set default value for junit.jar -->
+	<property name="junit.jar" value="${env.ANT_HOME}/lib/junit.jar"/>
+
+    <property name="buildURL" value="true" />
+
+	<path id="flex.qa.classpath">
+        <pathelement location="${junit.jar}" />
+        <pathelement location="${flexunit.gen.dir}/classes" />
+		<fileset dir="${qa.dir}/lib">
+		    <include name="*.jar"/>
+		</fileset>
+	</path>
+
+    <taskdef name="flexUnitTask" classname="tools.ant.FlexUnitTask">
+    	<classpath refid="flex.qa.classpath"/>
+    </taskdef>
+
+	<!-- only run unit tests if junit present -->
+    <condition property="junit.available">
+        <available file="${junit.jar}" />
+    </condition>
+
+    <target name="setup" description="--> set platform specific properties">
+        <fail unless="junit.available">FlexUnit test can not be run as junit.jar was not found at ${junit.jar}. See http://www.junit.org</fail>
+    	<echo>automation=${automation}</echo>
+
+        <osfamily property="os.family"/>
+        <switch value="${os.family}">
+            <case value="windows">
+                <property name="mxmlc.exe" value="mxmlc.exe"/>
+            </case>
+            <case value="unix">
+                <property name="mxmlc.exe" value="mxmlc"/>
+            </case>
+        </switch>
+        
+        <property file="${qa.dir}/features/excludes.properties" />      
+
+        <!-- get all excludes -->
+        <propertycopy name="server.flexunit.excludes" from="flexunit.${product}.all.excludes" silent="true" />
+    	
+        <!-- appserver specific excludes -->        
+        <propertycopy name="flexunit.appserver.excludes" from="flexunit.${appserver}.excludes" silent="true" />
+
+    </target>
+
+
+    <target name="clean">        
+        <delete quiet="true">
+            <fileset dir="${flexunit.test.dir}">            	
+            	<include name="*generated_runner.*" />            	              
+            </fileset>
+        </delete>
+        <echo message="Deleting old results and files from previous testsuite build"/>
+        <delete dir="${qa.reports}" quiet="true"/>
+        <delete dir="${flexunit.gen.dir}" quiet="true"/>
+        <delete file="${flexunit.test.dir}/anyfailures" quiet="true" />
+
+    </target>
+    
+    <target name="main" depends="clean,setup,run,viewreport"
+        description="Target for doing a full run based on class lists in full.properties.  Add -Dfeature=xx to point to a property file to include a subset of those lists OR specify -Dserver.flexunit.features if you know the name of a specific fileset." />
+
+    <target name="run">
+        <mkdir dir="${qa.reports}"/>
+    	<antcall target="startserver"/>
+		<foreach list="${server.flexunit.features}"
+				param="fileset_name"
+				target="autobuild_foreach_fileset"
+				inheritall="true" />
+        <antcall target="report" />
+        <!-- JUnit tests need the server running and will
+             stop the server after they run.
+    	<antcall target="stopserver"/>
+    	-->
+        <property file="${flexunit.test.dir}/anyfailures"/>
+    </target>
+    
+
+	
+	<target name="compile-swf">
+		   <property name="FLEX_HOME" value="${blazeds.dir}"/>
+		   <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />    
+	       
+		   <property name="config.dir" value="${qa.dir}/apps/qa-regress/WEB-INF/flex" />
+		   <mxmlc file="${flexunit.test.dir}/${fileset_name}_generated_runner.mxml" 
+	            output="${flexunit.test.dir}/${fileset_name}_generated_runner.swf"
+	            actionscript-file-encoding="UTF-8"
+	            keep-generated-actionscript="false"
+	            incremental="false"
+	            services="${config.dir}/services-config.xml"
+	            context-root="${appserver.qa.contextroot}" 
+	            locale="en_US">
+	            <load-config filename="${config.dir}/flex-config.xml"/>
+	        </mxmlc>
+		    <java classname="utils.CreateHTMLShell"  >
+			  <classpath refid="flex.qa.classpath"/>
+		       <arg line="${flexunit.test.dir}/${fileset_name}_generated_runner.mxml" />
+		    </java>        
+	</target>
+	
+    <target name="autobuild_foreach_fileset">
+    	<propertycopy name="current_fileset" from="server.flexunit.includes.${fileset_name}" silent="true"/>
+        <echo>Fileset name=${fileset_name}</echo>
+
+        <!-- code gen runner mxml file -->
+        <flexUnitTask executable="${mxmlc.dir}/${mxmlc.exe}"
+        	    seedFileStart="${flexunit.test.dir}/_seedFileStart.txt"
+        	    seedFileEnd="${flexunit.test.dir}/_seedFileEnd.txt"
+                buildSwf="false"
+        	    runnerFilename="${flexunit.test.dir}/${fileset_name}_generated_runner.mxml">
+        	
+        	<fileset id = "server.flexunit.classes" dir="${flexunit.test.dir}/src"
+        		includes="${current_fileset}"
+        		excludes="${server.flexunit.excludes},${flexunit.bugs.excludes},${flexunit.appserver.excludes}" />
+        	
+        </flexUnitTask>
+
+        <fileset id="server.flexunit.classes" dir="${flexunit.test.dir}/src"
+            includes="${current_fileset}"
+            excludes="${flexunit.server.all.excludes},${flexunit.bugs.excludes},${flexunit.appserver.excludes}"/>
+
+        <!-- code gen and build JUnit mirror of FlexUnit runner -->
+        <pathconvert pathSep=" " property="server.flexunit.files" refid="server.flexunit.classes"/>
+        
+		<mkdir dir="${flexunit.gen.dir}/src/testcases/flexunit" />
+        <java classname="flexunit.server.GenerateFlexUnitTest">
+        	<classpath refid="flex.qa.classpath" />
+        	<sysproperty key="feature" value="${fileset_name}" />
+            <sysproperty key="runner" value="${flexunit.test.dir}/${fileset_name}_generated_runner.mxml"/>
+        	<sysproperty key="outputdir" value="${flexunit.gen.dir}/src" />
+            <sysproperty key="basedir" value="${flexunit.test.dir}" />
+        	<sysproperty key="debug" value="false" />
+        	<sysproperty key="mxmlc.args" value="${mxmlc.args}"/>
+        	<sysproperty key="compiler" value="${compiler.type}"/>
+
+        	<arg line="${server.flexunit.files}" />
+        </java>
+
+        <antcall target="compilegentests" />
+
+    	<!-- if webtier compiler is not used, then precompile swfs -->
+        <if>
+            <equals arg1="${compiler.type}" arg2="mxmlc" />
+
+            <then>                
+            	<antcall target="compile-swf"/>
+            </then>       
+        </if>
+    	
+    	
+    	<echo message="running FlexUnit tests" />
+    	
+        <junit printsummary="yes" fork="yes" maxmemory="1024m" timeout="900000" showoutput="yes"
+            haltonerror="${qa.junit.haltonerror}"
+            haltonfailure="${qa.junit.haltonfailure}"
+            failureproperty="featurefailed" >
+            <sysproperty key="browser" value="${browser}" />
+			<sysproperty key="resultSocket" value="${result.socket}" />
+            <sysproperty key="browserType" value="${browserType}" />
+            <sysproperty key="browserServer" value="${browserServer}" />
+            <sysproperty key="browserServerPort" value="${browserServerPort}" />
+            <sysproperty key="mxmlcdir" value="${mxmlc.dir}"/>
+            <sysproperty key="flexunit" value="$flexunit.test.dir}"/>
+            <sysproperty key="buildURL" value="${buildURL}" />
+            <sysproperty key="mxmlcexe" value="${mxmlc.exe}"/>
+            <sysproperty key="mxmlc.args" value="${mxmlc.args}"/>
+            <sysproperty key="mxmlc.timeout" value="${mxmlc.timeout}"/>            
+            <sysproperty key="player.run.timeout" value="${timeout}"/>            
+            <sysproperty key="frameworks" value="${frameworks.dir}"/>
+            <sysproperty key="HOMEPATH" value="${HOMEPATH}" />
+            <sysproperty key="flexunit.tests.basedir" value="${flexunit.test.dir}"/>
+            <sysproperty key="qa.app.url" value="${webapp_url}"/>
+
+            <classpath refid="flex.qa.classpath"/>
+            <formatter type="${qa.junit.format}" extension="${qa.junit.ext}"/>
+            <batchtest fork="yes" todir="${qa.reports}">
+                <fileset dir="${flexunit.gen.dir}/src"
+                    includes="**/${fileset_name}_generated_runner_mxml.java"
+                    excludes=""/>
+            </batchtest>
+        </junit>
+
+        <if>
+            <equals arg1="${featurefailed}" arg2="true" />
+            <then>
+                <propertyfile file="${flexunit.test.dir}/anyfailures" >
+                    <entry key="failed" value="true" />
+                </propertyfile>
+            </then>
+        </if>
+
+
+    </target>
+
+
+    <target name="compilegentests" description="--> compile the generated tests">
+    	<mkdir dir="${flexunit.gen.dir}/classes" />
+        <javac srcdir="${flexunit.gen.dir}/src" destdir="${flexunit.gen.dir}/classes" debug="true" nowarn="true">
+          <classpath refid="flex.qa.classpath" />
+        </javac>
+    </target>
+
+
+    <target name="report" description="--> create html report">
+        <replace dir="${qa.reports}" token="\" value="/">
+            <include name="TEST-*.xml"/>
+        </replace>
+
+        <junitreport todir="${qa.reports}">
+            <fileset dir="${qa.reports}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" styledir="${flexunit.test.dir}/stylesheets" todir="${qa.reports}/html"/>
+        </junitreport>
+    </target>
+
+
+    <target name="viewreport" unless="nevershowreport" description="--> view the report in a browser">
+
+        <if>
+            <and>
+                <equals arg1="${alwaysshowreport}" arg2="false" />
+                <not>
+                    <equals arg1="${failed}" arg2="true" />
+                </not>
+            </and>
+            <then>
+                <echo>Skipping viewreport because alwaysshowreport=${alwaysshowreport} and failed=${failed}.</echo>
+            </then>
+            <else>
+                <echo message="execing browser"/>
+                <if>
+               	    <os family="mac"/>
+                <then>
+                    <exec executable="open" dir="${qa.reports}/html">
+                        <arg line="-n -a Safari ${qa.reports}/html/index.html"/>
+                    </exec>    
+                </then>
+                <else>
+                    <exec executable="${browser}" dir="${qa.reports}/html">
+                        <arg path="${qa.reports}/html/index.html"/>
+                    </exec>
+               	</else>
+              	</if>
+
+            </else>
+        </if>
+    </target>
+
+
+    <target name="startserver">
+        <ant antfile="${automation.build}" target="appServer.start">
+            <property name="appserver" value="${appserver}"/>
+            <property name="tomcat.dir" value="${tomcat.dir}"/>           
+        </ant>
+    </target>
+
+
+    <target name="stopserver">
+        <ant antfile="${automation.build}" target="appServer.stop">
+            <property name="appserver" value="${appserver}"/>
+            <property name="tomcat.dir" value="${tomcat.dir}"/>            
+        </ant>
+    </target>
+
+
+</project>
+
