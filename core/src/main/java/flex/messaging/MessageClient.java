@@ -18,7 +18,6 @@ package flex.messaging;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -109,8 +108,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      */
     public static void addMessageClientCreatedListener(MessageClientListener listener)
     {
-        if (listener != null)
+        if (listener != null) {
             createdListeners.addIfAbsent(listener);
+        }
     }
 
     /**
@@ -122,8 +122,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      */
     public static void removeMessageClientCreatedListener(MessageClientListener listener)
     {
-        if (listener != null)
+        if (listener != null) {
             createdListeners.remove(listener);
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -137,7 +138,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      */
     private static boolean equalStrings(String a, String b)
     {
-        return a == b || (a != null && a.equals(b));
+        return a != null && a.equals(b);
     }
 
     /**
@@ -145,14 +146,13 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      */
     static int compareStrings(String a, String b)
     {
-        if (a == b)
-            return 0;
-
-        if (a != null && b != null)
+        if (a != null && b != null) {
             return a.compareTo(b);
+        }
 
-        if (a == null)
+        if (a == null) {
             return -1;
+        }
 
         return 1;
     }
@@ -198,10 +198,14 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         if (useSession)
         {
             flexSession = FlexContext.getFlexSession();
-            flexSession.registerMessageClient(this);
+            if(flexSession != null) {
+                flexSession.registerMessageClient(this);
+            }
 
             flexClient = FlexContext.getFlexClient();
-            flexClient.registerMessageClient(this);
+            if(flexClient != null) {
+                flexClient.registerMessageClient(this);
+            }
 
             // SubscriptionManager will notify the created listeners, once
             // subscription state is setup completely.
@@ -211,13 +215,12 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         {
             flexClient = null;
             flexSession = null;
-            // Use an instance level lock.
-            lock = new Object();
             // On a remote server we don't notify created listeners.
         }
 
-        if (Log.isDebug())
+        if (Log.isDebug()) {
             Log.getLogger(MESSAGE_CLIENT_LOG_CATEGORY).debug("MessageClient created with clientId '" + this.clientId + "' for destination '" + destinationId + "'.");
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -255,7 +258,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     /**
      * The set of session destroy listeners to notify when the session is destroyed.
      */
-    private transient volatile CopyOnWriteArrayList destroyedListeners;
+    private transient volatile CopyOnWriteArrayList<MessageClientListener> destroyedListeners;
 
     /**
      * The Id for the endpoint this MessageClient subscription was created over.
@@ -281,7 +284,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     /**
      * The lock to use to guard all state changes for the MessageClient.
      */
-    protected Object lock = new Object();
+    protected final Object lock = new Object();
 
     /**
      * Flag indicating whether the MessageClient is attempting to notify the remote client of
@@ -482,8 +485,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
             {
                 synchronized (lock)
                 {
-                    if (destroyedListeners == null)
-                        destroyedListeners = new CopyOnWriteArrayList();
+                    if (destroyedListeners == null) {
+                        destroyedListeners = new CopyOnWriteArrayList<MessageClientListener>();
+                    }
                 }
             }
 
@@ -501,8 +505,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     public void removeMessageClientDestroyedListener(MessageClientListener listener)
     {
         // No need to check validity; removing a listener is always ok.
-        if (listener != null && destroyedListeners != null)
+        if (listener != null && destroyedListeners != null) {
             destroyedListeners.remove(listener);
+        }
     }
 
     /**
@@ -547,22 +552,25 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
             // only if the policy is not NONE, and a throttling limit is specified
             // either at the destination or by consumer.
             OutboundQueueThrottleManager throttleManager = getThrottleManager(true);
-            if (throttleManager != null)
+            if (throttleManager != null) {
                 throttleManager.registerDestination(destinationId, ts.getOutgoingClientFrequency(), ts.getOutboundPolicy());
+            }
         }
         else if (si.maxFrequency > 0) // Let the client know that maxFrequency will be ignored.
         {
-            if (Log.isWarn())
+            if (Log.isWarn()) {
                 Log.getLogger(MESSAGE_CLIENT_LOG_CATEGORY).warn("MessageClient with clientId '"
                         + clientId + "' for destination '" + destinationId
                         + "' specified a maxFrequency value of '" + si.maxFrequency
                         + "' but the destination does not define a throttling policy. This value will be ignored.");
+            }
         }
 
         // Now, register the subscription.
         OutboundQueueThrottleManager throttleManager = getThrottleManager(false);
-        if (throttleManager != null)
+        if (throttleManager != null) {
             throttleManager.registerSubscription(destinationId, si);
+        }
     }
 
     /**
@@ -620,8 +628,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
                 if (destination instanceof MessageDestination)
                 {
                     MessageDestination msgDestination = (MessageDestination)destination;
-                    if (msgDestination.getThrottleManager() != null)
+                    if (msgDestination.getThrottleManager() != null) {
                         msgDestination.getThrottleManager().removeClientThrottleMark(clientId);
+                    }
                 }
                 return true;
             }
@@ -640,8 +649,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         if (!createdListeners.isEmpty())
         {
             // CopyOnWriteArrayList is iteration-safe from ConcurrentModificationExceptions.
-            for (Iterator iter = createdListeners.iterator(); iter.hasNext();)
-                ((MessageClientListener)iter.next()).messageClientCreated(this);
+            for (MessageClientListener createdListener : createdListeners) {
+                createdListener.messageClientCreated(this);
+            }
         }
     }
 
@@ -655,14 +665,15 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      */
     public void resetEndpoint(String newEndpointId)
     {
-        String oldEndpointId = null;
-        FlexSession oldSession = null;
+        String oldEndpointId;
+        FlexSession oldSession;
         FlexSession newSession = FlexContext.getFlexSession();
         synchronized (lock)
         {
             // If anything is null, or nothing has changed, no need for a reset.
-            if (endpointId == null || newEndpointId == null || flexSession == null || newSession == null || (endpointId.equals(newEndpointId) && flexSession.equals(newSession)))
+            if (endpointId == null || newEndpointId == null || flexSession == null || newSession == null || (endpointId.equals(newEndpointId) && flexSession.equals(newSession))) {
                 return;
+            }
 
             oldEndpointId = endpointId;
             endpointId = newEndpointId;
@@ -672,28 +683,34 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         }
 
         // Unregister in order to reset the proper push settings in the re-registration below once the session association has been patched.
-        if (flexClient != null)
+        if (flexClient != null) {
             flexClient.unregisterMessageClient(this);
+        }
 
         // Clear out any reference to this subscription that the previously associated session has.
-        if (oldSession != null)
+        if (oldSession != null) {
             oldSession.unregisterMessageClient(this);
+        }
 
         // Associate the current session with this subscription.
-        if (flexSession != null)
+        if (flexSession != null) {
             flexSession.registerMessageClient(this);
+        }
 
         // Reset proper push settings.
-        if (flexClient != null)
+        if (flexClient != null) {
             flexClient.registerMessageClient(this);
+        }
 
         if (Log.isDebug())
         {
             String msg = "MessageClient with clientId '" + clientId + "' for destination '" + destinationId + "' has been reset as a result of a resubscribe.";
-            if (oldEndpointId != null && !oldEndpointId.equals(newEndpointId))
+            if (oldEndpointId != null && !oldEndpointId.equals(newEndpointId)) {
                 msg += " Endpoint change [" + oldEndpointId + " -> " + newEndpointId + "]";
-            if ((oldSession != null) && (newSession != null) && (oldSession != newSession)) // Test identity.
+            }
+            if ((oldSession != null) && (oldSession != newSession)) {
                 msg += " FlexSession change [" + oldSession.getClass().getName() + ":" + oldSession.getId() + " -> " + newSession.getClass().getName() + ":" + newSession.getId() + "]";
+            }
 
             Log.getLogger(MESSAGE_CLIENT_LOG_CATEGORY).debug(msg);
         }
@@ -719,8 +736,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         {
             for (SubscriptionInfo si : subscriptions)
             {
-                if (si.matches(message, subtopic, subtopicSeparator))
+                if (si.matches(message, subtopic, subtopicSeparator)) {
                     return true;
+                }
             }
         }
         return false;
@@ -761,8 +779,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     {
         synchronized (lock)
         {
-            if (!valid || invalidating)
+            if (!valid || invalidating) {
                 return; // Already shutting down.
+            }
 
             invalidating = true; // This thread gets to shut the MessageClient down.
             cancelTimeout();
@@ -778,7 +797,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
             msg.setDestination(destination.getId());
             msg.setClientId(clientId);
             msg.setOperation(CommandMessage.SUBSCRIPTION_INVALIDATE_OPERATION);
-            Set subscriberIds = new TreeSet();
+            Set<Object> subscriberIds = new TreeSet<Object>();
             subscriberIds.add(clientId);
             try
             {
@@ -794,9 +813,8 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         // Notify messageClientDestroyed listeners that we're being invalidated.
         if (destroyedListeners != null && !destroyedListeners.isEmpty())
         {
-            for (Iterator iter = destroyedListeners.iterator(); iter.hasNext();)
-            {
-                ((MessageClientListener)iter.next()).messageClientDestroyed(this);
+            for (Object destroyedListener : destroyedListeners) {
+                ((MessageClientListener) destroyedListener).messageClientDestroyed(this);
             }
             destroyedListeners.clear();
         }
@@ -830,8 +848,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
             }
             catch (MessageException me)
             {
-                if (Log.isDebug())
+                if (Log.isDebug()) {
                     Log.getLogger(MESSAGE_CLIENT_LOG_CATEGORY).debug("MessageClient: " + getClientId() + " issued an unsubscribe message during invalidation that was not processed but will continue with invalidation. Reason: " + ExceptionUtil.toString(me));
+                }
             }
         }
 
@@ -839,14 +858,16 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         {
             // If we didn't clean up all subscriptions log an error and continue with shutdown.
             int remainingSubscriptionCount = subscriptions.size();
-            if (remainingSubscriptionCount > 0 && Log.isError())
+            if (remainingSubscriptionCount > 0 && Log.isError()) {
                 Log.getLogger(MESSAGE_CLIENT_LOG_CATEGORY).error("MessageClient: " + getClientId() + " failed to remove " + remainingSubscriptionCount + " subscription(s) during invalidation");
+            }
         }
 
         // If someone registered this message client, invalidating it will free
         // their reference which will typically also remove this message client.
-        if (registered && destination instanceof MessageDestination)
-            ((MessageDestination)destination).getSubscriptionManager().releaseMessageClient(this);
+        if (registered && destination instanceof MessageDestination) {
+            ((MessageDestination) destination).getSubscriptionManager().releaseMessageClient(this);
+        }
 
         synchronized (lock)
         {
@@ -854,8 +875,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
             invalidating = false;
         }
 
-        if (Log.isDebug())
+        if (Log.isDebug()) {
             Log.getLogger(MESSAGE_CLIENT_LOG_CATEGORY).debug("MessageClient with clientId '" + clientId + "' for destination '" + destinationId + "' has been invalidated.");
+        }
     }
 
     /**
@@ -871,7 +893,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
             message.setDestination(destination.getId());
             message.setClientId(clientId);
 
-            Set subscriberIds = new TreeSet();
+            Set<Object> subscriberIds = new TreeSet<Object>();
             subscriberIds.add(clientId);
             try
             {
@@ -905,8 +927,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         if (o instanceof MessageClient)
         {
             MessageClient c = (MessageClient) o;
-            if (c != null && c.getClientId().equals(clientId))
+            if (c.getClientId().equals(clientId)) {
                 return true;
+            }
         }
         return false;
     }
@@ -1007,8 +1030,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         if (flexClient != null)
         {
             FlexClientOutboundQueueProcessor processor = flexClient.getOutboundQueueProcessor(endpointId);
-            if (processor != null)
-                return create? processor.getOrCreateOutboundQueueThrottleManager() : processor.getOutboundQueueThrottleManager();
+            if (processor != null) {
+                return create ? processor.getOrCreateOutboundQueueThrottleManager() : processor.getOutboundQueueThrottleManager();
+            }
         }
         return null;
     }
@@ -1016,8 +1040,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     private void unregisterSubscriptionWithThrottleManager(SubscriptionInfo si)
     {
         OutboundQueueThrottleManager throttleManager = getThrottleManager(false);
-        if (throttleManager != null)
+        if (throttleManager != null) {
             throttleManager.unregisterSubscription(destinationId, si);
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -1079,10 +1104,12 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
             SubscriptionInfo other = (SubscriptionInfo) o;
             int result;
 
-            if ((result = compareStrings(other.selector, selector)) != 0)
+            if ((result = compareStrings(other.selector, selector)) != 0) {
                 return result;
-            else if ((result = compareStrings(other.subtopic, subtopic)) != 0)
+            }
+            else if ((result = compareStrings(other.subtopic, subtopic)) != 0) {
                 return result;
+            }
 
             return 0;
         }
@@ -1096,26 +1123,30 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
          */
         public boolean matches(Message message, String subtopicToMatch, String subtopicSeparator)
         {
-            if ((subtopicToMatch == null && subtopic != null) || (subtopicToMatch != null && subtopic == null))
+            if ((subtopicToMatch == null && subtopic != null) || (subtopicToMatch != null && subtopic == null)) {
                 return false; // If either defines a subtopic, they both must define one.
+            }
 
             // If both define a subtopic, they must match.
-            if (subtopicToMatch != null && subtopic != null)
+            if (subtopicToMatch != null)
             {
                 Subtopic consumerSubtopic = new Subtopic(subtopic, subtopicSeparator);
                 Subtopic messageSubtopic = new Subtopic(subtopicToMatch, subtopicSeparator);
-                if (!consumerSubtopic.matches(messageSubtopic))
+                if (!consumerSubtopic.matches(messageSubtopic)) {
                     return false; // Not a match.
+                }
             }
 
-            if (selector == null)
+            if (selector == null) {
                 return true;
+            }
 
             JMSSelector jmsSelector = new JMSSelector(selector);
             try
             {
-                if (jmsSelector.match(message))
+                if (jmsSelector.match(message)) {
                     return true;
+                }
             }
             catch (JMSSelectorException jmse)
             {
@@ -1137,11 +1168,12 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
          */
         public String toString()
         {
-            StringBuffer sb = new StringBuffer();
-            sb.append("Subtopic: " + subtopic + StringUtils.NEWLINE);
-            sb.append("Selector: " + selector + StringUtils.NEWLINE);
-            if (maxFrequency > 0)
-                sb.append("maxFrequency: " + maxFrequency);
+            StringBuilder sb = new StringBuilder();
+            sb.append("Subtopic: ").append(subtopic).append(StringUtils.NEWLINE);
+            sb.append("Selector: ").append(selector).append(StringUtils.NEWLINE);
+            if (maxFrequency > 0) {
+                sb.append("maxFrequency: ").append(maxFrequency);
+            }
             return sb.toString();
         }
     }

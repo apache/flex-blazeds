@@ -269,8 +269,9 @@ public class FlexClientManager extends ManageableComponent
             flexClient = createFlexClient(id);
             checkForNullAndDuplicateId(flexClient.getId());
             flexClients.put(flexClient.getId(), flexClient);
-            if (flexClientTimeoutMillis > 0)
+            if (flexClientTimeoutMillis > 0) {
                 flexClientTimeoutManager.scheduleTimeout(flexClient);
+            }
             flexClient.notifyCreated();
             return flexClient;
         }

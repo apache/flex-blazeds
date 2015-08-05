@@ -110,8 +110,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
      */
     public static void addClientCreatedListener(FlexClientListener listener)
     {
-        if (listener != null)
+        if (listener != null) {
             createdListeners.addIfAbsent(listener);
+        }
     }
 
     /**
@@ -123,8 +124,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
      */
     public static void removeClientCreatedListener(FlexClientListener listener)
     {
-        if (listener != null)
+        if (listener != null) {
             createdListeners.remove(listener);
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -158,8 +160,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         updateLastUse();
         valid = true;
 
-        if (Log.isDebug())
+        if (Log.isDebug()) {
             Log.getLogger(FLEX_CLIENT_LOG_CATEGORY).debug("FlexClient created with id '" + this.id + "'.");
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -262,8 +265,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
 
             synchronized (lock)
             {
-                if (attributeListeners == null)
+                if (attributeListeners == null) {
                     attributeListeners = new CopyOnWriteArrayList<FlexClientAttributeListener>();
+                }
             }
 
             attributeListeners.addIfAbsent(listener);
@@ -288,8 +292,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
 
             synchronized (lock)
             {
-                if (destroyedListeners == null)
+                if (destroyedListeners == null) {
                     destroyedListeners = new CopyOnWriteArrayList<FlexClientListener>();
+                }
             }
 
             destroyedListeners.addIfAbsent(listener);
@@ -328,8 +333,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
 
             updateLastUse();
 
-            if (attributes == null)
+            if (attributes == null) {
                 return Collections.enumeration(Collections.<String>emptyList());
+            }
 
             // Return a copy so we do not run into concurrent modification problems if
             // someone adds to the attributes while iterating through the returned enumeration.
@@ -351,8 +357,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     {
         synchronized (lock)
         {
-            if (endpointPushHandlers != null && endpointPushHandlers.containsKey(endpointId))
+            if (endpointPushHandlers != null && endpointPushHandlers.containsKey(endpointId)) {
                 return endpointPushHandlers.get(endpointId);
+            }
             return null;
         }
     }
@@ -402,19 +409,22 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         {
             long currentLastUse = super.getLastUse();
             long idleTime = System.currentTimeMillis() - currentLastUse;
-            if (idleTime < flexClientManager.getFlexClientTimeoutMillis())
+            if (idleTime < flexClientManager.getFlexClientTimeoutMillis()) {
                 return currentLastUse; // Not timed out; this will trigger the timeout to be rescheduled.
+            }
 
             // Check for async long-polls or endpoint streaming connections, if found, keep alive.
             if (!outboundQueues.isEmpty())
             {
                 for (EndpointQueue queue : outboundQueues.values())
                 {
-                    if (queue.asyncPoll != null)
+                    if (queue.asyncPoll != null) {
                         return System.currentTimeMillis();
+                    }
 
-                    if (endpointPushHandlers != null && endpointPushHandlers.containsKey(queue.endpointId))
+                    if (endpointPushHandlers != null && endpointPushHandlers.containsKey(queue.endpointId)) {
                         return System.currentTimeMillis();
+                    }
                 }
             }
 
@@ -423,16 +433,18 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
             {
                 if (session instanceof ConnectionAwareSession)
                 {
-                    if (((ConnectionAwareSession)session).isConnected())
+                    if (((ConnectionAwareSession)session).isConnected()) {
                         return System.currentTimeMillis();
+                    }
                 }
                 // Otherwise, check for a long-poll.
                 if (session.waitMonitor != null)
                 {
                     for (EndpointQueue queue : session.waitMonitor.values())
                     {
-                        if (queue.flexClient.equals(this))
+                        if (queue.flexClient.equals(this)) {
                             return System.currentTimeMillis();
+                        }
                     }
                 }
             }
@@ -453,8 +465,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     public Object getSessionAttribute(String name)
     {
         Object attributeValue = getSessionAttributeInCurrentSession(name);
-        if (attributeValue != null)
+        if (attributeValue != null) {
             return attributeValue;
+        }
 
         return getSessionAttributeInOtherSessions(name);
     }
@@ -469,8 +482,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     public Enumeration<String> getSessionAttributeNames()
     {
         Set<String> attributeNames = new HashSet<String>();
-        for (FlexSession session : sessions)
+        for (FlexSession session : sessions) {
             attributeNames.addAll(getSessionAttributeNames(session));
+        }
         return Collections.enumeration(attributeNames);
     }
 
@@ -516,8 +530,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     {
         synchronized (lock)
         {
-            if (!valid || invalidating)
+            if (!valid || invalidating) {
                 return; // Already shutting down.
+            }
 
             invalidating = true; // This thread gets to shut the FlexClient down.
             flexClientManager.removeFlexClient(this);
@@ -527,8 +542,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         // Unregister from all FlexSessions.
         if (!sessions.isEmpty())
         {
-            for (FlexSession session : sessions)
+            for (FlexSession session : sessions) {
                 unregisterFlexSession(session);
+            }
         }
 
         // Invalidate associated MessageClient subscriptions.
@@ -557,8 +573,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         {
             Set<String> keySet = attributes.keySet();
             String[] keys = keySet.toArray(new String[keySet.size()]);
-            for (String key : keys)
+            for (String key : keys) {
                 removeAttribute(key);
+            }
         }
 
         // Close any registered push handlers.
@@ -573,12 +590,23 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
 
         synchronized (lock)
         {
+            // Clean up the contents of the queues.
+            if( (outboundQueues != null) && !outboundQueues.isEmpty()) {
+                for(EndpointQueue queue : outboundQueues.values()) {
+                    if((queue.messages != null) && !queue.messages.isEmpty()) {
+                        queue.messages.clear();
+                    }
+                }
+                outboundQueues.clear();
+            }
+
             valid = false;
             invalidating = false;
         }
 
-        if (Log.isDebug())
+        if (Log.isDebug()) {
             Log.getLogger(FLEX_CLIENT_LOG_CATEGORY).debug("FlexClient with id '" + this.id + "' has been invalidated.");
+        }
     }
 
     /**
@@ -644,8 +672,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
 
             if (messageClients != null && !messageClients.isEmpty())
             {
-                for (MessageClient messageClient : messageClients)
+                for (MessageClient messageClient : messageClients) {
                     count += messageClient.getSubscriptionCount();
+                }
             }
 
         }
@@ -668,8 +697,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
             {
                 for (MessageClient messageClient : messageClients)
                 {
-                    if (messageClient.getClientId().equals(clientId))
+                    if (messageClient.getClientId().equals(clientId)) {
                         return messageClient;
+                    }
                 }
             }
         }
@@ -757,23 +787,20 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
      */
     public FlushResult poll(String endpointId)
     {
-        EndpointQueue queue = null;
+        EndpointQueue queue;
         synchronized (lock)
         {
             checkValid();
 
             queue = outboundQueues.get(endpointId);
 
-            if (queue != null)
+            if (queue != null) {
                 return internalPoll(queue);
+            }
         }
 
-        if (queue == null)
-        {
-            // Otherwise, the client is not subscribed.
-            throwNotSubscribedException(endpointId);
-        }
-        
+        // Otherwise, the client is not subscribed.
+        throwNotSubscribedException(endpointId);
         return null;
     }
 
@@ -837,8 +864,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                         AsyncPollWithTimeout asyncPoll = new AsyncPollWithTimeout(this, session, queue, handler, waitIntervalMillis, endpointId);
                         synchronized (session)
                         {
-                            if (session.asyncPollMap == null)
+                            if (session.asyncPollMap == null) {
                                 session.asyncPollMap = new HashMap<String, AsyncPollWithTimeout>();
+                            }
                             session.asyncPollMap.put(endpointId, asyncPoll);
                         }
                         queue.asyncPoll = asyncPoll;
@@ -885,8 +913,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
             if (queue != null)
             {
                 FlushResult flushResult = internalPoll(queue);
-                if (flushResult != null)
+                if (flushResult != null) {
                     return flushResult;
+                }
             }
         }
 
@@ -942,8 +971,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                         Thread currentThread = Thread.currentThread();
                         currentThread.setName(threadName + POLL_WAIT_THREAD_NAME_EXTENSION);
 
-                        if (listener != null)
+                        if (listener != null) {
                             listener.waitStart(queue);
+                        }
  
                         queue.waitPoll = true; // Mark the queue as waiting.
 
@@ -954,8 +984,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                         // Reset thread name now that the wait is over.
                         currentThread.setName(threadName);
 
-                        if (listener != null)
+                        if (listener != null) {
                             listener.waitEnd(queue);
+                        }
 
                         if (queue.avoidBusyPolling)
                         {
@@ -975,10 +1006,11 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
 
                 if (Log.isDebug())
                 {
-                    if (didWait)
+                    if (didWait) {
                         reportStatusIfDebug("done waiting for new messages to arrive and is flushing the outbound queue");
-                    else
+                    } else {
                         reportStatusIfDebug("didn't need to wait and is flushing the outbound queue");
+                    }
                 }
 
                 // We need to hold the FlexClient lock to invoke flush.
@@ -1002,10 +1034,11 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
             }
             catch (InterruptedException e)
             {
-                if (Log.isWarn())
+                if (Log.isWarn()) {
                     Log.getLogger(FLEX_CLIENT_LOG_CATEGORY).warn("Poll wait thread '" + threadName + "' for FlexClient with id '" + this.id +
                             "' could not finish waiting for new messages to arrive " +
                             "because it was interrupted: " + e.toString());
+                }
             }
         }
         else
@@ -1019,8 +1052,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     private void reportStatusIfDebug(String message)
     {
         String threadName = Thread.currentThread().getName();
-        if (Log.isDebug())
+        if (Log.isDebug()) {
             Log.getLogger(FLEX_CLIENT_LOG_CATEGORY).debug("Poll wait thread '" + threadName + "' for FlexClient with id '" + this.id + "' is " + message);
+        }
     }
 
     /**
@@ -1051,12 +1085,14 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                 }
                 catch (RuntimeException e)
                 {
-                    if (Log.isError())
+                    if (Log.isError()) {
                         Log.getLogger(FLEX_CLIENT_LOG_CATEGORY).error("Failed to flush an outbound queue for MessageClient '" + client.getClientId() + "' for FlexClient '" + getId() + "'.", e);
+                    }
                     throw e;
                 }
-                if (flushResult != null)
+                if (flushResult != null) {
                     flushResult.setNextFlushWaitTimeMillis(0); // Force to 0.
+                }
             }
         }
         if (queue == null)
@@ -1078,15 +1114,17 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     public void push(Message message, MessageClient messageClient)
     {
         // We should check the message client is valid or not
-        if (!isValid())
+        if (!isValid()) {
             return;
+        }
 
         // Route this message to the proper per-endpoint outbound queue.
         EndpointQueue queue = outboundQueues.get(messageClient.getEndpointId());
 
         // This queue may be null if all corresponding subscriptions have been invalidated.
-        if (queue == null)
+        if (queue == null) {
             return;
+        }
 
         boolean empty;
         
@@ -1103,22 +1141,24 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                     queue.processor.add(queue.messages, message);
                     empty = queue.messages.isEmpty();
 
-                    if (Log.isDebug())
+                    if (Log.isDebug()) {
                         Log.getLogger(LogCategories.MESSAGE_GENERAL).debug(
                                 "Queuing message: " + message.getMessageId() +
-                                StringUtils.NEWLINE +
-                                "  to send to MessageClient: " + messageClient.getClientId() +
-                                StringUtils.NEWLINE +
-                                "  for FlexClient: " + messageClient.getFlexClient().getId() +
-                                StringUtils.NEWLINE +
-                                "  via endpoint: " + queue.endpointId +
-                                StringUtils.NEWLINE +
-                                "  client outbound queue size: " + queue.messages.size());
+                                        StringUtils.NEWLINE +
+                                        "  to send to MessageClient: " + messageClient.getClientId() +
+                                        StringUtils.NEWLINE +
+                                        "  for FlexClient: " + messageClient.getFlexClient().getId() +
+                                        StringUtils.NEWLINE +
+                                        "  via endpoint: " + queue.endpointId +
+                                        StringUtils.NEWLINE +
+                                        "  client outbound queue size: " + queue.messages.size());
+                    }
                 }
                 catch (RuntimeException e)
                 {
-                    if (Log.isError())
+                    if (Log.isError()) {
                         Log.getLogger(FLEX_CLIENT_LOG_CATEGORY).error("Failed to add a message to an outbound queue for FlexClient '" + getId() + "'.", e);
+                    }
                     throw e;
                 }
                 // And notify any threads that may be in a poll wait state.
@@ -1165,8 +1205,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     {
         synchronized (lock)
         {
-            if (endpointPushHandlers == null)
+            if (endpointPushHandlers == null) {
                 endpointPushHandlers = new HashMap<String, EndpointPushHandler>(1);
+            }
 
             if (endpointPushHandlers.containsKey(endpointId))
             {
@@ -1204,8 +1245,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     {
         synchronized (lock)
         {
-            if (messageClients == null)
+            if (messageClients == null) {
                 messageClients = new CopyOnWriteArrayList<MessageClient>();
+            }
         }
 
         if (messageClients.addIfAbsent(messageClient))
@@ -1222,8 +1264,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                 if (endpointPushHandlers != null)
                 {
                     EndpointPushHandler handler = endpointPushHandlers.get(endpointId);
-                    if (handler != null)
+                    if (handler != null) {
                         handler.registerMessageClient(messageClient);
+                    }
                 }
             }
         }
@@ -1248,8 +1291,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         }
 
         // If no value was bound under this name it's a no-op.
-        if (value == null)
+        if (value == null) {
             return;
+        }
 
         notifyAttributeUnbound(name, value);
         notifyAttributeRemoved(name, value);
@@ -1263,8 +1307,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     public void removeClientAttributeListener(FlexClientAttributeListener listener)
     {
         // No need to check validity; removing a listener is always ok.
-        if (listener != null && attributeListeners != null)
+        if (listener != null && attributeListeners != null) {
             attributeListeners.remove(listener);
+        }
     }
 
     /**
@@ -1277,8 +1322,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     public void removeClientDestroyedListener(FlexClientListener listener)
     {
         // No need to check validity; removing a listener is always ok.
-        if (listener != null && destroyedListeners != null)
+        if (listener != null && destroyedListeners != null) {
             destroyedListeners.remove(listener);
+        }
     }
 
     /**
@@ -1289,8 +1335,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
      */
     public void removeSessionAttribute(String name)
     {
-        for (FlexSession session : sessions)
+        for (FlexSession session : sessions) {
             session.removeAttribute(name);
+        }
     }
 
     /**
@@ -1341,8 +1388,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
 
             updateLastUse();
 
-            if (attributes == null)
+            if (attributes == null) {
                 attributes = new HashMap<String, Object>();
+            }
 
             oldValue = attributes.put(name, value);
         }
@@ -1373,8 +1421,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     public void setSessionAttribute(String name, Object value)
     {
         setSessionAttributeInCurrentSession(name, value);
-        if (!isCurrentSessionServletBased())
+        if (!isCurrentSessionServletBased()) {
             setSessionAttributeInServletBasedSession(name, value);
+        }
     }
 
     /**
@@ -1398,11 +1447,13 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     {
         synchronized (lock)
         {
-            if (endpointPushHandlers == null)
+            if (endpointPushHandlers == null) {
                 return; // No-op.
+            }
 
-            if (endpointPushHandlers.get(endpointId).equals(handler))
+            if (endpointPushHandlers.get(endpointId).equals(handler)) {
                 endpointPushHandlers.remove(endpointId);
+            }
         }
     }
 
@@ -1419,8 +1470,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
             session.removeSessionDestroyedListener(this);
             session.unregisterFlexClient(this);
             // Once all client sessions/connections terminate; shut down.
-            if (sessions.isEmpty())
+            if (sessions.isEmpty()) {
                 invalidate();
+            }
         }
     }
 
@@ -1448,8 +1500,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                     // Unregister the message client from the outbound throttle
                     // manager (if one exists).
                     OutboundQueueThrottleManager tm = queue.processor.getOutboundQueueThrottleManager();
-                    if (tm != null)
+                    if (tm != null) {
                         tm.unregisterAllSubscriptions(messageClient.getDestinationId());
+                    }
 
                     // If we're not attempting to notify the remote client that this MessageClient has
                     // been invalidated, remove any associated messages from the queue.
@@ -1459,8 +1512,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                         for (Iterator<Message> iter = queue.messages.iterator(); iter.hasNext(); )
                         {
                             Message message = iter.next();
-                            if (message.getClientId().equals(messageClientId))
+                            if (message.getClientId().equals(messageClientId)) {
                                 iter.remove();
+                            }
                         }
                     }
 
@@ -1481,8 +1535,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                                     msg.setClientId(messageClient.getClientId());
                                     msg.setOperation(CommandMessage.SUBSCRIPTION_INVALIDATE_OPERATION);
                                     List<Message> messages = flushResult.getMessages();
-                                    if (messages == null)
+                                    if (messages == null) {
                                         messages = new ArrayList<Message>(1);
+                                    }
                                     messages.add(msg);
                                 }
                                 completeAsyncPoll(queue.asyncPoll, flushResult);
@@ -1508,8 +1563,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                 if (endpointPushHandlers != null)
                 {
                     EndpointPushHandler handler = endpointPushHandlers.get(endpointId);
-                    if (handler != null)
+                    if (handler != null) {
                         handler.unregisterMessageClient(messageClient);
+                    }
                 }
             }
         }
@@ -1550,13 +1606,15 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         {
             asyncPoll.cancelTimeout();
             EndpointQueue queue = asyncPoll.getEndpointQueue();
-            if (queue.asyncPoll.equals(asyncPoll))
+            if (queue.asyncPoll.equals(asyncPoll)) {
                 queue.asyncPoll = null;
+            }
             FlexSession session = asyncPoll.getFlexSession();
             synchronized (session)
             {
-                if (session.asyncPollMap != null)
+                if (session.asyncPollMap != null) {
                     session.asyncPollMap.remove(asyncPoll.getEndpointId());
+                }
             }
             asyncPoll.getHandler().asyncPollComplete(result);
         }
@@ -1572,17 +1630,20 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         synchronized (lock)
         {
             // No need to invoke flush if the FlexClient has been invalidated.
-            if (!valid)
+            if (!valid) {
                 return;
+            }
 
             // If this invocation is a callback from a flush task, null out the task ref on
             // the queue to allow a subsequent delayed flush to be scheduled.
-            if (queue.flushTask != null)
+            if (queue.flushTask != null) {
                 queue.flushTask = null;
+            }
 
             FlushResult flushResult = internalFlush(queue, null, false /* updateLastUse */);
-            if (flushResult == null) // If there's no flush result, return.
+            if (flushResult == null) {// If there's no flush result, return.
                 return;
+            }
 
             // Pass any messages that are ready to flush off to the network layer.
             List<Message> messages = flushResult.getMessages();
@@ -1593,11 +1654,13 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                     if (queue.pushSession instanceof ConnectionAwareSession)
                     {
                         // Update last use only if we're actually writing back to the client.
-                        if ( ((ConnectionAwareSession)queue.pushSession).isConnected() )
+                        if ( ((ConnectionAwareSession)queue.pushSession).isConnected() ) {
                             updateLastUse();
+                        }
                     }
-                    for (Message msg : messages)
+                    for (Message msg : messages) {
                         queue.pushSession.push(msg);
+                    }
                 }
                 else if (endpointPushHandlers != null)
                 {
@@ -1609,8 +1672,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
 
             // Schedule a delayed flush if necessary.
             int flushWaitTime = flushResult.getNextFlushWaitTimeMillis();
-            if (flushWaitTime > 0) // Set up and schedule the delayed flush task.
+            if (flushWaitTime > 0) {// Set up and schedule the delayed flush task.
                 queue.flushTask = new FlexClientScheduledFlushForPush(queue, flushWaitTime);
+            }
         }
     }
     
@@ -1628,8 +1692,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
             newQueue.endpoint = flexClientManager.getMessageBroker().getEndpoint(endpointId);
             newQueue.messages = new ArrayList<Message>(); /* Default size of 10 is fine */
             FlexSession session = messageClient.getFlexSession();
-            if (session.isPushSupported())
+            if (session.isPushSupported()) {
                 newQueue.pushSession = session;
+            }
             newQueue.processor = flexClientManager.createOutboundQueueProcessor(this, endpointId);
             newQueue.messageClientRefCount = 1;
 
@@ -1642,8 +1707,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
             // Resubscribes as a result of network connectivity issues may arrive over the same
             // endpoint but use a new session.
             FlexSession session = messageClient.getFlexSession();
-            if (session.isPushSupported())
+            if (session.isPushSupported()) {
                 newQueue.pushSession = session;
+            }
         }
         return newQueue;
     }    
@@ -1696,13 +1762,14 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                 shutdownQueue(queue);
             }
 
-            if (updateLastUse)
+            if (updateLastUse) {
                 updateLastUseIfNecessary(flushResult);
+            }
         }
-        catch (RuntimeException e)
-        {
-            if (Log.isError())
+        catch (RuntimeException e) {
+            if (Log.isError()) {
                 Log.getLogger(FLEX_CLIENT_LOG_CATEGORY).error("Failed to flush an outbound queue for FlexClient '" + getId() + "'.", e);
+            }
             throw e;
         }
         return flushResult;
@@ -1731,13 +1798,15 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         // about the incoming poll request regardless.
         FlushResult internalFlushResult = internalFlush(queue);
         List<Message> flushedMessages = internalFlushResult.getMessages();
-        if (flushedMessages != null && !flushedMessages.isEmpty())
+        if (flushedMessages != null && !flushedMessages.isEmpty()) {
             allMessages.addAll(flushedMessages);
+        }
 
         // Schedule a delayed flush, if necessary.
         int flushWaitTime = internalFlushResult.getNextFlushWaitTimeMillis();
-        if (flushWaitTime > 0)
+        if (flushWaitTime > 0) {
             queue.flushTask = new FlexClientScheduledFlushForPoll(queue, flushWaitTime);
+        }
 
         if (allMessages.size() > 0) // Flush, if there are messages.
         {
@@ -1761,8 +1830,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         {
             FlexClientBindingEvent event = new FlexClientBindingEvent(this, name, value);
             // CopyOnWriteArrayList is iteration-safe from ConcurrentModificationExceptions.
-            for (FlexClientAttributeListener attribListener : attributeListeners)
+            for (FlexClientAttributeListener attribListener : attributeListeners) {
                 attribListener.attributeAdded(event);
+            }
         }
     }
 
@@ -1795,8 +1865,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         {
             FlexClientBindingEvent event = new FlexClientBindingEvent(this, name, value);
             // CopyOnWriteArrayList is iteration-safe from ConcurrentModificationExceptions.
-            for (FlexClientAttributeListener attribListener : attributeListeners)
+            for (FlexClientAttributeListener attribListener : attributeListeners) {
                 attribListener.attributeRemoved(event);
+            }
         }
     }
 
@@ -1813,8 +1884,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         {
             FlexClientBindingEvent event = new FlexClientBindingEvent(this, name, value);
             // CopyOnWriteArrayList is iteration-safe from ConcurrentModificationExceptions.
-            for (FlexClientAttributeListener attribListener : attributeListeners)
+            for (FlexClientAttributeListener attribListener : attributeListeners) {
                 attribListener.attributeReplaced(event);
+            }
         }
     }
 
@@ -1843,8 +1915,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         if (!createdListeners.isEmpty())
         {
             // CopyOnWriteArrayList is iteration-safe from ConcurrentModificationExceptions.
-            for (FlexClientListener createListener : createdListeners)
+            for (FlexClientListener createListener : createdListeners) {
                 createListener.clientCreated(this);
+            }
         }
     }
     
@@ -1890,21 +1963,21 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         // and deserves a more useful error message.
         // We determine this by checking for an (orphaned) FlexClient instance associated with the
         // current session that has a subscription established through the target endpoint.
-        List<FlexClient> flexClients = FlexContext.getFlexSession().getFlexClients();
-        for (FlexClient otherClient : flexClients)
-        {
-            if (!otherClient.equals(this))
-            {
-                List<MessageClient> otherSubs = otherClient.getMessageClients();
-                for (MessageClient otherSub : otherSubs)
-                {
-                    if (otherSub.getEndpointId().equals(endpointId))
-                    {
-                        // Throw not-subscribed exception with extra guidance.
-                        FlexClientNotSubscribedException e = new FlexClientNotSubscribedException();
-                        e.setMessage(10036, new Object[]{endpointId});
-                        e.setCode(MessageService.NOT_SUBSCRIBED_CODE);
-                        throw e;
+
+        FlexSession flexSession = FlexContext.getFlexSession();
+        if(flexSession != null) {
+            List<FlexClient> flexClients = flexSession.getFlexClients();
+            for (FlexClient otherClient : flexClients) {
+                if (!otherClient.equals(this)) {
+                    List<MessageClient> otherSubs = otherClient.getMessageClients();
+                    for (MessageClient otherSub : otherSubs) {
+                        if (otherSub.getEndpointId().equals(endpointId)) {
+                            // Throw not-subscribed exception with extra guidance.
+                            FlexClientNotSubscribedException e = new FlexClientNotSubscribedException();
+                            e.setMessage(10036, new Object[]{endpointId});
+                            e.setCode(MessageService.NOT_SUBSCRIBED_CODE);
+                            throw e;
+                        }
                     }
                 }
             }
@@ -1925,8 +1998,9 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     protected void updateLastUseIfNecessary(FlushResult flushResult)
     {
         List<Message> messages = flushResult != null ? flushResult.getMessages() : null;
-        if (messages != null && !messages.isEmpty())
+        if (messages != null && !messages.isEmpty()) {
             updateLastUse();
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -1939,14 +2013,19 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
     {
         Set<String> attributeNames = new HashSet<String>();
         Enumeration<String> currentAttributeNames = session.getAttributeNames();
-        while (currentAttributeNames.hasMoreElements())
+        while (currentAttributeNames.hasMoreElements()) {
             attributeNames.add(currentAttributeNames.nextElement());
+        }
         return attributeNames;
     }
 
     private Object getSessionAttributeInCurrentSession(String name)
     {
-        return FlexContext.getFlexSession().getAttribute(name);
+        FlexSession flexSession = FlexContext.getFlexSession();
+        if(flexSession != null) {
+            return flexSession.getAttribute(name);
+        }
+        return null;
     }
 
     private Object getSessionAttributeInOtherSessions(String name)
@@ -1954,19 +2033,24 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
         FlexSession currentSession = FlexContext.getFlexSession();
         for (FlexSession session : sessions)
         {
-            if (session == currentSession)
+            if (session == currentSession) {
                 continue;
+            }
 
             Object attributeValue = session.getAttribute(name);
-            if (attributeValue != null)
+            if (attributeValue != null) {
                 return attributeValue;
+            }
         }
         return null;
     }
 
     private void setSessionAttributeInCurrentSession(String name, Object value)
     {
-        FlexContext.getFlexSession().setAttribute(name, value);
+        FlexSession flexSession = FlexContext.getFlexSession();
+        if(flexSession != null) {
+            flexSession.setAttribute(name, value);
+        }
     }
 
     private void setSessionAttributeInServletBasedSession(String name, Object value)
@@ -2163,17 +2247,20 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
             synchronized (lock)
             {
                 // No need to invoke flush if the FlexClient has been invalidated.
-                if (!valid)
+                if (!valid) {
                     return;
+                }
 
                 // If this invocation is a callback from a flush task, null out the task ref on
                 // the queue to allow a subsequent delayed flush to be scheduled.
-                if (queue.flushTask != null)
+                if (queue.flushTask != null) {
                     queue.flushTask = null;
+                }
 
                 FlushResult flushResult = internalFlush(queue);
-                if (flushResult == null)
+                if (flushResult == null) {
                     return;
+                }
 
                 List<Message> messages = flushResult.getMessages();
                 if (messages != null && messages.size() > 0)
@@ -2184,16 +2271,18 @@ public class FlexClient extends TimeoutAbstractObject implements FlexSessionList
                     }
                     else
                     {
-                        if (queue.flushedMessagesBetweenPolls == null)
+                        if (queue.flushedMessagesBetweenPolls == null) {
                             queue.flushedMessagesBetweenPolls = new ArrayList<Message>();
+                        }
                         queue.flushedMessagesBetweenPolls.addAll(messages);
                     }
                 }
 
                 // Schedule a delayed flush, if necessary.
                 int flushWaitTime = flushResult.getNextFlushWaitTimeMillis();
-                if (flushWaitTime > 0)
+                if (flushWaitTime > 0) {
                     queue.flushTask = new FlexClientScheduledFlushForPoll(queue, flushWaitTime);
+                }
             }
         }
     }
