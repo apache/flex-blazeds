@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+               creationComplete="onCreationComplete(event)">
+
+    <fx:Script>
+        <![CDATA[
+            import mx.events.FlexEvent;
+            import mx.messaging.ChannelSet;
+            import mx.messaging.Consumer;
+            import mx.messaging.Producer;
+            import mx.messaging.channels.AMFChannel;
+            import mx.messaging.events.MessageAckEvent;
+            import mx.messaging.events.MessageEvent;
+            import mx.messaging.events.MessageFaultEvent;
+            import mx.messaging.messages.AsyncMessage;
+            import mx.messaging.messages.IMessage;
+
+            [Bindable]
+            protected var numMessages:Number = 0;
+
+            [Bindable]
+            protected var consumer:Consumer;
+
+            protected var producer:Producer;
+
+            protected function onCreationComplete(event:FlexEvent):void {
+                    var cs:ChannelSet = new ChannelSet();
+                    var pollingAMF:AMFChannel = new AMFChannel("amf",
+                            "http://localhost:8080/messaging-stresstest-server-4.8/messagebroker/amf");
+                    pollingAMF.pollingInterval = 1000;
+                    pollingAMF.pollingEnabled = true;
+                    pollingAMF.piggybackingEnabled = true;
+                    cs.addChannel(pollingAMF);
+
+                    consumer = new Consumer();
+                    consumer.channelSet = cs;
+                    consumer.destination = "MassMessageDestination";
+                    consumer.addEventListener(MessageAckEvent.ACKNOWLEDGE, onChannelConnect);
+                    consumer.addEventListener(MessageFaultEvent.FAULT, onFault);
+                    consumer.addEventListener(MessageFaultEvent.FAULT, onFault);
+                    consumer.addEventListener(MessageEvent.MESSAGE, onMessageReceived);
+                    consumer.subscribe();
+
+                    producer = new Producer();
+                    producer.channelSet = cs;
+                    producer.destination = "MassMessageDestination";
+                    producer.addEventListener(MessageFaultEvent.FAULT, onFault);
+                    producer.addEventListener(MessageFaultEvent.FAULT, onFault);
+                    producer.connect();
+            }
+
+            protected function onChannelConnect(event:Event):void {
+                    trace("Connected");
+                    var message:IMessage = new AsyncMessage();
+                    message.body.chatMessage = "Test";
+                    producer.send(message);
+            }
+
+            protected function onChannelDisconnect(event:Event):void {
+                    trace("Disconnected");
+            }
+
+            protected function onMessageReceived(event:Event):void {
+                    numMessages++;
+            }
+
+            protected function onFault(event:Event):void {
+                    trace(event);
+            }
+
+            ]]>
+    </fx:Script>
+
+    <s:VGroup>
+        <s:Label text="Subscribed: {consumer.subscribed}"/>
+        <s:Label text="Messages received: {numMessages}"/>
+    </s:VGroup>
+
+</s:Application>

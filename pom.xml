@@ -66,6 +66,8 @@
 		<module>opt</module>
 		<module>testsuite</module>
         <module>assembly</module>
+
+        <!--module>examples</module-->
 	</modules>
 
 	<build>
