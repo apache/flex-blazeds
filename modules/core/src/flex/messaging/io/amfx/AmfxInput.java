@@ -1050,7 +1050,7 @@ public class AmfxInput
 
         // Validation performed in XMLUtil#stringToDocument.
         Object value = XMLUtil.stringToDocument(xml, !(context.legacyXMLNamespaces),
-                context.allowXmlExternalEntityExpansion);
+                context.allowXmlDoctypeDeclaration, context.allowXmlExternalEntityExpansion);
         setValue(value);
     }
 

@@ -97,7 +97,7 @@ public class XMLUtil
      */
     public static Document stringToDocument(String xml)
     {
-        return stringToDocument(xml, true, false);
+        return stringToDocument(xml, true, false, false);
     }
 
     /**
@@ -109,7 +109,8 @@ public class XMLUtil
      * is name-space aware
      * @return Document
      */
-    public static Document stringToDocument(String xml, boolean nameSpaceAware, boolean allowXmlExternalEntityExpansion)
+    public static Document stringToDocument(String xml, boolean nameSpaceAware, boolean allowXmlDoctypeDeclaration,
+                                            boolean allowXmlExternalEntityExpansion)
     {
         ClassUtil.validateCreation(Document.class);
 
@@ -121,6 +122,11 @@ public class XMLUtil
                 StringReader reader = new StringReader(xml);
                 InputSource input = new InputSource(reader);
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+                if(!allowXmlDoctypeDeclaration)
+                {
+                    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                }
 
                 if(!allowXmlExternalEntityExpansion)
                 {
