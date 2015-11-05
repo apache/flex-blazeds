@@ -22,7 +22,7 @@ limitations under the License.
    <parent>
        <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>blazeds</artifactId>
-        <version>4.7.2</version>
+        <version>4.7.3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
