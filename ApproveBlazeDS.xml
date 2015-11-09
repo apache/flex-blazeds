@@ -100,7 +100,8 @@
     <fail message="The folder number is not set.  Specify -Dfolder.number=&lt;folder number (e.g. 1001, 1002, etc)&gt;"
        unless="folder.number"/>
        
-	<property name="package.url.path" value="https://repository.apache.org/content/repositories/orgapacheflex-${folder.number}/org/apache/flex/blazeds/blazeds/${release.version}" />
+    <property name="package.url.base" value="://repository.apache.org/content/repositories/orgapacheflex-${folder.number}/org/apache/flex/blazeds" />
+	<property name="package.url.path" value="https${package.url.base}/blazeds/${release.version}" />
 	<property name="package.url.name" value="blazeds-${release.version}-source-release" />
 	
     <condition property="zip.compressed">
@@ -148,10 +149,10 @@
         classpathref="anttask.classpath"/>
     </target>
 
-    <target name="main" depends="install-rat,download,check-sigs,uncompress,rat-check,check-notices,build,approve" description="Perform required release approval steps">
+    <target name="main" depends="install-rat,download,check-sigs,uncompress,rat-check,check-notices,binaries,build,approve" description="Perform required release approval steps">
     </target>
     
-    <target name="main-no-download" depends="install-rat,check-sigs,uncompress,rat-check,check-notices,build,approve" description="Perform required release approval steps">
+    <target name="main-no-download" depends="install-rat,check-sigs,uncompress,rat-check,check-notices,binaries,build,approve" description="Perform required release approval steps">
     </target>
 	
     <target name="test" >
@@ -220,6 +221,166 @@
         <unzip src="${basedir}/${package.url.name}.${package.suffix}"
                 dest="${basedir}/${package.url.name}"/>
     </target>
+    
+    <target name="binaries" if="isMac">
+        <get src="http${package.url.base}/"
+        dest="${basedir}/folderlist.txt" />
+        <!-- remove everything up to 'Parent Directory' -->
+        <replaceregexp file="${basedir}/folderlist.txt" match=".*Parent Directory" replace=""
+            flags="s" byline="false"/>
+        <!-- remove everything except the text after an href -->
+        <replaceregexp file="${basedir}/folderlist.txt" match="(.*)href=(.*)&gt;(.*)&lt;/a" replace="\3"
+                flags="g" byline="false"/>
+        <!-- remove everything inside single line td's -->
+        <replaceregexp file="${basedir}/folderlist.txt" match="&lt;td.*&lt;/td&gt;" replace=""
+                flags="g" byline="false"/>
+        <!-- remove everything all other html tags -->
+        <replaceregexp file="${basedir}/folderlist.txt" match="&lt;.*&gt;" replace=""
+                flags="g" byline="false"/>
+        <!-- remove everything up to &nbsp; -->
+        <replaceregexp file="${basedir}/folderlist.txt" match="&amp;nbsp;" replace=""
+                flags="g" byline="false"/>
+        <!-- remove all whitespace -->
+        <replaceregexp file="${basedir}/folderlist.txt" match="\s" replace=""
+                flags="g" byline="false"/>
+        <!-- remove blazeds folder -->
+        <replaceregexp file="${basedir}/folderlist.txt" match="blazeds/&gt;" replace=""
+                flags="g" byline="false"/>
+        <!-- remove opt folder -->
+        <replaceregexp file="${basedir}/folderlist.txt" match="flex-messaging-opt/&gt;" replace=""
+                flags="g" byline="false"/>
+        <!-- replace trailing /> with commas -->
+        <replaceregexp file="${basedir}/folderlist.txt" match="/&gt;" replace=","
+                flags="g" byline="false"/>
+        <!-- remove trailing comma -->
+        <replaceregexp file="${basedir}/folderlist.txt" match=",$" replace=""
+                flags="m" byline="false"/>
+        
+        <antcall target="examine-jars" />
+    </target>
+
+    <!-- how to do tar and sort on Windows? -->
+    <target name="examine-jars" if="isMac">
+        <!-- comma delimited list, no spaces, not one file per line -->
+        <copy file="folderlist.txt" tofile="loop.txt" />
+        <ant antfile="ApproveBlazeDS.xml" target="loopOnce" inheritAll="false" />
+    </target>
+    <target name="loopOnce" >
+        <!-- make a copy of the list so we can munge it to
+         get the first item in the list -->
+        <delete file="loop1.txt" />
+        <copy file="loop.txt" tofile="loop1.txt" />
+        <loadfile srcFile="loop.txt" property="checkiflast" />
+        <condition property="islast" value="true">
+            <not>
+                <contains string="${checkiflast}" substring="," />
+            </not>
+        </condition>
+        <antcall target="notlast" />
+        <antcall target="lastone" />
+    </target>
+    <target name="notlast" unless="islast">
+        <loadfile srcFile="loop1.txt" property="echoFile" />
+        <replaceregexp file="loop1.txt" match="^(.*),(.*)" replace="\2" />
+        <loadfile srcFile="loop1.txt" property="thisFile" />
+        <antcall target="jar-check" />
+        <replaceregexp file="loop.txt" match="^(.*),(.*)" replace="\1" />
+        <ant antfile="ApproveBlazeDS.xml" target="loopOnce" inheritAll="false"/>
+    </target>
+    <target name="lastone" if="islast">
+        <loadfile srcFile="loop1.txt" property="thisFile" />
+        <antcall target="jar-check" />
+        <delete file="loop.txt" />
+        <delete file="loop1.txt" />
+    </target>
+
+    <target name="jar-check" >
+        <delete dir="${basedir}/jar" failonerror="false" />
+        <delete dir="${basedir}/${thisFile}.jar" failonerror="false" />
+        <mkdir dir="${basedir}/jar" />
+        <get src="https${package.url.base}/${thisFile}/${release.version}/${thisFile}-${release.version}.jar"
+            dest="${basedir}/${thisFile}.jar" />
+        <get src="https${package.url.base}/${thisFile}/${release.version}/${thisFile}-${release.version}.jar.asc"
+            dest="${basedir}/${thisFile}.jar.asc" />
+        <get src="https${package.url.base}/${thisFile}/${release.version}/${thisFile}-${release.version}.jar.md5"
+            dest="${basedir}/${thisFile}.jar.md5" />
+        <echo message="Checking MD5..."/>
+        <replace file="${basedir}/${thisFile}.jar.md5"
+            token=" " />
+        <checksum file="${basedir}/${thisFile}.jar" algorithm="md5" verifyproperty="jar.md5.ok" />
+        <condition property="JARMD5Invalid">
+            <not>
+                <equals arg1="${jar.md5.ok}" arg2="true" />
+            </not>
+        </condition>
+        <fail message="MD5 checksum did not match" if="JARMD5Invalid" />
+        <exec executable="gpg" failonerror="true">
+            <arg value="--verify" />
+            <arg value="${basedir}/${thisFile}.jar.asc" />
+            <arg value="${basedir}/${thisFile}.jar" />
+        </exec>
+        <unjar src="${basedir}/${thisFile}.jar" dest="${basedir}/jar" />
+        <exec executable="tar" output="${basedir}/jarclasses.txt">
+            <arg value="tf" />
+            <arg value="${basedir}/${thisFile}.jar" />
+        </exec>
+        <replaceregexp file="${basedir}/jarclasses.txt" match="(.*)/(.*)" replace="\1" flags="m" byline="true"/>
+        <exec executable="sort" output="${basedir}/jarpaths.txt">
+            <arg value="-u" />
+            <arg value="${basedir}/jarclasses.txt" />
+        </exec>
+        <antcall target="display-text" >
+            <param name="file" value="${basedir}/jarpaths.txt" />
+        </antcall>
+        <input
+        message="Above is the list of folders in this ${thisFile}.&#xA;Folder names can sometimes indicate presence of third-party content that needs to be in LICENSE and/or NOTICE files.&#xA;Press the Enter key to see the LICENSE for this jar."/>
+        
+        <fail message="LICENSE not in ${basedir}/${thisFile}.jar">
+            <condition>
+                <not>
+                    <available file="${basedir}/jar/META-INF/LICENSE" />
+                </not>
+            </condition>
+        </fail>
+        <fail message="NOTICE not in ${basedir}/${thisFile}.jar">
+            <condition>
+                <not>
+                    <available file="${basedir}/jar/META-INF/NOTICE" />
+                </not>
+            </condition>
+        </fail>
+        <antcall target="display-text" >
+            <param name="file" value="${basedir}/jar/META-INF/LICENSE" />
+        </antcall>
+        <input
+        message="Check the LICENSE for the Apache License and third-party licenses. Is it ok?"
+        validargs="y,n"
+        defaultvalue="y"
+        addproperty="jar.license.ok"/>
+        <fail message="LICENSE for ${basedir}/${thisFile}.jar not correct">
+            <condition>
+                <not>
+                    <equals arg1="${jar.license.ok}" arg2="y" />
+                </not>
+            </condition>
+        </fail>
+        <antcall target="display-text" >
+            <param name="file" value="${basedir}/jar/META-INF/NOTICE" />
+        </antcall>
+        <input
+        message="Check the NOTICE for required notices from third-parties. Is it ok?"
+        validargs="y,n"
+        defaultvalue="y"
+        addproperty="jar.notice.ok"/>
+        <fail message="NOTICE for ${basedir}/${thisFile}.jar not correct">
+            <condition>
+                <not>
+                    <equals arg1="${jar.notice.ok}" arg2="y" />
+                </not>
+            </condition>
+        </fail>
+        
+    </target>
 
     <target name="rat-check" >
 
@@ -251,7 +412,8 @@
         addproperty="rat.license.ok"/>
 		<echo>filtering out AL files to make it easier to see binary files</echo>
 		<copy file="${rat.report}" tofile="${rat.report}.bin.txt" />
-		<replaceregexp file="${rat.report}.bin.txt" match="..AL.*" replace="" byline="true"/>
+        <replaceregexp file="${rat.report}.bin.txt" match="..AL.*" replace="__AL" byline="true"/>
+        <replaceregexp file="${rat.report}.bin.txt" flags="gs" match="__AL." replace="" byline="false"/>
 		<antcall target="display-text" >
             <param name="file" value="${rat.report}.bin.txt" />
         </antcall>
@@ -368,6 +530,7 @@ README is ok: ${readme.ok}
 RELEASE_NOTES is ok: ${releasenotes.ok}
 NOTICE is ok: ${notice.ok}
 LICENSE is ok: ${license.ok}
+No unapproved licenses or files in jars: y
 No unapproved licenses or archives: ${rat.license.ok}
 No unapproved binaries: ${rat.binaries.ok}
 		</echo>
