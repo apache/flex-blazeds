@@ -1,1 +1,0 @@
-Attribute 'class' must be specified for element 'service'

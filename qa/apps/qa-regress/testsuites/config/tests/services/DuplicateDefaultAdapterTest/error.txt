@@ -1,1 +1,0 @@
-Duplicate default adapter 'foo2' in service 'message-service'. 'foo' has already been selected as the default.

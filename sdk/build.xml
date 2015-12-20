@@ -1,0 +1,230 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<project name="modules/sdk/build.xml" default="main" basedir="../..">
+
+    <!-- properties -->
+    <property file="${basedir}/build.properties"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+
+    <property name="localsdk.lib.dir" value="${basedir}/modules/sdk/lib"/>
+
+    <property environment="env"/>
+
+    <patternset id="sdk.jars">
+        <include name="adt.jar"/>
+        <include name="asc.jar"/>
+        <include name="asdoc.jar"/>
+        <include name="batik*.jar"/>
+        <include name="commons-collections.jar"/>
+        <include name="commons-logging.jar"/>
+        <include name="compc.jar"/>
+        <include name="license.jar"/>
+        <include name="velocity-*.jar"/>
+        <include name="mm-velocity-*.jar"/>
+        <include name="mxmlc.jar"/>
+        <include name="swfutils.jar"/>
+        <include name="xerces*.jar"/>
+        <include name="flex-fontkit.jar"/>
+        <include name="fxgutils.jar"/>
+    </patternset>
+
+    <target name="main" depends="clean,copy"
+            description="cleans and copies the sdk libraries from the development location"/>
+
+    <!--
+        This will now copy files from the SDK and internal SDK to the
+        proper directories
+     -->
+    <target name="copy" description="copy SDK">
+        <echo>ant copying SDK from ${FLEX_HOME}</echo>
+        <copy toDir="${basedir}">
+            <fileset dir="${FLEX_HOME}">
+                <include name="lib/flexTasks.jar"/>
+                <include name="bin/**/*"/>
+                <include name="lib/adt.jar"/>
+                <include name="lib/asc.jar"/>
+                <include name="lib/asdoc.jar"/>
+                <include name="lib/batik*.jar"/>
+                <include name="lib/commons-collections.jar"/>
+                <include name="lib/commons-logging.jar"/>
+                <include name="lib/compc.jar"/>
+                <include name="lib/flex-fontkit.jar"/>
+                <include name="lib/fxgutils.jar"/>
+                <include name="lib/license.jar"/>
+                <include name="lib/velocity-*.jar"/>
+                <include name="lib/mm-velocity-*.jar"/>
+                <include name="lib/mxmlc.jar"/>
+                <include name="lib/swfutils.jar"/>
+                <include name="lib/xerces*.jar"/>
+                <include name="asdoc/**/*"/>
+                <include name="frameworks/**/*"/>
+                <include name="runtimes/player/**/*"/>
+                <include name="runtimes/air/**/*"/>
+                <include name="templates/**/*"/>
+                <exclude name="frameworks/build.xml"/>
+                <exclude name="frameworks/javascript/"/>
+                <exclude name="frameworks/projects/"/>
+                <!--exclude name="frameworks/themes/"/> -->
+            </fileset>
+        </copy>
+
+        <!-- flex-sdk-description.xml needs to go in /WEB-INF/flex for Flex Builder -->
+        <copy toDir="${basedir}/frameworks">
+            <fileset dir="${FLEX_HOME}">
+                <include name="flex-sdk-description.xml"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy playerglobal.swc from framework\libs\players to framework\libs directory -->
+        <copy file="${playerglobal.swc}" todir="${basedir}/frameworks/libs"/>
+
+        <!-- If using SDK3 copy dmv swcs for SDK 3 to frameworks\libs directory -->
+
+        <condition property="isFlex3" value="true">
+            <equals arg1="${sdk.version}" arg2="3"/>
+        </condition>
+        <antcall target="copy.flex3.dmv" />
+
+        <!-- 
+             Override with any custom "local" swcs. These swcs are written over the
+             base set of accepted swcs that have been unpacked or copied above. 
+        -->
+        <condition property="using.local.swcs" value="true">
+            <istrue value="${use.local.swcs}"/>
+        </condition>
+        <antcall target="copy.local.swcs" />
+
+        <!-- set swcs read only -->
+        <!-- attrib only works on windows -->
+        <attrib readonly="true">
+            <fileset dir="${basedir}">
+                <include name="frameworks/libs/**/*"/>
+                <include name="frameworks/locale/**/*"/>
+            </fileset>
+        </attrib>
+
+        <!-- set swcs read only (chmod only works on unix) -->
+        <chmod perm="-w" verbose="true" type="file">
+            <fileset dir="${basedir}">
+                <include name="frameworks/libs/**/*"/>
+                <include name="frameworks/locale/**/*"/>
+            </fileset>
+        </chmod>
+
+        <!-- turn on execute bits (unix only) -->
+        <chmod perm="+x" verbose="true" type="file">
+            <fileset dir="${basedir}">
+                <include name="bin/**/*"/>
+                <include name="servers/**/bin/*"/>
+            </fileset>
+        </chmod>
+
+        <!--<copy todir="${basedir}/bin">
+            <fileset dir="${basedir}/runtimes/player" includes="11.1/**,win/*,mac/*"/>
+            <fileset dir="${basedir}/runtimes/air" includes="win/*,mac/*"/>
+        </copy>
+        <delete dir="${basedir}/runtimes/player"/>-->
+
+        <!-- When the build is instrumented, command line compilation fails
+              if clover.jar is not in the classpath 
+        -->
+        <antcall target="instrumented.build" />
+
+    </target>
+
+    <target name="copy.flex3.dmv" if="isFlex3" >
+        <copy todir="${basedir}/frameworks/libs">
+            <fileset dir="${sdk.zip.dir}/dmv/">
+                <include name="datavisualization.swc"/>
+            </fileset>
+        </copy>
+        <copy todir="${basedir}/frameworks/locale">
+            <fileset dir="${sdk.zip.dir}/dmv/locale">
+                <include name="**/*.swc"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="copy.local.swcs" if="using.local.swcs">
+        <echo message="Processing local swc overrides..."/>
+        <copy todir="${basedir}/frameworks/libs">
+            <fileset dir="${basedir}/frameworks/local-swcs/">
+                <include name="**/*"/>
+                <exclude name="readme.txt"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="instrumented.build" if="build.is.instrumented">
+        <echo message="adding clover.jar to bin/jvm.config's classpath...."/>
+        <replace file="${basedir}/bin/jvm.config" token="java.class.path="
+        value="java.class.path=c:/depot/flex/enterprise/lib/clover.jar"/>
+        
+        <echo message="Updating mxmlc.jar's manifest to include clover.jar"/>
+        <copy file="${basedir}/lib/mxmlc.jar" tofile="${basedir}/lib/mxmlc.jar.orig"/>
+        
+        <unjar src="${basedir}/lib/mxmlc.jar" dest="${basedir}/lib/ccTemp"/>
+        
+        <replace file="${basedir}/lib/ccTemp/META-INF/MANIFEST.MF">
+            <replacefilter token="Class-Path:" value="Class-Path: clover.jar"/>
+        </replace>
+        
+        <jar basedir="${basedir}/lib/ccTemp" destfile="${basedir}/lib/mxmlc.jar"
+        manifest="${basedir}/lib/ccTemp/META-INF/MANIFEST.MF"/>
+    </target>
+    
+    <target name="clean" description="clean">
+        <delete failonerror="true" includeEmptyDirs="true" verbose="true">
+            <fileset dir="${lib.dir}" erroronmissingdir="false">
+                <patternset refid="sdk.jars"/>
+            </fileset>
+            <fileset dir="${lib.dir}" erroronmissingdir="false" includes="flexTasks.jar"/>
+            <fileset dir="${basedir}" erroronmissingdir="false">
+                <patternset>
+                    <include name="frameworks/flash-integration/**/*"/>
+                    <include name="frameworks/libs/**/*"/>
+                    <include name="frameworks/rsls/"/>
+                    <include name="frameworks/locale/**/*"/>
+                    <include name="frameworks/build_framework.xml"/>
+                    <include name="frameworks/downloads.xml"/>
+                    <include name="frameworks/flex-config-template.xml"/>
+                    <include name="frameworks/flex-sdk-description.xml"/>
+                    <include name="frameworks/metadata.xml"/>
+                    <include name="frameworks/*Fonts.ser"/>
+                    <include name="frameworks/*config.xml"/>
+                    <include name="frameworks/*-manifest.xml"/>
+                    <include name="frameworks/flash-unicode-table.xml"/>
+                    <include name="frameworks/themes/**/*"/>
+                    <include name="ant/"/>
+                    <include name="bin/"/>
+                    <include name="asdoc/"/>
+                    <include name="runtimes/"/>
+                    <include name="${sdk.jars}"/>
+                    <include name="templates/**/*"/>
+                </patternset>
+            </fileset>
+        </delete>
+        <delete quiet="true" dir="${basedir}/frameworks/tests"/>
+        <delete quiet="true" dir="${basedir}/frameworks/themes"/>
+        <delete quiet="true" dir="${basedir}/frameworks/flash-integration"/>
+        <echo>modules/sdk cleaned</echo>
+    </target>
+
+</project>

@@ -1,1 +1,0 @@
-Invalid Delivery Mode 'bogus_delivery_mode'. Valid values are DEFAULT_DELIVERY_MODE, PERSISTENT, and NON_PERSISTENT.

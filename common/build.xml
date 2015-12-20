@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<project name="modules/common/build.xml" default="main" basedir="../..">
+
+    <!-- properties -->
+    <property file="${basedir}/build.properties"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+
+    <property name="module.dir" value="${basedir}/modules/common"/>
+    <property name="module.lib.dir" location="${module.dir}/lib"/>
+    <property name="module.src" value="${module.dir}/src"/>
+    <property name="module.classes" value="${module.dir}/classes"/>
+    <property name="module.jar" value="${lib.dir}/flex-messaging-common.jar"/>
+    <property name="license.file" value="${basedir}/LICENSE" />
+    <property name="notice.file" value="${basedir}/NOTICE" />
+    
+    <property name="build.number" value=""/>
+    
+    <!-- j2ee apis required to compile -->
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+
+    <target name="main" depends="clean,prepare,run-depend,jar" description="cleans and runs the full build"/>
+
+    <target name="prepare">
+        <echo>${ant.file}</echo>
+        <mkdir dir="${lib.dir}"/>
+        <mkdir dir="${module.classes}"/>
+    </target>
+
+    <target name="run-depend" if="src.depend">
+        <echo message="Removing class files that changed and dependent class files."/>
+        <depend cache="${module.classes}" srcdir="${module.src}" destdir="${module.classes}"/>
+    </target>
+
+    <target name="compile" depends="prepare" description="compile">
+        <javac target="1.4" source="1.4" debug="${src.debug}" destdir="${module.classes}" srcdir="${module.src}"
+            includes="**/*.java" classpathref="classpath"/>
+        <echo file="${module.classes}/flex/messaging/version.properties" append="false">build=${build.number}</echo>
+    </target>
+                
+    <!-- jar containing messaging common infrastructure -->
+    <target name="jar" depends="compile">
+        <copy todir="${module.classes}/flex/messaging" overwrite="true">
+            <fileset dir="${module.src}/flex/messaging" includes="*.properties"/>
+        </copy>
+        <delete dir="${module.classes}/meta-inf" quiet="true"/>
+        
+        <mkdir dir="${module.classes}/META-INF"/>
+        <copy file="${license.file}" tofile="${module.classes}/META-INF/LICENSE"/>
+        <copy file="${notice.file}" tofile="${module.classes}/META-INF/NOTICE"/>
+        
+        <jar destfile="${module.jar}" basedir="${module.classes}">
+            <include name="META-INF/LICENSE"/>
+            <include name="META-INF/NOTICE"/>
+            <include name="flex/**"/>
+            <exclude name=".dependency-info/**"/>
+        	<manifest>
+        		<attribute name="Sealed" value="${manifest.sealed}"/>
+        		<attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Common Library"/>
+			    <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+			    <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+        	</manifest>
+        </jar>
+        <delete failonerror="false">
+            <fileset dir="${module.classes}/flex/messaging" includes="*.properties"/>
+        </delete>
+        <delete dir="${module.classes}/META-INF"/>
+    </target>
+
+    <target name="clean" description="clean">
+        <delete file="${module.jar}" failonerror="false"/>
+        <delete failonerror="false" includeEmptyDirs="true">
+            <fileset dir="${module.classes}">
+                <include name="**/*"/>
+                <exclude name="dependencies.txt"/>
+                <exclude name=".dependency-info/**"/>
+            </fileset>
+        </delete>
+        <delete quiet="true" dir="${module.classes}"/>
+    </target>
+
+</project>

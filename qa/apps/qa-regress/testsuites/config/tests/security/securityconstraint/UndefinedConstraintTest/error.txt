@@ -1,1 +1,0 @@
-Security constraint foo is not defined

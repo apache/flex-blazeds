@@ -1,1 +1,0 @@
-Cannot create class of type 'flex.messaging.factories.foo'. Type 'flex.messaging.factories.foo' not found.

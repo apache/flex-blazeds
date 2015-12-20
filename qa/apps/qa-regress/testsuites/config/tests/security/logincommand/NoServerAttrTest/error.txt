@@ -1,1 +1,0 @@
-Attribute 'server' must be specified for element 'login-command'

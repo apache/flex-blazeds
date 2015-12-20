@@ -1,5 +1,0 @@
-        }
-    ]]>
-    </mx:Script>
-
-</mx:Application>
