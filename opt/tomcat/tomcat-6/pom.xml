@@ -21,7 +21,7 @@ limitations under the License.
 
 	<parent>
         <groupId>org.apache.flex.blazeds</groupId>
-		<artifactId>flex-messaging-opt</artifactId>
+		<artifactId>flex-messaging-opt-tomcat</artifactId>
 		<version>4.8.0-SNAPSHOT</version>
 	</parent>
 
