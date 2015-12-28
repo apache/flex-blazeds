@@ -33,6 +33,51 @@ Each of the main targets for the modules will call clean themselves before proce
 
     <!-- properties -->
     <property file="${basedir}/build.properties" />
+    
+    <property name="modules.core.dir" value="${basedir}/core"/>
+    <property name="download.dir" value="${basedir}/in"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="servlet.dir" value="${lib.dir}/javax/servlet/servlet-api/${servlet.version}"/>
+    <property name="activemq.dir" value="${lib.dir}/org/apache/activemq"/>
+    <property name="activemq.zip.file" value="${basedir}/in/apache-activemq-${activemq.version}-bin.zip"/>
+    <property name="codec.dir" value="${lib.dir}/commons-codec/commons-codec/${codec.version}"/>
+    <property name="codec.zip.file" value="${basedir}/in/apache-codec-${codec.version}-bin.zip"/>
+    <property name="collections.dir" value="${lib.dir}/commons-collections/commons-collections/${collections.version}"/>
+    <property name="collections.zip.file" value="${basedir}/in/apache-collections-${collections.version}-bin.zip"/>
+    <!-- needed?
+     <property name="fileupload.zip.file" value="${basedir}/in/apache-fileupload-1.1.zip"/>
+     -->
+    <property name="httpclient.dir" value="${lib.dir}/commons-httpclient/commons-httpclient/${httpclient.version}"/>
+    <property name="httpclient.zip.file" value="${basedir}/in/apache-httpclient-${httpclient.version}-bin.zip"/>
+    <property name="logging.dir" value="${lib.dir}/commons-logging/commons-logging/${logging.version}"/>
+    <property name="logging.zip.file" value="${basedir}/in/apache-logging-1.1.1-bin.zip"/>
+    <!--
+     <property name="hsqldb.zip.file" value="${basedir}/in/hsqldb_1_8_0_10.zip"/>
+     <property name="jms.zip.file" value="${basedir}/in/openjms-0.7.6.1.zip"/>
+     -->
+    <property name="jms.jar" value="geronimo-jms_1.1_spec-1.1.1.jar" />
+    <property name="jms.dir" value="${lib.dir}/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1"/>
+    <property name="log4j.dir" value="${lib.dir}/log4j/log4j/${log4j.version}"/>
+    <property name="log4j.zip.file" value="${basedir}/in/logging-log4j-${log4j.version}.zip"/>
+    <property name="spring.dir" value="${lib.dir}/org/springframework/spring-core/${spring-version}.RELEASE"/>
+    <property name="spring.zip.file" value="${basedir}/in/spring-framework-${spring.version}.RELEASE.zip"/>
+    <property name="springsecurity.zip.file" value="${basedir}/in/spring-security-3.0.3.RELEASE.zip"/>
+    <!--
+     <property name="springflex.jar.file" value="${basedir}/lib/spring/spring-flex-core-1.5.2.RELEASE.jar"/>
+     <property name="taglibs.zip.file" value="${basedir}/in/jakarta-taglibs-standard-1.1.2.zip"/>
+     <property name="aopalliance.zip.file" value="${basedir}/in/aopalliance.zip"/>
+     <property name="backport.zip.file" value="${basedir}/in/backport-util-concurrent.zip"/>
+     <property name="cglib.jar.file" value="${basedir}/lib/spring/cglib-nodep-2.1_3.jar"/>
+     <property name="jackson.jar.file" value="${basedir}/lib/spring/jackson-core-asl-1.0.0.jar"/>
+     <property name="axis.zip.file" value="${basedir}/in/axis.zip"/>
+     -->
+    <property name="xalan.dir" value="${lib.dir}/xalan/xalan/${xalan.version}.RELEASE"/>
+    <property name="xalan.zip.file" value="${basedir}/in/xalan-j_${xalan.version}-bin-2jars.zip"/>
+    <property name="catalina4.dir" value="${lib.dir}/tomcat/catalina/${catalina4.version}"/>
+    <property name="catalina4.zip.file" value="${basedir}/in/jakarta-tomcat-${catalina4.version}.zip"/>
+    <property name="catalina.dir" value="${lib.dir}/org/apache/tomcat/catalina/${catalina.version}"/>
+    <property name="catalina7.dir" value="${lib.dir}/org/apache/tomcat/tomcat-catalina/${catalina7.version}"/>
+    
     <property name="dist.dir" value="${basedir}/dist"/>
     <property name="qa.dir" value="${basedir}/qa"/>
 
@@ -137,7 +182,7 @@ Each of the main targets for the modules will call clean themselves before proce
         <ant antfile="${basedir}/downloads.xml" dir="${basedir}"/>
     </target>
     
-    <target name="main" depends="check-env,clean,thirdparty-downloads,sdk,webtier,common,core,proxy,remoting,opt,apps,createMMSFile" description="full build">
+    <target name="main" depends="check-env,clean,thirdparty-downloads,sdk,common,core,proxy,remoting,opt,createMMSFile" description="full build">
         <tstamp>
             <format property="build.datetime" pattern="MM/dd/yyyy hh:mm:ss aa" />
         </tstamp>
@@ -150,77 +195,27 @@ Each of the main targets for the modules will call clean themselves before proce
 
     <!-- must be setup before building other targets -->
     <target name="sdk" description="get the sdk and add to the server">
-        <ant antfile="${basedir}/modules/sdk/build.xml"/>
+        <!--<ant antfile="${basedir}/sdk/build.xml"/> AJH: needed? -->
     </target>
     
-    <target name="webtier" description="get the webtier corresponding to the SDK used">
-        <ant antfile="${basedir}/qa/resources/webtier/build.xml"/>
-    </target>
-
     <target name="common" description="full build of the common module">
-        <ant antfile="${basedir}/modules/common/build.xml" target="${subproject.target}"/>
+        <ant antfile="${basedir}/common/build.xml" target="${subproject.target}"/>
     </target>
 
     <target name="core" description="full build of the core module">
-        <ant antfile="${basedir}/modules/core/build.xml" target="${subproject.target}"/>
+        <ant antfile="${basedir}/core/build.xml" target="${subproject.target}"/>
     </target>
 
     <target name="proxy" description="full build of the proxy module">
-        <ant antfile="${basedir}/modules/proxy/build.xml" target="${subproject.target}"/>
+        <ant antfile="${basedir}/proxy/build.xml" target="${subproject.target}"/>
     </target>
 
     <target name="remoting" description="full build of the remoting module">
-        <ant antfile="${basedir}/modules/remoting/build.xml" target="${subproject.target}"/>
+        <ant antfile="${basedir}/remoting/build.xml" target="${subproject.target}"/>
     </target>
 
     <target name="opt" description="full build of the opt module">
-        <ant antfile="${basedir}/modules/opt/build.xml" target="${subproject.target}"/>
-    </target>
-
-    <target name="ajax" description="full build of the fds-ajax bridge">
-        <ant antfile="${basedir}/resources/fds-ajax-bridge/build.xml" dir="${basedir}/resources/fds-ajax-bridge"/>
-    </target>
-
-	<!-- removing aspectj dependencies
-	    <target name="apps" depends="consoleapp,samplesapp,blazedsapp,blazeds-springapp,samples-springapp,qaapp,qa-manualapp,teamapp" description="full build of all active apps" />-->
-    <target name="apps" depends="consoleapp,samplesapp,blazedsapp,qaapp,qa-manualapp,teamapp" description="full build of all active apps" />
-
-    <target name="samplesapp" description="full build of the samples app">
-        <ant antfile="${basedir}/apps/samples/build.xml" target="${subproject.target}"/>
-    </target>
-
-    <target name="samples-springapp" description="full build of the spring-samples app">
-        <ant antfile="${basedir}/apps/samples-spring/build.xml" target="${subproject.target}"/>
-    </target>
-
-    <target name="blazedsapp" description="full build of the blazeds app">
-        <ant antfile="${basedir}/apps/blazeds/build.xml" target="${subproject.target}"/>
-    </target>
-
-    <target name="blazeds-springapp" description="full build of the blazeds-spring app">
-        <ant antfile="${basedir}/apps/blazeds-spring/build.xml" target="${subproject.target}"/>
-    </target>
-
-    <target name="consoleapp" description="full build of the flex admin app">
-        <antcall target="build.consoleapp" />
-    </target>
-    <target name="build.consoleapp" depends="check.flex3.consoleapp" if="isFlex3">
-        <ant antfile="${basedir}/apps/ds-console/build.xml" target="${subproject.target}"/>
-    </target>
-    <target name="check.flex3.consoleapp" unless="isFlex3" >
-        <echo message="Console app doesn't build with SDK 3, skipping."/>
-    </target>
-
-    <target name="qaapp" description="full build of the qa app">
-        <ant antfile="${qa.dir}/apps/qa-regress/build.xml" dir="${qa.dir}"/>
-    </target>
-
-    <target name="qa-manualapp" description="full build of the qa manual testing app">
-        <ant antfile="${qa.dir}/apps/qa-manual/build.xml" />
-    </target>
-
-    <target name="teamapp" description="full build of the team app">
-        <ant antfile="${basedir}/apps/team/build.xml" target="${subproject.target}"/>
+        <ant antfile="${basedir}/opt/build.xml" target="${subproject.target}"/>
     </target>
 
     <target name="postbuilds">
@@ -620,31 +615,14 @@ Each of the main targets for the modules will call clean themselves before proce
     </target>
 
     <target name="clean" description="clean">
-        <ant antfile="${basedir}/modules/sdk/build.xml" target="clean"/>
-        <ant antfile="${basedir}/modules/remoting/build.xml" target="clean"/>
-        <ant antfile="${basedir}/modules/proxy/build.xml" target="clean"/>
-        <ant antfile="${basedir}/modules/common/build.xml" target="clean"/>
-        <ant antfile="${basedir}/modules/core/build.xml" target="clean"/>
-        <ant antfile="${basedir}/modules/opt/build.xml" target="clean"/>
-        <ant antfile="${basedir}/apps/blazeds/build.xml" target="clean"/>
-        <ant antfile="${basedir}/apps/blazeds-spring/build.xml" target="clean"/>
-        <ant antfile="${basedir}/apps/ds-console/build.xml" target="clean"/>
-        <ant antfile="${basedir}/apps/samples/build.xml" target="clean"/>
-        <ant antfile="${basedir}/apps/samples-spring/build.xml" target="clean"/>
-        <ant antfile="${basedir}/apps/team/build.xml" target="clean"/>
-        <ant antfile="${basedir}/resources/fds-ajax-bridge/build.xml" target="clean"/>
-        <ant antfile="${basedir}/qa/apps/qa-manual/build.xml" target="clean"/>
-        <ant antfile="${basedir}/qa/apps/qa-regress/build.xml" target="clean"/>
-        <ant antfile="${basedir}/qa/resources/webtier/build.xml" target="clean"/>
-        <ant antfile="${basedir}/qa/src/build.xml" target="clean"/>
+        <ant antfile="${basedir}/sdk/build.xml" target="clean"/>
+        <ant antfile="${basedir}/remoting/build.xml" target="clean"/>
+        <ant antfile="${basedir}/proxy/build.xml" target="clean"/>
+        <ant antfile="${basedir}/common/build.xml" target="clean"/>
+        <ant antfile="${basedir}/core/build.xml" target="clean"/>
+        <ant antfile="${basedir}/opt/build.xml" target="clean"/>
         <delete>
             <fileset dir="." includes="TEST-*.xml"/>
-        </delete>
-        <delete quiet="true" dir="${basedir}/dist"/>
-        <delete quiet="true" dir="${basedir}/sampledb" includes="hsqldb.jar"/>
-        <delete quiet="true" dir="${basedir}/templates"/>
-        <delete>
-            <fileset dir="resources/clustering" includes="{jgroups.jars},jgroups-LICENSE.txt" />
         </delete>
     </target>
 

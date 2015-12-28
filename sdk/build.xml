@@ -17,13 +17,13 @@
   limitations under the License.
 
 -->
-<project name="modules/sdk/build.xml" default="main" basedir="../..">
+<project name="sdk/build.xml" default="main" basedir="..">
 
     <!-- properties -->
     <property file="${basedir}/build.properties"/>
     <property name="lib.dir" value="${basedir}/lib"/>
 
-    <property name="localsdk.lib.dir" value="${basedir}/modules/sdk/lib"/>
+    <property name="localsdk.lib.dir" value="${basedir}/sdk/lib"/>
 
     <property environment="env"/>
 

@@ -17,15 +17,13 @@
   limitations under the License.
 
 -->
-<project name="modules/opt/build.xml" default="main" basedir="../..">
+<project name="opt/build.xml" default="main" basedir="..">
 
     <!-- properties -->
     <property file="${basedir}/build.properties"/>
     <property name="lib.dir" value="${basedir}/lib"/>
 
-    <property name="module.dir" value="${basedir}/modules/opt"/>
-    <property name="module.lib.dir" location="${module.dir}/lib"/>
-    <property name="tomcat.lib.dir" location="${basedir}/servers/apache-tomcat-6.0.29/lib" />
+    <property name="module.dir" value="${basedir}/opt"/>
     <property name="module.src" value="${module.dir}/src"/>
     <property name="module.classes" value="${module.dir}/classes"/>
 
@@ -53,7 +51,10 @@
     <property name="javacexecutable" value="javac"/>
  
     <path id="base.classpath">
-        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+        <fileset dir="${lib.dir}" erroronmissingdir="false" includes="flex-messaging-common.jar"/>
+        <fileset dir="${lib.dir}" erroronmissingdir="false" includes="flex-messaging-core.jar"/>
+        <fileset dir="${servlet.dir}" erroronmissingdir="false" includes="servlet-api-${servlet.version}.jar"/>
+        <fileset dir="${httpclient.dir}" erroronmissingdir="false" includes="commons-httpclient-${httpclient.version}.jar"/>
     </path>
     
     <path id="jrun.classpath">
@@ -63,34 +64,25 @@
     
     <path id="tomcat-4150.classpath">
         <path refid="base.classpath"/>
-        <fileset dir="${module.lib.dir}">
-            <include name="catalina-4150.jar"/>
-            <include name="mx4j-jmx.jar"/>
-        </fileset>
-        <fileset dir="${tomcat.lib.dir}">
-            <include name="servlet-api.jar"/>
+        <fileset dir="${catalina4.dir}">
+            <include name="catalina-${catalina4.version}.jar"/>
+<!--            <include name="mx4j-jmx.jar"/> -->
         </fileset>
     </path>
         
     <path id="tomcat.classpath">
         <path refid="base.classpath"/>
-        <fileset dir="${module.lib.dir}">
-            <include name="catalina.jar"/>
-            <include name="mx4j-jmx.jar"/>
-        </fileset>
-        <fileset dir="${tomcat.lib.dir}">
-            <include name="servlet-api.jar"/>
+        <fileset dir="${catalina.dir}">
+            <include name="catalina-${catalina.version}.jar"/>
+<!--            <include name="mx4j-jmx.jar"/> -->
         </fileset>
     </path>
     
     <path id="tomcat-708.classpath">
         <path refid="base.classpath"/>
-        <fileset dir="${module.lib.dir}">
-            <include name="catalina-708.jar"/>
-            <include name="mx4j-jmx.jar"/>
-        </fileset>
-        <fileset dir="${tomcat.lib.dir}">
-            <include name="servlet-api.jar"/>
+        <fileset dir="${catalina7.dir}">
+            <include name="tomcat-catalina-${catalina7.version}.jar"/>
+<!--            <include name="mx4j-jmx.jar"/> -->
         </fileset>
     </path>
     
@@ -174,6 +166,9 @@
         <jar destfile="${tomcat-server-4150.jar}" basedir="${module.classes}">
             <include name="flex/messaging/security/TomcatValve4150*"/>
             <include name="flex/messaging/security/tomcat-descriptor.xml"/>
+            <include name="flex/messaging/security/TomcatLogin.class"/>
+            <include name="flex/messaging/security/TomcatLoginCommand.class"/>
+            <include name="flex/messaging/security/TomcatLoginHolder*.class"/>
             <manifest>
                 <attribute name="Sealed" value="${manifest.sealed}"/>
                 <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Tomcat 4.1 Value"/>
@@ -185,6 +180,9 @@
             <include name="flex/messaging/security/TomcatValve.class"/>
             <include name="flex/messaging/security/TomcatValve$*"/>
             <include name="flex/messaging/security/tomcat-descriptor.xml"/>
+            <include name="flex/messaging/security/TomcatLogin.class"/>
+            <include name="flex/messaging/security/TomcatLoginCommand.class"/>
+            <include name="flex/messaging/security/TomcatLoginHolder*.class"/>
             <manifest>
                 <attribute name="Sealed" value="${manifest.sealed}"/>
                 <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Tomcat 5 Valve"/>
@@ -193,30 +191,20 @@
             </manifest>
         </jar>
         <antcall target="jar.for.tomcat7"/>
-        <jar destfile="${tomcat-common.jar}" basedir="${module.classes}">
-            <include name="flex/messaging/security/TomcatLogin.class"/> 
-            <include name="flex/messaging/security/TomcatLoginHolder*.class"/>          
-            <manifest>
-                <attribute name="Sealed" value="${manifest.sealed}"/>
-                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Tomcat Common"/>
-                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
-                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
-            </manifest>
-        </jar>
         <delete failonerror="false">
             <fileset dir="${module.classes}/flex/messaging/security" includes="*.xml"/>
         </delete>
-        <copy todir="${appserver.dir}/lib/blazeds">
-            <fileset dir="${tomcat.jar.dir}" includes="flex-tomcat-common.jar,flex-tomcat-server.jar" />
-        </copy>
         <copy todir="${tomcat.jar.dir}" file="${tomcat.src}/flex/messaging/security/${tomcat.valve}"/>
     </target>
     
-    <target name="jar.for.tomcat7" if="env.JAVA16_HOME">
+    <target name="jar.for.tomcat7" >
         <jar destfile="${tomcat-server-708.jar}" basedir="${module.classes}">
               <include name="flex/messaging/security/Tomcat7Valve.class"/>
               <include name="flex/messaging/security/Tomcat7Valve$*"/>
               <include name="flex/messaging/security/tomcat-descriptor.xml"/>
+              <include name="flex/messaging/security/TomcatLogin.class"/>
+              <include name="flex/messaging/security/TomcatLoginCommand.class"/>
+              <include name="flex/messaging/security/TomcatLoginHolder*.class"/>
               <manifest>
                   <attribute name="Sealed" value="${manifest.sealed}"/>
                   <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Tomcat 7 Valve"/>
@@ -301,21 +289,6 @@
         <copy todir="${module.classes}/flex/messaging" overwrite="true">
             <fileset dir="${module.src}/properties/flex/messaging" includes="*.properties"/>
         </copy>
-        <jar destfile="${opt.jar}" basedir="${module.classes}">
-            <exclude name=".dependency-info/**"/>
-            <include name="flex/**"/>
-            <exclude name="flex/messaging/security/TomcatValve*"/>
-            <exclude name="flex/messaging/security/TomcatLogin.class"/>
-            <exclude name="flex/messaging/security/TomcatLoginHolder.class"/>
-            <exclude name="flex/messaging/security/Tomcat7Valve.class"/>
-            <exclude name="flex/messaging/security/Tomcat7Valve$*"/>
-            <manifest>
-                <attribute name="Sealed" value="${manifest.sealed}"/>
-                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Optional Vendor"/>
-                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
-                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
-            </manifest>
-        </jar>
         <delete failonerror="false">
             <fileset dir="${module.classes}/flex/messaging" includes="*.properties"/>
         </delete>
@@ -330,8 +303,6 @@
             </fileset>
         </delete>
         <delete file="${logins.jar}" failonerror="false"/>
-        <delete file="${opt.jar}" failonerror="false"/>
-        <delete file="${tomcat-common.jar}" failonerror="false"/>
         <delete file="${tomcat-server-4150.jar}" failonerror="false"/>
         <delete file="${tomcat-server.jar}" failonerror="false"/>
         <delete file="${tomcat-server-708.jar}" failonerror="false"/>

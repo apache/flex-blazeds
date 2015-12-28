@@ -17,32 +17,34 @@
   limitations under the License.
 
 -->
-<project name="modules/core/build.xml" default="main" basedir="../..">
+<project name="core/build.xml" default="main" basedir="..">
 
     <!-- properties -->
     <property file="${basedir}/build.properties"/>
     <property name="lib.dir" value="${basedir}/lib"/>
 
-    <property name="module.dir" value="${basedir}/modules/core"/>
+    <property name="module.dir" value="${basedir}/core"/>
     <property name="module.lib.dir" location="${module.dir}/lib"/>
-    <property name="tomcat.lib.dir" location="${basedir}/servers/apache-tomcat-6.0.29/lib" />
+    <property name="tomcat.lib.dir" location="${lib.dir}" />
     <property name="module.src" value="${module.dir}/src"/>
     <property name="module.classes" value="${module.dir}/classes"/>
     <property name="module.jar" value="${lib.dir}/flex-messaging-core.jar"/>
     <property name="module.dist.dir" value="${basedir}/dist/source"/>
 
-    <property name="common.src" value="${basedir}/modules/common/src"/>
-    <property name="remoting.src" value="${basedir}/modules/remoting/src"/>
-    <property name="proxy.src" value="${basedir}/modules/proxy/src"/>
-    <property name="opt.src" value="${basedir}/modules/opt/src"/>    
+    <property name="common.src" value="${basedir}/common/src"/>
+    <property name="remoting.src" value="${basedir}/remoting/src"/>
+    <property name="proxy.src" value="${basedir}/proxy/src"/>
+    <property name="opt.src" value="${basedir}/opt/src"/>    
 
     <property name="build.number" value=""/>
 
     <!-- j2ee apis required to compile -->
     <path id="classpath">
-        <fileset dir="${lib.dir}" erroronmissingdir="false" includes="**/*.jar"/>
-        <fileset dir="${module.lib.dir}" erroronmissingdir="false" includes="**/*.jar"/>
-        <fileset dir="${tomcat.lib.dir}" erroronmissingdir="false" includes="**/*.jar"/>
+        <fileset dir="${lib.dir}" erroronmissingdir="false" includes="flex-messaging-common.jar"/>
+        <fileset dir="${xalan.dir}" includes="xalan-${xalan.version}.jar"/>
+        <fileset dir="${activemq.dir}" erroronmissingdir="false" includes="activemq-core/${activemq.version}/activemq-core-${activemq.version}.jar"/>
+        <fileset dir="${servlet.dir}" erroronmissingdir="false" includes="servlet-api-${servlet.version}.jar"/>
+        <fileset dir="${jms.dir}" erroronmissingdir="false" includes="${jms.jar}"/>
     </path>
 
     <target name="main" depends="clean,prepare,run-depend,jar" description="cleans and runs the full build"/>
@@ -124,7 +126,7 @@
    <target name="javadoc">
         <path id="javadoc.classpath">
             <path refid="classpath"/>
-            <fileset dir="${basedir}/modules/opt/lib" includes="*.jar" excludes="catalina-708.jar"/>
+            <fileset dir="${basedir}/opt/lib" includes="*.jar" excludes="catalina-708.jar"/>
         </path>
         <mkdir dir="${basedir}/docs"/>
         <mkdir dir="${basedir}/docs/api"/>
