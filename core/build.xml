@@ -41,7 +41,7 @@
     <!-- j2ee apis required to compile -->
     <path id="classpath">
         <fileset dir="${lib.dir}" erroronmissingdir="false" includes="flex-messaging-common.jar"/>
-        <fileset dir="${xalan.dir}" includes="xalan-${xalan.version}.jar"/>
+        <fileset dir="${xalan.dir}" erroronmissingdir="false" includes="xalan-${xalan.version}.jar"/>
         <fileset dir="${activemq.dir}" erroronmissingdir="false" includes="activemq-core/${activemq.version}/activemq-core-${activemq.version}.jar"/>
         <fileset dir="${servlet.dir}" erroronmissingdir="false" includes="servlet-api-${servlet.version}.jar"/>
         <fileset dir="${jms.dir}" erroronmissingdir="false" includes="${jms.jar}"/>
