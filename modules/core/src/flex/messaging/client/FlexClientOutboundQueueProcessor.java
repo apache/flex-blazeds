@@ -194,21 +194,21 @@ public class FlexClientOutboundQueueProcessor
                     continue;
                 }
 
-                messageClient = messageClient == null? getMessageClient(message) : messageClient;
+                MessageClient messageClientForCurrentMessage = messageClient == null? getMessageClient(message) : messageClient;
 
                 // First, apply the destination level outbound throttling.
-                ThrottleResult throttleResult = throttleOutgoingDestinationLevel(messageClient, message, false);
+                ThrottleResult throttleResult = throttleOutgoingDestinationLevel(messageClientForCurrentMessage, message, false);
                 Result result = throttleResult.getResult();
 
                 // No destination level throttling; check destination-client level throttling.
                 if (Result.OK == result)
                 {
-                    throttleResult = throttleOutgoingClientLevel(messageClient, message, false);
+                    throttleResult = throttleOutgoingClientLevel(messageClientForCurrentMessage, message, false);
                     result = throttleResult.getResult();
                     // If no throttling, simply add the message to the list.
                     if (Result.OK == result)
                     {
-                        updateMessageFrequencyOutgoing(messageClient, message);
+                        updateMessageFrequencyOutgoing(messageClientForCurrentMessage, message);
                         if (messagesToFlush == null)
                             messagesToFlush = new ArrayList<Message>();
                         messagesToFlush.add(message);
