@@ -194,21 +194,25 @@ public class FlexClientOutboundQueueProcessor
                     continue;
                 }
 
-                messageClient = messageClient == null? getMessageClient(message) : messageClient;
+                // If no message client was explicitly provided, get the message client from
+                // the current message.
+                MessageClient messageClientForCurrentMessage = messageClient == null ?
+                        getMessageClient(message) : messageClient;
 
                 // First, apply the destination level outbound throttling.
-                ThrottleResult throttleResult = throttleOutgoingDestinationLevel(messageClient, message, false);
+                ThrottleResult throttleResult =
+                        throttleOutgoingDestinationLevel(messageClientForCurrentMessage, message, false);
                 Result result = throttleResult.getResult();
 
                 // No destination level throttling; check destination-client level throttling.
                 if (Result.OK == result)
                 {
-                    throttleResult = throttleOutgoingClientLevel(messageClient, message, false);
+                    throttleResult = throttleOutgoingClientLevel(messageClientForCurrentMessage, message, false);
                     result = throttleResult.getResult();
                     // If no throttling, simply add the message to the list.
                     if (Result.OK == result)
                     {
-                        updateMessageFrequencyOutgoing(messageClient, message);
+                        updateMessageFrequencyOutgoing(messageClientForCurrentMessage, message);
                         if (messagesToFlush == null)
                             messagesToFlush = new ArrayList<Message>();
                         messagesToFlush.add(message);
@@ -238,7 +242,8 @@ public class FlexClientOutboundQueueProcessor
      */
     public boolean isMessageExpired(Message message)
     {
-        return (message.getTimeToLive() > 0 && (System.currentTimeMillis() - message.getTimestamp()) >= message.getTimeToLive());
+        return (message.getTimeToLive() > 0 &&
+                (System.currentTimeMillis() - message.getTimestamp()) >= message.getTimeToLive());
     }
 
     /**
@@ -250,7 +255,8 @@ public class FlexClientOutboundQueueProcessor
      * parts of regular throttling code is skipped.
      * @return The result of throttling attempt.
      */
-    protected ThrottleResult throttleOutgoingDestinationLevel(MessageClient msgClient, Message message, boolean buffered)
+    protected ThrottleResult throttleOutgoingDestinationLevel(
+            MessageClient msgClient, Message message, boolean buffered)
     {
         ThrottleManager throttleManager = getThrottleManager(msgClient);
         if (throttleManager != null)
