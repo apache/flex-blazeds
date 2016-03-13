@@ -17,13 +17,13 @@
   limitations under the License.
 
 -->
-<project name="modules/common/build.xml" default="main" basedir="../..">
+<project name="common/build.xml" default="main" basedir="..">
 
     <!-- properties -->
     <property file="${basedir}/build.properties"/>
     <property name="lib.dir" value="${basedir}/lib"/>
 
-    <property name="module.dir" value="${basedir}/modules/common"/>
+    <property name="module.dir" value="${basedir}/common"/>
     <property name="module.lib.dir" location="${module.dir}/lib"/>
     <property name="module.src" value="${module.dir}/src"/>
     <property name="module.classes" value="${module.dir}/classes"/>
@@ -35,7 +35,7 @@
     
     <!-- j2ee apis required to compile -->
     <path id="classpath">
-        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+        <fileset dir="${xalan.dir}" includes="xalan-${xalan.version}.jar"/>
     </path>
 
     <target name="main" depends="clean,prepare,run-depend,jar" description="cleans and runs the full build"/>

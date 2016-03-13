@@ -17,14 +17,13 @@
   limitations under the License.
 
 -->
-<project name="modules/remoting/build.xml" default="main" basedir="../..">
+<project name="remoting/build.xml" default="main" basedir="..">
 
     <!-- properties -->
     <property file="${basedir}/build.properties"/>
     <property name="lib.dir" value="${basedir}/lib"/>
 
-    <property name="module.dir" value="${basedir}/modules/remoting"/>
-    <property name="module.lib.dir" location="${module.dir}/lib"/>
+    <property name="module.dir" value="${basedir}/remoting"/>
     <property name="module.src" value="${module.dir}/src"/>
     <property name="module.classes" value="${module.dir}/classes"/>
     <property name="module.jar" value="${lib.dir}/flex-messaging-remoting.jar"/>
@@ -32,7 +31,8 @@
     <property name="build.number" value=""/>
 
     <path id="classpath">
-        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+        <fileset dir="${lib.dir}" erroronmissingdir="false" includes="flex-messaging-common.jar"/>
+        <fileset dir="${lib.dir}" erroronmissingdir="false" includes="flex-messaging-core.jar"/>
     </path>
 
     <target name="main" depends="clean,prepare,run-depend,jar" description="cleans and runs the full build"/>

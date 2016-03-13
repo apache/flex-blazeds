@@ -164,8 +164,9 @@ frameworks/mxml-manifest.xml
 frameworks/spark-manifest.xml
 frameworks/tests/
 frameworks/themes/
-modules/core/classes/
-modules/core/src/ExcludeDoclet.java
+remoting/classes/
+core/classes/
+core/src/ExcludeDoclet.java
 qa/resources/config/air-config.xml
 qa/resources/config/flex-config.xml
 resources/security/tomcat/TomcatValve.java
