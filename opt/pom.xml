@@ -35,6 +35,7 @@ limitations under the License.
 		<!--module>websphere</module-->
 		<!--module>weblogic</module-->
 		<!--module>oracle</module-->
+		<module>blazeds-spring-boot-starter</module>
 	</modules>
 
 	<dependencies>

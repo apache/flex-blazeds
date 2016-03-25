@@ -65,7 +65,6 @@
 		<module>remoting</module>
 		<module>opt</module>
 		<module>testsuite</module>
-		<module>blazeds-spring-boot-starter</module>
 	</modules>
 
 	<build>
