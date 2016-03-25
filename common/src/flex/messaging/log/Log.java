@@ -44,7 +44,7 @@ public class Log
 
     private static Log log;
     private static PrettyPrinter prettyPrinter;
-    private static String prettyPrinterClass = "BasicPrettyPrinter";
+    private static String prettyPrinterClass = "flex.messaging.util.BasicPrettyPrinter";
 
     private static final HashSet excludedProperties = new HashSet();
     public static final String VALUE_SUPRESSED = "** [Value Suppressed] **";
@@ -519,6 +519,7 @@ public class Log
             }
             catch (Throwable t)
             {
+                throw new RuntimeException("Error creating instance of default pretty printer.", t);
             }
         }
         return (PrettyPrinter)prettyPrinter.copy();
