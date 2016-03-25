@@ -20,6 +20,7 @@
 package org.apache.flex.blazeds.spring;
 
 import flex.messaging.MessageBroker;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
