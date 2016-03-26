@@ -1,0 +1,160 @@
+= BlazeDS Spring-Boot Starter
+
+This module can be used to configure a BlazeDS server with Spring-Boot.
+It automatically kicks in as soon as a services-config.xml is detected in
+`META-INF/flex/services-config.xml`
+
+In order to call your Spring services from Flex using Remote objects, all
+you need is a Spring-Boot starter:
+
+.init/Application.java
+----
+package init;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+@ComponentScan("de.codecentric.iot.rapiro")
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+}
+----
+
+The services-config.xml is the core part of this, as it describes
+which channels the BlazeDS instance will provide. It has to be located
+in the applications classpath in `META-INF/flex/servcies-config.xml`:
+
+.src/main/resources/META-INF/flex/services-config.xml
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<services-config>
+    <services>
+        <service id="remoting-service" class="flex.messaging.services.RemotingService">
+            <adapters>
+                <adapter-definition
+                        id="java-object"
+                        class="flex.messaging.services.remoting.adapters.JavaAdapter"
+                        default="true"/>
+            </adapters>
+            <default-channels>
+                <channel ref="websocketAmf"/>
+                <channel ref="longPollingAmf"/>
+                <channel ref="shortPollingAmf"/>
+            </default-channels>
+        </service>
+    </services>
+
+    <channels>
+        <channel-definition id="websocketAmf" class="mx.messaging.channels.StreamingAMFChannel">
+            <endpoint url="http://{server.name}:{server.port}/{context.root}/messagebroker/websocket-amf"
+                      class="flex.messaging.endpoints.StreamingAMFEndpoint"/>
+            <properties>
+                <server-to-client-heartbeat-millis>5000</server-to-client-heartbeat-millis>
+                <add-no-cache-headers>true</add-no-cache-headers>
+            </properties>
+        </channel-definition>
+        <channel-definition id="longPollingAmf" class="mx.messaging.channels.AMFChannel">
+            <endpoint url="http://{server.name}:{server.port}/{context.root}/messagebroker/long-polling-amf"
+                     class="flex.messaging.endpoints.AMFEndpoint"/>
+            <properties>
+                <polling-enabled>true</polling-enabled>
+                <wait-interval-millis>0</wait-interval-millis>
+                <polling-interval-millis>1000</polling-interval-millis>
+                <max-waiting-poll-requests>100</max-waiting-poll-requests>
+                <piggybacking-enabled>true</piggybacking-enabled>
+                <add-no-cache-headers>true</add-no-cache-headers>
+            </properties>
+        </channel-definition>
+        <channel-definition id="shortPollingAmf" class="mx.messaging.channels.AMFChannel">
+            <endpoint url="http://{server.name}:{server.port}/{context.root}/messagebroker/short-polling-amf"
+                      class="flex.messaging.endpoints.AMFEndpoint"/>
+            <properties>
+                <polling-enabled>true</polling-enabled>
+                <polling-interval-millis>3000</polling-interval-millis>
+                <piggybacking-enabled>true</piggybacking-enabled>
+                <add-no-cache-headers>true</add-no-cache-headers>
+            </properties>
+        </channel-definition>
+    </channels>
+
+    <flex-client>
+        <!-- Make sure clients are automatically expired -->
+        <timeout-minutes>720</timeout-minutes>
+    </flex-client>
+
+    <logging>
+        <!--
+                Logging inside BlazeDS is completely turned off.
+                The UniversalExceptionTranslator will handle logging
+                of exceptions inside Spring.
+        -->
+        <target class="flex.messaging.log.ConsoleTarget" level="None"/>
+    </logging>
+</services-config>
+----
+
+As soon as you have Spring services annotated with `@RemotingDestination`
+these are automatically accessible.
+
+.src/main/java/de/codecentric/iot/rapiro/movement/MovementService.java
+----
+package de.codecentric.iot.rapiro.movement;
+
+import org.springframework.flex.remoting.RemotingDestination;
+import org.springframework.stereotype.Service;
+
+@Service("movementService")
+@RemotingDestination
+public class MovementService {
+
+    @Override
+    public void stop() {
+        System.out.println("Stop");
+    }
+
+    @Override
+    public void moveForward() {
+        System.out.println("Forward");
+    }
+
+    @Override
+    public void moveLeft() {
+        System.out.println("Left");
+    }
+
+    @Override
+    public void moveRight() {
+        System.out.println("Right");
+    }
+
+    @Override
+    public void moveBack() {
+        System.out.println("Back");
+    }
+
+}
+----
+
+The Flex code for accessing these methods is now:
+
+.src/main/flex/de/codecentric/iot/rapiro/movement/MovementService.mxml
+----
+    <fx:Declarations>
+        <s:RemoteObject id="movementService"
+                        destination="movementService"
+                        endpoint="http://localhost:8080/messagebroker/short-polling-amf"
+                        fault="onFault(event)">
+            <s:method name="stop" result="onResult(event)"/>
+            <s:method name="moveForward" result="onResult(event)"/>
+            <s:method name="moveLeft" result="onResult(event)"/>
+            <s:method name="moveRight" result="onResult(event)"/>
+            <s:method name="moveBack" result="onResult(event)"/>
+        </s:RemoteObject>
+    </fx:Declarations>
+----
