@@ -26,6 +26,22 @@ public class Application {
 }
 ----
 
+In order to do it's magic, you need to add a depdendency to the
+the BlazeDS Spring-Boot starter in your pom.xml
+
+.pom.xml
+----
+
+...
+        <dependency>
+            <groupId>org.apache.flex.blazeds</groupId>
+            <artifactId>blazeds-spring-boot-starter</artifactId>
+            <version>4.7.3-SNAPSHOT</version>
+        </dependency>
+...
+
+----
+
 The services-config.xml is the core part of this, as it describes
 which channels the BlazeDS instance will provide. It has to be located
 in the applications classpath in `META-INF/flex/servcies-config.xml`:
