@@ -34,6 +34,23 @@ limitations under the License.
             <artifactId>spring-boot-autoconfigure</artifactId>
             <version>1.3.3.RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>4.2.3.RELEASE</version>
+        </dependency>
+
+        <!--
+            A s we rely on the Web layer being configured,
+            we can also take care of providing it. This way
+            all you need is a dependency to blazeds-spring-boot-starter
+            and you have all you need.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>1.3.3.RELEASE</version>
+        </dependency>
 
         <!-- Add a reference to Apache Flex BlazeDS -->
         <dependency>
@@ -83,18 +100,6 @@ limitations under the License.
                     <artifactId>blazeds-remoting</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <!--
-            As we rely on the Web layer being configured,
-            we can also take care of providing it. This way
-            all you need is a dependency to blazeds-spring-boot-starter
-            and you have all you need.
-        -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>1.3.3.RELEASE</version>
         </dependency>
     </dependencies>
 
