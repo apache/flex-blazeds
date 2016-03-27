@@ -16,7 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan("de.codecentric.iot.rapiro")
+@ComponentScan("my.base.package")
 public class Application {
 
     public static void main(String[] args) {
@@ -118,9 +118,9 @@ in the applications classpath in `META-INF/flex/servcies-config.xml`:
 As soon as you have Spring services annotated with `@RemotingDestination`
 these are automatically accessible.
 
-.src/main/java/de/codecentric/iot/rapiro/movement/MovementService.java
+.src/main/java/my/base/package/movement/MovementService.java
 ----
-package de.codecentric.iot.rapiro.movement;
+package my.base.package.movement;
 
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.stereotype.Service;
@@ -159,7 +159,7 @@ public class MovementService {
 
 The Flex code for accessing these methods is now:
 
-.src/main/flex/de/codecentric/iot/rapiro/movement/MovementService.mxml
+.src/main/flex/my/base/package/rapiro/movement/MovementService.mxml
 ----
     <fx:Declarations>
         <s:RemoteObject id="movementService"
