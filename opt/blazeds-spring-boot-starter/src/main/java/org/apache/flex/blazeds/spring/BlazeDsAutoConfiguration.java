@@ -19,20 +19,16 @@
 
 package org.apache.flex.blazeds.spring;
 
-import flex.messaging.MessageBroker;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.flex.config.RemotingAnnotationPostProcessor;
 import org.springframework.flex.core.MessageBrokerFactoryBean;
 import org.springframework.flex.servlet.MessageBrokerHandlerAdapter;
-import org.springframework.web.context.support.ServletContextAwareProcessor;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import javax.servlet.ServletContext;
 import java.util.Properties;
@@ -52,7 +48,7 @@ public class BlazeDsAutoConfiguration extends WebMvcConfigurationSupport {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    @Bean
+    @Bean(name = "_messageBroker")
     public MessageBrokerFactoryBean messageBrokerFactoryBean() throws Exception {
         MessageBrokerFactoryBean factoryBean = new MessageBrokerFactoryBean();
         // TODO: Do all the special configuration magic here ...
@@ -70,18 +66,6 @@ public class BlazeDsAutoConfiguration extends WebMvcConfigurationSupport {
         //factoryBean.afterPropertiesSet();
 
         return factoryBean;
-    }
-
-    /**
-     * Create and configure an instance of the MessageBroker.
-     *
-     * @return MessageBroker instance.
-     * @throws Exception in case anything went wrong.
-     */
-    @Bean
-    public MessageBroker _messageBroker(MessageBrokerFactoryBean factoryBean) throws Exception {
-        // Return the instance.
-        return factoryBean.getObject();
     }
 
     /**
