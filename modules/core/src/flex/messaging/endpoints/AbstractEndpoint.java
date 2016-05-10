@@ -109,6 +109,9 @@ public abstract class AbstractEndpoint extends ManageableComponent
     private static final String LEGACY_THROWABLE = "legacy-throwable";
     private static final String LEGACY_BIG_NUMBERS = "legacy-big-numbers";
     private static final String LEGACY_EXTERNALIZABLE = "legacy-externalizable";
+    private static final String ALLOW_XML_DOCTYPE_DECLARATION = "allow-xml-doctype-declaration";
+    private static final String ALLOW_XML_EXTERNAL_ENTITY_EXPANSION = "allow-xml-external-entity-expansion";
+
     private static final String LOG_PROPERTY_ERRORS = "log-property-errors";
     private static final String IGNORE_PROPERTY_ERRORS = "ignore-property-errors";
     private static final String INCLUDE_READ_ONLY = "include-read-only";
@@ -276,6 +279,8 @@ public abstract class AbstractEndpoint extends ManageableComponent
             serializationContext.legacyThrowable = serialization.getPropertyAsBoolean(LEGACY_THROWABLE, false);
             serializationContext.legacyBigNumbers = serialization.getPropertyAsBoolean(LEGACY_BIG_NUMBERS, false);
             serializationContext.legacyExternalizable = serialization.getPropertyAsBoolean(LEGACY_EXTERNALIZABLE, false);
+            serializationContext.allowXmlDoctypeDeclaration = serialization.getPropertyAsBoolean(ALLOW_XML_DOCTYPE_DECLARATION, false);
+            serializationContext.allowXmlExternalEntityExpansion = serialization.getPropertyAsBoolean(ALLOW_XML_EXTERNAL_ENTITY_EXPANSION, false);
             serializationContext.maxObjectNestLevel = (int)serialization.getPropertyAsLong(MAX_OBJECT_NEST_LEVEL, 512);
             serializationContext.maxCollectionNestLevel = (int)serialization.getPropertyAsLong(MAX_COLLECTION_NEST_LEVEL, 15);
             serializationContext.preferVectors = serialization.getPropertyAsBoolean(PREFER_VECTORS, false);
@@ -499,7 +504,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * Sets the ID of the <code>AbstractEndpoint</code>. If the <code>AbstractEndpoint</code>
      * has a <code>MessageBroker</code> assigned, it also updates the ID in the
      * <code>MessageBroker</code>.
-     * <p/>
+     *
      * @param id The endpoint ID.
      */
     @Override
@@ -735,7 +740,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Returns the url of the endpoint parsed for the client.
      *
      * @return The url of the endpoint parsed for the client.
@@ -759,7 +764,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Returns the total throughput for the endpoint.
      *
      * @return The total throughput for the endpoint.
@@ -777,7 +782,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     //
     //--------------------------------------------------------------------------
 
-    /** @exclude **/
+
     public static void addNoCacheHeaders(HttpServletRequest req, HttpServletResponse res)
     {
         String userAgent = req.getHeader(UserAgentManager.USER_AGENT_HEADER_NAME);
@@ -797,7 +802,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      */
     public Message convertToSmallMessage(Message message)
     {
@@ -815,7 +820,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * Retrieves a <code>ConfigMap</code> of the endpoint properties the client
      * needs. Subclasses should add additional properties to <code>super.describeDestination</code>,
      * or return <code>null</code> if they must not send their properties to the client.
-     * <p/>
+     *
      * @return ConfigMap The ConfigMap object.
      */
     public ConfigMap describeEndpoint()
@@ -893,7 +898,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Make sure this matches with ChannelSettings.getParsedUri.
      */
     public String getParsedUrl(String contextPath)
@@ -903,7 +908,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      */
     public void handleClientMessagingVersion(Number version)
     {
@@ -923,7 +928,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * Default implementation of the Endpoint <code>service</code> method.
      * Subclasses should call <code>super.service</code> before their custom
      * code.
-     * <p/>
+     *
      * @param req The HttpServletRequest object.
      * @param res The HttpServletResponse object.
      */
@@ -935,7 +940,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     /**
      * Typically invoked by subclasses, this method transforms decoded message data
      * into the appropriate Message object and routes the Message to the endpoint's broker.
-     * <p/>
+     *
      * @param message The decoded message data.
      * @return Message The transformed message.
      */
@@ -1104,7 +1109,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
    }
 
    /**
-    * @exclude
+    *
     * Performance metrics gathering property
     */
     public boolean isRecordMessageSizes()
@@ -1113,7 +1118,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
    /**
-    * @exclude
+    *
     * Performance metrics gathering property
     */
     public boolean isRecordMessageTimes()
@@ -1122,7 +1127,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      */
     public void setThreadLocals()
     {
@@ -1140,7 +1145,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      */
     public void clearThreadLocals()
     {
@@ -1369,7 +1374,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Verifies that the remote client supports the FlexClient API.
      * Legacy clients that do not support this receive a message fault for any messages they send.
      *
@@ -1386,7 +1391,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      */
     protected Class<?> createClass(String className)
     {

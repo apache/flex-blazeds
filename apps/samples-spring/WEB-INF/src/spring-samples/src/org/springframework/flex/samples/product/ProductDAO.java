@@ -26,11 +26,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-/**
- * 
- * @author Christophe Coenraets
- * @author Jeremy Grelle
- */
 public class ProductDAO implements IProductDAO {
 
     private final DataSource dataSource;

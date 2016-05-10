@@ -36,15 +36,15 @@ public class ThrottleSettings
         CONFLATE
     };
 
-    /** @exclude **/
+
     public static final String ELEMENT_INBOUND = "throttle-inbound";
-    /** @exclude **/
+
     public static final String ELEMENT_OUTBOUND = "throttle-outbound";
-    /** @exclude **/
+
     public static final String ELEMENT_POLICY = "policy";
-    /** @exclude **/
+
     public static final String ELEMENT_DEST_FREQ = "max-frequency";
-    /** @exclude **/
+
     public static final String ELEMENT_CLIENT_FREQ = "max-client-frequency";
 
     // Errors

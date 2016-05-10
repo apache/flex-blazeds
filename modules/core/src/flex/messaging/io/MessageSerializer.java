@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * @author Peter Farland
  *
- * @exclude
  */
 public interface MessageSerializer
 {

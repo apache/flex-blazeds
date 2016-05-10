@@ -21,11 +21,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * 
- * @author Mark Fisher
- * @author Jeremy Grelle
- */
 public class Counter {
 
     private volatile boolean running;

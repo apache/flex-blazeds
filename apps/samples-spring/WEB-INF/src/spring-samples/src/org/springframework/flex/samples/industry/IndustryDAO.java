@@ -32,11 +32,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.stereotype.Service;
 
-/**
- * 
- * @author Christophe Coenraets
- * @author Jeremy Grelle
- */
 @Service("industryService")
 @RemotingDestination(channels = { "my-amf" })
 public class IndustryDAO implements IIndustryDAO {

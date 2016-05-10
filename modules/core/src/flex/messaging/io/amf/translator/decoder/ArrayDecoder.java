@@ -23,16 +23,13 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 
 /**
- * @exclude
+ *
  * Decodes native Java Array, java.util.Collection, or
  * java.lang.String (to char[]) instances to a native
  * Java Array instance with desired component type.
  *
  * This class does not handle the case where the source
  * encodedObject is modified while decoding.
- *
- * @author Brian Deitte
- * @author Peter Farland
  */
 public class ArrayDecoder extends ActionScriptDecoder
 {

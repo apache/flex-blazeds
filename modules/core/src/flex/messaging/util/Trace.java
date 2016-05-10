@@ -39,7 +39,7 @@ import java.util.Date;
  *
  * Add new xxx members as desired.
  *
- * @exclude
+ *
  */
 
 public class Trace 

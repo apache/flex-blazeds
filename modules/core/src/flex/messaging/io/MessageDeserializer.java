@@ -26,8 +26,6 @@ import java.io.InputStream;
 /**
  * An interface to allow for either AMF or AMFX based deserializers
  * to process requests.
- *
- * @author Peter Farland
  */
 public interface MessageDeserializer
 {

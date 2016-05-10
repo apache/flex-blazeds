@@ -30,8 +30,6 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * The <code>EndpointControl</code> class is the MBean implementation for
  * monitoring and managing an <code>Endpoint</code> at runtime.
- *
- * @author shodgson
  */
 public abstract class EndpointControl extends BaseControl implements EndpointControlMBean
 {

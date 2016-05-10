@@ -25,7 +25,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * Utility class for URL encoding.
  * 
- * @exclude
+ *
  */
 public final class URLEncoder
 {

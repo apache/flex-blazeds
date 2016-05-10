@@ -300,7 +300,7 @@ public abstract class AbstractMessage implements Message, Cloneable
     }
 
     /**
-     * @exclude
+     *
      * 
      * While this class itself does not implement java.io.Externalizable,
      * SmallMessage implementations will typically use Externalizable to
@@ -375,7 +375,7 @@ public abstract class AbstractMessage implements Message, Cloneable
     }
 
     /**
-     * @exclude
+     *
      * 
      * While this class itself does not implement java.io.Externalizable,
      * SmallMessage implementations will typically use Externalizable to
@@ -643,7 +643,7 @@ public abstract class AbstractMessage implements Message, Cloneable
     }
 
     /**
-     * @exclude
+     *
      * Used by the readExtenral method to read the body.
      *  
      * @param input Object input.
@@ -656,7 +656,7 @@ public abstract class AbstractMessage implements Message, Cloneable
     }
 
     /**
-     * @exclude
+     *
      * To support efficient serialization for SmallMessage implementations,
      * this utility method reads in the property flags from an ObjectInput
      * stream. Flags are read in one byte at a time. Flags make use of
@@ -683,10 +683,7 @@ public abstract class AbstractMessage implements Message, Cloneable
 
             flagsArray[i] = flags;
 
-            if ((flags & HAS_NEXT_FLAG) != 0)
-                hasNextFlag = true;
-            else
-                hasNextFlag = false;
+            hasNextFlag = (flags & HAS_NEXT_FLAG) != 0;
 
             i++;
         }
@@ -695,7 +692,7 @@ public abstract class AbstractMessage implements Message, Cloneable
     }
 
     /**
-     * @exclude
+     *
      * Used by writeExternal method to write the body.
      * 
      * @param output The object output.

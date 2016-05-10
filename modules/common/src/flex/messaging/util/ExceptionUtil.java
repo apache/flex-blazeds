@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 /**
- * @exclude
+ *
  */
 public class ExceptionUtil
 {
@@ -205,6 +205,10 @@ public class ExceptionUtil
 
     /**
      * Recursively prints out a stack of wrapped exceptions.
+     *
+     * @param th the Throwable object
+     * @param out the output writer to print to
+     * @param depth the number of levels the stack should be printed
      */
     protected static void printExceptionStack(Throwable th, PrintWriter out, int depth){
         //only print the stack depth if the depth is greater than 0

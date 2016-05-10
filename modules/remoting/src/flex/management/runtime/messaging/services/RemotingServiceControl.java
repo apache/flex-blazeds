@@ -22,8 +22,6 @@ import flex.messaging.services.RemotingService;
 /**
  * The <code>RemotingServiceControl</code> class is the MBean implemenation
  * for monitoring and managing a <code>RemotingService</code> at runtime.
- * 
- * @author shodgson
  */
 public class RemotingServiceControl extends ServiceControl implements
         RemotingServiceControlMBean

@@ -22,8 +22,6 @@ import flex.messaging.endpoints.AMFEndpoint;
 /**
  * The <code>AMFEndpointControl</code> class is the MBean implemenation
  * for monitoring and managing an <code>AMFEndpoint</code> at runtime.
- *
- * @author shodgson
  */
 public class AMFEndpointControl extends PollingEndpointControl implements
         AMFEndpointControlMBean

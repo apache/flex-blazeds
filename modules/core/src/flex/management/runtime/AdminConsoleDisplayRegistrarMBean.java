@@ -21,7 +21,7 @@ import java.io.IOException;
 import flex.management.BaseControlMBean;
 
 /**
- * @exclude
+ *
  */
 public interface AdminConsoleDisplayRegistrarMBean extends BaseControlMBean
 {

@@ -87,9 +87,6 @@ security.provider.2=sun.security.provider.Sun
  * Authenticates against WebSphere but does not store the authenticated
  * user in the HttpServletRequest for http attempts due to the container
  * not providing a mechanism for access.
- *
- * @author Paul Reilly
- * @author Matt Chotin
  */
 public class WebSphereLoginCommand extends AppServerLoginCommand implements PrincipalConverter
 {

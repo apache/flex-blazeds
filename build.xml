@@ -27,6 +27,8 @@ Each of the main targets for the modules will call clean themselves before proce
 
 -->
 <project name="BlazeDS" default="main" basedir=".">
+
+    <property file="${basedir}/env.properties"/>
     <property environment="env"/>
 
     <!-- properties -->
@@ -42,9 +44,6 @@ Each of the main targets for the modules will call clean themselves before proce
 
     <property name="server.baseurl" value="http://localhost:8400"/>
 
-    <property name="ant-contrib.jar" location="${env.ANT_HOME}/lib/ant-contrib-1.0b2.jar"/>
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${ant-contrib.jar}"/>
-
     <property name="tmp.dir" value="${basedir}/packagetemp/temp" />
     <property name="local.sdk.dir" value="resources/flex_sdk" />
     
@@ -53,7 +52,30 @@ Each of the main targets for the modules will call clean themselves before proce
     <property name="FLEX_HOME" value="${env.FLEX_HOME}"/>
     <property name="ANT_HOME" value="${env.ANT_HOME}"/>
 
-    <target name="check-env" 
+    <condition property="ocx.dir" value="${env.WINDIR}/system32/Macromed/Flash/" >
+        <isset property="env.WINDIR"/>
+    </condition>
+    <condition property="ocx.dir" value="${env.WinDir}/system32/Macromed/Flash/" >
+        <isset property="env.WinDir"/>
+    </condition>
+    <property name="ocx.dir" value="${env.windir}/system32/Macromed/Flash/" />
+
+    <condition property="isFlex3" value="true">
+        <equals arg1="${sdk.version}" arg2="3"/>
+    </condition>
+
+
+    <condition property="installer.exe" value="${fp9.installer.exe}">
+        <equals arg1="${sdk.version}" arg2="3"/>
+    </condition>
+    <property name="installer.exe" value="${fp11.installer.exe}"/>
+
+    <condition property="installer.plugin.exe" value="${fp9.installer.plugin.exe}">
+        <equals arg1="${sdk.version}" arg2="3"/>
+    </condition>
+    <property name="installer.plugin.exe" value="${fp11.installer.plugin.exe}"/>
+
+    <target name="check-env"
         depends="check-flex-home, load-more-properties, check-playerglobal-home" />
     
     <target name="check-flex-home" unless="flexhome.exists"
@@ -180,15 +202,13 @@ Each of the main targets for the modules will call clean themselves before proce
     </target>
 
     <target name="consoleapp" description="full build of the flex admin app">
-        <if>
-            <equals arg1="${sdk.version}" arg2="3"/>
-            <then>
-                <echo message="Console app doesn't build with SDK 3, skipping."/>
-            </then>
-            <else>
-                <ant antfile="${basedir}/apps/ds-console/build.xml" target="${subproject.target}"/>
-            </else>
-        </if>
+        <antcall target="build.consoleapp" />
+    </target>
+    <target name="build.consoleapp" depends="check.flex3.consoleapp" if="isFlex3">
+        <ant antfile="${basedir}/apps/ds-console/build.xml" target="${subproject.target}"/>
+    </target>
+    <target name="check.flex3.consoleapp" unless="isFlex3" >
+        <echo message="Console app doesn't build with SDK 3, skipping."/>
     </target>
 
     <target name="qaapp" description="full build of the qa app">
@@ -210,23 +230,6 @@ Each of the main targets for the modules will call clean themselves before proce
     <target name="createMMSFile"
         description="create mms.cfg in order to enable local shared object access"
         if="isWindows">
-        <if>
-            <isset property="env.WINDIR"/>
-            <then>
-                <property name="ocx.dir" value="${env.WINDIR}/system32/Macromed/Flash/" />
-            </then>
-            <else>
-                <if>
-                    <isset property="env.WinDir"/>
-                    <then>
-                        <property name="ocx.dir" value="${env.WinDir}/system32/Macromed/Flash/" />
-                    </then>
-                    <else>
-                        <property name="ocx.dir" value="${env.windir}/system32/Macromed/Flash/" />
-                    </else>
-                </if>
-            </else>
-        </if>
         <!-- Sets the default maximum local shared object storage size to unlimited -->
         <echo file="${ocx.dir}/mms.cfg" append="false">LocalStorageLimit=6</echo>
     </target>
@@ -756,40 +759,17 @@ Each of the main targets for the modules will call clean themselves before proce
     <target name="ocx" description="Update the ActiveX player to the latest.  You must CLOSE YOUR BROWSERS for this to work.">
         <property name="ant-contrib.jar" location="${env.ANT_HOME}/lib/ant-contrib-1.0b2.jar"/>
         
-        
-        <if>
-            <equals arg1="${sdk.version}" arg2="3"/>
-            <then>
-                <property name="installer.exe" value="${fp9.installer.exe}"/>
-                <property name="installer.plugin.exe" value="${fp9.installer.plugin.exe}"/>
-            </then>
-            <else>
-                <property name="installer.exe" value="${fp11.installer.exe}"/>
-                <property name="installer.plugin.exe" value="${fp11.installer.plugin.exe}"/>
-            </else> 
-        </if>
-        
-  
         <available file="${basedir}/qa/automation/bin/${uninstaller.exe}" property="uninstaller.exists" />
 
-        <if>
+        <condition property="uninstall.fp" value="true">
             <and>
                 <equals arg1="${uninstaller.exists}" arg2="true" />
                 <not>
                     <equals arg1="${skip.uninstall}" arg2="true" />
                 </not>
             </and>
-            <then>
-                <echo>Uninstalling the old ActiveX and Plugin players.</echo>
-                <exec dir="${basedir}" executable="${basedir}/qa/automation/bin/${uninstaller.exe}" >
-                    <arg line="-uninstall" />
-                </exec>
-            </then>
-            <else>
-                <echo>Uninstall was skipped.</echo>
-                <echo> - skip.uninstall? ${skip.uninstall}</echo>
-            </else>
-        </if>
+        </condition>
+        <antcall target="actual.uninstall.fp" />
 
         <echo>Installing the new player.</echo>
         <exec dir="${basedir}/bin" executable="${basedir}/bin/${installer.exe}">
@@ -799,6 +779,16 @@ Each of the main targets for the modules will call clean themselves before proce
         <exec dir="${basedir}/bin" executable="${basedir}/bin/${installer.plugin.exe}">
            <arg line="-install"/>
         </exec>
+    </target>
+    <target name="actual.uninstall.fp" depends="check.uninstall.fp" if="uninstall.fp">
+        <echo>Uninstalling the old ActiveX and Plugin players.</echo>
+        <exec dir="${basedir}" executable="${basedir}/qa/automation/bin/${uninstaller.exe}" >
+            <arg line="-uninstall" />
+        </exec>
+    </target>
+    <target name="check.uninstall.fp" unless="uninstall.fp" >
+        <echo>Uninstall was skipped.</echo>
+        <echo> - skip.uninstall? ${skip.uninstall}</echo>
     </target>
 
     <target name="javadoc">

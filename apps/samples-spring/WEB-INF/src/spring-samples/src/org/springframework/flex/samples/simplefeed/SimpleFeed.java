@@ -28,11 +28,6 @@ import java.util.Random;
 
 import org.springframework.flex.messaging.MessageTemplate;
 
-/**
- * 
- * @author Christophe Coenraets
- * @author Jeremy Grelle
- */
 public class SimpleFeed {
 
     private static FeedThread thread;

@@ -63,8 +63,6 @@ import flex.messaging.util.StringUtils;
 /**
  * The MessageService class is the Service implementation that manages point-to-point
  * and publish-subscribe messaging.
- *
- * @author neville
  */
 public class MessageService extends AbstractService implements MessagingConstants
 {
@@ -73,7 +71,7 @@ public class MessageService extends AbstractService implements MessagingConstant
     /** Log category for <code>MessageService</code> that captures message timing. */
     public static final String TIMING_LOG_CATEGORY = LogCategories.MESSAGE_TIMING;
 
-    /** @exclude **/
+
     public static final String NOT_SUBSCRIBED_CODE = "Server.Processing.NotSubscribed";
 
     // Errors
@@ -223,7 +221,7 @@ public class MessageService extends AbstractService implements MessagingConstant
     }
 
     /**
-     * @exclude
+     *
      */
 
     public Object serviceMessage(Message message, boolean throttle)
@@ -232,7 +230,7 @@ public class MessageService extends AbstractService implements MessagingConstant
     }
 
     /**
-     * @exclude
+     *
      */
     public Object serviceMessage(Message message, boolean throttle, MessageDestination dest)
     {
@@ -326,7 +324,7 @@ public class MessageService extends AbstractService implements MessagingConstant
     }
 
     /**
-     * @exclude
+     *
      */
     @Override
     public Object serviceCommand(CommandMessage message)
@@ -445,7 +443,7 @@ public class MessageService extends AbstractService implements MessagingConstant
     }
 
     /**
-     * @exclude
+     *
      * This method is provided for a cluster peer broadcast from a single remote node.  Because the
      * cluster handling code adds the remote server's address as a paramter when you call invokePeerToPeerOperation
      * we need a new variant of this method which takes the remote node's address.
@@ -456,7 +454,7 @@ public class MessageService extends AbstractService implements MessagingConstant
     }
 
     /**
-     * @exclude
+     *
      * This method is provided for a cluster peer broadcast, it is not intended to be
      * invoked locally.
      */
@@ -573,7 +571,7 @@ public class MessageService extends AbstractService implements MessagingConstant
     }
 
     /**
-     * @exclude
+     *
      * This method is used by messaging adapters to send a message to a specific
      * set of clients that are directly connected to this server.  It does not
      * propagate the message to other servers in the cluster.
@@ -714,7 +712,7 @@ public class MessageService extends AbstractService implements MessagingConstant
      * This method is provided for a clustered messaging with the routing-mode set to point-to-point.
      * On startup, a server invokes this method for each server to request its local subscription state.
      *
-     * @exclude
+     *
      */
     public void requestSubscriptions(String destinationId, Object remoteAddress)
     {
@@ -728,7 +726,7 @@ public class MessageService extends AbstractService implements MessagingConstant
      * subscription state and sends it back to the requesting server by calling its
      * receiveSubscriptions method.
      *
-     * @exclude
+     *
      */
     public void sendSubscriptions(String destinationId, Object remoteAddress)
     {
@@ -787,7 +785,7 @@ public class MessageService extends AbstractService implements MessagingConstant
      * This method is provided for a cluster peer broadcast, it is not invoked locally.  It is used
      * by remote clients to send their subscription table to this server.
      *
-     * @exclude
+     *
      */
     public void receiveSubscriptions(String destinationId, Object subscriptions, Object senderAddress)
     {
@@ -799,7 +797,7 @@ public class MessageService extends AbstractService implements MessagingConstant
     }
 
     /**
-     * @exclude
+     *
      * Called when we need to push a local subscribe/unsubscribe to all of the remote
      * servers.
      */
@@ -1169,7 +1167,7 @@ public class MessageService extends AbstractService implements MessagingConstant
     }
 
     /**
-     * @exclude
+     *
      * Tests a selector in an attempt to avoid runtime errors that we could catch at startup.
      *
      * @param selectorExpression The expression to test.
@@ -1226,7 +1224,7 @@ public class MessageService extends AbstractService implements MessagingConstant
     }
     
     /**
-     * @exclude
+     *
      * 
      * This is override the method stop().
      * It is needed to provide locking of MessageService.subcribeLock first

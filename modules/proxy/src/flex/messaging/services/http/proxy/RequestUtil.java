@@ -20,10 +20,8 @@ import flex.messaging.log.Log;
 import flex.messaging.services.HTTPProxyService;
 
 /**
- * @exclude
- * Request methods shared by J2EE and .NET.
  *
- * @author Brian Deitte
+ * Request methods shared by J2EE and .NET.
  */
 public class RequestUtil
 {

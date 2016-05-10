@@ -35,8 +35,7 @@ import flex.messaging.util.LocaleUtils;
  * sections of the document need to be parsed first.
  * </p>
  *
- * @author Peter Farland
- * @exclude
+ *
  */
 public abstract class ServerConfigurationParser extends AbstractConfigurationParser
 {

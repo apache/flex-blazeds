@@ -31,11 +31,8 @@ import java.util.Set;
 import org.apache.commons.httpclient.Cookie;
 
 /**
- * @exclude
- * Store all the information needed for a proxy request.
  *
- * @author Brian Deitte
- * @author Peter Farland
+ * Store all the information needed for a proxy request.
  */
 public class ProxyContext extends SharedProxyContext
 {

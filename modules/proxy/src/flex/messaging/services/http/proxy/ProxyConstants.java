@@ -17,10 +17,8 @@
 package flex.messaging.services.http.proxy;
 
 /**
- * @exclude
- * Contants related to the proxy (shared with .NET).
  *
- * @author Brian Deitte
+ * Contants related to the proxy (shared with .NET).
  */
 public class ProxyConstants
 {

@@ -23,8 +23,6 @@ import flex.management.BaseControlMBean;
 /**
  * Defines the runtime monitoring and management interface for
  * <code>SubscriptionManager</code>s.
- *
- * @author shodgson
  */
 public interface SubscriptionManagerControlMBean extends BaseControlMBean
 {

@@ -23,22 +23,18 @@
 <project name="team.war/build.xml" default="main" basedir="../..">
 
     <property file="${basedir}/build.properties" />
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${env.ANT_HOME}/lib/ant-contrib-1.0b2.jar"/>
     <property name="team.war" value="${basedir}/apps/team" />
     <property name="dist.dir" value="${basedir}/dist" />
     <property name="src.dir" value="${team.war}/WEB-INF/src" />
     <property name="classes.dir" value="${team.war}/WEB-INF/classes" />
-    <if>
+    <condition property="template.dir" value="client-side-detection-with-history">
         <equals arg1="${sdk.version}" arg2="3"/>
-        <then>
-            <property name="template.dir" value="client-side-detection-with-history"/>
-            <property name="war.filename" value="team-sdk3.war"/>
-        </then>            
-        <else>
-            <property name="template.dir" value=""/>
-            <property name="war.filename" value="team.war"/>
-        </else>        
-    </if>
+    </condition>
+    <property name="template.dir" value=""/>
+    <condition property="war.filename" value="team-sdk3.war">
+        <equals arg1="${sdk.version}" arg2="3"/>
+    </condition>
+    <property name="war.filename" value="team.war"/>
 
     <path id="classpath">
         <fileset dir="${team.war}/WEB-INF/lib" includes="**/*.jar" />

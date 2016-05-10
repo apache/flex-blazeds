@@ -52,18 +52,20 @@ public interface FlexFactory extends FlexConfigurable
      * an instance of this object.  If the instance is application
      * scoped, the FactoryInstance may contain a reference to the
      * instance directly.
-     * <p>
+     *
      * Any valid properties used for this configuration
      * must be accessed to avoid warnings about unused configuration
      * elements.  If your factory is only used for application
      * scoped components, you do not need to implement
      * this method as the lookup method itself can be used
      * to validate its configuration.
-     * </p><p>
+     *
      * The id property is used as a name to help you identify
      * this factory instance for any errors it might generate.
-     * </p>
      *
+     * @param id id of the factory
+     * @param properties properties
+     * @return a new FactoryInstance instance
      */
     FactoryInstance createFactoryInstance(String id, ConfigMap properties);
 

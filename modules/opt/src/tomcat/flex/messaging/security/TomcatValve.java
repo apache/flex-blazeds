@@ -44,7 +44,7 @@ import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
 
 /**
- * @exclude
+ *
  * A Tomcat valve for allowing programmatic login.  This valve saves the container, 
  * something not available normally to a servlet, and allows login to the current realm. 
  * The pieces interacting with Tomcat are taken from org.apache.catalina.authenticator.AuthenticatorBase.

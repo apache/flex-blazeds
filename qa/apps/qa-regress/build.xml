@@ -20,7 +20,6 @@
 <project name="qa-regress.war/build.xml" default="main" basedir="../.."> <!-- flex/qa -->
 
     <property environment="env"/>
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${env.ANT_HOME}/lib/ant-contrib-1.0b2.jar"/>
     <property name="qa.dir" value="${basedir}" />
     <property name="blazeds.dir" value="${qa.dir}/.."/>
        
@@ -43,22 +42,24 @@
     <property name="nowarn" value="on" />   
     <property name="server" value="${build.number}"/>
     
-    <if>
+    <condition property="template.dir" value="client-side-detection-with-history">
         <equals arg1="${sdk.version}" arg2="3"/>
-        <then>
-            <property name="template.dir" value="client-side-detection-with-history"/>
-            <property name="qa-regress.war.file" value="qa-regress-sdk3.war"/>
-        </then>            
-        <else>
-            <property name="template.dir" value=""/>
-            <property name="qa-regress.war.file" value="qa-regress.war"/>
-        </else>        
-    </if>
-
+    </condition>
+    <condition property="qa-regress.war.file" value="qa-regress-sdk3.war">
+        <equals arg1="${sdk.version}" arg2="3"/>
+    </condition>
+    <property name="template.dir" value=""/>
+    <property name="qa-regress.war.file" value="qa-regress.war"/>
+    
+    <condition property="flextasks.dir" value="${FLEX_HOME}/ant/lib">
+        <available file="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+    </condition>
+    <property name="flextasks.dir" value="${FLEX_HOME}/lib" />
+        
 
     <path id="classpath">
         <fileset dir="${qa.war}/WEB-INF/lib" includes="**/*.jar"/>
-        <fileset dir="${FLEX_HOME}/ant/lib" includes="flexTasks.jar"/>
+        <fileset dir="${flextasks.dir}" includes="flexTasks.jar"/>
         <pathelement location="${jms.jar}"/>
         <pathelement location="${servlet.jar}"/>
         <pathelement location="${xalan.jar}"/>
@@ -66,6 +67,7 @@
 
     <path id="qa.classpath">
         <fileset dir="${qa.dir}/lib" includes="**/*.jar"/>
+        <fileset dir="${blazeds.dir}/lib" includes="**/*.jar"/>
         <!--fileset dir="${ANT_HOME}/lib" includes="**/*.jar"/>
         <fileset dir="${FLEX_HOME}/ant/lib" includes="flexTasks.jar"/-->
         <fileset dir="${FLEX_HOME}/lib/external" includes="xercesImpl.jar"/>
@@ -128,15 +130,11 @@
     
     <target name="copy-resources" depends="copy-webtier">
         
-       <if>
+        <condition property="runtype.spring" value="true">
             <equals arg1="${runtype}" arg2="spring" />
-            <then>
-                <!-- replace web.xml with web.xml.spring -->
-                <copy file="${qa.war}/WEB-INF/web.xml" tofile="${qa.war}/WEB-INF/web.xml.orig"/>
-                <delete file="${qa.war}/WEB-INF/web.xml"/>
-                <copy file="${qa.war}/WEB-INF/web.xml.spring" tofile="${qa.war}/WEB-INF/web.xml"/>                        
-            </then>
-        </if>
+        </condition>
+        <antcall target="copy.if.spring" />
+        
         <!-- copy to the WEB-INF/flex directory -->
         <copy todir="${qa.war}/WEB-INF/flex">
             <fileset dir="${blazeds.dir.frameworks.dir}">
@@ -193,6 +191,13 @@
         </propertyfile>
     </target>
 
+    <target name="copy.if.spring" if="runtype.spring" >
+        <!-- replace web.xml with web.xml.spring -->
+        <copy file="${qa.war}/WEB-INF/web.xml" tofile="${qa.war}/WEB-INF/web.xml.orig"/>
+        <delete file="${qa.war}/WEB-INF/web.xml"/>
+        <copy file="${qa.war}/WEB-INF/web.xml.spring" tofile="${qa.war}/WEB-INF/web.xml"/>
+    </target>
+    
     <target name="copy.automation.resources" description="Copy QA Resources..." >
         <!-- delete old folders -->
         <delete>
@@ -305,18 +310,19 @@
 
         <delete dir="${config.dir}/mergeGenerated" quiet="true"/>
         
-        <if>
+        <condition property="runtype.validators" value="true">
             <equals arg1="${runtype}" arg2="validators" />
-            <then>
-                <!-- replace services-config.xml with services-config.validators.xml for class deserialization validator testing -->
-                <copy file="${qa.war}/WEB-INF/flex/services-config.xml" tofile="${qa.war}/WEB-INF/flex/services-config.xml.orig"/>
-                <delete file="${qa.war}/WEB-INF/flex/services-config.xml"/>
-                <copy file="${qa.war}/WEB-INF/flex/services-config.validators.xml" tofile="${qa.war}/WEB-INF/flex/services-config.xml"/>
-            </then>
-        </if>
+        </condition>
+        <antcall target="copy.if.validators" />
     </target>
 
-
+    <target name="copy.if.validators" if="runtype.validators" >
+        <!-- replace services-config.xml with services-config.validators.xml for class deserialization validator testing -->
+        <copy file="${qa.war}/WEB-INF/flex/services-config.xml" tofile="${qa.war}/WEB-INF/flex/services-config.xml.orig"/>
+        <delete file="${qa.war}/WEB-INF/flex/services-config.xml"/>
+        <copy file="${qa.war}/WEB-INF/flex/services-config.validators.xml" tofile="${qa.war}/WEB-INF/flex/services-config.xml"/>
+    </target>
+    
     <target name="generate-deployable-config-files" depends="generate-config-files"
             description="--> Remove relative paths from config files.  Override 'config.sourcedir' to specify a different source location for the original config files." >
         <property name="config.sourcedir" location="${qa.dir}/resources/config" />

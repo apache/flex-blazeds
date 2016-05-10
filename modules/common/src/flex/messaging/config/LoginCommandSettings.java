@@ -19,8 +19,7 @@ package flex.messaging.config;
 /**
  * Settings for <code>LoginCommand</code> class.
  *
- * @author esolovey
- * @exclude
+ *
  */
 public class LoginCommandSettings
 {

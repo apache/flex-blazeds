@@ -220,7 +220,7 @@ public class MessageDestination extends FactoryDestination
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      * Returns a <tt>ConfigMap</tt> of destination properties that the client
      * needs. This includes properties from <code>super{@link #describeDestination(boolean)}</code>
      * and it also includes outbound throttling policy that the edge server might need.
@@ -264,25 +264,25 @@ public class MessageDestination extends FactoryDestination
         return destinationConfig;
     }
 
-    /** @exclude */
+
     public SubscriptionManager getSubscriptionManager()
     {
         return subscriptionManager;
     }
 
-    /** @exclude */
+
     public RemoteSubscriptionManager getRemoteSubscriptionManager()
     {
         return remoteSubscriptionManager;
     }
 
-    /** @exclude */
+
     public ThrottleManager getThrottleManager()
     {
         return throttleManager;
     }
 
-    /** @exclude **/
+
     @Override
     public boolean equals(Object o)
     {
@@ -302,7 +302,7 @@ public class MessageDestination extends FactoryDestination
         return false;
     }
 
-    /** @exclude **/
+
     @Override
     public int hashCode()
     {
@@ -310,7 +310,7 @@ public class MessageDestination extends FactoryDestination
             (getId() == null ? 0 : getId().hashCode());
     }
 
-    /** @exclude **/
+
     @Override
     public String toString()
     {

@@ -25,8 +25,6 @@ import java.util.Set;
 /**
  * The <code>SubscriptionManagerControl</code> class is the MBean implementation for
  * monitoring and managing a <code>SubscriptionManager</code> at runtime.
- * 
- * @author shodgson
  */
 public class SubscriptionManagerControl extends BaseControl implements
         SubscriptionManagerControlMBean

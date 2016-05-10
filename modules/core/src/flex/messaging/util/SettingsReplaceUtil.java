@@ -32,7 +32,7 @@ import java.util.Set;
  * Methods for replacing tokens in config files
  * {context.root}, {context-root}, {server.name}, {server-name}, {server.port}, {server-port}.
  * 
- * @exclude
+ *
  */
 public class SettingsReplaceUtil
 {
@@ -179,7 +179,7 @@ public class SettingsReplaceUtil
     /**
      * Replace {server.name} a horribly complicated way.  This is needed to support relative
      * URLs.  I would like for us to rethink this someday and find a better way to do this
-     * <p/>
+     *
      * @param urls the list of urls to replace
      * @param newURLs the set of new urls
      */

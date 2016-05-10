@@ -19,7 +19,7 @@ package flex.messaging;
 import java.util.EventListener;
 
 /**
- * @exclude
+ *
  * Provides notification for multicast message routing events to support optimized
  * asynchronous IO to the target remote hosts.
  */

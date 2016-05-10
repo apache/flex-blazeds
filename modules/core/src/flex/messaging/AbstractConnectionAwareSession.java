@@ -19,7 +19,7 @@ package flex.messaging;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * @exclude
+ *
  * Abstract base class for <tt>ConnectionAwareSession</tt> implementations.
  * Provides support for registering <tt>FlexSessionConnectivityListener</tt>s
  * along with protected methods to notify registered listeners of <tt>FlexSessionConnectivityEvent</tt>s.
@@ -33,7 +33,7 @@ public abstract class AbstractConnectionAwareSession extends FlexSession impleme
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      * Constructs a new instance.
      *
      * @param sessionProvider The provider that instantiated this instance.

@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * A JMSProxy subclass for <code>javax.jms.MessageProducer</code> instances.
  *
- * @exclude
+ *
  */
 public abstract class JMSProducer extends JMSProxy
 {

@@ -26,7 +26,7 @@ import flex.messaging.config.ConfigMap;
 import flex.messaging.log.LogCategories;
 
 /**
- * @exclude
+ *
  * Base interface for cluster implementations.
  */
 public abstract class Cluster
@@ -227,7 +227,7 @@ public abstract class Cluster
     /**
      * Add a local endpoint URL for a local channel. After doing so, broadcast the information to
      * peers so that they will be aware of the URL.
-     * <p/>
+     *
      * @param serviceType the service type of the endpoint
      * @param destName the destination name
      * @param channelId the Channel ID

@@ -61,7 +61,6 @@ import javax.sql.RowSet;
  * XML is formatted using using UTF-8 encoding.
  * </p>
  *
- * @author Peter Farland
  * @see AmfxMessageSerializer
  * @see AmfxInput
  */
@@ -136,7 +135,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
                 // Using double to write big numbers such as BigInteger or
                 // BigDecimal can result in information loss so we write
                 // them as String by default...
-                writeString(((Number)o).toString());
+                writeString(o.toString());
             }
             else
             {
@@ -313,7 +312,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     //
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFBoolean(boolean b) throws IOException
     {
@@ -327,7 +326,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFDouble(double d) throws IOException
     {
@@ -344,7 +343,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFInt(int i) throws IOException
     {
@@ -370,7 +369,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeByteArray(byte[] ba) throws IOException
     {
@@ -393,7 +392,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeByteArray(Byte[] ba) throws IOException
     {
@@ -413,7 +412,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     public void writeUTF(StringBuffer sb) throws IOException
     {
@@ -422,7 +421,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeDate(Date d) throws IOException
     {
@@ -470,7 +469,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeMapAsECMAArray(Map map) throws IOException
     {
@@ -512,7 +511,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFNull() throws IOException
     {
@@ -523,7 +522,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeString(String s) throws IOException
     {
@@ -538,7 +537,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     //
 
     /**
-     * @exclude
+     *
      */
     protected void writeAMFArray(Object o, Class componentType) throws IOException
     {
@@ -561,7 +560,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeArrayCollection(Collection col, SerializationDescriptor desc) throws IOException
     {
@@ -590,7 +589,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeCustomObject(Object o) throws IOException
     {
@@ -642,7 +641,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writePropertyProxy(PropertyProxy pp, Object instance) throws IOException
     {
@@ -710,7 +709,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeString(String s, boolean isTrait) throws IOException
     {
@@ -752,7 +751,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
      *
      * @param sb The StringBuffer to which the escaped String should be written.
      * @param s The source String to escape for XML.
-     * @exclude
+     *
      */
     protected void writeEscapedString(StringBuffer sb, String s)
     {
@@ -795,7 +794,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeCharArrayAsString(Character[] ca) throws IOException
     {
@@ -814,7 +813,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeCharArrayAsString(char[] ca) throws IOException
     {
@@ -823,7 +822,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeCollection(Collection c, SerializationDescriptor descriptor) throws IOException
     {
@@ -834,7 +833,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeObjectArray(Object[] values, SerializationDescriptor descriptor) throws IOException
     {
@@ -845,7 +844,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected void writeObjectArrayDirectly(Object[] values, SerializationDescriptor descriptor) throws IOException
     {
@@ -883,7 +882,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
      * </p>
      *
      * @param obj An array of primitives
-     * @exclude
+     *
      */
     protected void writePrimitiveArray(Object obj) throws IOException
     {
@@ -967,7 +966,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
      *
      * @return Success/failure indicator as to whether the object could be
      *         serialized as a reference.
-     * @exclude
+     *
      */
     protected boolean byReference(Object o) throws IOException
     {
@@ -1005,7 +1004,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected boolean byReference(String s) throws IOException
     {
@@ -1043,7 +1042,7 @@ public class AmfxOutput extends AbstractAmfOutput implements AmfxTypes
     }
 
     /**
-     * @exclude
+     *
      */
     protected boolean byReference(TraitsInfo ti) throws IOException
     {

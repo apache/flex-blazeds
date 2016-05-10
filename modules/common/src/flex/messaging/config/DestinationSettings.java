@@ -29,15 +29,11 @@ import java.util.List;
  * client messages for this destination and any security constraints that need
  * to be enforced.
  * </p>
- *
- * @see flex.messaging.Destination
- * @author Peter Farland
- * @exclude
  */
 public class DestinationSettings extends PropertiesSettings
 {
     /**
-     * @exclude
+     *
      */
     public static final String SERVER_ELEMENT = "server";
 
@@ -72,7 +68,7 @@ public class DestinationSettings extends PropertiesSettings
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     String getSourceFile()
     {
@@ -81,7 +77,7 @@ public class DestinationSettings extends PropertiesSettings
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void setSourceFile(String sourceFile)
     {

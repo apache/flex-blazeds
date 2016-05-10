@@ -39,9 +39,6 @@ import flex.messaging.messages.Message;
  * component creation code in one of <code>initialize</code>, <code>start</code>, 
  * and <code>stop</code> methods depending on when they want their components 
  * to be created.  
- * 
- * @author matamel
- *
  */
 public abstract class AbstractBootstrapService implements Service
 {
@@ -172,163 +169,163 @@ public abstract class AbstractBootstrapService implements Service
      */
     public abstract void stop();
        
-    /** @exclude **/
+
     public ConfigMap describeService(Endpoint endpoint)
     {
         return null;
     }
     
-    /** @exclude **/
+
     public BaseControl getControl()
     {
         throw new UnsupportedOperationException();
     }
     
-    /** @exclude **/
+
     public void setControl(BaseControl control)
     {        
         throw new UnsupportedOperationException();
     }
     
-    /** @exclude **/
+
     public void addDefaultChannel(String id)
     {        
         // No-op
     }
     
-    /** @exclude **/
+
     public void setDefaultChannels(List<String> ids)
     {
         // No-op
     }
 
-    /** @exclude **/
+
     public boolean removeDefaultChannel(String id)
     {
         return false;
     }
 
-    /** @exclude **/
+
     public void addDestination(Destination destination)
     {   
         throw new UnsupportedOperationException();
     }
 
-    /** @exclude **/
+
     public Destination createDestination(String destId)
     {
         throw new UnsupportedOperationException();
     }
 
-    /** @exclude **/
+
     public Destination removeDestination(String id)
     {
         throw new UnsupportedOperationException();
     }
     
-    /** @exclude **/
+
     public String getDefaultAdapter()
     {
         throw new UnsupportedOperationException();
     }
 
-    /** @exclude **/
+
     public void setDefaultAdapter(String id)
     {        
         throw new UnsupportedOperationException();
     }
     
-    /** @exclude **/
+
     public List<String> getDefaultChannels()
     {
         throw new UnsupportedOperationException();
     }
 
-    /** @exclude **/
+
     public Destination getDestination(Message message)
     {
         throw new UnsupportedOperationException();
     }
 
-    /** @exclude **/
+
     public Destination getDestination(String id)
     {
         throw new UnsupportedOperationException();
     }
 
-    /** @exclude **/
+
     public Map<String, Destination> getDestinations()
     {
         throw new UnsupportedOperationException();
     }
 
-    /** @exclude **/
+
     public Map<String, String> getRegisteredAdapters()
     {
         throw new UnsupportedOperationException();
     }
 
-    /** @exclude **/
+
     public boolean isStarted()
     {
         return false;
     }
     
-    /** @exclude **/
+
     public boolean isSupportedMessage(Message message)
     {
         return false;
     }
 
-    /** @exclude **/
+
     public boolean isSupportedMessageType(String messageClassName)
     {
         return false;
     }
 
-    /** @exclude **/
+
     public String registerAdapter(String id, String className)
     {
         throw new UnsupportedOperationException();
     }
 
-    /** @exclude **/
+
     public String unregisterAdapter(String id)
     {
         throw new UnsupportedOperationException();
     }
     
-    /** @exclude **/
+
     public Object serviceCommand(CommandMessage message)
     {
         throw new UnsupportedOperationException();
     }
     
-    /** @exclude **/
+
     public Object serviceMessage(Message message)
     {
         throw new UnsupportedOperationException();
     }
     
-    /** @exclude **/
+
     public List getMessageTypes()
     {        
         throw new UnsupportedOperationException();
     }
 
-    /** @exclude **/
+
     public void addMessageType(String messageType)
     {
         throw new UnsupportedOperationException();   
     }
 
-    /** @exclude **/
+
     public void setMessageTypes(List messageTypes)
     {        
         throw new UnsupportedOperationException();
     }   
         
-    /** @exclude **/
+
     public boolean removeMessageType(String messageType)
     {
         throw new UnsupportedOperationException();

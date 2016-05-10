@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * @exclude
+ *
  * The SubscriptionManager monitors subscribed clients for MessageService
  * and its subclasses, such as DataService.
  */

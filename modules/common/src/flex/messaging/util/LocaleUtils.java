@@ -19,7 +19,7 @@ package flex.messaging.util;
 import java.util.Locale;
 
 /**
- * @exclude
+ *
  */
 public class LocaleUtils
 {

@@ -20,7 +20,7 @@ import flex.messaging.io.SerializationContext;
 import flex.messaging.io.TypeMarshallingContext;
 
 /**
- * @exclude
+ *
  */
 public class ReferenceAwareCalendarDecoder extends CalendarDecoder
 {

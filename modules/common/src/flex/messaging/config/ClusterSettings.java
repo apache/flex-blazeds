@@ -17,7 +17,7 @@
 package flex.messaging.config;
 
 /**
- * @exclude
+ *
  */
 public class ClusterSettings extends PropertiesSettings
 {
@@ -130,8 +130,8 @@ public class ClusterSettings extends PropertiesSettings
      * Sets the name of the cluster implementation class.
      * The default is 'flex.messaging.cluster.JGroupsCluster'.
      *
-     * @param className
-     * @exclude
+     * @param className name of the cluster implementation class
+     *
      */
     public void setImplementationClass(String className)
     {
@@ -143,7 +143,7 @@ public class ClusterSettings extends PropertiesSettings
      * The class must support the flex.messaging.cluster.Cluster interface.
      *
      * @return The implementation class name.
-     * @exclude
+     *
      */
     public String getImplementationClass()
     {

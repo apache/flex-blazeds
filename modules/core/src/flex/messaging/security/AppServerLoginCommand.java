@@ -30,7 +30,7 @@ import flex.messaging.io.MessageIOConstants;
  * This class implements LoginCommand and doAuthorization in way that should work by default if
  * authorization logged a user into the J2EE application server.  doAuthorization uses isUserInRole.
  *
- * @exclude
+ *
  */
 public abstract class AppServerLoginCommand implements LoginCommand
 {

@@ -57,9 +57,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * an endpoint that can handle the request's content type. This
  * does not occur for non-http endpoints, such as the rtmp endpoint.
  *
- * @author sneville
  * @see flex.messaging.MessageBroker
- * @exclude
+ *
  */
 public class MessageBrokerServlet extends HttpServlet
 {
@@ -434,7 +433,7 @@ public class MessageBrokerServlet extends HttpServlet
         return this.getClass().getClassLoader();
     }
 
-    /** @exclude */
+
     // Call ONLY on servlet startup
     public static void createThreadLocals()
     {
@@ -444,7 +443,7 @@ public class MessageBrokerServlet extends HttpServlet
         TypeMarshallingContext.createThreadLocalObjects();
     }
 
-    /** @exclude */
+
     // Call ONLY on servlet shutdown
     protected static void destroyThreadLocals()
     {

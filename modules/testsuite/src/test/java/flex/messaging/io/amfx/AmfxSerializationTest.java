@@ -48,8 +48,6 @@ import flex.messaging.MessageException;
  * back to XML to test the serializer. Finally, the serialized
  * XML is re-deserialized back into a request and once more
  * tested.
- *
- * @author Peter Farland
  */
 public class AmfxSerializationTest extends TestCase
 {

@@ -35,8 +35,6 @@
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
     </path>
 
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
-
     <target name="main" depends="clean,prepare,run-depend,jar" description="cleans and runs the full build"/>
 
     <target name="prepare">
@@ -59,6 +57,7 @@
             </fileset>
         </delete>
         <delete quiet="true" dir="${module.classes}" />
+        <echo>modules/remoting clean</echo>
     </target>
 
     <target name="compile" depends="prepare" description="compile">

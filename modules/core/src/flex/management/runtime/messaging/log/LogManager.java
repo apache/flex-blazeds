@@ -32,9 +32,6 @@ import flex.messaging.log.Target;
  * The LogManager is an interface between the Log and the LogControl which exists
  * because Log lives in the common package, so it cannot extend ManageableComponent itself,
  * which is necessary for a class to be exposed through MBeans.
- *
- * @author majacobs
- *
  */
 public class LogManager extends ManageableComponent
 {
@@ -204,9 +201,6 @@ public class LogManager extends ManageableComponent
     /**
      * This private class keeps track of what categories exist in LogCategories by implementing
      * LogCategories and reflecting the interface's properties.
-     *
-     * @author majacobs
-     *
      */
     private class CategoryManager implements LogCategories
     {

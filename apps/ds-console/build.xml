@@ -43,8 +43,6 @@
     <target name="ds-console" depends="compile,compile-swf"/>
 
     <property environment="env"/>
-    <property name="ant-contrib.jar" location="${env.ANT_HOME}/lib/ant-contrib-1.0b2.jar"/>
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${ant-contrib.jar}"/>
 
     <target name="prepare">
         <mkdir dir="${ds-console.war}/WEB-INF/src"/>

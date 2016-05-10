@@ -1,0 +1,33 @@
+Apache Flex BlazeDS 4.7.1
+=======================
+
+Apache Flex BlazeDS 4.7.1 is an update to 4.7.0 to allow configuration control
+over XML Entity processing. 
+
+Known Issues
+_____________
+FLEX-34648 Memory Leak occurred in AsyncMessage when sending alot of
+
+Apache Flex BlazeDS 4.7
+=======================
+
+Apache Flex BlazeDS 4.7 is the first release of BlazeDS from Apache. Earlier
+releases were provided by Adobe Systems Inc. 
+
+Known Issues
+_____________
+
+
+Differences from Adobe BlazeDS 4.6 include:
+
+- No functional differences the only changes that were made were adding code to make the
+  test-suite run against a server instance brought up by the test-suite itself making it
+  self sufficient. The Adobe version relied on the availability of a running BlazeDS server
+  instance.
+
+Please report new issues to our bug tracker at:
+
+    https://issues.apache.org/jira/browse/FLEX
+
+                                          The Apache Flex Project
+                                          <http://flex.apache.org/>

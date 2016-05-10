@@ -51,7 +51,7 @@ import java.net.UnknownHostException;
 import flex.messaging.util.Trace;
 
 /**
- * @exclude
+ *
  * <p>
  * EasySSLProtocolSocketFactory can be used to creats SSL {@link Socket}s
  * that accept self-signed certificates.
@@ -94,7 +94,6 @@ import flex.messaging.util.Trace;
  * The component is provided as a reference material, which may be inappropriate
  * for use without additional customization.
  * </p>
- * @author <a href="mailto:oleg -at- ural.ru">Oleg Kalnichevski</a>
  */
 public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
 {
@@ -142,8 +141,7 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
                                int port,
                                InetAddress clientHost,
                                int clientPort)
-            throws IOException, UnknownHostException
-    {
+            throws IOException {
 
         return getSSLContext().getSocketFactory().createSocket(host,
                 port,
@@ -174,8 +172,7 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
                                final int port,
                                final InetAddress localAddress,
                                final int localPort,
-                               final HttpConnectionParams params) throws IOException, UnknownHostException, ConnectTimeoutException
-    {
+                               final HttpConnectionParams params) throws IOException {
         if (params == null)
         {
             throw new IllegalArgumentException("Parameters may not be null");
@@ -194,8 +191,7 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
 
     /** {@inheritDoc} */
     public Socket createSocket(String host, int port)
-            throws IOException, UnknownHostException
-    {
+            throws IOException {
         return getSSLContext().getSocketFactory().createSocket(host,
                 port);
     }
@@ -205,8 +201,7 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
                                String host,
                                int port,
                                boolean autoClose)
-            throws IOException, UnknownHostException
-    {
+            throws IOException {
         return getSSLContext().getSocketFactory().createSocket(socket,
                 host,
                 port,

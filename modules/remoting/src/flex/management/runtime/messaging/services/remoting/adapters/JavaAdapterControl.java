@@ -23,8 +23,6 @@ import flex.messaging.services.remoting.adapters.JavaAdapter;
 /**
  * The <code>JavaAdapterControl</code> class is the MBean implemenation
  * for monitoring and managing Java service adapters at runtime.
- * 
- * @author shodgson
  */
 public class JavaAdapterControl extends ServiceAdapterControl implements
         JavaAdapterControlMBean

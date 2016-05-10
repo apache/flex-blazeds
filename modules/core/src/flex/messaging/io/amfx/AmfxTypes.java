@@ -18,8 +18,6 @@ package flex.messaging.io.amfx;
 
 /**
  * AMFX is an XML representation of AMF 3.
- *
- * @author Peter Farland
  */
 public interface AmfxTypes
 {

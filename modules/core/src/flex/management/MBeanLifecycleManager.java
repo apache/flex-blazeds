@@ -27,8 +27,6 @@ import javax.management.ObjectName;
 /**
  * Helper class for managing MBean lifecycles externally from the core server
  * components where necessary.
- * 
- * @author shodgson
  */
 public class MBeanLifecycleManager
 {

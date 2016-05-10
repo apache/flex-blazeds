@@ -19,7 +19,7 @@ package flex.messaging.io.amf.translator.decoder;
 /**
  * Decodes an ActionScript native object to a Java native object.
  *
- * @exclude
+ *
  */
 public class NativeDecoder extends ActionScriptDecoder
 {

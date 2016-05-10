@@ -24,8 +24,7 @@ import flex.messaging.util.StringUtils;
  * to be modified without affecting needing to update the configuration
  * parser.
  *
- * @author Peter Farland
- * @exclude
+ *
  */
 public class ChannelSettings extends PropertiesSettings
 {

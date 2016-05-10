@@ -20,7 +20,7 @@ package flex.messaging.messages;
 /**
  * A marker interface that is used to indicate that a Message has an
  * alternative smaller form for serialization.
- * @exclude
+ *
  */
 public interface SmallMessage extends Message
 {

@@ -40,12 +40,12 @@ import javax.management.RuntimeOperationsException;
 
 /**
  * Remoting gateway to the MBean server that hosts Flex MBeans.
- * <p>
+ *
  * Some base javax.management.MBeanServer methods are unimplemented due to the
  * fact that we're interacting with the MBean server from remote Flash clients.
  * Some methods have been modified to better suite remote Flash clients. Other
  * methods are additive, serving as a convenience for Flex applications.
- * </p><p>
+ *
  * Unimplemented methods from the base MBeanServer API:
  * <ul>
  *   <li>getDomains() - JMX 1.2</li>
@@ -58,7 +58,7 @@ import javax.management.RuntimeOperationsException;
  *   <li>getClassLoader() - meaningless to a Flash client.</li>
  *   <li>getClassLoaderRepository() - meaningless to a Flash client.</li>
  * </ul>
- * </p><p>
+ *
  * Modifications to the base MBeanServer API:
  * <ul>
  *   <li>* All ObjectName arguments are typed as String because serialization in either
@@ -71,16 +71,13 @@ import javax.management.RuntimeOperationsException;
  *   <li>getAttributes() returns an Array of Attributes rather than an AttributeList.</li>
  *   <li>setAttributes() accepts and returns Arrays of Attributes rather than AttributeLists.</li>
  * </ul>
- * </p><p>
+ *
  * Additonal Flex-specific methods:
  * <ul>
  *   <li>getFlexMBeanCount()</li>
  *   <li>getFlexDomains()</li>
  *   <li>getFlexMBeanObjectNames()</li>
  * </ul>
- * </p>
- *
- * @author shodgson
  */
 public class MBeanServerGateway
 {

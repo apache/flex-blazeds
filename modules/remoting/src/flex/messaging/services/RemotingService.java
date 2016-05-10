@@ -44,9 +44,6 @@ import flex.messaging.messages.MessagePerformanceUtils;
  * service name or &quot;source&quot; that is meaningful to an
  * adapter before invocation.
  * </p>
- *
- * @author Sean Neville
- * @author Peter Farland
  */
 public class RemotingService extends AbstractService
 {
@@ -131,7 +128,7 @@ public class RemotingService extends AbstractService
     //
     //--------------------------------------------------------------------------
     /**
-     * @exclude
+     *
      */
     public MethodMatcher getMethodMatcher()
     {

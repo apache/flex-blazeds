@@ -17,12 +17,12 @@
 package flex.messaging.util;
 
 /**
- * @exclude
+ *
  */
 public class DoubleUtil
 {
     /**
-     * @exclude
+     *
      */
     public static long doubleToRawLongBits(double d)
     {

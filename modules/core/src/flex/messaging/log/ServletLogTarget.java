@@ -30,7 +30,7 @@ public class ServletLogTarget extends LineFormattedTarget
      * This method must be called during startup to give this target a reference
      * to the ServletContext.
      * @param ctx the servlet context
-     * @exclude
+     *
      */
     public static void setServletContext(ServletContext ctx)
     {

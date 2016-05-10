@@ -22,8 +22,6 @@ import flex.messaging.util.ClassUtil;
 
 /**
  * Factory to get a <code>MBeanServerLocator</code>.
- * 
- * @author shodgson
  */
 public class MBeanServerLocatorFactory
 {

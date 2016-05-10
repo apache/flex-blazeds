@@ -19,7 +19,7 @@ package flex.messaging.services.http.proxy;
 import org.apache.commons.httpclient.auth.AuthScope;
 
 /**
- * @exclude
+ *
  * Methods used by multiple proxy classes.
  */
 public class ProxyUtil

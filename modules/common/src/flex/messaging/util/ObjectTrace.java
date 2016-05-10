@@ -24,7 +24,7 @@ import flex.messaging.log.Log;
  * Note that new lines are NOT added after the individual values
  * in complex type properties.
  *
- * @exclude
+ *
  */
 public class ObjectTrace
 {
@@ -155,6 +155,8 @@ public class ObjectTrace
     /**
      * Uses the static member, m_indent to create a string of spaces of
      * the appropriate indentation.
+     *
+     * @return the ident string.
      */
     protected String indentString()
     {

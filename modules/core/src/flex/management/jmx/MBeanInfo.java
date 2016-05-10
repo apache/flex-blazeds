@@ -19,8 +19,6 @@ package flex.management.jmx;
 /**
  * Remotable MBeanInfo class that complies with Flash serialization requirements. 
  * MBean Notifications are not currently supported.
- *
- * @author shodgson
  */
 public class MBeanInfo
 {

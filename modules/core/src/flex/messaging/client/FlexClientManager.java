@@ -36,7 +36,7 @@ import flex.messaging.util.TimeoutAbstractObject;
 import flex.messaging.util.TimeoutManager;
 
 /**
- * @exclude
+ *
  * Manages FlexClient instances for a MessageBroker.
  */
 public class FlexClientManager extends ManageableComponent
@@ -50,7 +50,7 @@ public class FlexClientManager extends ManageableComponent
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      */
     public FlexClientManager()
     {
@@ -67,7 +67,7 @@ public class FlexClientManager extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      */
     public FlexClientManager(boolean enableManagement, MessageBroker mbroker)
     {
@@ -305,7 +305,7 @@ public class FlexClientManager extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Monitors an async poll for a FlexClient for timeout.
      *
      * @param asyncPollTimeout The async poll task to monitor for timeout.
@@ -316,7 +316,7 @@ public class FlexClientManager extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Monitors a scheduled flush for a FlexClient for timeout.
      *
      * @param scheduledFlushTimeout The schedule flush task to monitor for timeout.
@@ -395,7 +395,7 @@ public class FlexClientManager extends ManageableComponent
     }
 
     /**
-     * @exclude
+     *
      * Removes a FlexClient from being managed by this manager.
      * This method is invoked by FlexClients when they are invalidated.
      *

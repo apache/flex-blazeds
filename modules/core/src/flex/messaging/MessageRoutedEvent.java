@@ -21,7 +21,7 @@ import flex.messaging.messages.Message;
 import java.util.EventObject;
 
 /**
- * @exclude
+ *
  * This event indicates that the source message has been routed to the outbound message queues
  * for all target clients.
  * This can be used as the trigger for performing optimized IO to flush these queued messages to 
@@ -30,7 +30,7 @@ import java.util.EventObject;
 public class MessageRoutedEvent extends EventObject
 {
     /**
-     * @exclude
+     *
      */
     private static final long serialVersionUID = -3063794416424805005L;
 

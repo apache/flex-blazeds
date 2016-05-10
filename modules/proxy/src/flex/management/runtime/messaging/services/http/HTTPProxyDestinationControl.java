@@ -21,14 +21,12 @@ import java.util.Date;
 import flex.management.BaseControl;
 import flex.management.runtime.AdminConsoleTypes;
 import flex.management.runtime.messaging.DestinationControl;
-import flex.messaging.services.http.HTTPProxyDestination;;
+import flex.messaging.services.http.HTTPProxyDestination;
 
 /**
- * @exclude
+ *
  * The <code>HTTPProxyDestinationControl</code> class is the MBean implementation for
  * monitoring and managing a <code>HTTPProxyDestination</code> at runtime.
- * 
- * @author shodgson
  */
 public class HTTPProxyDestinationControl extends DestinationControl
     implements HTTPProxyDestinationControlMBean
@@ -76,7 +74,7 @@ public class HTTPProxyDestinationControl extends DestinationControl
     }
     
     /**
-     * @exclude
+     *
      *  (non-Javadoc)
      * @see flex.management.runtime.HTTPProxyServiceControlMBean#getInvokeSOAPCount()
      */
@@ -86,7 +84,7 @@ public class HTTPProxyDestinationControl extends DestinationControl
     }
     
     /**
-     * @exclude
+     *
      *  (non-Javadoc)
      * @see flex.management.runtime.HTTPProxyServiceControlMBean#resetInvokeSOAPCount()
      */
@@ -107,7 +105,7 @@ public class HTTPProxyDestinationControl extends DestinationControl
     }
     
     /**
-     * @exclude
+     *
      *  (non-Javadoc)
      * @see flex.management.runtime.HTTPProxyServiceControlMBean#getLastInvokeSOAPTimestamp()
      */
@@ -117,7 +115,7 @@ public class HTTPProxyDestinationControl extends DestinationControl
     }
     
     /**
-     * @exclude
+     *
      *  (non-Javadoc)
      * @see flex.management.runtime.HTTPProxyServiceControlMBean#getInvokeSOAPFrequency()
      */
@@ -135,7 +133,7 @@ public class HTTPProxyDestinationControl extends DestinationControl
     }
     
     /**
-     * @exclude
+     *
      *  (non-Javadoc)
      * @see flex.management.runtime.HTTPProxyServiceControlMBean#getInvokeHTTPCount()
      */
@@ -145,7 +143,7 @@ public class HTTPProxyDestinationControl extends DestinationControl
     }
     
     /**
-     * @exclude
+     *
      *  (non-Javadoc)
      * @see flex.management.runtime.HTTPProxyServiceControlMBean#resetInvokeHTTPCount()
      */
@@ -166,7 +164,7 @@ public class HTTPProxyDestinationControl extends DestinationControl
     }
     
     /**
-     * @exclude
+     *
      *  (non-Javadoc)
      * @see flex.management.runtime.HTTPProxyServiceControlMBean#getLastInvokeHTTPTimestamp()
      */
@@ -176,7 +174,7 @@ public class HTTPProxyDestinationControl extends DestinationControl
     }
 
     /**
-     * @exclude
+     *
      *  (non-Javadoc)
      * @see flex.management.runtime.HTTPProxyServiceControlMBean#getInvokeHTTPFrequency()
      */
@@ -194,7 +192,7 @@ public class HTTPProxyDestinationControl extends DestinationControl
     }
     
     /**
-     * @exclude
+     *
      *  (non-Javadoc)
      * @see flex.management.BaseControlMBean#getType()
      */

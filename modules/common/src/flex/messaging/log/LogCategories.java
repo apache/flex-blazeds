@@ -17,7 +17,7 @@
 package flex.messaging.log;
 
 /**
- * @exclude
+ *
  *
  * This class contains all the log categories used in our classes. When adding
  * a new log category, make sure the sample configuration file is updated

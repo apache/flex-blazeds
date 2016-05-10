@@ -19,7 +19,7 @@ package flex.messaging.services.remoting.adapters;
 import flex.messaging.MessageException;
 
 /**
- * @exclude
+ *
  */
 public class NoSuchMethodException extends MessageException
 {

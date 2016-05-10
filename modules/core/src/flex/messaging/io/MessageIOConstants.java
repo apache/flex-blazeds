@@ -17,7 +17,7 @@
 package flex.messaging.io;
 
 /**
- * @exclude
+ *
  */
 public interface MessageIOConstants
 {

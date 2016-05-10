@@ -22,7 +22,7 @@ import java.util.Collection;
 import flex.messaging.io.TypeMarshallingContext;
 
 /**
- * @exclude
+ *
  */
 public class ReferenceAwareArrayDecoder extends ArrayDecoder
 {

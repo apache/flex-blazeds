@@ -26,7 +26,7 @@ import java.util.TreeMap;
 /**
  * Decodes an ActionScript object to a Java Map.
  *
- * @exclude
+ *
  */
 public class MapDecoder extends ActionScriptDecoder
 {

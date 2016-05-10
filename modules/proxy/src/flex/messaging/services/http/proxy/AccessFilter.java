@@ -21,7 +21,7 @@ import flex.messaging.FlexContext;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @exclude
+ *
  * Determines whether overall access to the proxy is allowed for a request.
  */
 public class AccessFilter extends ProxyFilter

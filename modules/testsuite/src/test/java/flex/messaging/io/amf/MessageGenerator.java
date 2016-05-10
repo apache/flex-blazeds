@@ -42,7 +42,6 @@ import java.util.ArrayList;
  * This class, which extends DataOutput, interprets the XML and writes an AMF request to the
  * underlying DataOutputStream.
  * </p>
- * @author Peter Farland
  */
 public class MessageGenerator extends Amf0Output
 {

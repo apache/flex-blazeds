@@ -43,23 +43,22 @@ import flex.messaging.util.Trace;
  * in avmglue/DataIO.cpp
  * </p>
  *
- * @author Peter Farland
- * @exclude
+ *
  */
 public class Amf3Input extends AbstractAmfInput implements Amf3Types
 {
     /**
-     * @exclude
+     *
      */
     protected List objectTable;
 
     /**
-     * @exclude
+     *
      */
     protected List stringTable;
 
     /**
-     * @exclude
+     *
      */
     protected List traitsTable;
 
@@ -135,7 +134,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected Object readObjectValue(int type) throws ClassNotFoundException, IOException
     {
@@ -249,7 +248,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected String readString() throws IOException
     {
@@ -622,7 +621,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected Object readArray() throws ClassNotFoundException, IOException
     {
@@ -728,7 +727,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected Object readScriptObject() throws ClassNotFoundException, IOException
     {
@@ -815,7 +814,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected void readExternalizable(String className, Object object) throws ClassNotFoundException, IOException
     {
@@ -838,7 +837,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected byte[] readByteArray() throws IOException
     {
@@ -864,7 +863,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected TraitsInfo readTraits(int ref) throws IOException
     {
@@ -891,7 +890,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected String readUTF(int utflen) throws IOException
     {
@@ -920,7 +919,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
      *
      * @return A int capable of holding an unsigned 29 bit integer.
      * @throws IOException
-     * @exclude
+     *
      */
     protected int readUInt29() throws IOException
     {
@@ -951,7 +950,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected Object readXml() throws IOException
     {
@@ -987,7 +986,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected Object getObjectReference(int ref)
     {
@@ -998,7 +997,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected String getStringReference(int ref)
     {
@@ -1011,7 +1010,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     /**
-     * @exclude
+     *
      */
     protected TraitsInfo getTraitReference(int ref)
     {

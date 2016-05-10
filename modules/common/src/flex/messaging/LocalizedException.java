@@ -28,31 +28,30 @@ import flex.messaging.util.ResourceLoader;
  * number and an optional message variant that is used to look up a localized error
  * message or details string using a <code>ResourceLoader</code>. These methods also
  * set the number property of the exception instance.
- * <p>
+ *
  * The various overloads optionally support specifying a target locale as well as
  * arguments to substitute into the localized string if it is parameterized.
- * </p><p>
+ *
  * Localized error message and details strings are stored in the flex.messaging.errors
  * resource bundle. Entries must have the following format.
  * <ul>
  *  <li>Error message: {number}[-{variant}]={message}</li>
  *  <li>Error details: {number}[-{variant}]-details={details}</li>
  * </ul>
- * </p>
  *
  * @see ResourceLoader
  */
 public class LocalizedException extends RuntimeException
 {
-    /** @exclude - transient, the resourceLoader for localized strings doesn't need to serialize.  */
+    /** - transient, the resourceLoader for localized strings doesn't need to serialize.  */
     protected transient ResourceLoader resourceLoader;
-    /** @exclude */
+
     protected int number;
-    /** @exclude */
+
     protected String message;
-    /** @exclude */
+
     protected String details;
-    /** @exclude */
+
     protected Throwable rootCause;
 
     /**

@@ -39,8 +39,6 @@ import org.apache.xpath.CachedXPathAPI;
 /**
  * Verifies that a deserialized ActionMessage
  * from an AMFX request matches the expected value.
- *
- * @author Peter Farland
  */
 public abstract class DeserializationConfirmation
 {

@@ -38,24 +38,16 @@ To use the fds-ajax-bridge, run this build file
     <property name="qa.app.war" location="${blazeds.dir}/qa/apps/qa-manual" />
     <property name="qa.config.file" value="${qa.app.war}/WEB-INF/flex/services-config.xml"/>
 	
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
-	
-	<path id="classpath">			
-		<fileset dir="${app.war}/WEB-INF/flex/jars" includes="*.jar"/> 
-        <fileset dir="${blazeds.dir}/lib" includes="clover.jar"/>
-    </path>
-
-	<!--override the value of class path if the build is being instrumented for code coverage -->
-	<if>
+    <!--override the value of class path if the build is being instrumented for code coverage -->
+    <condition property="classpath.lib.folder" value="../../lib">
         <istrue value="${build.is.instrumented}"/>
-     <then>		
-		<path id="classpath">			
-			<fileset dir="${app.war}/WEB-INF/flex/jars" includes="*.jar"/> 
-            <fileset dir="../../lib" includes="clover.jar"/>
-        </path>
-     </then>	 	
-    </if>
-
+    </condition>
+    <property name="classpath.lib.folder" value="${blazeds.dir}/lib" />
+    
+	<path id="classpath">
+		<fileset dir="${app.war}/WEB-INF/flex/jars" includes="*.jar"/> 
+        <fileset dir="${classpath.lib.folder}" includes="clover.jar"/>
+    </path>
     
     <target name="main" depends="clean,dev" description="Cleans and builds the fds-ajax bridge on dev application"/>
 

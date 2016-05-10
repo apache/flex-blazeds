@@ -39,7 +39,6 @@ import flex.messaging.io.PagedRowSet;
  * The RemotingService's JavaAdapter is expected to manage this instance.
  *
  * @see flex.messaging.io.PageableRowSet
- * @author Peter Farland
  */
 public class PageableRowSetCache
 {

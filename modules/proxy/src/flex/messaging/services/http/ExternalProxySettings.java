@@ -21,19 +21,19 @@ package flex.messaging.services.http;
  */
 public class ExternalProxySettings
 {
-    /** @exclude **/
+
     public static final int DEFAULT_PROXY_PORT = 80;
-    /** @exclude **/
+
     public static final String PORT = "port";
-    /** @exclude **/
+
     public static final String EXTERNAL_PROXY = "external-proxy";
-    /** @exclude **/
+
     public static final String SERVER = "server";
-    /** @exclude **/
+
     public static final String NT_DOMAIN = "nt-domain";
-    /** @exclude **/
+
     public static final String USERNAME = "username";
-    /** @exclude **/
+
     public static final String PASSWORD = "password";    
     private static final String HTTP = "http://";
 
@@ -173,7 +173,7 @@ public class ExternalProxySettings
     }
 
     /**
-     * @exclude
+     *
      */
     public static boolean isDotNet()
     {

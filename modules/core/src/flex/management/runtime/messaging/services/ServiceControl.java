@@ -31,8 +31,6 @@ import javax.management.ObjectName;
 /**
  * The <code>ServiceControl</code> class is the MBean implementation for
  * monitoring and managing a <code>Service</code> at runtime.
- * 
- * @author shodgson
  */
 public abstract class ServiceControl extends BaseControl implements ServiceControlMBean
 {

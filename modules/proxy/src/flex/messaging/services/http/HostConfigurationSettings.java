@@ -17,39 +17,38 @@
 package flex.messaging.services.http;
 
 /**
- * @exclude
+ *
  * Collects the properties needed to create an Apache Commons HTTPClient
  * HostConfiguration. Holds all of the variables needed to describe an HTTP
  * connection to a host: remote host, port and protocol, proxy host and port,
  * local address, and virtual host.
  *  
- * @author Peter Farland
  * @see org.apache.commons.httpclient.HostConfiguration
  */
 public class HostConfigurationSettings
 {
-    /** @exclude */
+
     public static final String HOST = "host";
     
-    /** @exclude */
+
     public static final String PORT = "port";
     
-    /** @exclude */
+
     public static final String PROTOCOL = "protocol";
     
-    /** @exclude */
+
     public static final String PROTOCOL_FACFORY = "protocol-factory";
     
-    /** @exclude */
+
     public static final String LOCAL_ADDRESS = "local-address";
     
-    /** @exclude */
+
     public static final String MAX_CONNECTIONS = "max-connections";
     
-    /** @exclude */
+
     public static final String PROXY = "proxy";
     
-    /** @exclude */
+
     public static final String VIRTUAL_HOST = "virtual-host";
 
     private String host;    

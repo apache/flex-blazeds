@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * This class watches for changes on files and forces a re-deploy by touching the specified files.
  * 
- * @exclude
+ *
  */
 public class RedeployManager implements FlexComponent
 {

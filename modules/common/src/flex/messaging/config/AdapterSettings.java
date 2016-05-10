@@ -24,10 +24,6 @@ package flex.messaging.config;
  * Adapters can also be configured with initialization
  * properties.
  * </p>
- *
- * @see flex.messaging.services.ServiceAdapter
- * @author Peter Farland
- * @exclude
  */
 public class AdapterSettings extends PropertiesSettings
 {
@@ -64,7 +60,6 @@ public class AdapterSettings extends PropertiesSettings
      * Gets the name of the Java class implementation for this adapter.
      *
      * @return String The name of the adapter implementation.
-     * @see flex.messaging.services.ServiceAdapter
      */
     public String getClassName()
     {
@@ -112,7 +107,7 @@ public class AdapterSettings extends PropertiesSettings
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     String getSourceFile()
     {
@@ -121,7 +116,7 @@ public class AdapterSettings extends PropertiesSettings
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void setSourceFile(String file)
     {

@@ -53,7 +53,7 @@ public class AuthenticationService extends AbstractService
     public static final String ID = "authentication-service";
 
     /**
-     * @exclude
+     *
      */
     public AuthenticationService()
     {
@@ -61,7 +61,7 @@ public class AuthenticationService extends AbstractService
     }
     
     /**
-     * @exclude
+     *
      */
     public AuthenticationService(boolean enableManagement)
     {
@@ -97,7 +97,7 @@ public class AuthenticationService extends AbstractService
     
     // This service's id should never be changed
     /**
-     * @exclude
+     *
      */
     public void setId(String id)
     {
@@ -106,7 +106,7 @@ public class AuthenticationService extends AbstractService
 
     // This service should not be visible to the client
     /**
-     * @exclude
+     *
      */
     public ConfigMap describeService(Endpoint endpoint)
     { 
@@ -114,7 +114,7 @@ public class AuthenticationService extends AbstractService
     }
     
     /**
-     * @exclude
+     *
      */
     public Object serviceMessage(Message message)
     {
@@ -122,7 +122,7 @@ public class AuthenticationService extends AbstractService
     }
 
     /**
-     * @exclude
+     *
      */
     public Object serviceCommand(CommandMessage msg)
     {
@@ -165,7 +165,7 @@ public class AuthenticationService extends AbstractService
     }
     
     /**
-     * @exclude
+     *
      */
     @Override
     public void stop()
@@ -175,7 +175,7 @@ public class AuthenticationService extends AbstractService
     }
 
     /**
-     * @exclude
+     *
      */
     public void decodeAndLogin(String encoded, LoginManager lm)
     {
@@ -183,7 +183,7 @@ public class AuthenticationService extends AbstractService
     }
 
     /**
-     * @exclude
+     *
      */
     private void decodeAndLoginWithCharset(String encoded, LoginManager lm, String charset)
     {
@@ -245,7 +245,7 @@ public class AuthenticationService extends AbstractService
     }
     
     /**
-     * @exclude
+     *
      */
     protected void setupServiceControl(MessageBroker broker)
     {

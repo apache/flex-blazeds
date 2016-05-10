@@ -22,12 +22,12 @@ import flex.messaging.MessageDestination;
 import java.util.Iterator;
 
 /**
- * @exclude
+ *
  */
 public class RemoteMessageClient extends MessageClient
 {
     /**
-     * @exclude
+     *
      */
     private static final long serialVersionUID = -4743740983792418491L;
 

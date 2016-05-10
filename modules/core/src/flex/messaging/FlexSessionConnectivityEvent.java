@@ -24,7 +24,7 @@ import java.util.EventObject;
 public class FlexSessionConnectivityEvent extends EventObject
 {
     /**
-     * @exclude
+     *
      */
     private static final long serialVersionUID = 8622680412552475829L;
 

@@ -24,8 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Peter Farland
- * @exclude
+ *
  */
 public class SecuritySettings
 {

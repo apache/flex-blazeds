@@ -25,7 +25,7 @@ import org.jgroups.MembershipListener;
 import org.jgroups.View;
 
 /**
- * @exclude
+ *
  * Clusters employ this Listener in order to respond to nodes which
  * join and abandon it. This class bridges the low-level protocol layer
  * to the more abstract logical cluster.

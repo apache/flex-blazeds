@@ -28,8 +28,6 @@ import javax.management.ObjectName;
 /**
  * The <code>MessageDestinationControl</code> class is the MBean implementation for
  * monitoring and managing a <code>MessageDestination</code> at runtime.
- * 
- * @author shodgson
  */
 public class MessageDestinationControl extends DestinationControl implements
         MessageDestinationControlMBean

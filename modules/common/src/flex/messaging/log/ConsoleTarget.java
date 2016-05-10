@@ -17,7 +17,7 @@
 package flex.messaging.log;
 
 /**
- * @exclude
+ *
  */
 public class ConsoleTarget extends LineFormattedTarget
 {

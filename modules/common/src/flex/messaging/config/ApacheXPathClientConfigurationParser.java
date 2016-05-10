@@ -29,8 +29,7 @@ import javax.xml.transform.TransformerException;
  * sections of the document need to be parsed first.
  * </p>
  *
- * @author Peter Farland
- * @exclude
+ *
  */
 public class ApacheXPathClientConfigurationParser extends ClientConfigurationParser
 {

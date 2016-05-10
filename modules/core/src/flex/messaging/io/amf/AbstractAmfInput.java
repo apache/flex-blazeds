@@ -35,7 +35,7 @@ import flex.messaging.util.XMLUtil;
  * A deserializer of AMF protocol data.
  *
  * @see ActionMessageOutput
- * @exclude
+ *
  */
 public abstract class AbstractAmfInput extends AmfIO implements ActionMessageInput
 {
@@ -68,7 +68,7 @@ public abstract class AbstractAmfInput extends AmfIO implements ActionMessageInp
 
     /**
      * Internal use
-     * @exclude
+     *
      */
     public void setInputStream(InputStream in)
     {
@@ -82,7 +82,8 @@ public abstract class AbstractAmfInput extends AmfIO implements ActionMessageInp
             return xml;
 
         // Validation performed in XMLUtil#stringToDocument.
-        return XMLUtil.stringToDocument(xml, !(context.legacyXMLNamespaces));
+        return XMLUtil.stringToDocument(xml, !(context.legacyXMLNamespaces),
+                context.allowXmlDoctypeDeclaration, context.allowXmlExternalEntityExpansion);
     }
 
     /**
@@ -115,7 +116,7 @@ public abstract class AbstractAmfInput extends AmfIO implements ActionMessageInp
      *               [0] - String className - the name or alias of the class to create
      *               [1] - PropertyProxy proxy
      * @return an instance of the appropriate object for deserialization
-     * @exclude
+     *
      */
     protected Object createObjectInstance(Object[] params)
     {
@@ -187,7 +188,7 @@ public abstract class AbstractAmfInput extends AmfIO implements ActionMessageInp
      * Internal use. Convenience method for creating an ASObject and assigning it a type
      * @param type named type for the ASObject or null
      * @return a new instance of ASObject
-     * @exclude
+     *
      */
     protected ASObject createDefaultASObject(String type)
     {
@@ -198,7 +199,7 @@ public abstract class AbstractAmfInput extends AmfIO implements ActionMessageInp
     }
 
     /**
-     * @exclude
+     *
      */
     protected void readMaxStringBytes()
     {

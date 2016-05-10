@@ -24,8 +24,6 @@ import flex.messaging.LocalizedException;
  * may also throw this exception type during initialization
  * in the event that the configuration settings used to
  * initialize the component was invalid.
- *
- * @author Peter Farland
  */
 public class ConfigurationException extends LocalizedException
 {

@@ -23,8 +23,6 @@ import flex.management.BaseControlMBean;
 
 /**
  * Defines the runtime monitoring and management interface for service adapters.
- *
- * @author shodgson
  */
 public interface ServiceAdapterControlMBean extends BaseControlMBean
 {

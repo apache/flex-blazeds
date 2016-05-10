@@ -102,6 +102,8 @@ public class FactoryInstance
      * This is by convention the main property for the defining the 
      * instance we create with this factory.  It may be the class name
      * for the JavaFactory or the id for a factory that uses ids.
+     *
+     * @param source source
      */
     public void setSource(String source)
     {

@@ -122,7 +122,7 @@ public abstract class AbstractDatabase
 
     /**
      * Creates a <code>PreparedStatement</code> for a SQL INSERT.
-     * <p/>
+     *
      * e.g.
      * <pre>
      * INSERT INTO myTable ( field1, field2 )
@@ -258,13 +258,13 @@ public abstract class AbstractDatabase
 
     /**
      * Creates a <code>PreparedStatement</code> for a SQL UPDATE.
-     * <p/>
+     *
      * e.g.
      * <pre>
      * UPDATE Job
      *     SET Position = 'Manager'
      *     WHERE Employee_ID = 12345678
-     * <p/>
+     *
      * </pre>
      *
      * @param table   The table name to update
@@ -373,7 +373,7 @@ public abstract class AbstractDatabase
 
     /**
      * Creates a <code>PreparedStatement</code> for a SQL DELETE.
-     * <p/>
+     *
      * e.g.
      * <pre>
      * DELETE FROM Employee

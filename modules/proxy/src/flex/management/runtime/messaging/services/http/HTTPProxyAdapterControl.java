@@ -21,11 +21,9 @@ import flex.management.runtime.messaging.services.ServiceAdapterControl;
 import flex.messaging.services.http.HTTPProxyAdapter;
 
 /**
- * @exclude
+ *
  * The <code>HTTPProxyAdapterControl</code> class is the MBean implemenation
  * for monitoring and managing <code>HTTPProxyAdapter</code>s at runtime.
- * 
- * @author shodgson
  */
 public class HTTPProxyAdapterControl extends ServiceAdapterControl implements
         HTTPProxyAdapterControlMBean
@@ -45,7 +43,7 @@ public class HTTPProxyAdapterControl extends ServiceAdapterControl implements
     }
 
     /**
-     * @exclude
+     *
      *
      *  (non-Javadoc)
      * @see flex.management.BaseControlMBean#getType()

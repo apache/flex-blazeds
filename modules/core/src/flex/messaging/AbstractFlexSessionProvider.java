@@ -19,7 +19,7 @@ package flex.messaging;
 import flex.messaging.config.ConfigMap;
 
 /**
- * @exclude
+ *
  * Base for FlexSessionProvider implementations.
  * Providers are protocol-specific factories for concrete FlexSession implementations.
  * They are registered with a FlexSessionManager, which acts as the central point of control

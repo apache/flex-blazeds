@@ -215,7 +215,7 @@ public class TypeMarshallingContext
     }
 
     /**
-     * @exclude
+     *
      * Destroy static thread local storage.
      * Call ONLY on shutdown.
      */
@@ -228,7 +228,7 @@ public class TypeMarshallingContext
     }
 
     /**
-     * @exclude
+     *
      * Create static thread local storage.
      */
     public static void createThreadLocalObjects()

@@ -50,7 +50,7 @@ import java.util.TreeSet;
  *
  * @see java.util.Collection
  *
- * @exclude
+ *
  */
 public class CollectionDecoder extends ActionScriptDecoder
 {

@@ -56,20 +56,17 @@ import java.util.Map;
 
 /**
  * Adapter class for proxy services.
- *
- * @author Brian Deitte
- * @author Peter Farland
  */
 public class HTTPProxyAdapter extends ServiceAdapter
 {
     // NOTE: any changes to this class should also be made to the corresponding version in the .NET.
     // The corresponding class is at src/dotNet/libs/FlexASPlib/Aspx/Proxy/ServiceProxyModule.cs
 
-    /** @exclude **/
+
     public static final String CONTENT_TYPE_XML = "application/xml";
-    /** @exclude **/
+
     public static final String CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
-    /** @exclude **/
+
     public static final int DEFAULT_COOKIE_LIMIT = 200;
 
     private static final String COOKIE_LIMIT = "cookie-limit";
@@ -133,7 +130,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
 
     /**
      * Initializes the <code>HTTPProxyAdapter</code> with the properties.
-     * <p/>
+     *
      * <pre>
      * &lt;connection-manager&gt;
      *     &lt;cookie-policy&gt;rfc2109&lt;/cookie-policy&gt;

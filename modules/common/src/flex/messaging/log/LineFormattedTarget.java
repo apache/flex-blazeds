@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @exclude
+ *
  */
 public class LineFormattedTarget extends AbstractTarget
 {

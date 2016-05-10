@@ -25,12 +25,12 @@ import flex.messaging.log.LogEvent;
 public class DuplicateSessionException extends MessageException
 {
     /**
-     * @exclude
+     *
      */
     public static final String DUPLICATE_SESSION_DETECTED_CODE = "Server.Processing.DuplicateSessionDetected";
 
     /**
-     * @exclude
+     *
      */
     private static final long serialVersionUID = -741704726700619666L;
 

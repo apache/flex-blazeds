@@ -26,8 +26,6 @@ import flex.messaging.messages.Message;
 
 /**
  * The ServiceAdapter class is the base definition of a service adapter.
- *
- * @author neville
  */
 public abstract class ServiceAdapter extends ManageableComponent
 {

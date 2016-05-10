@@ -18,8 +18,6 @@ package flex.management.jmx;
 
 /**
  * Remotable MBeanOperationInfo class that complies with Flash serialization requirements.
- *
- * @author shodgson
  */
 public class MBeanOperationInfo
 {

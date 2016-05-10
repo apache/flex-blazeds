@@ -141,7 +141,7 @@ public class RemotingDestination extends FactoryDestination
     //
     //--------------------------------------------------------------------------
     /**
-     * @exclude
+     *
      */
     public MethodMatcher getMethodMatcher()
     {
@@ -149,7 +149,7 @@ public class RemotingDestination extends FactoryDestination
     }
 
     /**
-     * @exclude
+     *
      */
     public void setMethodMatcher(MethodMatcher matcher)
     {

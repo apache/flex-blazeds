@@ -29,8 +29,7 @@ import java.lang.reflect.Modifier;
  * and handle error conditions consistently across the RemoteObject
  * code base.
  *
- * @author Peter Farland
- * @exclude
+ *
  */
 public class ClassUtil
 {
@@ -222,7 +221,7 @@ public class ClassUtil
         {
             if (cls != null)
             {
-                Constructor c = cls.getConstructor(new Class[]{});
+                Constructor c = cls.getConstructor();
                 int mod = c.getModifiers();
                 return Modifier.isPublic(mod);
             }
@@ -252,7 +251,7 @@ public class ClassUtil
      * Validates the assignment of a value to an index of an Array or List instance
      * against the deserialization validator. If the assignment is not valid,
      * SerializationException is thrown.
-     * <p/>
+     *
      * @param obj The Array or List instance.
      * @param index The index at which the value is being assigned.
      * @param value The value that is assigned to the index.

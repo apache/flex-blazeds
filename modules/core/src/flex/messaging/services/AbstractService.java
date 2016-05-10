@@ -42,8 +42,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * This is the default implementation of <code>Service</code>, which provides a
  * convenient base for behavior and associations common to all Services.
- *
- * @author neville
  */
 public abstract class AbstractService extends ManageableComponent implements Service
 {
@@ -579,7 +577,7 @@ public abstract class AbstractService extends ManageableComponent implements Ser
     }
 
     /**
-     * @exclude
+     *
      * Returns a <tt>ConfigMap</tt> of service properties that the client needs.
      * The <tt>allDestinations</tt> flag controls whether configuration for all 
      * destinations or only reliable client destinations is returned. 

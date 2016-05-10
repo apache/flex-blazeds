@@ -32,7 +32,7 @@ import oracle.security.jazn.realm.RealmUser;
 /**
  * An Oracle specific implementation of java.security.Principal.
  * 
- * @exclude
+ *
  */
 public class OracleUser implements Principal
 {

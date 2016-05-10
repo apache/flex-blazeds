@@ -103,7 +103,7 @@ public class AmfxInput
     /**
      * Constructor.
      * Construct an AmfxInput by passing in a <code>SerialziationContext</code> object
-     * <p/>
+     *
      * @param context the <code>SerialziationContext</code> object
      */
     public AmfxInput(SerializationContext context)
@@ -147,7 +147,7 @@ public class AmfxInput
 
     /**
      * Set Debug trace.
-     * <p/>
+     *
      * @param trace current <code>AmfTrace</code> setting
      */
     public void setDebugTrace(AmfTrace trace)
@@ -158,7 +158,7 @@ public class AmfxInput
 
     /**
      * Set Action Message.
-     * <p/>
+     *
      * @param msg current <code>ActionMessage</code>
      */
     public void setActionMessage(ActionMessage msg)
@@ -168,7 +168,7 @@ public class AmfxInput
 
     /**
      * Read object from the AmfxInput object.
-     * <p/>
+     *
      * @return currently return null, not supported
      * @throws IOException when reading the object has the IOException
      */
@@ -181,7 +181,7 @@ public class AmfxInput
     /**
      * Append a string to text.
      * XML Considerations
-     * <p/>
+     *
      * @param s the String to append
      */
     public void text(String s)
@@ -196,7 +196,7 @@ public class AmfxInput
 
     /**
      * Start the amfx process by setting the ActionMessage version.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_amfx(Attributes attributes)
@@ -223,7 +223,7 @@ public class AmfxInput
 
     /**
      * End the Amfx process.
-     * <p/>
+     *
      */
     public void end_amfx()
     {
@@ -231,7 +231,7 @@ public class AmfxInput
 
     /**
      * Start the process of message headers.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_header(Attributes attributes)
@@ -258,7 +258,7 @@ public class AmfxInput
 
     /**
      * End process of message headers.
-     * <p/>
+     *
      */
     public void end_header()
     {
@@ -271,7 +271,7 @@ public class AmfxInput
 
     /**
      * Start process of the message body.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_body(Attributes attributes)
@@ -287,7 +287,7 @@ public class AmfxInput
 
     /**
      * End process of the message body.
-     * <p/>
+     *
      */
     public void end_body()
     {
@@ -305,7 +305,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type Array.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_array(Attributes attributes)
@@ -383,7 +383,7 @@ public class AmfxInput
 
     /**
      * End process of Action Script type Array.
-     * <p/>
+     *
      */
     public void end_array()
     {
@@ -464,7 +464,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type ByteArray.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_bytearray(Attributes attributes)
@@ -474,7 +474,7 @@ public class AmfxInput
 
     /**
      * End process of the Action Script type ByteArray.
-     * <p/>
+     *
      */
     public void end_bytearray()
     {
@@ -494,7 +494,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type Date.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_date(Attributes attributes)
@@ -504,7 +504,7 @@ public class AmfxInput
 
     /**
      * End process of the Action Script type Date.
-     * <p/>
+     *
      */
     public void end_date()
     {
@@ -530,7 +530,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type Double.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_double(Attributes attributes)
@@ -540,7 +540,7 @@ public class AmfxInput
 
     /**
      * End process of the Action Script type Double.
-     * <p/>
+     *
      */
     public void end_double()
     {
@@ -563,7 +563,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type False.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_false(Attributes attributes)
@@ -576,7 +576,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type False.
-     * <p/>
+     *
      */
     public void end_false()
     {
@@ -584,7 +584,7 @@ public class AmfxInput
 
     /**
      * Start process of Item.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_item(Attributes attributes)
@@ -619,7 +619,7 @@ public class AmfxInput
 
     /**
      * End process of Item.
-     * <p/>
+     *
      */
     public void end_item()
     {
@@ -628,7 +628,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type Int.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_int(Attributes attributes)
@@ -638,7 +638,7 @@ public class AmfxInput
 
     /**
      * End process of the Action Script type Int.
-     * <p/>
+     *
      */
     public void end_int()
     {
@@ -661,7 +661,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type NULL.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_null(Attributes attributes)
@@ -674,7 +674,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type NULL.
-     * <p/>
+     *
      */
     public void end_null()
     {
@@ -684,7 +684,7 @@ public class AmfxInput
 
     /**
      * Start process of type Object.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_object(Attributes attributes)
@@ -748,7 +748,7 @@ public class AmfxInput
     // </object>
     /**
      * End process of type Object.
-     * <p/>
+     *
      */
     public void end_object()
     {
@@ -788,7 +788,7 @@ public class AmfxInput
 
     /**
      * Start process of reference.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_ref(Attributes attributes)
@@ -823,7 +823,7 @@ public class AmfxInput
 
     /**
      * End process of reference.
-     * <p/>
+     *
      */
     public void end_ref()
     {
@@ -831,7 +831,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type String.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_string(Attributes attributes)
@@ -874,7 +874,7 @@ public class AmfxInput
 
     /**
      * End process of the Action Script type String.
-     * <p/>
+     *
      */
     public void end_string()
     {
@@ -911,7 +911,7 @@ public class AmfxInput
 
     /**
      * Start process of Traits.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_traits(Attributes attributes)
@@ -978,7 +978,7 @@ public class AmfxInput
 
     /**
      * End process of Traits.
-     * <p/>
+     *
      */
     public void end_traits()
     {
@@ -987,7 +987,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type True.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_true(Attributes attributes)
@@ -1002,7 +1002,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type True.
-     * <p/>
+     *
      */
     public void end_true()
     {
@@ -1010,7 +1010,7 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type undefined.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_undefined(Attributes attributes)
@@ -1023,7 +1023,7 @@ public class AmfxInput
 
     /**
      * End process of the Action Script type undefined.
-     * <p/>
+     *
      */
     public void end_undefined()
     {
@@ -1031,7 +1031,7 @@ public class AmfxInput
 
     /**
      * Start process of XML.
-     * <p/>
+     *
      * @param attributes current Attributes
      */
     public void start_xml(Attributes attributes)
@@ -1041,7 +1041,7 @@ public class AmfxInput
 
     /**
      * End process of XML.
-     * <p/>
+     *
      */
     public void end_xml()
     {
@@ -1049,7 +1049,8 @@ public class AmfxInput
         xml = unescapeCloseCDATA(xml);
 
         // Validation performed in XMLUtil#stringToDocument.
-        Object value = XMLUtil.stringToDocument(xml, !(context.legacyXMLNamespaces));
+        Object value = XMLUtil.stringToDocument(xml, !(context.legacyXMLNamespaces),
+                context.allowXmlDoctypeDeclaration, context.allowXmlExternalEntityExpansion);
         setValue(value);
     }
 

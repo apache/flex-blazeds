@@ -30,8 +30,6 @@ import flex.messaging.config.SecurityConstraint;
  * The endpoint also encodes messages and delivers them to clients.
  * Endpoints are specific to a message format and network transport,
  * and are defined by the named URI path on which they are located.
- * 
- * @author neville
  */
 public interface Endpoint extends Manageable
 {
@@ -97,7 +95,7 @@ public interface Endpoint extends Manageable
      * All endpoints are referenceable by an ID that is unique among
      * all the endpoints registered to a single broker instance. The id
      * is set through this method, usually through parsed configuration.
-     * <p/>
+     *
      * @param id The endpoint ID.
      */
     void setId(String id);
@@ -126,7 +124,7 @@ public interface Endpoint extends Manageable
      */
     double getMessagingVersion();
     
-    /** @exclude **/
+
     String getParsedUrl(String contextPath);
     
     /**
@@ -160,7 +158,7 @@ public interface Endpoint extends Manageable
      * Responds to HTTP-based messages published by a client. Endpoints which
      * do not support access over HTTP should throw an UnsupportedOperationException
      * in the implementation of htis method.
-     * <p/>
+     *
      * @param req The HttpServletRequest object.
      * @param res The HttpServletResponse object.
      */
@@ -181,7 +179,7 @@ public interface Endpoint extends Manageable
     void setUrl(String url);  
     
     /**
-     * @exclude
+     *
      * Returns the url of the endpoint parsed for the client. 
      *  
      * @return The url of the endpoint parsed for the client.

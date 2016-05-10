@@ -18,11 +18,6 @@ package org.springframework.flex.samples.industry;
 
 import java.io.Serializable;
 
-/**
- * 
- * @author Christophe Coenraets
- * @author Jeremy Grelle
- */
 public class Industry implements Serializable {
 
     static final long serialVersionUID = 103844514947365244L;

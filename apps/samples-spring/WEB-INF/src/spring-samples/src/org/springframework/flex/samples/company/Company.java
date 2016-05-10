@@ -20,11 +20,6 @@ import java.io.Serializable;
 
 import org.springframework.flex.samples.industry.Industry;
 
-/**
- * 
- * @author Christophe Coenraets
- * @author Jeremy Grelle
- */
 public class Company implements Serializable {
 
     static final long serialVersionUID = 103844514947365244L;

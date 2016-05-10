@@ -20,12 +20,12 @@ import flex.messaging.MessageException;
 import flex.messaging.log.LogEvent;
 
 /**
- * @exclude
+ *
  */
 public class FlexClientNotSubscribedException extends MessageException
 {
     /**
-     * @exclude
+     *
      */
     private static final long serialVersionUID = 773524927178340950L;
 

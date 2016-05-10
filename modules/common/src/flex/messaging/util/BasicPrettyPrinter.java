@@ -27,7 +27,7 @@ import java.util.Map;
  * Prettifies the representation of an Object as a String. Complex
  * types are not traversed.
  *
- * @exclude
+ *
  */
 public class BasicPrettyPrinter implements PrettyPrinter
 {

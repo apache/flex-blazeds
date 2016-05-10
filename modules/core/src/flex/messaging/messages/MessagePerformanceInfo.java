@@ -19,7 +19,7 @@ package flex.messaging.messages;
 import java.io.Serializable;
 
 /**
- * @exclude
+ *
  *
  * The MessagePerformanceInfo class is used to capture various metrics about
  * the sizing and timing of a message sent from a client to the server and its
@@ -39,14 +39,14 @@ public class MessagePerformanceInfo implements Serializable, Cloneable
     private static final long serialVersionUID = -8556484221291213962L;
 
     /**
-     * @exclude
+     *
      *
       * Size of message in Bytes (message types depends on what header this MPI is in)
       */
     public long messageSize;
 
     /**
-     * @exclude
+     *
      *
       * Millisecond timestamp of when this message was sent
       * (origin depends on on what header this MPI is in)
@@ -54,7 +54,7 @@ public class MessagePerformanceInfo implements Serializable, Cloneable
     public long sendTime;
 
     /**
-     * @exclude
+     *
      *
       * Millisecond timestamp of when this message was received
       * (destination depends on on what header this MPI is in)
@@ -62,7 +62,7 @@ public class MessagePerformanceInfo implements Serializable, Cloneable
     public long receiveTime;
 
     /**
-     * @exclude
+     *
      *
       * Amount of time in milliseconds that this message was being processed on the server
       * in order to calculate and populate MPI metrics
@@ -70,35 +70,35 @@ public class MessagePerformanceInfo implements Serializable, Cloneable
     public long overheadTime;
 
     /**
-     * @exclude
+     *
      *
       * "OUT" when this message originated on the server
       */
     public String infoType;
 
     /**
-     * @exclude
+     *
      *
       * True if this is info for a message that was pushed from server to client
       */
     public boolean pushedFlag;
 
     /**
-     * @exclude
+     *
      *
      * Flag is true when record-message-sizes is enabled for the communication channel
       */
     public boolean recordMessageSizes;
 
     /**
-     * @exclude
+     *
      *
      * Flag is true when record-message-times is enabled for the communication channel
       */
     public boolean recordMessageTimes;
 
     /**
-     * @exclude
+     *
      *
      * Millisecond timestamp of when the server became ready to push this message out
      * to clients
@@ -106,7 +106,7 @@ public class MessagePerformanceInfo implements Serializable, Cloneable
     public long serverPrePushTime;
 
     /**
-     * @exclude
+     *
      *
      * Millisecond timestamp of when the server called into the adapter associated with the
      * destination of this message
@@ -114,7 +114,7 @@ public class MessagePerformanceInfo implements Serializable, Cloneable
     public long serverPreAdapterTime;
 
     /**
-     * @exclude
+     *
      *
      * Millisecond timestamp of when server processing returned from the adapater associated
      * with the destination of this message
@@ -122,7 +122,7 @@ public class MessagePerformanceInfo implements Serializable, Cloneable
     public long serverPostAdapterTime;
 
     /**
-     * @exclude
+     *
      *
      * Millisecond timestamp of when the adapter associated with the destination of this message
      * made a call to an external component (for example a JMS server)
@@ -130,7 +130,7 @@ public class MessagePerformanceInfo implements Serializable, Cloneable
     public long serverPreAdapterExternalTime;
 
     /**
-     * @exclude
+     *
      *
      * Millisecond timestamp of when processing came back to the adapter associated with the destination
      * of this message from a call to an external component (for example a JMS server)
@@ -138,7 +138,7 @@ public class MessagePerformanceInfo implements Serializable, Cloneable
     public long serverPostAdapterExternalTime;
 
     /**
-     * @exclude
+     *
      *
       * Copies the immutable fields of this MPI isntance over to create a new one
       * @return cloned instance of this MessagePerformanceInfo instance
@@ -171,7 +171,7 @@ public class MessagePerformanceInfo implements Serializable, Cloneable
     }
 
     /**
-     * @exclude
+     *
      *
       * Increase the overhead counter for this MPI
       * @param overhead Increment size in milliseconds
@@ -182,7 +182,7 @@ public class MessagePerformanceInfo implements Serializable, Cloneable
     }
 
     /**
-     * @exclude
+     *
      *
      * Default constructor
       */

@@ -164,7 +164,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      * Constructs a new MessageClient for local use.
      *
      * @param clientId The clientId for the MessageClient.
@@ -177,7 +177,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Constructs a new MessageClient.
      *
      * @param clientId The clientId for the MessageClient.
@@ -409,11 +409,13 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * This is used for FlexClient outbound queue management. When a MessageClient is invalidated
      * if it is attempting to notify the client, then we must leave the outbound queue containing
      * the notification in place. Otherwise, any messages queued for the subscription may be
      * removed from the queue and possibly shut down immediately.
+     *
+     * @return true if the MessageClient is currently trying to notify the client about it's invalidation.
      */
     public boolean isAttemptingInvalidationClientNotification()
     {
@@ -421,12 +423,14 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * This is set to true when the MessageClient is invalidated due to the client
      * channel the subscription was established over disconnecting.
      * It allows the FlexClient class to cleanup the outbound queue for the channel's
      * corresponding server endpoint for the remote client, because we know that no
      * currently queued messages need to be retained for delivery.
+     *
+     * @param value true if the MessageClient is invalidated due to the client being disconnected
      */
     public void setClientChannelDisconnected(boolean value)
     {
@@ -434,7 +438,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     * @return true if the MessageClient is invalidated due to the client being disconnected
      */
     public boolean isClientChannelDisconnected()
     {
@@ -442,7 +446,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * This is true when some code other than the SubscriptionManager
      * is maintaining subscriptions for this message client.  It ensures
      * that we have this MessageClient kept around until the session
@@ -454,7 +458,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      */
     public boolean isRegistered()
     {
@@ -502,7 +506,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Adds a subscription to the subscription set for this MessageClient.
      *
      * @param selector The selector expression used for the subscription.
@@ -527,7 +531,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Registers  the subscription with the outbound queue processor's throttle
      * manager, if one exists.
      *
@@ -562,7 +566,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Removes a subscription from the subscription set for this MessageClient.
      *
      * @param selector The selector expression for the subscription.
@@ -589,7 +593,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * We use the same MessageClient for more than one subscription with different
      * selection criteria.  This tracks the number of subscriptions that are active
      * so that we know when we are finished.
@@ -603,7 +607,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Decrements the numReferences variable and returns true if this was the last reference.
      */
     public boolean decrementReferences()
@@ -626,7 +630,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Invoked by SubscriptionManager once the subscription state is setup completely
      * for the MessageClient..
      */
@@ -642,7 +646,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Invoked by SubscriptionManager while handling a subscribe request.
      * If the request is updating an existing subscription the 'push' state in the associated FlexClient
      * may need to be updated to ensure that the correct endpoint is used for this subscription.
@@ -696,7 +700,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Used to test whether this client should receive this message
      * based on the list of subscriptions we have recorded for it.
      * It must match both the subtopic and the selector expression.
@@ -888,7 +892,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Compares this MessageClient to the specified object. The result is true if
      * the argument is not null and is a MessageClient instance with a matching
      * clientId value.
@@ -908,7 +912,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Returns the hash code for this MessageClient. The returned value is
      * the hash code for the MessageClient's clientId property.
      *
@@ -921,7 +925,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * The String representation of this MessageClient is returned (its clientId value).
      *
      * @return The clientId value for this MessageClient.
@@ -937,7 +941,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     //----------------------------------
 
     /**
-     * @exclude
+     *
      * Implements TimeoutCapable.
      * This method returns the timeout value configured for the MessageClient's destination.
      */
@@ -949,7 +953,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Implements TimeoutCapable.
      * This method is invoked when the MessageClient has timed out and it
      * invalidates the MessageClient.
@@ -960,7 +964,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Returns true if a timeout task is running for this MessageClient.
      */
     public boolean isTimingOut()
@@ -969,7 +973,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     * @exclude
+     *
      * Records whether a timeout task is running for this MessageClient.
      */
     public void setTimingOut(boolean value)

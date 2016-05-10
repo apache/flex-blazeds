@@ -19,7 +19,7 @@ package flex.messaging.messages;
 /**
  * Implemented by messages that may be batched.
  *
- * @exclude
+ *
  */
 public interface BatchableMessage
 {

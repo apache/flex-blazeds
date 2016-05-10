@@ -31,10 +31,6 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-/**
- * @author Christophe Coenraets
- * @author Jeremy Grelle
- */
 public class DatabaseInitializer {
 
     private final JdbcTemplate template;

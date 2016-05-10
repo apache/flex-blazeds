@@ -18,8 +18,6 @@ package flex.messaging.config;
 
 /**
  * Network policy settings for a MessageDestination.
- *
- * @author neville
  */
 public class NetworkSettings
 {

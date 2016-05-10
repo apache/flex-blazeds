@@ -17,7 +17,7 @@
 package flex.messaging;
 
 /**
- * @exclude
+ *
  */
 public interface ServiceValidationListener
 {

@@ -28,7 +28,7 @@ import flex.messaging.log.LogCategories;
  * a servlet init-param &quot;services.configuration.manager&quot;
  * to the MessageBrokerServlet.
  *
- * @exclude
+ *
  */
 public interface ConfigurationManager
 {

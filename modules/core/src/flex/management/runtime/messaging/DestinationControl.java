@@ -28,8 +28,6 @@ import javax.management.ObjectName;
 /**
  * The <code>DestinationControl</code> class is the MBean implementation for
  * monitoring and managing a <code>Destination</code> at runtime.
- * 
- * @author shodgson
  */
 public abstract class DestinationControl extends BaseControl implements
         DestinationControlMBean

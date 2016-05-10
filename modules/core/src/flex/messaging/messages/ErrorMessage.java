@@ -24,8 +24,7 @@ import java.util.Map;
 /**
  * A message describing a MessageException.
  *
- * @author neville
- * @exclude
+ *
  */
 public class ErrorMessage extends AcknowledgeMessage
 {
@@ -63,7 +62,7 @@ public class ErrorMessage extends AcknowledgeMessage
     }
 
     /**
-     * @exclude
+     *
      */
     public Message getSmallMessage()
     {

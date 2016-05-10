@@ -45,8 +45,6 @@ import javax.servlet.ServletContext;
  * in the ServletContext (for application scoped components) and in the
  * session (for session scoped components) so you can use these components in your
  * JSP as well.
- *
- * @author Jeff Vroom
  */
 public class JavaFactory implements FlexFactory, DestructibleFlexFactory
 {
@@ -57,7 +55,7 @@ public class JavaFactory implements FlexFactory, DestructibleFlexFactory
     private static final int INVALID_CLASS_FOUND = 10654;
 
     /**
-     * @exclude
+     *
      * Default constructor
      */
     public JavaFactory()

@@ -46,7 +46,7 @@ import java.security.cert.X509Certificate;
 import flex.messaging.util.Trace;
 
 /**
- * @exclude
+ *
  * <p>
  * EasyX509TrustManager unlike default {@link javax.net.ssl.X509TrustManager} accepts
  * self-signed certificates.
@@ -63,8 +63,6 @@ import flex.messaging.util.Trace;
  * The component is provided as a reference material, which may be inappropriate
  * use without additional customization.
  * </p>
- * @author <a href="mailto:adrian.sutton@ephox.com">Adrian Sutton</a>
- * @author <a href="mailto:oleg@ural.ru">Oleg Kalnichevski</a> 
  */
 public class EasyX509TrustManager implements X509TrustManager
 {

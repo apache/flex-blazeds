@@ -28,7 +28,7 @@ package flex.messaging.util.concurrent;
  * the callback on the <code>FailedExecutionHandler</code> if one has been set.
  * 
  * @see java.util.concurrent.Executor
- * @exclude
+ *
  */ 
 public interface Executor
 {

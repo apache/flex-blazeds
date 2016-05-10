@@ -282,6 +282,13 @@
                          max object nest limit can prevent a recursion stack overflow. By default, it is set to 512.
                     -->
                     <max-object-nest-level>512</max-object-nest-level>
+                    <!--
+                         Per default the expansion of external entities in xml is disabled for
+                         security reasons. If you require them to be expanded, turn this option
+                         to true. See also:
+                         https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Processing
+                    -->
+                    <allow-xml-external-entity-expansion>true</allow-xml-external-entity-expansion>
                 </serialization>
                 <!-- Optional. Use this to limit the client channel's connect attempt
                      to the specified time interval.

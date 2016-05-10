@@ -54,9 +54,7 @@ import java.util.List;
  *
  * JAR NOTE: this class is not in flex-messaging.jar but rather flex-tomcat-server.jar
  *
- * @author Brian Deitte
- * @author Matt Chotin
- * @exclude 
+ *
  */
 public class TomcatValve4150 extends ValveBase implements Lifecycle
 {

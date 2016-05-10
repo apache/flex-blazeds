@@ -24,8 +24,6 @@ import javax.management.ObjectName;
 
 /**
  * Defines the runtime monitoring and management interface for managed services.
- *
- * @author shodgson
  */
 public interface ServiceControlMBean extends BaseControlMBean
 {

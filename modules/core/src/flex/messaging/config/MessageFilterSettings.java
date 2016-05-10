@@ -19,7 +19,7 @@ package flex.messaging.config;
 /**
  * Settings class for message filters.
  * 
- * @exclude
+ *
  */
 public class MessageFilterSettings extends PropertiesSettings
 {
@@ -27,8 +27,8 @@ public class MessageFilterSettings extends PropertiesSettings
      * Filters belong to one of two types; those that filter messages
      * asynchronously and those that filter messages synchronously.
      */
-    public enum FilterType { ASYNC, SYNC };
-    
+    public enum FilterType { ASYNC, SYNC }
+
     private String id;
 
     /**

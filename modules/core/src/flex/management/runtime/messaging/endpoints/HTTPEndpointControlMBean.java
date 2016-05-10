@@ -18,8 +18,6 @@ package flex.management.runtime.messaging.endpoints;
 
 /**
  * Defines the runtime monitoring and management interface for managed HTTP endpoints.
- *
- * @author shodgson
  */
 public interface HTTPEndpointControlMBean extends PollingEndpointControlMBean
 {

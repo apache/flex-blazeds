@@ -23,7 +23,7 @@ package flex.messaging.util;
  * drain less than everything that is currently
  * available.
  * 
- * @exclude
+ *
  */
 public class Base64
 {
@@ -59,7 +59,7 @@ public class Base64
                 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64
             };
     /**
-    * @exclude
+    *
     */
 
     public static class Decoder
@@ -146,7 +146,7 @@ public class Base64
     }
 
     /**
-    * @exclude
+    *
     */
     public static class Encoder
     {

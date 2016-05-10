@@ -23,7 +23,7 @@ package flex.messaging.config;
  * The <tt>MessagingConfiguration</tt> instance using the parser will store these and
  * use them to configure the <tt>MessageBroker</tt> with shared server instances.
  *
- * @exclude
+ *
  */
 public class SharedServerSettings extends PropertiesSettings
 {

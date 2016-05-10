@@ -29,8 +29,6 @@ import java.util.Map;
  * Proxies serialization of a Map and considers all keys as String based property
  * names. Additionally, bean properties from the instance are also included and
  * override any Map entries with the same key name.
- *
- * @author Peter Farland
  */
 public class MapProxy extends BeanProxy
 {

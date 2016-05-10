@@ -21,8 +21,6 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * Utility class for URL decoding.
- * 
- *@exclude
  */
 public final class URLDecoder
 {

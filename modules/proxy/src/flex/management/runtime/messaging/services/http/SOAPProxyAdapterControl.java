@@ -20,11 +20,9 @@ import flex.management.BaseControl;
 import flex.messaging.services.http.SOAPProxyAdapter;
 
 /**
- * @exclude
+ *
  * The <code>SOAPProxyAdapterControl</code> class is the MBean implementation
  * for monitoring and managing <code>SOAPProxyAdapter</code>s at runtime.
- * 
- * @author shodgson
  */
 public class SOAPProxyAdapterControl extends HTTPProxyAdapterControl implements
         SOAPProxyAdapterControlMBean
@@ -44,7 +42,7 @@ public class SOAPProxyAdapterControl extends HTTPProxyAdapterControl implements
     }
 
     /**
-     * @exclude
+     *
      *  (non-Javadoc)
      * @see flex.management.BaseControlMBean#getType()
      */

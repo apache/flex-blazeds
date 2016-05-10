@@ -34,7 +34,7 @@ import flex.messaging.LocalizedException;
  * PreLink. It also requires a list of channel classes to be added as
  * dependencies.
  *
- * @exclude
+ *
  */
 public class ServicesDependencies
 {
@@ -623,7 +623,7 @@ public class ServicesDependencies
             {
                 List children = (List)value;
                 for (Iterator childrenIter = children.iterator(); childrenIter.hasNext();)
-                    addStringProperty(buf, indent, name, (String)childrenIter.next());;
+                    addStringProperty(buf, indent, name, (String)childrenIter.next());
             }
             else if (value instanceof ConfigMap)
             {

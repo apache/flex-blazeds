@@ -23,8 +23,7 @@ import flex.messaging.util.ClassUtil;
  * The factory configuration defines a single factory in the flex
  * configuration file.
  *
- * @author Jeff Vroom
- * @exclude
+ *
  */
 public class FactorySettings extends PropertiesSettings
 {

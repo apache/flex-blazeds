@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @exclude
+ *
  */
 public abstract class AbstractTarget implements Target
 {
@@ -172,6 +172,8 @@ public abstract class AbstractTarget implements Target
 
     /**
      * Return the log level for this target.
+     *
+     * @return the log level set for this target.
      */
     public short getLevel()
     {
@@ -180,6 +182,8 @@ public abstract class AbstractTarget implements Target
 
     /**
      * Return the target's unique ID.
+     *
+     * @return the target's unique ID.
      */
     public String getId()
     {

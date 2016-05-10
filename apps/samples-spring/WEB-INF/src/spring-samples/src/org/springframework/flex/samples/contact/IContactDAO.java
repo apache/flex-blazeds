@@ -18,11 +18,6 @@ package org.springframework.flex.samples.contact;
 
 import org.springframework.flex.samples.dao.IGenericDAO;
 
-/**
- * 
- * @author Christophe Coenraets
- * @author Jeremy Grelle
- */
 public interface IContactDAO extends IGenericDAO<Contact> {
 
 }

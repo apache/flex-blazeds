@@ -27,8 +27,6 @@ import java.io.ObjectInput;
  * Entry point for deserializing an individual ActionMessage
  * request message for AMF, AMFX or RTMP.
  *
- * @author Peter Farland
- *
  * @see flex.messaging.io.amf.Amf0Input Classic Version 0 Deserializer
  * @see flex.messaging.io.amf.Amf3Input AVM+ Version 3 Deserializer
  *
@@ -87,19 +85,19 @@ public interface ActionMessageInput extends ObjectInput
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void setInputStream(InputStream in);
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void setDebugTrace(AmfTrace trace);
 
     /**
      * Internal use only.
-     * @exclude
+     *
      */
     void reset();
 }

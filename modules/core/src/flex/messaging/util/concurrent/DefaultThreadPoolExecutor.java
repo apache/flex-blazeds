@@ -31,7 +31,7 @@ import java.util.concurrent.RejectedExecutionException;
  * Implements {@link Executor} and extends the <code>ThreadPoolExecutor</code> provided by the
  * Java 1.4.x-friendly backport of the <code>java.util.concurrent</code> API.
  * 
- * @exclude
+ *
  */
 public class DefaultThreadPoolExecutor extends ThreadPoolExecutor implements Executor
 {
@@ -134,7 +134,7 @@ public class DefaultThreadPoolExecutor extends ThreadPoolExecutor implements Exe
     //--------------------------------------------------------------------------
     
     /**
-     * @exclude
+     *
      * This implementation relies on the default <code>RejectedExecutionHandler</code>, {@link java.util.concurrent.ThreadPoolExecutor.AbortPolicy}, which
      * throws a <code>RejectedExecutionException</code> if the command cannot be queued for execution.
      */

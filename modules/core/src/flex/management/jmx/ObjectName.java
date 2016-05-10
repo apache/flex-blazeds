@@ -22,8 +22,6 @@ import javax.management.MalformedObjectNameException;
 /**
  * Remotable ObjectName representation that complies with Flash serialization requirements. 
  * This class is JMX 1.1 compliant.
- * 
- * @author shodgson
  */
 public class ObjectName
 {
@@ -90,6 +88,7 @@ public class ObjectName
      * <code>javax.management.ObjectName</code> instance.
      * 
      * @return A JMX <code>ObjectName</code> based upon this instance.
+     * @throws MalformedObjectNameException an exception
      */
     public javax.management.ObjectName toObjectName() throws MalformedObjectNameException
     {

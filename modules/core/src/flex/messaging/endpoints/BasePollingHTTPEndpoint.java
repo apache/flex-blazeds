@@ -252,7 +252,7 @@ public abstract class BasePollingHTTPEndpoint extends BaseHTTPEndpoint implement
     //----------------------------------
 
     /**
-     * @exclude
+     *
      * This is a property used on the client.
      */
     protected boolean piggybackingEnabled;
@@ -262,7 +262,7 @@ public abstract class BasePollingHTTPEndpoint extends BaseHTTPEndpoint implement
     //----------------------------------
 
     /**
-     * @exclude
+     *
      * This is a property used on the client.
      */
     protected boolean pollingEnabled;
@@ -272,7 +272,7 @@ public abstract class BasePollingHTTPEndpoint extends BaseHTTPEndpoint implement
     //----------------------------------
 
     /**
-     * @exclude
+     *
      * This is a property used on the client.
      */
     protected long pollingIntervalMillis = -1;
@@ -332,7 +332,7 @@ public abstract class BasePollingHTTPEndpoint extends BaseHTTPEndpoint implement
     //--------------------------------------------------------------------------
 
     /**
-     * @exclude
+     *
      * Returns a <code>ConfigMap</code> of endpoint properties that the client
      * needs. This includes properties from <code>super.describeEndpoint</code>
      * and additional <code>BaseHTTPEndpoint</code> specific properties under

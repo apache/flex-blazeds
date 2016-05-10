@@ -23,7 +23,7 @@ import java.util.Arrays;
  * key consists of the Remote Object class containing this method, the method name,
  * and the classes representing the parameters in the signature of this method.
  *
- * @exclude
+ *
  */
 public class MethodKey
 {

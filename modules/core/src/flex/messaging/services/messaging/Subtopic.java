@@ -37,7 +37,7 @@ public class Subtopic
     /**
      * Constructor.
      *
-     * @exclude
+     *
      *
      * @param subtopic The full subtopic string.
      * @param separator The separator for tokenizing a hierarchical subtopic.
@@ -178,15 +178,8 @@ public class Subtopic
         if (!(other instanceof Subtopic))
             return false;
         Subtopic otherSubtopic = (Subtopic) other;
-        if (subtopic.equals(otherSubtopic.subtopic) &&
-            ((separator == null && otherSubtopic.separator == null) || (separator != null && separator.equals(otherSubtopic.separator))))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return subtopic.equals(otherSubtopic.subtopic) &&
+                ((separator == null && otherSubtopic.separator == null) || (separator != null && separator.equals(otherSubtopic.separator)));
     }
 
     /**
@@ -266,10 +259,7 @@ public class Subtopic
             while (n-- > 0)
             {
                 tok1 = t1.nextToken();
-                if (tok1.equals(SUBTOPIC_WILDCARD))
-                    matchToken = false;
-                else
-                    matchToken = true;
+                matchToken = !tok1.equals(SUBTOPIC_WILDCARD);
 
                 if (t2.hasMoreTokens())
                 {
@@ -290,10 +280,7 @@ public class Subtopic
                 return true;
             else if ((difference < 0) && tok1.equals(SUBTOPIC_WILDCARD))
                 return true;
-            else if ((difference > 0) && tok2.equals(SUBTOPIC_WILDCARD))
-                return true;
-            else
-                return false;
+            else return (difference > 0) && tok2.equals(SUBTOPIC_WILDCARD);
         }
     }
 

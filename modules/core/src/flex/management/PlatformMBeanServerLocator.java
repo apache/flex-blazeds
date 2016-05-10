@@ -25,8 +25,6 @@ import flex.messaging.log.LogCategories;
 /**
  * The platform implementation of an MBeanServerLocator for Java 1.5+.
  * This locator exposes the platform MBeanServer.
- *
- * @author shodgson
  */
 public class PlatformMBeanServerLocator implements MBeanServerLocator
 {

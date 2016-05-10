@@ -24,7 +24,7 @@ import java.io.Serializable;
 
 /**
  * A context for reading and writing messages.
- * @exclude
+ *
  */
 public class ActionContext implements Serializable
 {
@@ -42,38 +42,38 @@ public class ActionContext implements Serializable
     public boolean isDebug;
 
     /**
-     * @exclude
+     *
      * Performance metrics related field, keeps track of bytes deserialized using this context
      */
     private int deserializedBytes;
 
     /**
-     * @exclude
+     *
      * Performance metrics related field, keeps track of bytes serialized using this context
      */
     private int serializedBytes;
 
     /**
-     * @exclude
+     *
      * Performance metrics related field, recordMessageSizes flag
      */
     private boolean recordMessageSizes;
 
     /**
-     * @exclude
+     *
      * Performance metrics related field, recordMessageTimes flag
      */
     private boolean recordMessageTimes;
 
     /**
-     * @exclude
+     *
      * Performance metrics related field, incoming MPI object, will only be populated when one of
      * the record-message-* params is enabled
      */
     private MessagePerformanceInfo mpii;
 
     /**
-     * @exclude
+     *
      * Performance metrics related field, outgoing MPI object, will only be populated when one of
      * the record-message-* params is enabled
      */

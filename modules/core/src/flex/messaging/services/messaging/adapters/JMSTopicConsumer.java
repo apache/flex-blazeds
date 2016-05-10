@@ -36,7 +36,7 @@ import java.util.concurrent.Callable;
 /**
  * A <code>JMSConsumer</code> subclass specifically for JMS Topic subscribers.
  *
- * @exclude
+ *
  */
 public class JMSTopicConsumer extends JMSConsumer
 {

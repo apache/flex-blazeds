@@ -19,8 +19,6 @@
 -->
 <project name="modules/sdk/build.xml" default="main" basedir="../..">
 
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
-
     <!-- properties -->
     <property file="${basedir}/build.properties"/>
     <property name="lib.dir" value="${basedir}/lib"/>
@@ -99,38 +97,19 @@
 
         <!-- If using SDK3 copy dmv swcs for SDK 3 to frameworks\libs directory -->
 
-        <if>
+        <condition property="isFlex3" value="true">
             <equals arg1="${sdk.version}" arg2="3"/>
-            <then>
-                <copy todir="${basedir}/frameworks/libs">
-                    <fileset dir="${sdk.zip.dir}/dmv/">
-                        <include name="datavisualization.swc"/>
-                    </fileset>
-                </copy>
-                <copy todir="${basedir}/frameworks/locale">
-                    <fileset dir="${sdk.zip.dir}/dmv/locale">
-                        <include name="**/*.swc"/>
-                    </fileset>
-                </copy>
-            </then>
-        </if>
+        </condition>
+        <antcall target="copy.flex3.dmv" />
 
         <!-- 
              Override with any custom "local" swcs. These swcs are written over the
              base set of accepted swcs that have been unpacked or copied above. 
         -->
-        <if>
+        <condition property="using.local.swcs" value="true">
             <istrue value="${use.local.swcs}"/>
-            <then>
-                <echo message="Processing local swc overrides..."/>
-                <copy todir="${basedir}/frameworks/libs">
-                    <fileset dir="${basedir}/frameworks/local-swcs/">
-                        <include name="**/*"/>
-                        <exclude name="readme.txt"/>
-                    </fileset>
-                </copy>
-            </then>
-        </if>
+        </condition>
+        <antcall target="copy.local.swcs" />
 
         <!-- set swcs read only -->
         <!-- attrib only works on windows -->
@@ -166,29 +145,51 @@
         <!-- When the build is instrumented, command line compilation fails
               if clover.jar is not in the classpath 
         -->
-        <if>
-            <istrue value="${build.is.instrumented}"/>
-            <then>
-                <echo message="adding clover.jar to bin/jvm.config's classpath...."/>
-                <replace file="${basedir}/bin/jvm.config" token="java.class.path="
-                         value="java.class.path=c:/depot/flex/enterprise/lib/clover.jar"/>
-
-                <echo message="Updating mxmlc.jar's manifest to include clover.jar"/>
-                <copy file="${basedir}/lib/mxmlc.jar" tofile="${basedir}/lib/mxmlc.jar.orig"/>
-
-                <unjar src="${basedir}/lib/mxmlc.jar" dest="${basedir}/lib/ccTemp"/>
-
-                <replace file="${basedir}/lib/ccTemp/META-INF/MANIFEST.MF">
-                    <replacefilter token="Class-Path:" value="Class-Path: clover.jar"/>
-                </replace>
-
-                <jar basedir="${basedir}/lib/ccTemp" destfile="${basedir}/lib/mxmlc.jar"
-                     manifest="${basedir}/lib/ccTemp/META-INF/MANIFEST.MF"/>
-            </then>
-        </if>
+        <antcall target="instrumented.build" />
 
     </target>
 
+    <target name="copy.flex3.dmv" if="isFlex3" >
+        <copy todir="${basedir}/frameworks/libs">
+            <fileset dir="${sdk.zip.dir}/dmv/">
+                <include name="datavisualization.swc"/>
+            </fileset>
+        </copy>
+        <copy todir="${basedir}/frameworks/locale">
+            <fileset dir="${sdk.zip.dir}/dmv/locale">
+                <include name="**/*.swc"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="copy.local.swcs" if="using.local.swcs">
+        <echo message="Processing local swc overrides..."/>
+        <copy todir="${basedir}/frameworks/libs">
+            <fileset dir="${basedir}/frameworks/local-swcs/">
+                <include name="**/*"/>
+                <exclude name="readme.txt"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="instrumented.build" if="build.is.instrumented">
+        <echo message="adding clover.jar to bin/jvm.config's classpath...."/>
+        <replace file="${basedir}/bin/jvm.config" token="java.class.path="
+        value="java.class.path=c:/depot/flex/enterprise/lib/clover.jar"/>
+        
+        <echo message="Updating mxmlc.jar's manifest to include clover.jar"/>
+        <copy file="${basedir}/lib/mxmlc.jar" tofile="${basedir}/lib/mxmlc.jar.orig"/>
+        
+        <unjar src="${basedir}/lib/mxmlc.jar" dest="${basedir}/lib/ccTemp"/>
+        
+        <replace file="${basedir}/lib/ccTemp/META-INF/MANIFEST.MF">
+            <replacefilter token="Class-Path:" value="Class-Path: clover.jar"/>
+        </replace>
+        
+        <jar basedir="${basedir}/lib/ccTemp" destfile="${basedir}/lib/mxmlc.jar"
+        manifest="${basedir}/lib/ccTemp/META-INF/MANIFEST.MF"/>
+    </target>
+    
     <target name="clean" description="clean">
         <delete failonerror="true" includeEmptyDirs="true" verbose="true">
             <fileset dir="${lib.dir}" erroronmissingdir="false">
@@ -223,6 +224,7 @@
         <delete quiet="true" dir="${basedir}/frameworks/tests"/>
         <delete quiet="true" dir="${basedir}/frameworks/themes"/>
         <delete quiet="true" dir="${basedir}/frameworks/flash-integration"/>
+        <echo>modules/sdk cleaned</echo>
     </target>
 
 </project>

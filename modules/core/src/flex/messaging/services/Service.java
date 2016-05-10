@@ -32,8 +32,6 @@ import flex.messaging.messages.Message;
  * The MessageBroker has endpoints on one end and services
  * on the other. The Service interface defines the contract between
  * the MessageBroker and all Service implementations.
- *
- * @author sneville
  */
 public interface Service extends Manageable, FlexComponent
 {
