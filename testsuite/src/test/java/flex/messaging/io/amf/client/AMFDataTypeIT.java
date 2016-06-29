@@ -19,6 +19,7 @@ package flex.messaging.io.amf.client;
 import java.util.Date;
 import java.util.List;
 
+import flex.messaging.util.TestServerWrapper;
 import junit.extensions.TestSetup;
 import org.w3c.dom.Document;
 
@@ -29,7 +30,6 @@ import junit.framework.TestSuite;
 
 import amfclient.ClientCustomType;
 
-import flex.messaging.util.TestServer;
 import flex.messaging.io.amf.client.exceptions.ClientStatusException;
 import flex.messaging.io.amf.client.exceptions.ServerStatusException;
 import flex.messaging.util.XMLUtil;
@@ -47,7 +47,7 @@ public class AMFDataTypeIT extends TestCase
     private static final String DEFAULT_AMF_OPERATION = getOperationCall(DEFAULT_METHOD_NAME);
     private static final String UNEXPECTED_EXCEPTION_STRING = "Unexpected exception: ";
 
-    private static TestServer server;
+    private static TestServerWrapper serverWrapper;
     private static int serverPort;
 
     /**
@@ -92,8 +92,8 @@ public class AMFDataTypeIT extends TestCase
 
         return new TestSetup(suite) {
             protected void setUp() throws Exception {
-                server = new TestServer();
-                serverPort = server.startServer("classpath:/WEB-INF/flex/services-config.xml");
+                serverWrapper = new TestServerWrapper();
+                serverPort = serverWrapper.startServer("classpath:/WEB-INF/flex/services-config.xml");
                 if(serverPort == -1) {
                     Assert.fail("Couldn't start server process");
                 }
@@ -102,8 +102,8 @@ public class AMFDataTypeIT extends TestCase
                         "amfclient.ClientCustomType" /* client type */);
             }
             protected void tearDown() throws Exception {
-                server.stopServer();
-                server = null;
+                serverWrapper.stopServer();
+                serverWrapper = null;
             }
         };
     }

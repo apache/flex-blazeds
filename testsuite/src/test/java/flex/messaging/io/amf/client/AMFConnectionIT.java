@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 
+import flex.messaging.util.TestServerWrapper;
 import junit.extensions.TestSetup;
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -29,7 +30,6 @@ import junit.framework.TestSuite;
 
 import amfclient.ClientCustomType;
 
-import flex.messaging.util.TestServer;
 import flex.messaging.MessageException;
 import flex.messaging.messages.RemotingMessage;
 import flex.messaging.io.amf.ASObject;
@@ -55,7 +55,7 @@ public class AMFConnectionIT extends TestCase
     private static final String BAR_STRING = "bar";
     private static final String UNEXPECTED_EXCEPTION_STRING = "Unexpected exception: ";
 
-    private static TestServer server;
+    private static TestServerWrapper serverWrapper;
     private static int serverPort;
 
     /**
@@ -109,8 +109,8 @@ public class AMFConnectionIT extends TestCase
 
         return new TestSetup(suite) {
             protected void setUp() throws Exception {
-                server = new TestServer();
-                serverPort = server.startServer("classpath:/WEB-INF/flex/services-config.xml");
+                serverWrapper = new TestServerWrapper();
+                serverPort = serverWrapper.startServer("classpath:/WEB-INF/flex/services-config.xml");
                 if(serverPort == -1) {
                     Assert.fail("Couldn't start server process");
                 }
@@ -119,8 +119,8 @@ public class AMFConnectionIT extends TestCase
                         "amfclient.ClientCustomType" /* client type */);
             }
             protected void tearDown() throws Exception {
-                server.stopServer();
-                server = null;
+                serverWrapper.stopServer();
+                serverWrapper = null;
             }
         };
     }
