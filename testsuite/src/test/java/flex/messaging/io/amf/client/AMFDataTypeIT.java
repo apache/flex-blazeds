@@ -19,6 +19,7 @@ package flex.messaging.io.amf.client;
 import java.util.Date;
 import java.util.List;
 
+import junit.extensions.TestSetup;
 import org.w3c.dom.Document;
 
 import junit.framework.Assert;
@@ -37,7 +38,7 @@ import flex.messaging.util.XMLUtil;
  * JUnit tests for AMFConnection. Note that most of the tests require a running
  * server with the specified destination. 
  */
-public class AMFDataTypeTest extends TestCase
+public class AMFDataTypeIT extends TestCase
 {
     private static final String DEFAULT_DESTINATION_ID = "amfConnectionTestService";
     private static final String DEFAULT_METHOD_NAME = "echoString";
@@ -46,8 +47,8 @@ public class AMFDataTypeTest extends TestCase
     private static final String DEFAULT_AMF_OPERATION = getOperationCall(DEFAULT_METHOD_NAME);
     private static final String UNEXPECTED_EXCEPTION_STRING = "Unexpected exception: ";
 
-    private TestServer server;
-    private int serverPort;
+    private static TestServer server;
+    private static int serverPort;
 
     /**
      * Given a remote method name, returns the AMF connection call needed using
@@ -63,56 +64,51 @@ public class AMFDataTypeTest extends TestCase
     }
 
 
-    public AMFDataTypeTest(String name)
+    public AMFDataTypeIT(String name)
     {
         super(name);
     }
 
     public static Test suite()
     {
-        //TestSuite suite = new TestSuite(AMFDataTypeTest.class);
+        //TestSuite suite = new TestSuite(AMFDataTypeIT.class);
         TestSuite suite = new TestSuite();
-        suite.addTest(new AMFDataTypeTest("testCallStringArgStringReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallIntArgIntReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallBooleanArgBooleanReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallObjectArgObjectReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallObjectArgCustomReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallCustomArgObjectReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallCustomArgCustomReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallNoArgObjectReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallNoArgCustomReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallNoArgObjectArrayReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallDateArgDateReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallShortArgShortReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallDoubleArgDoubleReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallIntArrayArgIntArrayReturn"));
-        suite.addTest(new AMFDataTypeTest("testCallObjectArrayArgObjectArrayReturn"));
-        suite.addTest(new AMFDataTypeTest("testXMLDocument"));
-        return suite;
-    }
+        suite.addTest(new AMFDataTypeIT("testCallStringArgStringReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallIntArgIntReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallBooleanArgBooleanReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallObjectArgObjectReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallObjectArgCustomReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallCustomArgObjectReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallCustomArgCustomReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallNoArgObjectReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallNoArgCustomReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallNoArgObjectArrayReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallDateArgDateReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallShortArgShortReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallDoubleArgDoubleReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallIntArrayArgIntArrayReturn"));
+        suite.addTest(new AMFDataTypeIT("testCallObjectArrayArgObjectArrayReturn"));
+        suite.addTest(new AMFDataTypeIT("testXMLDocument"));
 
-    protected void setUp() throws Exception
-    {
-        server = new TestServer();
-        serverPort = server.startServer("classpath:/WEB-INF/flex/services-config.xml");
-        if(serverPort == -1) {
-            Assert.fail("Couldn't start server process");
-        }
-        // Give the "server" some time to startup.
-        Thread.sleep(400L);
+        return new TestSetup(suite) {
+            protected void setUp() throws Exception {
+                server = new TestServer();
+                serverPort = server.startServer("classpath:/WEB-INF/flex/services-config.xml");
+                if(serverPort == -1) {
+                    Assert.fail("Couldn't start server process");
+                }
+                // Give the "server" some time to startup.
+                Thread.sleep(400L);
 
-        AMFConnection.registerAlias(
-                "remoting.amfclient.ServerCustomType" /* server type */,
-                "amfclient.ClientCustomType" /* client type */);
-        super.setUp();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        server.stopServer();
-        server = null;
-
-        super.tearDown();
+                AMFConnection.registerAlias(
+                        "remoting.amfclient.ServerCustomType" /* server type */,
+                        "amfclient.ClientCustomType" /* client type */);
+            }
+            protected void tearDown() throws Exception {
+                server.stopServer();
+                server = null;
+            }
+        };
     }
 
     public void testCallStringArgStringReturn()

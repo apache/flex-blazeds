@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 
+import junit.extensions.TestSetup;
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -43,7 +44,7 @@ import flex.messaging.io.MessageIOConstants;
  * JUnit tests for AMFConnection. Note that most of the tests require a running
  * server with the specified destination.
  */
-public class AMFConnectionTest extends TestCase
+public class AMFConnectionIT extends TestCase
 {
     private static final String DEFAULT_DESTINATION_ID = "amfConnectionTestService";
     private static final String DEFAULT_METHOD_NAME = "echoString";
@@ -54,8 +55,8 @@ public class AMFConnectionTest extends TestCase
     private static final String BAR_STRING = "bar";
     private static final String UNEXPECTED_EXCEPTION_STRING = "Unexpected exception: ";
 
-    private TestServer server;
-    private int serverPort;
+    private static TestServer server;
+    private static int serverPort;
 
     /**
      * Given a remote method name, returns the AMF connection call needed using
@@ -71,67 +72,60 @@ public class AMFConnectionTest extends TestCase
     }
 
 
-    public AMFConnectionTest(String name)
+    public AMFConnectionIT(String name)
     {
         super(name);
     }
 
     public static Test suite()
     {
-        //TestSuite suite = new TestSuite(AMFConnectionTest.class);
+        //TestSuite suite = new TestSuite(AMFConnectionIT.class);
         TestSuite suite = new TestSuite();
-        suite.addTest(new AMFConnectionTest("testConnect"));
-        suite.addTest(new AMFConnectionTest("testConnectAndClose"));
-        suite.addTest(new AMFConnectionTest("testConnectBadUrl"));
-        suite.addTest(new AMFConnectionTest("testCallMultipleTimes"));
-        suite.addTest(new AMFConnectionTest("testCallNoConnect"));
-        suite.addTest(new AMFConnectionTest("testCallNoConnectStringMsg"));
-        suite.addTest(new AMFConnectionTest("testCallUnreachableConnectUrl"));
-        suite.addTest(new AMFConnectionTest("testCallNonexistantMethod"));
-        suite.addTest(new AMFConnectionTest("testHttpResponseInfoWithNonexistantMethod"));
-        suite.addTest(new AMFConnectionTest("testCloseNoConnect"));
-        suite.addTest(new AMFConnectionTest("testSetGetObjectEncoding"));
-        suite.addTest(new AMFConnectionTest("testSetGetDefaultObjectEncoding"));
-        suite.addTest(new AMFConnectionTest("testSetGetAMFHeaderProcessor"));
-        suite.addTest(new AMFConnectionTest("testAddRemoveAMFHeaderTwoParam"));
-        suite.addTest(new AMFConnectionTest("testAddRemoveAMFHeader"));
-        suite.addTest(new AMFConnectionTest("testAddRemoveAllAMFHeaders"));
-        suite.addTest(new AMFConnectionTest("testAddRemoveHTTPRequestHeader"));
-        suite.addTest(new AMFConnectionTest("testAddRemoveAllHTTPRequestHeaders"));
-        suite.addTest(new AMFConnectionTest("testRemoveAMFHeader"));
-        suite.addTest(new AMFConnectionTest("testRemoveAllAMFHeaders"));
-        suite.addTest(new AMFConnectionTest("testRemoveHTTPRequestHeader"));
-        suite.addTest(new AMFConnectionTest("testRemoveAllHTTPRequestHeaders"));
-        suite.addTest(new AMFConnectionTest("testInstantiateTypes"));
-        suite.addTest(new AMFConnectionTest("testSetGetAMFTrace"));
-        suite.addTest(new AMFConnectionTest("testHTTPProxy"));
-        return suite;
-    }
+        suite.addTest(new AMFConnectionIT("testConnect"));
+        suite.addTest(new AMFConnectionIT("testConnectAndClose"));
+        suite.addTest(new AMFConnectionIT("testConnectBadUrl"));
+        suite.addTest(new AMFConnectionIT("testCallMultipleTimes"));
+        suite.addTest(new AMFConnectionIT("testCallNoConnect"));
+        suite.addTest(new AMFConnectionIT("testCallNoConnectStringMsg"));
+        suite.addTest(new AMFConnectionIT("testCallUnreachableConnectUrl"));
+        suite.addTest(new AMFConnectionIT("testCallNonexistantMethod"));
+        suite.addTest(new AMFConnectionIT("testHttpResponseInfoWithNonexistantMethod"));
+        suite.addTest(new AMFConnectionIT("testCloseNoConnect"));
+        suite.addTest(new AMFConnectionIT("testSetGetObjectEncoding"));
+        suite.addTest(new AMFConnectionIT("testSetGetDefaultObjectEncoding"));
+        suite.addTest(new AMFConnectionIT("testSetGetAMFHeaderProcessor"));
+        suite.addTest(new AMFConnectionIT("testAddRemoveAMFHeaderTwoParam"));
+        suite.addTest(new AMFConnectionIT("testAddRemoveAMFHeader"));
+        suite.addTest(new AMFConnectionIT("testAddRemoveAllAMFHeaders"));
+        suite.addTest(new AMFConnectionIT("testAddRemoveHTTPRequestHeader"));
+        suite.addTest(new AMFConnectionIT("testAddRemoveAllHTTPRequestHeaders"));
+        suite.addTest(new AMFConnectionIT("testRemoveAMFHeader"));
+        suite.addTest(new AMFConnectionIT("testRemoveAllAMFHeaders"));
+        suite.addTest(new AMFConnectionIT("testRemoveHTTPRequestHeader"));
+        suite.addTest(new AMFConnectionIT("testRemoveAllHTTPRequestHeaders"));
+        suite.addTest(new AMFConnectionIT("testInstantiateTypes"));
+        suite.addTest(new AMFConnectionIT("testSetGetAMFTrace"));
+        suite.addTest(new AMFConnectionIT("testHTTPProxy"));
 
-    @Override
-    protected void setUp() throws Exception
-    {
-        server = new TestServer();
-        serverPort = server.startServer("classpath:/WEB-INF/flex/services-config.xml");
-        if(serverPort == -1) {
-            Assert.fail("Couldn't start server process");
-        }
-        // Give the "server" some time to startup.
-        Thread.sleep(400L);
+        return new TestSetup(suite) {
+            protected void setUp() throws Exception {
+                server = new TestServer();
+                serverPort = server.startServer("classpath:/WEB-INF/flex/services-config.xml");
+                if(serverPort == -1) {
+                    Assert.fail("Couldn't start server process");
+                }
+                // Give the "server" some time to startup.
+                Thread.sleep(400L);
 
-        AMFConnection.registerAlias(
-                "remoting.amfclient.ServerCustomType" /* server type */,
-                "amfclient.ClientCustomType" /* client type */);
-
-        super.setUp();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        server.stopServer();
-        server = null;
-
-        super.tearDown();
+                AMFConnection.registerAlias(
+                        "remoting.amfclient.ServerCustomType" /* server type */,
+                        "amfclient.ClientCustomType" /* client type */);
+            }
+            protected void tearDown() throws Exception {
+                server.stopServer();
+                server = null;
+            }
+        };
     }
 
     // Not a test, just an example to show how to use AMFConnection.

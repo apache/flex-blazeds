@@ -17,7 +17,7 @@
 package amfclient;
 
 /**
- * The client side object used by the AMFConnectionTest. There is a corresponding
+ * The client side object used by the AMFConnectionIT. There is a corresponding
  * server side object.
  */
 public class ClientCustomType

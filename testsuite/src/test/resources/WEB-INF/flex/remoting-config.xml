@@ -47,7 +47,7 @@
         <channel ref="amf"/>
     </default-channels>
 
-    <!-- This destination is used by AMFConnectionTest JUnit test -->
+    <!-- This destination is used by AMFConnectionIT JUnit test -->
     <destination id="amfConnectionTestService" channels="amf">
         <properties>
             <source>remoting.amfclient.AMFConnectionTestService</source>
