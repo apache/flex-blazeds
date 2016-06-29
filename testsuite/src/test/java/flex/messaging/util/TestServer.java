@@ -53,7 +53,7 @@ public class TestServer {
         try {
             serverProcess = processBuilder.start();
             // Give the server some time to ramp up.
-            Thread.sleep(500);
+            Thread.sleep(3000);
             System.out.println("STARTED");
             return port;
         } catch (IOException e) {
