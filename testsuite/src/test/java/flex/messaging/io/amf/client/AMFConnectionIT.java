@@ -115,7 +115,7 @@ public class AMFConnectionIT extends TestCase
                     Assert.fail("Couldn't start server process");
                 }
                 // Give the "server" some time to startup.
-                Thread.sleep(400L);
+                Thread.sleep(3000L);
 
                 AMFConnection.registerAlias(
                         "remoting.amfclient.ServerCustomType" /* server type */,
