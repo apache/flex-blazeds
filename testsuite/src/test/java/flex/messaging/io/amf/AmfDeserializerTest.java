@@ -31,6 +31,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.net.URI;
 import java.net.URL;
 
 public class AmfDeserializerTest extends TestCase
@@ -90,7 +91,8 @@ public class AmfDeserializerTest extends TestCase
             }
 
             URL resource = ClassLoader.getSystemResource(sample);
-            File testData = new File(resource.getFile());
+            URI uri = new URI(resource.toString());
+            File testData = new File(uri.getPath());
             String testDataLocation = testData.getCanonicalPath();
 
             PipedOutputStream pout = new PipedOutputStream();

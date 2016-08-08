@@ -36,6 +36,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.net.URI;
 import java.net.URL;
 
 public class AmfDeserializationValidatorTest extends TestCase
@@ -92,8 +93,9 @@ public class AmfDeserializationValidatorTest extends TestCase
                 sample = "amf_request.xml";
 
             URL resource = ClassLoader.getSystemResource(sample);
-            File testData = new File(resource.getFile());
-            String testDataLocation = testData.getCanonicalPath();
+            URI uri = new URI(resource.toString());
+            File testData = new File(uri.getPath());
+             String testDataLocation = testData.getCanonicalPath();
 
             // Generate sample AMF request from the data file.
             PipedOutputStream pout = new PipedOutputStream();
