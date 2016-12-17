@@ -20,7 +20,7 @@ limitations under the License.
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-        <groupId>org.apache.flex.blazeds</groupId>
+		<groupId>org.apache.flex.blazeds</groupId>
 		<artifactId>blazeds</artifactId>
 		<version>4.7.3-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
@@ -30,8 +30,8 @@ limitations under the License.
 	<packaging>pom</packaging>
 
 	<modules>
-	    <module>tomcat</module>
-        <!-- TODO: Commented out these project as they have third-party dependencies that might be problematic. -->
+		<module>tomcat</module>
+		<!-- TODO: Commented out these project as they have third-party dependencies that might be problematic. -->
 		<!--module>websphere</module-->
 		<!--module>weblogic</module-->
 		<!--module>oracle</module-->
@@ -40,7 +40,7 @@ limitations under the License.
 
 	<dependencies>
 		<dependency>
-            <groupId>org.apache.flex.blazeds</groupId>
+			<groupId>org.apache.flex.blazeds</groupId>
 			<artifactId>flex-messaging-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
