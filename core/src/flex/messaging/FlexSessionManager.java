@@ -18,6 +18,8 @@ package flex.messaging;
 
 import flex.management.ManageableComponent;
 import flex.messaging.log.LogCategories;
+
+import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -289,9 +291,11 @@ public class FlexSessionManager extends ManageableComponent
             return;
         
         super.stop();
-        
-        for (Class<? extends FlexSession> sessionClass : providers.keySet())
+
+        Enumeration<Class<? extends FlexSession>> sessionClasses = providers.keys();
+        while (sessionClasses.hasMoreElements())
         {
+            Class<? extends FlexSession> sessionClass = sessionClasses.nextElement();
             unregisterFlexSessionProvider(sessionClass);
         }
         providers.clear();

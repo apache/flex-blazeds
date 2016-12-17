@@ -29,6 +29,7 @@ import flex.messaging.log.Log;
 import flex.messaging.messages.CommandMessage;
 import flex.messaging.util.UserAgentManager;
 
+import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -410,8 +411,10 @@ public abstract class BasePollingHTTPEndpoint extends BaseHTTPEndpoint implement
             return;
 
         // Notify any currently waiting polls.
-        for (Object notifier : currentWaitedRequests.keySet())
+        Enumeration keys = currentWaitedRequests.keys();
+        while (keys.hasMoreElements())
         {
+            Object notifier = keys.nextElement();
             synchronized (notifier)
             {
                 notifier.notifyAll(); // Break any current waits.
