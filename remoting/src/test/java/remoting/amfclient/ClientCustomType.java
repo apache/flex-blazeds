@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package amfclient;
+package remoting.amfclient;
 
 /**
  * The client side object used by the AMFConnectionIT. There is a corresponding

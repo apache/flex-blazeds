@@ -16,14 +16,10 @@
  */
 package flex.messaging.validators;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import flex.messaging.config.ConfigMap;
+
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * The <code>ClassDeserializationValidator</code> is provided as a default
@@ -31,8 +27,7 @@ import flex.messaging.config.ConfigMap;
  * validates the creation of allowed and disallowed classes as specified in
  * the configuration.
  */
-public class ClassDeserializationValidator implements DeserializationValidator
-{
+public class ClassDeserializationValidator implements DeserializationValidator {
     //--------------------------------------------------------------------------
     //
     // Public Static Constants
@@ -43,25 +38,36 @@ public class ClassDeserializationValidator implements DeserializationValidator
     public static final String PROPERTY_DISALLOW_CLASSES = "disallow-classes";
     public static final String PROPERTY_CLASS_ATTR = "class";
     public static final String PROPERTY_NAME_ATTR = "name";
-    
-    private static final String [] DEFAULT_ALLOW_CLASSES = {
-        "flex.messaging.*",  
-        "flex.data.*",  
-        "java.lang.Boolean",  
-        "java.lang.Byte",  
-        "java.lang.Character",  
-        "java.lang.Double",  
-        "java.lang.Float",  
-        "java.lang.Integer",  
-        "java.lang.Long",  
-        "java.lang.Object",  
-        "java.lang.Short",  
-        "java.lang.String",  
-        "java.io.Externalizable",  
-        "java.util.*",
-        "org.w3c.dom.Document",
-        "\\[B",  
-        "\\[Ljava.lang.Object;"  
+
+    private static final String[] DEFAULT_ALLOW_CLASSES = {
+            "flex.messaging.io.amf.SerializedObject",
+            "flex.messaging.io.ArrayCollection",
+            "flex.messaging.io.ObjectProxy",
+            "flex.messaging.io.SerializationProxy",
+            "flex.messaging.messages.AcknowledgeMessageExt",
+            "flex.messaging.messages.AsyncMessageExt",
+            "flex.messaging.messages.CommandMessageExt",
+            "flex.data.messages.DataMessageExt",
+            "flex.data.messages.ManagedRemotingMessageExt",
+            "flex.data.messages.PagedMessageExt",
+            "flex.data.messages.SequencedMessageExt",
+            "flex.data.messages.UpdateCollectionMessageExt",
+            "flex.data.ChangedItems",
+            "java.lang.Boolean",
+            "java.lang.Byte",
+            "java.lang.Character",
+            "java.lang.Double",
+            "java.lang.Float",
+            "java.lang.Integer",
+            "java.lang.Long",
+            "java.lang.Object",
+            "java.lang.Short",
+            "java.lang.String",
+            "java.io.Externalizable",
+            "java.util.Date",
+            "org.w3c.dom.Document",
+            "\\[B",
+            "\\[Ljava.lang.Object;"
     };
 
     //--------------------------------------------------------------------------
@@ -87,6 +93,10 @@ public class ClassDeserializationValidator implements DeserializationValidator
     private Map<String, Pattern> allowClassPatterns;
     private Map<String, Pattern> disallowClassPatterns;
 
+    public ClassDeserializationValidator() {
+    }
+
+
     //--------------------------------------------------------------------------
     //
     // Public Methods
@@ -98,10 +108,8 @@ public class ClassDeserializationValidator implements DeserializationValidator
      *
      * @param classNamePattern The name of the class which can be a regular expression.
      */
-    public void addAllowClassPattern(String classNamePattern)
-    {
-        synchronized (lock)
-        {
+    public void addAllowClassPattern(String classNamePattern) {
+        synchronized (lock) {
             if (allowClassPatterns == null)
                 allowClassPatterns = new HashMap<String, Pattern>();
 
@@ -116,10 +124,8 @@ public class ClassDeserializationValidator implements DeserializationValidator
      *
      * @param classNamePattern The name of the class which can be a regular expression.
      */
-    public void removeAllowClassPattern(String classNamePattern)
-    {
-        synchronized (lock)
-        {
+    public void removeAllowClassPattern(String classNamePattern) {
+        synchronized (lock) {
             if (allowClassPatterns != null)
                 allowClassPatterns.remove(classNamePattern);
 
@@ -132,10 +138,8 @@ public class ClassDeserializationValidator implements DeserializationValidator
      *
      * @param classNamePattern The name of the class which can be a regular expression.
      */
-    public void addDisallowClassPattern(String classNamePattern)
-    {
-        synchronized (lock)
-        {
+    public void addDisallowClassPattern(String classNamePattern) {
+        synchronized (lock) {
             if (disallowClassPatterns == null)
                 disallowClassPatterns = new HashMap<String, Pattern>();
 
@@ -150,10 +154,8 @@ public class ClassDeserializationValidator implements DeserializationValidator
      *
      * @param classNamePattern The name of the class which can be a regular expression.
      */
-    public void removeDisallowClassPattern(String classNamePattern)
-    {
-        synchronized (lock)
-        {
+    public void removeDisallowClassPattern(String classNamePattern) {
+        synchronized (lock) {
             if (disallowClassPatterns != null)
                 disallowClassPatterns.remove(classNamePattern);
 
@@ -167,12 +169,11 @@ public class ClassDeserializationValidator implements DeserializationValidator
      * therefore this method always returns true.
      *
      * @param instance The Array or List instance.
-     * @param index The index at which the value is being assigned.
-     * @param value The value that is assigned to the index.
+     * @param index    The index at which the value is being assigned.
+     * @param value    The value that is assigned to the index.
      * @return True.
      */
-    public boolean validateAssignment(Object instance, int index, Object value)
-    {
+    public boolean validateAssignment(Object instance, int index, Object value) {
         return true;
     }
 
@@ -181,13 +182,12 @@ public class ClassDeserializationValidator implements DeserializationValidator
      * to a value but this class only deals with class creations, therefore this
      * method always returns true.
      *
-     * @param instance The instance with the property that is being assigned a new value.
+     * @param instance     The instance with the property that is being assigned a new value.
      * @param propertyName The name of the property that is being assigned.
-     * @param value The value that the property is being assigned to.
+     * @param value        The value that the property is being assigned to.
      * @return True.
      */
-    public boolean validateAssignment(Object instance, String propertyName, Object value)
-    {
+    public boolean validateAssignment(Object instance, String propertyName, Object value) {
         return true;
     }
 
@@ -199,9 +199,8 @@ public class ClassDeserializationValidator implements DeserializationValidator
      * @param c The class that is being created.
      * @return True if the creation is valid.
      */
-    public boolean validateCreation(Class<?> c)
-    {
-        String className = c == null? null : c.getName();
+    public boolean validateCreation(Class<?> c) {
+        String className = c == null ? null : c.getName();
         if (className == null)
             return true;
 
@@ -217,12 +216,9 @@ public class ClassDeserializationValidator implements DeserializationValidator
         // go through the disallow and allow class patterns list.
 
         // Disallow the class if there's a disallow-classes list, and the class is in that list.
-        if (disallowClassPatterns != null && !disallowClassPatterns.isEmpty())
-        {
-            for (Pattern pattern : disallowClassPatterns.values())
-            {
-                if (pattern.matcher(className).matches())
-                {
+        if (disallowClassPatterns != null && !disallowClassPatterns.isEmpty()) {
+            for (Pattern pattern : disallowClassPatterns.values()) {
+                if (pattern.matcher(className).matches()) {
                     addDisallowClass(className);
                     return false;
                 }
@@ -230,12 +226,9 @@ public class ClassDeserializationValidator implements DeserializationValidator
         }
 
         // Disallow the class if there's an allowed-classes list, and the class is NOT in that list.
-        if (allowClassPatterns != null && !allowClassPatterns.isEmpty())
-        {
-            for (Pattern pattern : allowClassPatterns.values())
-            {
-                if (pattern.matcher(className).matches())
-                {
+        if (allowClassPatterns != null && !allowClassPatterns.isEmpty()) {
+            for (Pattern pattern : allowClassPatterns.values()) {
+                if (pattern.matcher(className).matches()) {
                     addAllowClass(className);
                     return true;
                 }
@@ -250,28 +243,25 @@ public class ClassDeserializationValidator implements DeserializationValidator
         return true;
     }
 
-    /** {@inheritDoc} */
-    public void initialize(String id, ConfigMap properties)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void initialize(String id, ConfigMap properties) {
         // Apply default allow classes
-        for (String defaultAllowClassPattern : DEFAULT_ALLOW_CLASSES)
-        {
+        for (String defaultAllowClassPattern : DEFAULT_ALLOW_CLASSES) {
             addAllowClassPattern(defaultAllowClassPattern);
         }
-        
+
         if (properties == null || properties.size() == 0)
             return;
 
         // Process allow-classes.
         ConfigMap allowedClassesMap = properties.getPropertyAsMap(PROPERTY_ALLOW_CLASSES, null);
-        if (allowedClassesMap != null && !allowedClassesMap.isEmpty())
-        {
+        if (allowedClassesMap != null && !allowedClassesMap.isEmpty()) {
             List<?> names = allowedClassesMap.getPropertyAsList(PROPERTY_CLASS_ATTR, null);
-            if (names != null && !names.isEmpty())
-            {
-                for (Object element : names)
-                {
-                    String name = ((ConfigMap)element).getProperty(PROPERTY_NAME_ATTR);
+            if (names != null && !names.isEmpty()) {
+                for (Object element : names) {
+                    String name = ((ConfigMap) element).getProperty(PROPERTY_NAME_ATTR);
                     addAllowClassPattern(name);
                 }
             }
@@ -279,14 +269,11 @@ public class ClassDeserializationValidator implements DeserializationValidator
 
         // Process disallow-classes.
         ConfigMap disallowedClassesMap = properties.getPropertyAsMap(PROPERTY_DISALLOW_CLASSES, null);
-        if (disallowedClassesMap != null && !disallowedClassesMap.isEmpty())
-        {
+        if (disallowedClassesMap != null && !disallowedClassesMap.isEmpty()) {
             List<?> names = disallowedClassesMap.getPropertyAsList(PROPERTY_CLASS_ATTR, null);
-            if (names != null && !names.isEmpty())
-            {
-                for (Object element : names)
-                {
-                    String name = ((ConfigMap)element).getProperty(PROPERTY_NAME_ATTR);
+            if (names != null && !names.isEmpty()) {
+                for (Object element : names) {
+                    String name = ((ConfigMap) element).getProperty(PROPERTY_NAME_ATTR);
                     addDisallowClassPattern(name);
                 }
             }
@@ -299,10 +286,8 @@ public class ClassDeserializationValidator implements DeserializationValidator
     //
     //--------------------------------------------------------------------------
 
-    protected void addAllowClass(String className)
-    {
-        synchronized (lock)
-        {
+    protected void addAllowClass(String className) {
+        synchronized (lock) {
             if (allowClasses == null)
                 allowClasses = new HashSet<String>();
 
@@ -311,10 +296,8 @@ public class ClassDeserializationValidator implements DeserializationValidator
         }
     }
 
-    protected void addDisallowClass(String className)
-    {
-        synchronized (lock)
-        {
+    protected void addDisallowClass(String className) {
+        synchronized (lock) {
             if (disallowClasses == null)
                 disallowClasses = new HashSet<String>();
 
@@ -322,15 +305,12 @@ public class ClassDeserializationValidator implements DeserializationValidator
                 disallowClasses.add(className);
         }
     }
-    
-    protected void clearClassCache()
-    {
-        if (allowClasses != null)
-        {
+
+    protected void clearClassCache() {
+        if (allowClasses != null) {
             allowClasses.clear();
         }
-        if (disallowClasses != null)
-        {
+        if (disallowClasses != null) {
             disallowClasses.clear();
         }
     }

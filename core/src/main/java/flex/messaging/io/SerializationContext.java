@@ -17,6 +17,7 @@
 package flex.messaging.io;
 
 import flex.messaging.util.ClassUtil;
+import flex.messaging.validators.ClassDeserializationValidator;
 import flex.messaging.validators.DeserializationValidator;
 
 import java.io.Serializable;

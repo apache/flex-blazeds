@@ -28,7 +28,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import amfclient.ClientCustomType;
+import remoting.amfclient.ClientCustomType;
 
 import flex.messaging.MessageException;
 import flex.messaging.messages.RemotingMessage;
@@ -116,7 +116,7 @@ public class AMFConnectionIT extends TestCase
                 }
                 AMFConnection.registerAlias(
                         "remoting.amfclient.ServerCustomType" /* server type */,
-                        "amfclient.ClientCustomType" /* client type */);
+                        "remoting.amfclient.ClientCustomType" /* client type */);
             }
             protected void tearDown() throws Exception {
                 serverWrapper.stopServer();
@@ -329,11 +329,9 @@ public class AMFConnectionIT extends TestCase
     public void testCallNonexistantMethod()
     {
         String method = "nonExistantMethod";
-        final ClientCustomType methodArg = new ClientCustomType();
-        methodArg.setId(1);
         try
         {
-            internalTestCall(getOperationCall(method), methodArg, new CallResultHandler(){
+            internalTestCall(getOperationCall(method), "Wombat", new CallResultHandler(){
                 public void onResult(Object result)
                 {
                     fail("Unexcepted result: " + result);
@@ -382,6 +380,7 @@ public class AMFConnectionIT extends TestCase
             fail(UNEXPECTED_EXCEPTION_STRING + e);
         }
     }
+
     public void testCloseNoConnect()
     {
         AMFConnection amfConnection = new AMFConnection();

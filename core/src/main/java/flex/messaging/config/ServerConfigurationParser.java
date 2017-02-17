@@ -16,6 +16,7 @@
  */
 package flex.messaging.config;
 
+import flex.messaging.validators.ClassDeserializationValidator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -1865,19 +1866,35 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
     private void validators(Node root)
     {
         Node validatorsNode = selectSingleNode(root, VALIDATORS_ELEMENT);
-        if (validatorsNode == null)
+        if (validatorsNode == null) {
+            // Default to the ClassDeserializationValidator
+            defaultValidator();
             return;
+        }
 
         // Validation
         allowedChildElements(validatorsNode, VALIDATORS_CHILDREN);
 
         // Validator
         NodeList validators = selectNodeList(validatorsNode, VALIDATOR_ELEMENT);
-        for (int i = 0; i < validators.getLength(); i++)
-        {
-            Node validator = validators.item(i);
-            validator(validator);
+        if(validators.getLength() > 0) {
+            for (int i = 0; i < validators.getLength(); i++) {
+                Node validator = validators.item(i);
+                validator(validator);
+            }
+        } else {
+            // Default to the ClassDeserializationValidator
+            defaultValidator();
         }
+    }
+
+    /**
+     * Initialize a efault validator that protects BlazeDS against the most obvious attacks.
+     */
+    private void defaultValidator() {
+        ValidatorSettings validatorSettings = new ValidatorSettings();
+        validatorSettings.setClassName(ClassDeserializationValidator.class.getName());
+        ((MessagingConfiguration)config).addValidatorSettings(validatorSettings);
     }
 
     private void validator(Node validator)

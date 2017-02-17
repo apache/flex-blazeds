@@ -29,7 +29,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import amfclient.ClientCustomType;
+import remoting.amfclient.ClientCustomType;
 
 import flex.messaging.io.amf.client.exceptions.ClientStatusException;
 import flex.messaging.io.amf.client.exceptions.ServerStatusException;
@@ -47,9 +47,12 @@ public class AMFDataTypeIT extends TestCase
     private static final String DEFAULT_URL = "http://localhost:%s/qa-regress/messagebroker/amf";
     private static final String DEFAULT_AMF_OPERATION = getOperationCall(DEFAULT_METHOD_NAME);
     private static final String UNEXPECTED_EXCEPTION_STRING = "Unexpected exception: ";
+    private static final String UNEXPECTED_SUCCESS_STRING = "Unexpected success of previous operation";
 
-    private static TestServerWrapper serverWrapper;
-    private static int serverPort;
+    private static TestServerWrapper standardValidationServerWrapper;
+    private static int standardValidationServerPort;
+    private static TestServerWrapper customValidationServerWrapper;
+    private static int customValidationServerPort;
     private static SerializationContext serializationContext;
 
     /**
@@ -61,10 +64,13 @@ public class AMFDataTypeIT extends TestCase
         return DEFAULT_DESTINATION_ID + "." + method;
     }
 
-    protected String getConnectionUrl() {
-        return String.format(DEFAULT_URL, serverPort);
+    protected String getStandardValidationConnectionUrl() {
+        return String.format(DEFAULT_URL, standardValidationServerPort);
     }
 
+    protected String getCustomValidationConnectionUrl() {
+        return String.format(DEFAULT_URL, customValidationServerPort);
+    }
 
     public AMFDataTypeIT(String name)
     {
@@ -93,17 +99,29 @@ public class AMFDataTypeIT extends TestCase
         suite.addTest(new AMFDataTypeIT("testXMLDocumentEnabledXml"));
         suite.addTest(new AMFDataTypeIT("testXMLDocumentDisabledXml"));
 
+        suite.addTest(new AMFDataTypeIT("testCallObjectArgObjectReturnCustomizedValidation"));
+        suite.addTest(new AMFDataTypeIT("testCallCustomArgObjectReturnCustomizedValidation"));
+        suite.addTest(new AMFDataTypeIT("testCallObjectArgCustomReturnCustomizedValidation"));
+        suite.addTest(new AMFDataTypeIT("testCallCustomArgCustomReturnCustomizedValidation"));
+        suite.addTest(new AMFDataTypeIT("testCallObjectArrayArgObjectArrayReturnCustomizedValidation"));
 
         return new TestSetup(suite) {
             protected void setUp() throws Exception {
-                serverWrapper = new TestServerWrapper();
-                serverPort = serverWrapper.startServer("classpath:/WEB-INF/flex/services-config.xml");
-                if(serverPort == -1) {
-                    Assert.fail("Couldn't start server process");
+                standardValidationServerWrapper = new TestServerWrapper();
+                standardValidationServerPort = standardValidationServerWrapper.startServer("classpath:/WEB-INF/flex/services-config.xml");
+                if(standardValidationServerPort == -1) {
+                    Assert.fail("Couldn't start server (standard validation) process");
                 }
+
+                customValidationServerWrapper = new TestServerWrapper();
+                customValidationServerPort = customValidationServerWrapper.startServer("classpath:/WEB-INF/flex/services-config-customized-validation.xml");
+                if(customValidationServerPort == -1) {
+                    Assert.fail("Couldn't start server (custom validation) process");
+                }
+
                 AMFConnection.registerAlias(
                         "remoting.amfclient.ServerCustomType" /* server type */,
-                        "amfclient.ClientCustomType" /* client type */);
+                        "remoting.amfclient.ClientCustomType" /* client type */);
 
                 serializationContext = new SerializationContext();
                 serializationContext.createASObjectForMissingType = true;
@@ -117,8 +135,10 @@ public class AMFDataTypeIT extends TestCase
                 serializationContext.allowXml = false;
             }
             protected void tearDown() throws Exception {
-                serverWrapper.stopServer();
-                serverWrapper = null;
+                standardValidationServerWrapper.stopServer();
+                standardValidationServerWrapper = null;
+                customValidationServerWrapper.stopServer();
+                customValidationServerWrapper = null;
             }
         };
     }
@@ -132,7 +152,7 @@ public class AMFDataTypeIT extends TestCase
                 {
                     Assert.assertEquals(DEFAULT_METHOD_ARG, result);
                 }
-            });
+            }, false);
         }
         catch (Exception e)
         {
@@ -151,7 +171,7 @@ public class AMFDataTypeIT extends TestCase
                 {
                     Assert.assertEquals(methodArg, ((Double)result).intValue());
                 }
-            });
+            }, false);
         }
         catch (Exception e)
         {
@@ -170,7 +190,7 @@ public class AMFDataTypeIT extends TestCase
                 {
                     Assert.assertEquals(methodArg, result);
                 }
-            });
+            }, false);
         }
         catch (Exception e)
         {
@@ -189,7 +209,7 @@ public class AMFDataTypeIT extends TestCase
                 {
                     Assert.assertEquals(methodArg, result);
                 }
-            });
+            }, false);
         }
         catch (Exception e)
         {
@@ -208,7 +228,7 @@ public class AMFDataTypeIT extends TestCase
                 {
                     Assert.assertEquals(methodArg, ((Double)result).shortValue());
                 }
-            });
+            }, false);
         }
         catch (Exception e)
         {
@@ -227,7 +247,7 @@ public class AMFDataTypeIT extends TestCase
                 {
                     Assert.assertEquals(methodArg, result);
                 }
-            });
+            }, false);
         }
         catch (Exception e)
         {
@@ -249,7 +269,30 @@ public class AMFDataTypeIT extends TestCase
                     ClientCustomType temp2 = (ClientCustomType)result;
                     Assert.assertEquals(1, temp2.getId());
                 }
-            });
+            }, false);
+            fail(UNEXPECTED_SUCCESS_STRING);
+        }
+        catch (Exception e)
+        {
+            // An exception is what we expect here.
+        }
+    }
+
+    public void testCallObjectArgObjectReturnCustomizedValidation()
+    {
+        String method = "echoObject1";
+        ClientCustomType temp = new ClientCustomType();
+        temp.setId(1);
+        final Object methodArg = temp;
+        try
+        {
+            internalTestCall(getOperationCall(method), methodArg, new CallResultHandler(){
+                public void onResult(Object result)
+                {
+                    ClientCustomType temp2 = (ClientCustomType)result;
+                    Assert.assertEquals(1, temp2.getId());
+                }
+            }, true);
         }
         catch (Exception e)
         {
@@ -271,7 +314,30 @@ public class AMFDataTypeIT extends TestCase
                     ClientCustomType temp2 = (ClientCustomType)result;
                     Assert.assertEquals(1, temp2.getId());
                 }
-            });
+            }, false);
+            fail(UNEXPECTED_SUCCESS_STRING);
+        }
+        catch (Exception e)
+        {
+            // An exception is what we expect here.
+        }
+    }
+
+    public void testCallObjectArgCustomReturnCustomizedValidation()
+    {
+        String method = "echoObject2";
+        ClientCustomType temp = new ClientCustomType();
+        temp.setId(1);
+        final Object methodArg = temp;
+        try
+        {
+            internalTestCall(getOperationCall(method), methodArg, new CallResultHandler(){
+                public void onResult(Object result)
+                {
+                    ClientCustomType temp2 = (ClientCustomType)result;
+                    Assert.assertEquals(1, temp2.getId());
+                }
+            }, true);
         }
         catch (Exception e)
         {
@@ -292,7 +358,29 @@ public class AMFDataTypeIT extends TestCase
                     ClientCustomType temp2 = (ClientCustomType)result;
                     Assert.assertEquals(1, temp2.getId());
                 }
-            });
+            }, false);
+            fail(UNEXPECTED_SUCCESS_STRING);
+        }
+        catch (Exception e)
+        {
+            // An exception is what we expect here.
+        }
+    }
+
+    public void testCallCustomArgObjectReturnCustomizedValidation()
+    {
+        String method = "echoObject3";
+        final ClientCustomType methodArg = new ClientCustomType();
+        methodArg.setId(1);
+        try
+        {
+            internalTestCall(getOperationCall(method), methodArg, new CallResultHandler(){
+                public void onResult(Object result)
+                {
+                    ClientCustomType temp2 = (ClientCustomType)result;
+                    Assert.assertEquals(1, temp2.getId());
+                }
+            }, true);
         }
         catch (Exception e)
         {
@@ -313,7 +401,29 @@ public class AMFDataTypeIT extends TestCase
                     ClientCustomType temp2 = (ClientCustomType)result;
                     Assert.assertEquals(1, temp2.getId());
                 }
-            });
+            }, false);
+            fail(UNEXPECTED_SUCCESS_STRING);
+        }
+        catch (Exception e)
+        {
+            // An exception is what we expect here.
+        }
+    }
+
+    public void testCallCustomArgCustomReturnCustomizedValidation()
+    {
+        String method = "echoObject4";
+        final ClientCustomType methodArg = new ClientCustomType();
+        methodArg.setId(1);
+        try
+        {
+            internalTestCall(getOperationCall(method), methodArg, new CallResultHandler(){
+                public void onResult(Object result)
+                {
+                    ClientCustomType temp2 = (ClientCustomType)result;
+                    Assert.assertEquals(1, temp2.getId());
+                }
+            }, true);
         }
         catch (Exception e)
         {
@@ -332,7 +442,7 @@ public class AMFDataTypeIT extends TestCase
                     ClientCustomType temp2 = (ClientCustomType)result;
                     Assert.assertEquals(1, temp2.getId());
                 }
-            });
+            }, false);
         }
         catch (Exception e)
         {
@@ -351,7 +461,7 @@ public class AMFDataTypeIT extends TestCase
                     ClientCustomType temp2 = (ClientCustomType)result;
                     Assert.assertEquals(1, temp2.getId());
                 }
-            });
+            }, false);
         }
         catch (Exception e)
         {
@@ -374,7 +484,7 @@ public class AMFDataTypeIT extends TestCase
                         Assert.assertEquals(i, temp2.getId());
                     }
                 }
-            });
+            }, false);
         }
         catch (Exception e)
         {
@@ -397,7 +507,7 @@ public class AMFDataTypeIT extends TestCase
                         Assert.assertEquals(i, ((Integer)temp.get(i)).intValue());
                     }
                 }
-            });
+            }, false);
         }
         catch (Exception e)
         {
@@ -428,7 +538,39 @@ public class AMFDataTypeIT extends TestCase
                         Assert.assertEquals(i, temp2.getId());
                     }
                 }
-            });
+            }, false);
+            fail(UNEXPECTED_SUCCESS_STRING);
+        }
+        catch (Exception e)
+        {
+            // An exception is what we expect here.
+        }
+    }
+
+    public void testCallObjectArrayArgObjectArrayReturnCustomizedValidation()
+    {
+        String method = "echoObject1";
+        Object[] temp = new Object[3];
+        for (int i = 0; i < temp.length; i++)
+        {
+            ClientCustomType cct = new ClientCustomType();
+            cct.setId(i);
+            temp[i] = cct;
+        }
+        final Object[] methodArg = temp;
+        try
+        {
+            internalTestCall(getOperationCall(method), methodArg, new CallResultHandler(){
+                public void onResult(Object result)
+                {
+                    List temp = (List)result;
+                    for (int i = 0; i < temp.size(); i++)
+                    {
+                        ClientCustomType temp2 = (ClientCustomType)temp.get(i);
+                        Assert.assertEquals(i, temp2.getId());
+                    }
+                }
+            }, true);
         }
         catch (Exception e)
         {
@@ -464,7 +606,7 @@ public class AMFDataTypeIT extends TestCase
                         fail(UNEXPECTED_EXCEPTION_STRING + e);
                     }
                 }
-            });
+            }, false);
         }
         catch (Exception e)
         {
@@ -501,7 +643,7 @@ public class AMFDataTypeIT extends TestCase
                         fail(UNEXPECTED_EXCEPTION_STRING + e);
                     }
                 }
-            });
+            }, false);
         }
         catch (Exception e)
         {
@@ -517,11 +659,15 @@ public class AMFDataTypeIT extends TestCase
 
     // Helper method used by JUnit tests to pass in an operation and method argument
     // When the AMF call returns, CallResultHandler.onResult is called to Assert things.
-    private void internalTestCall(String operation, Object methodArg, CallResultHandler resultHandler) throws ClientStatusException, ServerStatusException
+    private void internalTestCall(String operation, Object methodArg, CallResultHandler resultHandler, boolean customizedValidation) throws ClientStatusException, ServerStatusException
     {
         AMFConnection amfConnection = new AMFConnection();
         // Connect.
-        amfConnection.connect(getConnectionUrl(), serializationContext);
+        if(customizedValidation) {
+            amfConnection.connect(getCustomValidationConnectionUrl(), serializationContext);
+        } else {
+            amfConnection.connect(getStandardValidationConnectionUrl(), serializationContext);
+        }
         // Make a remoting call and retrieve the result.
         Object result;
         if (methodArg == null)

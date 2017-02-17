@@ -19,6 +19,9 @@ package flex.messaging.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Simple little wrapper starting up a BlazeDS server in a separate VM useful for unit testing the
@@ -37,11 +40,17 @@ public class TestServerWrapper {
         final String separator = System.getProperty("file.separator");
         final String classpath = System.getProperty("java.class.path");
         final String path = System.getProperty("java.home") + separator + "bin" + separator + "java";
+        List<String> args = new LinkedList<String>();
+        args.add(path);
+/*        if(configPath.contains("customized-validation")) {
+            args.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005");
+        }*/
+        args.add("-cp");
+        args.add(classpath);
+        args.add(TestServer.class.getCanonicalName());
+        args.add(configPath);
         System.out.print("Starting test-server");
-        final ProcessBuilder processBuilder = new ProcessBuilder(path,
-                //"-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005",
-                "-cp", /*"\"" +*/ classpath /*+ "\""*/,
-                TestServer.class.getCanonicalName(), /*"\"" +*/ configPath /*+ "\""*/);
+        final ProcessBuilder processBuilder = new ProcessBuilder(args.toArray(new String[0]));
         processBuilder.redirectErrorStream(true);
         try {
             serverProcess = processBuilder.start();
