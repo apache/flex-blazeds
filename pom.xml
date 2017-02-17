@@ -70,6 +70,7 @@
   </scm>
 
   <modules>
+    <module>archetypes</module>
     <module>common</module>
     <module>core</module>
     <module>proxy</module>
