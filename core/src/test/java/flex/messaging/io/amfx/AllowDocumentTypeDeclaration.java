@@ -30,10 +30,6 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-/**
- * Created by christoferdutz on 23.07.15.
- */
-
 public class AllowDocumentTypeDeclaration extends TestCase {
 
     public void testDoctypeEnabled() throws Exception {
@@ -41,16 +37,17 @@ public class AllowDocumentTypeDeclaration extends TestCase {
         TinyServer server = new TinyServer();
         server.start();
 
-        // Sleep for half a second.
-        Thread.sleep(500);
+        // Wait till the server is up.
+        while(server.port == 0) {
+            Thread.sleep(100);
+        }
 
         try {
-            StringBuffer xml = new StringBuffer(512);
-            xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
-            xml.append("<!DOCTYPE foo PUBLIC \"-//VSR//PENTEST//EN\" \"http://localhost:" + server.getPort() +
-                    "/service?ssrf\">");
-            xml.append("<foo>Some content</foo>");
-            XMLUtil.stringToDocument(xml.toString(), true, true, false);
+            String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" +
+                    "<!DOCTYPE foo PUBLIC \"-//VSR//PENTEST//EN\" \"http://localhost:" +
+                    server.getPort() + "/service?ssrf\">" +
+                    "<foo>Some content</foo>";
+            XMLUtil.stringToDocument(xml, true, true, false);
 
             // The server should have been contacted.
             Assert.assertTrue(server.connected);
@@ -64,14 +61,16 @@ public class AllowDocumentTypeDeclaration extends TestCase {
         TinyServer server = new TinyServer();
         server.start();
 
-        // Sleep for half a second.
-        Thread.sleep(500);
+        // Wait till the server is up.
+        while(server.port == 0) {
+            Thread.sleep(100);
+        }
 
         try {
-            StringBuffer xml = new StringBuffer(512);
+            StringBuilder xml = new StringBuilder(512);
             xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
-            xml.append("<!DOCTYPE foo PUBLIC \"-//VSR//PENTEST//EN\" \"http://localhost:" + server.getPort() +
-                    "/service?ssrf\">");
+            xml.append("<!DOCTYPE foo PUBLIC \"-//VSR//PENTEST//EN\" \"http://localhost:");
+            xml.append(server.getPort()).append("/service?ssrf\">");
             xml.append("<foo>Some content</foo>");
             try {
                 XMLUtil.stringToDocument(xml.toString(), true, false, false);
@@ -115,6 +114,9 @@ public class AllowDocumentTypeDeclaration extends TestCase {
                         "<!ELEMENT foo>" +
                         "]>").getBytes());
                 out.flush();
+
+                // It seems we need a little sleep here or the Dom parser hangs forever.
+                Thread.sleep(100);
             } catch (Exception e) {
                 // Ignore.
             } finally {
@@ -131,7 +133,7 @@ public class AllowDocumentTypeDeclaration extends TestCase {
             }
         }
 
-        public void kill() {
+        void kill() {
             try {
                 serverSocket.close();
             } catch (IOException e) {
@@ -139,12 +141,8 @@ public class AllowDocumentTypeDeclaration extends TestCase {
             }
         }
 
-        public int getPort() {
+        int getPort() {
             return port;
-        }
-
-        public boolean isConnected() {
-            return connected;
         }
     }
 
