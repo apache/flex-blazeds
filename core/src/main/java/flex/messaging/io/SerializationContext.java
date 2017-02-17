@@ -80,6 +80,7 @@ public class SerializationContext implements Serializable, Cloneable
     // Similarly like how many dimensional matrix that we support for serialization.
     public int maxCollectionNestLevel = 15;
 
+    public boolean allowXml = false;
     public boolean allowXmlDoctypeDeclaration = false;
     public boolean allowXmlExternalEntityExpansion = false;
 
@@ -228,6 +229,7 @@ public class SerializationContext implements Serializable, Cloneable
             context.deserializationValidator = deserializationValidator;
             context.maxObjectNestLevel = maxObjectNestLevel;
             context.maxCollectionNestLevel = maxCollectionNestLevel;
+            context.allowXml = allowXml;
             context.allowXmlDoctypeDeclaration = allowXmlDoctypeDeclaration;
             context.allowXmlExternalEntityExpansion = allowXmlExternalEntityExpansion;
             context.preferVectors = preferVectors;

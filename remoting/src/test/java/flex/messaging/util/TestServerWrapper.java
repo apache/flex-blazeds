@@ -39,7 +39,7 @@ public class TestServerWrapper {
         final String path = System.getProperty("java.home") + separator + "bin" + separator + "java";
         System.out.print("Starting test-server");
         final ProcessBuilder processBuilder = new ProcessBuilder(path,
-                /*"-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005",*/
+                "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005",
                 "-cp", /*"\"" +*/ classpath /*+ "\""*/,
                 TestServer.class.getCanonicalName(), /*"\"" +*/ configPath /*+ "\""*/);
         processBuilder.redirectErrorStream(true);

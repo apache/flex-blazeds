@@ -33,6 +33,8 @@ import flex.messaging.io.SerializationContext;
 import flex.messaging.io.SerializationException;
 import flex.messaging.io.UnknownTypeException;
 import flex.messaging.io.amf.AmfTrace.VectorType;
+import flex.messaging.log.Log;
+import flex.messaging.log.LogCategories;
 import flex.messaging.util.ClassUtil;
 import flex.messaging.util.Trace;
 
@@ -982,7 +984,14 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
                 trace.write(xml);
         }
 
-        return stringToDocument(xml);
+        // Only deserialize xml if this is enabled.
+        if (context.allowXml) {
+            return stringToDocument(xml);
+        } else {
+            Log.getLogger(LogCategories.CONFIGURATION).warn(
+                    "Xml deserialization is disabled, please enable by setting allowXml to 'true'");
+            return null;
+        }
     }
 
     /**

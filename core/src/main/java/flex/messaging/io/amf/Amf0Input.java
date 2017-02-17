@@ -29,6 +29,8 @@ import flex.messaging.io.PropertyProxy;
 import flex.messaging.io.SerializationContext;
 import flex.messaging.io.SerializationException;
 import flex.messaging.io.UnknownTypeException;
+import flex.messaging.log.Log;
+import flex.messaging.log.LogCategories;
 import flex.messaging.util.ClassUtil;
 
 /**
@@ -510,10 +512,18 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
     {
         String xml = readLongUTF();
 
-        if (isDebug)
+        if (isDebug) {
             trace.write(xml);
+        }
 
-        return stringToDocument(xml);
+        // Only deserialize xml if this is enabled.
+        if (context.allowXml) {
+            return stringToDocument(xml);
+        } else {
+            Log.getLogger(LogCategories.CONFIGURATION).warn(
+                    "Xml deserialization is disabled, please enable by setting allowXml to 'true'");
+            return null;
+        }
     }
 
 

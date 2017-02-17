@@ -565,6 +565,27 @@ public class AMFConnection
      */
     public void connect(String connectUrl) throws ClientStatusException
     {
+        SerializationContext serializationContext = new SerializationContext();
+        serializationContext.createASObjectForMissingType = true;
+        // Make sure collections are written out as Arrays (vs. ArrayCollection),
+        // in case the server does not recognize ArrayCollections.
+        serializationContext.legacyCollection = true;
+        // When legacyMap is true, Java Maps are serialized as ECMA arrays
+        // instead of anonymous Object.
+        serializationContext.legacyMap = true;
+        connect(connectUrl, serializationContext);
+    }
+
+    /**
+     * Connects to the URL provided. Any previous connections are closed.
+     *
+     * @param connectUrl The url to connect to.
+     * @param serializationContext The serialization context used to configure the serialization.
+     *
+     * @throws ClientStatusException If there is a client side exception.
+     */
+    public void connect(String connectUrl, SerializationContext serializationContext) throws ClientStatusException
+    {
         if (connected)
             close();
 
@@ -586,15 +607,7 @@ public class AMFConnection
         try
         {
             urlObject = new URL(encodedUrl != null? encodedUrl : url);
-
-            serializationContext = new SerializationContext();
-            serializationContext.createASObjectForMissingType = true;
-            // Make sure collections are written out as Arrays (vs. ArrayCollection),
-            // in case the server does not recognize ArrayCollections.
-            serializationContext.legacyCollection = true;
-            // When legacyMap is true, Java Maps are serialized as ECMA arrays
-            // instead of anonymous Object.
-            serializationContext.legacyMap = true;
+            this.serializationContext = serializationContext;
             internalConnect();
         }
         catch (IOException e)

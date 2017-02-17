@@ -19,6 +19,7 @@ package flex.messaging.io.amf.client;
 import java.util.Date;
 import java.util.List;
 
+import flex.messaging.io.SerializationContext;
 import flex.messaging.util.TestServerWrapper;
 import junit.extensions.TestSetup;
 import org.w3c.dom.Document;
@@ -49,6 +50,7 @@ public class AMFDataTypeIT extends TestCase
 
     private static TestServerWrapper serverWrapper;
     private static int serverPort;
+    private static SerializationContext serializationContext;
 
     /**
      * Given a remote method name, returns the AMF connection call needed using
@@ -88,7 +90,9 @@ public class AMFDataTypeIT extends TestCase
         suite.addTest(new AMFDataTypeIT("testCallDoubleArgDoubleReturn"));
         suite.addTest(new AMFDataTypeIT("testCallIntArrayArgIntArrayReturn"));
         suite.addTest(new AMFDataTypeIT("testCallObjectArrayArgObjectArrayReturn"));
-        suite.addTest(new AMFDataTypeIT("testXMLDocument"));
+        suite.addTest(new AMFDataTypeIT("testXMLDocumentEnabledXml"));
+        suite.addTest(new AMFDataTypeIT("testXMLDocumentDisabledXml"));
+
 
         return new TestSetup(suite) {
             protected void setUp() throws Exception {
@@ -100,6 +104,17 @@ public class AMFDataTypeIT extends TestCase
                 AMFConnection.registerAlias(
                         "remoting.amfclient.ServerCustomType" /* server type */,
                         "amfclient.ClientCustomType" /* client type */);
+
+                serializationContext = new SerializationContext();
+                serializationContext.createASObjectForMissingType = true;
+                // Make sure collections are written out as Arrays (vs. ArrayCollection),
+                // in case the server does not recognize ArrayCollections.
+                serializationContext.legacyCollection = true;
+                // When legacyMap is true, Java Maps are serialized as ECMA arrays
+                // instead of anonymous Object.
+                serializationContext.legacyMap = true;
+                // Disable serialization of xml documents.
+                serializationContext.allowXml = false;
             }
             protected void tearDown() throws Exception {
                 serverWrapper.stopServer();
@@ -421,11 +436,14 @@ public class AMFDataTypeIT extends TestCase
         }
     }
 
-  
-    public void testXMLDocument()
+
+    public void testXMLDocumentEnabledXml()
     {
         try
         {
+            // Temporarily enable xml serialization/deserialization.
+            serializationContext.allowXml = true;
+
             String method = "echoObject1";
             final StringBuffer xml = new StringBuffer(512);
             xml.append("<test>    <item id=\"1\">        <sweet/>    </item></test>");
@@ -452,6 +470,43 @@ public class AMFDataTypeIT extends TestCase
         {
             fail(UNEXPECTED_EXCEPTION_STRING + e);
         }
+        finally {
+            // Disable xml serialization/deserialization again.
+            serializationContext.allowXml = false;
+        }
+    }
+
+
+    public void testXMLDocumentDisabledXml()
+    {
+        try
+        {
+            String method = "echoObject1";
+            final StringBuffer xml = new StringBuffer(512);
+            xml.append("<test>    <item id=\"1\">        <sweet/>    </item></test>");
+
+            Document xmlDoc = XMLUtil.stringToDocument(xml.toString());
+            final Object methodArg = xmlDoc;
+            internalTestCall(getOperationCall(method), methodArg, new CallResultHandler(){
+                public void onResult(Object result)
+                {
+                    try
+                    {
+                        Document retXmlDoc = (Document)result;
+                        String retXML = XMLUtil.documentToString(retXmlDoc);
+                        Assert.assertEquals("", retXML);
+                    }
+                    catch (Exception e)
+                    {
+                        fail(UNEXPECTED_EXCEPTION_STRING + e);
+                    }
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            fail(UNEXPECTED_EXCEPTION_STRING + e);
+        }
     }
 
     // A simple interface to handle AMF call results.
@@ -466,7 +521,7 @@ public class AMFDataTypeIT extends TestCase
     {
         AMFConnection amfConnection = new AMFConnection();
         // Connect.
-        amfConnection.connect(getConnectionUrl());
+        amfConnection.connect(getConnectionUrl(), serializationContext);
         // Make a remoting call and retrieve the result.
         Object result;
         if (methodArg == null)

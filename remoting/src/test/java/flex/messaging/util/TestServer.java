@@ -45,7 +45,12 @@ public class TestServer {
         servlet.setInitParameter("services.configuration.file", configPath);
         context.addServlet(servlet, "/messagebroker/amf/*");
         server.setHandler(context);
-        server.start();
+        server.setDumpAfterStart(true);
+        try {
+            server.start();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 
         int port = ((ServerConnector) server.getConnectors()[0]).getLocalPort();
         System.out.println("Port:" + port);
