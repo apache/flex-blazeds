@@ -591,14 +591,6 @@ public class MessagingConfiguration implements ServicesConfiguration
             // Only set the DeserializationValidator types for now.
             if (validator instanceof DeserializationValidator)
             {
-                // there can only be one deserialization validator, throw an error if there is more than one.
-                DeserializationValidator existingValidator = broker.getDeserializationValidator();
-                if (existingValidator != null)
-                {
-                    ConfigurationException cx = new ConfigurationException();
-                    cx.setMessage(11400, new Object[]{existingValidator.getClass().getCanonicalName(), className});                    
-                    throw cx;
-                }
                 DeserializationValidator deserializationValidator = (DeserializationValidator)validator;
                 deserializationValidator.initialize(null, settings.getProperties());
                 broker.setDeserializationValidator(deserializationValidator);

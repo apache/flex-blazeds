@@ -1867,8 +1867,6 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
     {
         Node validatorsNode = selectSingleNode(root, VALIDATORS_ELEMENT);
         if (validatorsNode == null) {
-            // Default to the ClassDeserializationValidator
-            defaultValidator();
             return;
         }
 
@@ -1882,19 +1880,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
                 Node validator = validators.item(i);
                 validator(validator);
             }
-        } else {
-            // Default to the ClassDeserializationValidator
-            defaultValidator();
         }
-    }
-
-    /**
-     * Initialize a efault validator that protects BlazeDS against the most obvious attacks.
-     */
-    private void defaultValidator() {
-        ValidatorSettings validatorSettings = new ValidatorSettings();
-        validatorSettings.setClassName(ClassDeserializationValidator.class.getName());
-        ((MessagingConfiguration)config).addValidatorSettings(validatorSettings);
     }
 
     private void validator(Node validator)

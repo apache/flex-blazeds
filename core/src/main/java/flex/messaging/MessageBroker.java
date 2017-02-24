@@ -186,6 +186,9 @@ public class MessageBroker extends ManageableComponent
         factories = new HashMap<String, FlexFactory>();
         registeredEndpoints = new HashMap<String, String>();
 
+        // Initialize the default validator.
+        deserializationValidator = new ClassDeserializationValidator();
+
         // Add the built-in java factory
         addFactory("java", new JavaFactory());
 

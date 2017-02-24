@@ -42,9 +42,9 @@ public class TestServerWrapper {
         final String path = System.getProperty("java.home") + separator + "bin" + separator + "java";
         List<String> args = new LinkedList<String>();
         args.add(path);
-/*        if(configPath.contains("customized-validation")) {
-            args.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005");
-        }*/
+        //if(configPath.contains("customized-validation")) {
+//            args.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005");
+        //}
         args.add("-cp");
         args.add(classpath);
         args.add(TestServer.class.getCanonicalName());

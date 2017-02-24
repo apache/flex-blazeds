@@ -16,6 +16,7 @@
  */
 package flex.messaging.io.amfx;
 
+import flex.messaging.validators.ClassDeserializationValidator;
 import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -69,7 +70,10 @@ public class AmfxSerializationTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
+        ClassDeserializationValidator classDeserializationValidator = new ClassDeserializationValidator();
+        classDeserializationValidator.addAllowClassPattern("flex.messaging.io.amfx.testtypes.*");
         serializationContext = new SerializationContext();
+        serializationContext.setDeserializationValidator(classDeserializationValidator);
         SerializationContext.setSerializationContext(serializationContext);
         //trace = new AmfTrace();
     }

@@ -26,8 +26,7 @@ import java.io.Serializable;
  * A simple context to get settings from an endpoint to a deserializer
  * or serializer.
  */
-public class SerializationContext implements Serializable, Cloneable
-{
+public class SerializationContext implements Serializable, Cloneable {
     static final long serialVersionUID = -3020985035377116475L;
 
     // Endpoint serialization configuration flags
@@ -54,7 +53,7 @@ public class SerializationContext implements Serializable, Cloneable
      * Provides a way to control whether small messages should be sent even
      * if the client can support them. If set to false, small messages
      * will not be sent.
-     *
+     * <p>
      * The default is true.
      */
     public boolean enableSmallMessages = true;
@@ -63,10 +62,10 @@ public class SerializationContext implements Serializable, Cloneable
      * Determines whether type information will be used to instantiate a new instance.
      * If set to false, types will be deserialized as flex.messaging.io.ASObject instances
      * with type information retained but not used to create an instance.
-     *
+     * <p>
      * Note that types in the flex.* package (and any subpackage) will always be
      * instantiated.
-     *
+     * <p>
      * The default is true.
      */
     public boolean instantiateTypes = true;
@@ -76,7 +75,7 @@ public class SerializationContext implements Serializable, Cloneable
 
     // How deep level of nest object in the object graph that we support
     public int maxObjectNestLevel = 512;
-    
+
     // How deep level of nest collection objects in the object graph that we support
     // Similarly like how many dimensional matrix that we support for serialization.
     public int maxCollectionNestLevel = 15;
@@ -99,8 +98,9 @@ public class SerializationContext implements Serializable, Cloneable
     /**
      * The default constructor.
      */
-    public SerializationContext()
-    {
+    public SerializationContext() {
+        // Initialize the default validator.
+        deserializationValidator = new ClassDeserializationValidator();
     }
 
     /**
@@ -108,8 +108,7 @@ public class SerializationContext implements Serializable, Cloneable
      *
      * @return The deserializer class.
      */
-    public Class getDeserializerClass()
-    {
+    public Class getDeserializerClass() {
         return deserializer;
     }
 
@@ -118,8 +117,7 @@ public class SerializationContext implements Serializable, Cloneable
      *
      * @param c The deserializer class.
      */
-    public void setDeserializerClass(Class c)
-    {
+    public void setDeserializerClass(Class c) {
         deserializer = c;
     }
 
@@ -128,8 +126,7 @@ public class SerializationContext implements Serializable, Cloneable
      *
      * @return The serializer class.
      */
-    public Class getSerializerClass()
-    {
+    public Class getSerializerClass() {
         return serializer;
     }
 
@@ -138,8 +135,7 @@ public class SerializationContext implements Serializable, Cloneable
      *
      * @param c The serializer class.
      */
-    public void setSerializerClass(Class c)
-    {
+    public void setSerializerClass(Class c) {
         serializer = c;
     }
 
@@ -148,16 +144,13 @@ public class SerializationContext implements Serializable, Cloneable
      *
      * @return A new message deserializer instance.
      */
-    public MessageDeserializer newMessageDeserializer()
-    {
+    public MessageDeserializer newMessageDeserializer() {
         Class deserializerClass = getDeserializerClass();
-        if (deserializerClass == null)
-        {
+        if (deserializerClass == null) {
             deserializerClass = ClassUtil.createClass("flex.messaging.io.amf.AmfMessageDeserializer");
             this.setDeserializerClass(deserializerClass);
         }
-        MessageDeserializer deserializer = (MessageDeserializer)ClassUtil.createDefaultInstance(deserializerClass, MessageDeserializer.class);
-        return deserializer;
+        return (MessageDeserializer) ClassUtil.createDefaultInstance(deserializerClass, MessageDeserializer.class);
     }
 
     /**
@@ -165,16 +158,13 @@ public class SerializationContext implements Serializable, Cloneable
      *
      * @return A new message serializer instance.
      */
-    public MessageSerializer newMessageSerializer()
-    {
+    public MessageSerializer newMessageSerializer() {
         Class serializerClass = getSerializerClass();
-        if (serializerClass == null)
-        {
+        if (serializerClass == null) {
             serializerClass = ClassUtil.createClass("flex.messaging.io.amf.AmfMessageSerializer");
             this.setSerializerClass(serializerClass);
         }
-        MessageSerializer serializer = (MessageSerializer)ClassUtil.createDefaultInstance(serializerClass, MessageSerializer.class);
-        return serializer;
+        return (MessageSerializer) ClassUtil.createDefaultInstance(serializerClass, MessageSerializer.class);
     }
 
     /**
@@ -182,8 +172,7 @@ public class SerializationContext implements Serializable, Cloneable
      *
      * @return The deserialization validator.
      */
-    public DeserializationValidator getDeserializationValidator()
-    {
+    public DeserializationValidator getDeserializationValidator() {
         return deserializationValidator;
     }
 
@@ -192,20 +181,15 @@ public class SerializationContext implements Serializable, Cloneable
      *
      * @param deserializationValidator The deserialization validator.
      */
-    public void setDeserializationValidator(DeserializationValidator deserializationValidator)
-    {
+    public void setDeserializationValidator(DeserializationValidator deserializationValidator) {
         this.deserializationValidator = deserializationValidator;
     }
 
     @Override
-    public Object clone()
-    {
-        try
-        {
+    public Object clone() {
+        try {
             return super.clone();
-        }
-        catch (CloneNotSupportedException e)
-        {
+        } catch (CloneNotSupportedException e) {
             // this should never happen since this class extends object
             // but just in case revert to manual clone
             SerializationContext context = new SerializationContext();
@@ -244,57 +228,52 @@ public class SerializationContext implements Serializable, Cloneable
     /**
      * Establishes a SerializationContext for the current thread.
      * Users are not expected to call this function.
+     *
      * @param context The current SerializationContext.
      */
-    public static void setSerializationContext(SerializationContext context)
-    {
-        if (context == null)
+    public static void setSerializationContext(SerializationContext context) {
+        if (context == null) {
             contexts.remove();
-        else
+        } else {
             contexts.set(context);
+        }
     }
 
     /**
      * @return The current thread's SerializationContext.
      */
-    public static SerializationContext getSerializationContext()
-    {
+    public static SerializationContext getSerializationContext() {
         SerializationContext sc = contexts.get();
-        if (sc == null)
-        {
+        if (sc == null) {
             sc = new SerializationContext();
             SerializationContext.setSerializationContext(sc);
         }
         return sc;
     }
+
     /**
      * Clears out the thread local state after the request completes.
      */
-    public static void clearThreadLocalObjects()
-    {
-        if (contexts != null)
-        {
+    public static void clearThreadLocalObjects() {
+        if (contexts != null) {
             contexts.remove();
         }
     }
 
     /**
-     *
      * Create thread local storage.
      */
-    public static void createThreadLocalObjects()
-    {
-        if (contexts == null)
-            contexts = new ThreadLocal();
+    public static void createThreadLocalObjects() {
+        if (contexts == null) {
+            contexts = new ThreadLocal<SerializationContext>();
+        }
     }
 
     /**
-     *
      * Destroy thread local storage.
      * Call ONLY on shutdown.
      */
-    public static void releaseThreadLocalObjects()
-    {
+    public static void releaseThreadLocalObjects() {
         clearThreadLocalObjects();
 
         contexts = null;

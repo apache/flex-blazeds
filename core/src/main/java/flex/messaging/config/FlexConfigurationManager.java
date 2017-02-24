@@ -44,11 +44,11 @@ import java.io.File;
  */
 public class FlexConfigurationManager implements ConfigurationManager
 {
-    static final String DEFAULT_CONFIG_PATH = "/WEB-INF/flex/services-config.xml";
+    private static final String DEFAULT_CONFIG_PATH = "/WEB-INF/flex/services-config.xml";
 
-    protected String configurationPath = null;
-    protected ConfigurationFileResolver configurationResolver = null;
-    protected ConfigurationParser parser = null;
+    private String configurationPath = null;
+    private ConfigurationFileResolver configurationResolver = null;
+    private ConfigurationParser parser = null;
 
     public MessagingConfiguration getMessagingConfiguration(ServletConfig servletConfig)
     {
@@ -88,10 +88,10 @@ public class FlexConfigurationManager implements ConfigurationManager
         parser.reportTokens();
     }
 
-    protected ConfigurationParser getConfigurationParser(ServletConfig servletConfig)
+    private ConfigurationParser getConfigurationParser(ServletConfig servletConfig)
     {
         ConfigurationParser parser = null;
-        Class parserClass = null;
+        Class parserClass;
         String className = null;
 
         // Check for Custom Parser Specification
@@ -175,7 +175,7 @@ public class FlexConfigurationManager implements ConfigurationManager
      *
      * @param servletConfig configuration
      */
-    protected void setupConfigurationPathAndResolver(ServletConfig servletConfig)
+    private void setupConfigurationPathAndResolver(ServletConfig servletConfig)
     {
         if (servletConfig != null)
         {
@@ -229,7 +229,7 @@ public class FlexConfigurationManager implements ConfigurationManager
 
    }
 
-    protected void verifyMinimumJavaVersion() throws ConfigurationException
+    private void verifyMinimumJavaVersion() throws ConfigurationException
     {
         try
         {
@@ -262,7 +262,7 @@ public class FlexConfigurationManager implements ConfigurationManager
                     }
                     else if (third == 2)
                     {
-                        if ((vendor != null) && (vendor.indexOf("Sun") != -1))
+                        if ((vendor != null) && vendor.contains("Sun"))
                         {
                             // test at least 1.4.2_06 on Sun
                             int fourth = Integer.parseInt(split[3]);
@@ -284,7 +284,7 @@ public class FlexConfigurationManager implements ConfigurationManager
             {
                 ConfigurationException cx = new ConfigurationException();
 
-                if ((vendor != null) && (vendor.indexOf("Sun") != -1))
+                if ((vendor != null) && vendor.contains("Sun"))
                 {
                     // The minimum required Java version was not found. Please install JDK 1.4.2_06 or above. Current version is XX.
                     cx.setMessage(10139, new Object[] { System.getProperty("java.version")});

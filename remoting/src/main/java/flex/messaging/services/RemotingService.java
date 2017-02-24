@@ -164,10 +164,12 @@ public class RemotingService extends AbstractService
         {
             RemotingMessage message = (RemotingMessage)msg;
             RemotingDestination destination = (RemotingDestination)getDestination(msg);
-            RemotingDestinationControl destinationControl = (destination.isManaged()) ? (RemotingDestinationControl)destination.getControl() : null;
 
             if (destination != null)
             {
+                RemotingDestinationControl destinationControl = (destination.isManaged()) ?
+                        (RemotingDestinationControl) destination.getControl() : null;
+
                 ServiceAdapter adapter = destination.getAdapter();
                 long startTime = 0;
                 if (destinationControl != null)
