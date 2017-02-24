@@ -17,27 +17,22 @@
 
 package flex.messaging.log;
 
-public class TestingTarget extends AbstractTarget
-{
-    public TestingTarget()
-    {
+public class TestingTarget extends AbstractTarget {
+    public TestingTarget() {
         super();
     }
 
-    public void addLogger(Logger logger)
-    {
+    public void addLogger(Logger logger) {
         super.addLogger(logger);
         addLoggerCalled = true;
     }
 
-    public void removeLogger(Logger logger)
-    {
+    public void removeLogger(Logger logger) {
         super.removeLogger(logger);
         removeLoggerCalled = true;
     }
 
-    public void logEvent(LogEvent event)
-    {
+    public void logEvent(LogEvent event) {
         lastEvent = event;
     }
 

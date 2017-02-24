@@ -17,58 +17,34 @@
 
 package flex.messaging;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import flex.messaging.config.ChannelSettings;
-import flex.messaging.config.ConfigurationConstants;
-import flex.messaging.config.ConfigurationException;
-import flex.messaging.config.NetworkSettings;
-import flex.messaging.config.SecurityConstraint;
+import flex.messaging.config.*;
 import flex.messaging.services.AbstractService;
 import flex.messaging.services.MessageService;
 import flex.messaging.services.ServiceAdapter;
 import flex.messaging.services.messaging.adapters.ActionScriptAdapter;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Important: While adding new tests, make sure you don't create dependencies
  * to other modules. (eg. don't use RemotingDestination as that would create
  * dependency on remoting module; instead add the test in remoting module).
  */
-public class DestinationTest extends TestCase 
-{
+public class DestinationTest {
     protected Destination destination;
-    protected MessageBroker broker;
 
-    public DestinationTest(String name)
-    {
-        super(name);
-    }
-
-    public static Test suite()
-    {
-        return new TestSuite(DestinationTest.class);
-    }
-
-    protected void setUp() throws Exception
-    {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
         destination = new MessageDestination();
         destination.setId("destId");
     }
 
-    protected void tearDown() throws Exception
-    {
-        super.tearDown();
-    }
-
-    public void testSetService()
-    {
+    @Test
+    public void testSetService() {
         MessageBroker broker = new MessageBroker(false);
         broker.initThreadLocals();
 
@@ -77,7 +53,7 @@ public class DestinationTest extends TestCase
         broker.addService(service);
         destination.setService(service);
 
-        MessageService actualSvc = (MessageService)destination.getService();
+        MessageService actualSvc = (MessageService) destination.getService();
 
         Assert.assertEquals(service, actualSvc);
 
@@ -85,23 +61,20 @@ public class DestinationTest extends TestCase
         Assert.assertEquals(destination, actualDest);
     }
 
-    public void testSetServiceNull()
-    {
-        try
-        {
+    @Test
+    public void testSetServiceNull() {
+        try {
             destination.setService(null);
 
-            fail("ConfigurationException expected");
-        }
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             int error = 11116; //ManageableComponent.NULL_COMPONENT_PROPERTY;
             Assert.assertEquals(ce.getNumber(), error);
         }
     }
 
-    public void testSetAdapter()
-    {
+    @Test
+    public void testSetAdapter() {
         ServiceAdapter expected = new ActionScriptAdapter();
         expected.setId("adapterId");
         destination.setAdapter(expected);
@@ -111,16 +84,16 @@ public class DestinationTest extends TestCase
     }
 
 
-    public void testSetAdapterNull()
-    {
+    @Test
+    public void testSetAdapterNull() {
         destination.setAdapter(null);
 
         ServiceAdapter actual = destination.getAdapter();
         Assert.assertNull(actual);
     }
 
-    public void testSetAdapterNullId()
-    {
+    @Test
+    public void testSetAdapterNullId() {
         ServiceAdapter adapter = new ActionScriptAdapter();
         destination.setAdapter(adapter);
 
@@ -129,8 +102,8 @@ public class DestinationTest extends TestCase
 
     }
 
-    public void testAddChannelNotStarted()
-    {
+    @Test
+    public void testAddChannelNotStarted() {
         String id = "default-channel";
         destination.addChannel(id);
 
@@ -142,12 +115,12 @@ public class DestinationTest extends TestCase
      * In running code, the channels would be added from the services-config.xml.
      * Here, we have to force them into the broker.
      */
-    public void testAddChannelStartedBrokerKnows()
-    {
-        start();
+    @Test
+    public void testAddChannelStartedBrokerKnows() {
         String id = "default-channel";
         Map<String, ChannelSettings> csMap = new HashMap<String, ChannelSettings>();
         csMap.put(id, null);
+        MessageBroker broker = start();
         broker.setChannelSettings(csMap);
         destination.addChannel(id);
 
@@ -155,11 +128,11 @@ public class DestinationTest extends TestCase
         Assert.assertTrue(contains);
     }
 
-    public void testCreateAdapterRegisteredWithService ()
-    {
+    @Test
+    public void testCreateAdapterRegisteredWithService() {
         MessageService service = new MessageService();
         service.setId("dummy-service");
-        broker = new MessageBroker(false);
+        MessageBroker broker = new MessageBroker(false);
         broker.addService(service);
 
         String adapterId = "id";
@@ -173,65 +146,55 @@ public class DestinationTest extends TestCase
         Assert.assertEquals(expected, actual);
     }
 
-    public void testCreateAdapterWithoutService()
-    {
-        try
-        {
+    @Test
+    public void testCreateAdapterWithoutService() {
+        try {
             destination.createAdapter("id");
 
-            fail("ConfigurationException expected");
-        }
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             int error = 11117; // Destination.NO_SERVICE;
             Assert.assertEquals(ce.getNumber(), error);
         }
     }
 
-    public void testCreateAdapterUnregisteredWithService()
-    {
+    @Test
+    public void testCreateAdapterUnregisteredWithService() {
         MessageService service = new MessageService();
         service.setId("dummy-service");
-        broker = new MessageBroker(false);
+        MessageBroker broker = new MessageBroker(false);
         broker.addService(service);
         destination.setService(service);
 
-        try
-        {
+        try {
             destination.createAdapter("id");
 
-            fail("ConfigurationException expected");
-        }
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             int error = ConfigurationConstants.UNREGISTERED_ADAPTER;
             Assert.assertEquals(ce.getNumber(), error);
         }
 
     }
 
-    public void testCreateAdapterWithExistingId()
-    {
+    @Test
+    public void testCreateAdapterWithExistingId() {
         String id = "java-adapter";
 
         start();
 
-        try
-        {
+        try {
             destination.createAdapter(id);
 
-            fail("ConfigurationException expected");
-        }
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             int error = ConfigurationConstants.UNREGISTERED_ADAPTER;
             Assert.assertEquals(error, ce.getNumber());
         }
     }
 
-
-    public void testSetNetworkSettings()
-    {
+    @Test
+    public void testSetNetworkSettings() {
         NetworkSettings ns = new NetworkSettings();
         ns.setSubscriptionTimeoutMinutes(1);
         destination.setNetworkSettings(ns);
@@ -240,8 +203,8 @@ public class DestinationTest extends TestCase
         Assert.assertEquals(ns, actual);
     }
 
-    public void testSetSecurityConstraint()
-    {
+    @Test
+    public void testSetSecurityConstraint() {
         SecurityConstraint sc = new SecurityConstraint();
         destination.setSecurityConstraint(sc);
 
@@ -249,8 +212,8 @@ public class DestinationTest extends TestCase
         Assert.assertEquals(sc, actual);
     }
 
-    public void testSetSecurityConstraintRefNotStarted()
-    {
+    @Test
+    public void testSetSecurityConstraintRefNotStarted() {
         String ref = "sample-security";
         destination.setSecurityConstraint(ref);
 
@@ -258,8 +221,8 @@ public class DestinationTest extends TestCase
         Assert.assertNull(sc);
     }
 
-    public void testStop()
-    {
+    @Test
+    public void testStop() {
         start();
         destination.stop();
 
@@ -267,20 +230,20 @@ public class DestinationTest extends TestCase
         Assert.assertFalse(started);
     }
 
-    public void testSetManaged()
-    {
+    @Test
+    public void testSetManaged() {
         destination.setManaged(true);
 
         boolean managed = destination.isManaged();
         Assert.assertTrue(managed);
     }
 
-    public void testSetManagedParentUnmanaged()
-    {
+    @Test
+    public void testSetManagedParentUnmanaged() {
         MessageService service = new MessageService();
         service.setId("dummy-service");
         service.setManaged(false);
-        broker = new MessageBroker(false);
+        MessageBroker broker = new MessageBroker(false);
         broker.addService(service);
 
         destination.setService(service);
@@ -290,15 +253,15 @@ public class DestinationTest extends TestCase
         Assert.assertFalse(managed);
     }
 
-    public void testGetLogCategory()
-    {
+    @Test
+    public void testGetLogCategory() {
         String logCat = destination.getLogCategory();
         String logCat2 = destination.getLogCategory();
         Assert.assertEquals(logCat, logCat2);
     }
 
-    public void testExtraProperties()
-    {
+    @Test
+    public void testExtraProperties() {
         String propertyName = "extraProperty";
         String propertyValue = "extraValue";
 
@@ -317,9 +280,8 @@ public class DestinationTest extends TestCase
         Assert.assertEquals(actualDest.getExtraProperty(propertyName), propertyValue);
     }
 
-    private void start()
-    {
-        broker = new MessageBroker(false);
+    private MessageBroker start() {
+        MessageBroker broker = new MessageBroker(false);
         MessageService service = new MessageService();
         service.setId("dummy-service");
         service.setMessageBroker(broker);
@@ -331,5 +293,6 @@ public class DestinationTest extends TestCase
         destination.addChannel("some-Channel");
         destination.setService(service);
         destination.start();
+        return broker;
     }
 }

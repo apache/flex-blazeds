@@ -22,82 +22,59 @@ import flex.messaging.MessageDestination;
 import flex.messaging.config.ConfigurationException;
 import flex.messaging.services.messaging.adapters.ActionScriptAdapter;
 import org.junit.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ServiceAdapterTest extends TestCase
-{
+public class ServiceAdapterTest {
+
     protected ServiceAdapter adapter;
     protected Destination destination;
-    
-    public ServiceAdapterTest(String name)
-    {
-        super(name);
-    }
 
-    public static Test suite()
-    {
-        return new TestSuite(ServiceAdapterTest.class);
-    }
-
-    protected void setUp() throws Exception
-    {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
         adapter = new ActionScriptAdapter();
         adapter.setId("as-adapter");
     }
 
-    protected void tearDown() throws Exception
-    {
-        super.tearDown();
-    }
-    
-    public void testSetDestination()
-    {
+    @Test
+    public void testSetDestination() {
         destination = new MessageDestination();
         adapter.setDestination(destination);
-        
+
         Destination actual = adapter.getDestination();
         Assert.assertEquals(destination, actual);
-        
+
         ServiceAdapter actual2 = destination.getAdapter();
         Assert.assertEquals(adapter, actual2);
     }
-    
-    public void testSetDestinationNull()
-    {        
-        try
-        {
+
+    @Test
+    public void testSetDestinationNull() {
+        try {
             adapter.setDestination(null);
 
-            fail("ConfigurationException expected");
-        }
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             int error = 11116; // ManageableComponent.NULL_COMPONENT_PROPERTY;
             Assert.assertEquals(ce.getNumber(), error);
         }
     }
-        
-    public void testSetDestinationWrongType()
-    {
+
+    @Test
+    public void testSetDestinationWrongType() {
         destination = new Destination();
-        
-        try 
-        {
+
+        try {
             adapter.setDestination(destination);
-            
-            fail("ClassCastException expected");
+
+            Assert.fail("ClassCastException expected");
+        } catch (ClassCastException e) {
+            // Ignore this as we are expecting this.
         }
-        catch (ClassCastException e)
-        {            
-        }        
     }
-    
-    public void testSetManagedParentUnmanaged()
-    {
+
+    @Test
+    public void testSetManagedParentUnmanaged() {
         destination = new MessageDestination();
         destination.setManaged(false);
         destination.setAdapter(adapter);
@@ -105,13 +82,13 @@ public class ServiceAdapterTest extends TestCase
 
         boolean managed = adapter.isManaged();
         Assert.assertFalse(managed);
-        
+
     }
-       
-    public void testSetManaged()
-    {
+
+    @Test
+    public void testSetManaged() {
         adapter.setManaged(true);
-        
+
         boolean managed = adapter.isManaged();
         Assert.assertTrue(managed);
     }

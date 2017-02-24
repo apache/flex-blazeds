@@ -17,40 +17,26 @@
 
 package flex.messaging.util;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.*;
 
-public class HexTest extends TestCase
-{
-    public HexTest(String name)
-    {
-        super(name);
-    }
-
-    public static Test suite()
-    {
-        return new TestSuite(HexTest.class);
-    }
-
+public class HexTest {
     /**
      * Try encoding and decoding 10,000 random combinations of bytes.
      */
-    public void testEncodingAndDecoding()
-    {
+    @Test
+    public void testEncodingAndDecoding() {
         int randomLimit = 500;
         boolean success = true;
 
-        for (int myCount = 0; myCount < 10000; myCount++)
-        {
-            byte raw [] = new byte[(int)(Math.random() * randomLimit)];
+        for (int myCount = 0; myCount < 10000; myCount++) {
+            byte raw[] = new byte[(int) (Math.random() * randomLimit)];
 
-            for (int i = 0; i < raw.length; ++i)
-            {
-                if ((i % 1024) < 256)
-                    raw[i] = (byte)(i % 1024);
-                else
-                    raw[i] = (byte)((int)(Math.random() * 255) - 128);
+            for (int i = 0; i < raw.length; ++i) {
+                if ((i % 1024) < 256) {
+                    raw[i] = (byte) (i % 1024);
+                } else {
+                    raw[i] = (byte) ((int) (Math.random() * 255) - 128);
+                }
             }
             Hex.Encoder encoder = new Hex.Encoder(100);
             encoder.encode(raw);
@@ -61,28 +47,22 @@ public class HexTest extends TestCase
             decoder.decode(encoded);
             byte check[] = decoder.flush();
 
-            if (check.length != raw.length)
-            {
+            if (check.length != raw.length) {
                 success = false;
-            }
-            else
-            {
-                for (int i = 0; i < check.length; ++i)
-                {
-                    if (check[i] != raw[i])
-                    {
+            } else {
+                for (int i = 0; i < check.length; ++i) {
+                    if (check[i] != raw[i]) {
                         success = false;
                         break;
                     }
                 }
             }
 
-            if (!success)
-            {
+            if (!success) {
                 break;
             }
         }
 
-        assertTrue(success);
+        org.junit.Assert.assertTrue(success);
     }
 }

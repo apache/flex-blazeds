@@ -17,99 +17,86 @@
 package flex.messaging.services.messaging;
 
 import org.junit.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
 
-public class SubtopicTest extends TestCase
-{
+public class SubtopicTest {
     private static final String DEFAULT_SEPERATOR = ".";
     private static final String ANOTHER_SEPERATOR = "*";
 
-    public SubtopicTest(String name)
-    {
-        super(name);
-    }
-
-    public static Test suite()
-    {
-        return new TestSuite(SubtopicTest.class);
-    }
-
-    public void testMatches1()
-    {    
+    @Test
+    public void testMatches1() {
         Subtopic s1 = new Subtopic("foo", DEFAULT_SEPERATOR);
         Subtopic s2 = new Subtopic("foo", DEFAULT_SEPERATOR);
         boolean result = s1.matches(s2);
         Assert.assertTrue(result);
     }
 
-    public void testMatches2()
-    {    
+    @Test
+    public void testMatches2() {
         Subtopic s1 = new Subtopic("foo", DEFAULT_SEPERATOR);
         Subtopic s2 = new Subtopic("bar", DEFAULT_SEPERATOR);
         boolean result = s1.matches(s2);
         Assert.assertFalse(result);
     }
-    
-    public void testMatches3()
-    {    
+
+    @Test
+    public void testMatches3() {
         Subtopic s1 = new Subtopic("foo.bar", DEFAULT_SEPERATOR);
         Subtopic s2 = new Subtopic("foo.bar", DEFAULT_SEPERATOR);
         boolean result = s1.matches(s2);
         Assert.assertTrue(result);
     }
 
-    public void testMatches4()
-    {    
+    @Test
+    public void testMatches4() {
         Subtopic s1 = new Subtopic("foo.bar", DEFAULT_SEPERATOR);
         Subtopic s2 = new Subtopic("foo*bar", ANOTHER_SEPERATOR);
         boolean result = s1.matches(s2);
         Assert.assertFalse(result);
     }
 
-    public void testMatches5()
-    {
+    @Test
+    public void testMatches5() {
         Subtopic s1 = new Subtopic("*", DEFAULT_SEPERATOR);
-        Subtopic s2 = new Subtopic("foo.bar.foo", DEFAULT_SEPERATOR); 
+        Subtopic s2 = new Subtopic("foo.bar.foo", DEFAULT_SEPERATOR);
         boolean result = s1.matches(s2);
         Assert.assertTrue(result);
     }
 
-    public void testMatches6()
-    {
+    @Test
+    public void testMatches6() {
         Subtopic s1 = new Subtopic("foo.*", DEFAULT_SEPERATOR);
         Subtopic s2 = new Subtopic("foo.bar", DEFAULT_SEPERATOR);
         boolean result = s1.matches(s2);
         Assert.assertTrue(result);
     }
 
-    public void testMatches7()
-    {
+    @Test
+    public void testMatches7() {
         Subtopic s1 = new Subtopic("foo.*", DEFAULT_SEPERATOR);
         Subtopic s2 = new Subtopic("foo.bar.foo", DEFAULT_SEPERATOR);
         boolean result = s1.matches(s2);
         Assert.assertTrue(result);
     }
 
-    public void testMatches8()
-    {
+    @Test
+    public void testMatches8() {
         Subtopic s1 = new Subtopic("foo.bar.foo", DEFAULT_SEPERATOR);
-        Subtopic s2 = new Subtopic("foo.*", DEFAULT_SEPERATOR); 
+        Subtopic s2 = new Subtopic("foo.*", DEFAULT_SEPERATOR);
         boolean result = s1.matches(s2);
         Assert.assertTrue(result);
     }
 
-    public void testMatches9()
-    {
+    @Test
+    public void testMatches9() {
         Subtopic s1 = new Subtopic("foo.bar.*", DEFAULT_SEPERATOR);
-        Subtopic s2 = new Subtopic("foo.bar.foo", DEFAULT_SEPERATOR); 
+        Subtopic s2 = new Subtopic("foo.bar.foo", DEFAULT_SEPERATOR);
         boolean result = s1.matches(s2);
         Assert.assertTrue(result);
     }
 
-    public void testMatches10()
-    {
+    @Test
+    public void testMatches10() {
         Subtopic s1 = new Subtopic("foo.*", DEFAULT_SEPERATOR);
         Subtopic s2 = new Subtopic("foo", DEFAULT_SEPERATOR);
         boolean result = s1.matches(s2);

@@ -19,74 +19,50 @@ package flex.messaging.io.amf;
 
 import flex.messaging.io.MessageDeserializer;
 import flex.messaging.io.SerializationContext;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import macromedia.qa.metrics.MetricsManager;
 import macromedia.qa.metrics.Value;
 import macromedia.util.UnitTrace;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 
-public class AmfDeserializerTest extends TestCase
-{
+public class AmfDeserializerTest {
     private MetricsManager metricsManager;
 
-    public AmfDeserializerTest(String name)
-    {
-        super(name);
-    }
-
-
-    protected void setUp()
-    {
-        try
-        {
+    @Before
+    public void setUp() {
+        try {
             String project = System.getProperty("project.name");
             String build = System.getProperty("build.number");
             String props = System.getProperty("metrics.properties");
 
             if (project != null && build != null
-                    && !build.trim().toUpperCase().equals("N/A") && props != null)
-            {
+                    && !build.trim().toUpperCase().equals("N/A") && props != null) {
 
                 File file = new File(props);
 
-                if (file.exists())
-                {
+                if (file.exists()) {
                     metricsManager = new MetricsManager(project, build, file);
-
                     metricsManager.newRun();
                     metricsManager.newMetric("AMF Deserialization Time", "ms");
                 }
             }
-        }
-        catch (Throwable t)
-        {
-            if (UnitTrace.errors)
+        } catch (Throwable t) {
+            if (UnitTrace.errors) {
                 t.printStackTrace();
+            }
         }
     }
 
-
-    public static Test suite()
-    {
-        return new TestSuite(AmfDeserializerTest.class);
-    }
-
-    public void testDeserializeMessage()
-    {
-        try
-        {
+    @Test
+    public void testDeserializeMessage() {
+        try {
             String sample = System.getProperty("AMF_SAMPLE_FILE");
-            if (sample == null || sample.length() < 1)
-            {
+            if (sample == null || sample.length() < 1) {
                 sample = "amf_request.xml";
             }
 
@@ -125,32 +101,29 @@ public class AmfDeserializerTest extends TestCase
             long finish = System.currentTimeMillis();
             trace.endMessage();
 
-            try
-            {
-                if (metricsManager != null)
-                {
+            try {
+                if (metricsManager != null) {
                     long duration = finish - start;
                     Value v2 = metricsManager.createValue(duration);
                     metricsManager.saveValue(v2);
                     trace.newLine();
 
-                    if (UnitTrace.debug)
+                    if (UnitTrace.debug) {
                         System.out.print("AMF Deserialization Time: " + duration + "ms");
+                    }
+                }
+            } catch (Throwable t) {
+                if (UnitTrace.errors) {
+                    t.printStackTrace();
                 }
             }
-            catch (Throwable t)
-            {
-                if (UnitTrace.errors)
-                    t.printStackTrace();
-            }
 
-            if (UnitTrace.debug)
+            if (UnitTrace.debug) {
                 System.out.print(trace.toString());
-        }
-        catch (Exception e)
-        {
+            }
+        } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
     }
 }

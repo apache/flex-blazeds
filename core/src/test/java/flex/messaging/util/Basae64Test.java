@@ -17,38 +17,25 @@
 
 package flex.messaging.util;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
-public class Basae64Test extends TestCase
-{
-    public Basae64Test(String name)
-    {
-        super(name);
-    }
+import org.junit.Test;
 
-    public static Test suite()
-    {
-        return new TestSuite(Basae64Test.class);
-    }
-
+public class Basae64Test {
     /**
      * Try encoding and decoding 10,000 random combinations of bytes.
      */
-    public void testEncodingAndDecoding()
-    {
+    @Test
+    public void testEncodingAndDecoding() {
         int randomLimit = 500;
         boolean success = true;
 
-        byte raw [] = new byte[(int)(Math.random() * randomLimit)];
+        byte raw[] = new byte[(int) (Math.random() * randomLimit)];
 
-        for (int i = 0; i < raw.length; ++i)
-        {
+        for (int i = 0; i < raw.length; ++i) {
             if ((i % 1024) < 256)
-                raw[i] = (byte)(i % 1024);
+                raw[i] = (byte) (i % 1024);
             else
-                raw[i] = (byte)((int)(Math.random() * 255) - 128);
+                raw[i] = (byte) ((int) (Math.random() * 255) - 128);
         }
         Base64.Encoder encoder = new Base64.Encoder(100);
         encoder.encode(raw);
@@ -59,22 +46,17 @@ public class Basae64Test extends TestCase
         decoder.decode(encoded);
         byte check[] = decoder.flush();
 
-        if (check.length != raw.length)
-        {
+        if (check.length != raw.length) {
             success = false;
-        }
-        else
-        {
-            for (int i = 0; i < check.length; ++i)
-            {
-                if (check[i] != raw[i])
-                {
+        } else {
+            for (int i = 0; i < check.length; ++i) {
+                if (check[i] != raw[i]) {
                     success = false;
                     break;
                 }
             }
         }
 
-        assertTrue(success);
+        org.junit.Assert.assertTrue(success);
     }
 }

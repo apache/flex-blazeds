@@ -18,105 +18,92 @@ package flex.messaging.client;
 
 import flex.messaging.MessageBroker;
 import org.junit.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for the flex.messaging.client.FlexClientManager
  */
-public class FlexClientManagerTest extends TestCase {
-	
-	protected MessageBroker broker;
-	protected FlexClientManager manager;
+public class FlexClientManagerTest {
 
-    public FlexClientManagerTest(String name)
-    {
-        super(name);
-    }
+    private FlexClientManager manager;
 
-    public static Test suite()
-    {
-        return new TestSuite(FlexClientManagerTest.class);
-    }
-
-    protected void setUp() throws Exception
-    {
-        super.setUp();
-
-        broker = new MessageBroker(false);
+    @Before
+    public void setUp() throws Exception {
+        MessageBroker broker = new MessageBroker(false);
         broker.initThreadLocals();
         manager = new FlexClientManager(broker);
     }
-    
-    protected void tearDown() throws Exception
-    {
-        super.tearDown();
-    }
+
     /**
-     * Test that FlexClientManager.createFlexClient(id) returns 
-     * a FlexClient instance with the correct id.  
+     * Test that FlexClientManager.createFlexClient(id) returns
+     * a FlexClient instance with the correct id.
      */
-    public void testCreateFlexClientWithId()
-    {
+    @Test
+    public void testCreateFlexClientWithId() {
         String id = "abc";
-        FlexClient client = manager.createFlexClient(id);       
-        Assert.assertEquals(id, client.getId());        
+        FlexClient client = manager.createFlexClient(id);
+        Assert.assertEquals(id, client.getId());
     }
+
     /**
-     * Test that calling FlexClientManager.getFlexClient(id) with 
+     * Test that calling FlexClientManager.getFlexClient(id) with
      * a new id, returns a new FlexClient instance with the correct
-     * id. 
+     * id.
      */
-    public void testGetFlexClientNewId()
-    {
+    @Test
+    public void testGetFlexClientNewId() {
         String id = "def";
         FlexClient client = manager.getFlexClient(id);
         Assert.assertNotNull(client);
-        Assert.assertEquals(id, client.getId());        
+        Assert.assertEquals(id, client.getId());
     }
+
     /**
-     * Test that calling FlexClientManager.getFlexClient(id) with 
-     * an id for an existing FlexClient, returns the FlexClient 
-     * instance with the correct id. 
+     * Test that calling FlexClientManager.getFlexClient(id) with
+     * an id for an existing FlexClient, returns the FlexClient
+     * instance with the correct id.
      */
-    public void testGetFlexClientExistingId()
-    {
+    @Test
+    public void testGetFlexClientExistingId() {
         String id = "ghi";
         manager.createFlexClient(id);
-        FlexClient client = manager.getFlexClient(id);        
-        Assert.assertEquals(id, client.getId());        
+        FlexClient client = manager.getFlexClient(id);
+        Assert.assertEquals(id, client.getId());
     }
+
     /**
-     * Test that calling FlexClientManager.getFlexClient(id, createNewIfNotExist) 
+     * Test that calling FlexClientManager.getFlexClient(id, createNewIfNotExist)
      * with an id for a nonexistent FlexClient and false returns null.
      */
-    public void testGetFlexClientCreateNewFalse()
-    {
+    @Test
+    public void testGetFlexClientCreateNewFalse() {
         String id = "jkl";
-        FlexClient client = manager.getFlexClient(id,false);        
-        Assert.assertNull(client);       
+        FlexClient client = manager.getFlexClient(id, false);
+        Assert.assertNull(client);
     }
+
     /**
      * Test that calling FlexClientManager.getFlexClientCount() returns
      * 2 when there are 2 FlexClients.
      */
-    public void testGetFlexClientCount()
-    {        
+    @Test
+    public void testGetFlexClientCount() {
         manager.getFlexClient("client1");
         manager.getFlexClient("client2");
-        Assert.assertEquals(2, manager.getFlexClientCount());       
+        Assert.assertEquals(2, manager.getFlexClientCount());
     }
+
     /**
      * Test that FlexClientManager.removeFlexClient(FlexClient) removes
-     * the correct FlexClient. 
+     * the correct FlexClient.
      */
-    public void testRemoveFlexClient()
-    {        
+    @Test
+    public void testRemoveFlexClient() {
         FlexClient client = manager.getFlexClient("client1");
         manager.getFlexClient("client2");
         manager.removeFlexClient(client);
-        Assert.assertEquals(1, manager.getFlexClientCount());      
+        Assert.assertEquals(1, manager.getFlexClientCount());
         Assert.assertEquals("client2", manager.getClientIds()[0]);
     }
 

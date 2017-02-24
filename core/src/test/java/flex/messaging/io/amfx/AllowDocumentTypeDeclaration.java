@@ -21,7 +21,7 @@ package flex.messaging.io.amfx;
 import flex.messaging.MessageException;
 import flex.messaging.util.XMLUtil;
 import org.junit.Assert;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,15 +30,16 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class AllowDocumentTypeDeclaration extends TestCase {
+public class AllowDocumentTypeDeclaration {
 
+    @Test
     public void testDoctypeEnabled() throws Exception {
         // Start a simple server socket.
         TinyServer server = new TinyServer();
         server.start();
 
         // Wait till the server is up.
-        while(server.port == 0) {
+        while (server.port == 0) {
             Thread.sleep(100);
         }
 
@@ -56,13 +57,14 @@ public class AllowDocumentTypeDeclaration extends TestCase {
         }
     }
 
+    @Test
     public void testDoctypeDisabled() throws Exception {
         // Start a simple server socket.
         TinyServer server = new TinyServer();
         server.start();
 
         // Wait till the server is up.
-        while(server.port == 0) {
+        while (server.port == 0) {
             Thread.sleep(100);
         }
 
@@ -102,7 +104,7 @@ public class AllowDocumentTypeDeclaration extends TestCase {
                 clientSocket = serverSocket.accept();
                 connected = true;
                 BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                while(reader.ready()) {
+                while (reader.ready()) {
                     String line = reader.readLine();
                     System.out.println(line);
                 }
@@ -122,12 +124,12 @@ public class AllowDocumentTypeDeclaration extends TestCase {
             } finally {
                 try {
                     clientSocket.getOutputStream().close();
-                } catch(Exception e) {
+                } catch (Exception e) {
                     // Ignore ...
                 }
                 try {
                     clientSocket.getOutputStream().close();
-                } catch(Exception e) {
+                } catch (Exception e) {
                     // Ignore ...
                 }
             }

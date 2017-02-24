@@ -17,83 +17,60 @@
 
 package flex.messaging.log;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+public class LogTest {
 
-public class LogTest extends TestCase
-{
-    public LogTest(String name)
-    {
-        super(name);
-    }
-    
     private TestingTarget testTarget;
-    
-    public static Test suite()
-    {
+
+    @Before
+    public void setUp() throws Exception {
         // Make sure the logger is reset before starting the tests.
         Log.clear();
-
-        // Explicitly specify the order of the tests.
-        TestSuite suite = new TestSuite();
-        suite.addTest(new LogTest("testInitialLogState"));
-        suite.addTest(new LogTest("testLogStateAfterAddingTarget"));
-        suite.addTest(new LogTest("testLogStateAfterAddRemoveTarget"));
-        suite.addTest(new LogTest("testAddTargetGetLogger"));
-        suite.addTest(new LogTest("testAddTargetGetLoggerThenRemoveFilter"));
-        suite.addTest(new LogTest("testGetLoggerAddTarget"));
-        suite.addTest(new LogTest("testLogAddFilterNull"));
-        suite.addTest(new LogTest("testLogSetFilterNull"));
-        return suite;
-    }
-    
-    protected void setUp() throws Exception
-    {
         Log.createLog();
-        // Init a ConsoleLogTarget for testing purposes.        
+        // Init a ConsoleLogTarget for testing purposes.
         testTarget = new TestingTarget(); // Defaults to a log level of none with no filters.
-        super.setUp();
     }
 
-    protected void tearDown() throws Exception
-    {
+    @After
+    public void tearDown() throws Exception {
         Log.flush();
-        super.tearDown();
     }
-    
-    public void testInitialLogState()
-    {
+
+    @Test
+    public void testInitialLogState() {
         Assert.assertEquals(Log.getTargetLevel(), LogEvent.NONE);
-        Assert.assertTrue(Log.getTargets().size() == 0); 
+        Assert.assertTrue(Log.getTargets().size() == 0);
     }
-    
-    public void testLogStateAfterAddingTarget()
-    {        
+
+    @Test
+    public void testLogStateAfterAddingTarget() {
         Assert.assertEquals(testTarget.getLevel(), LogEvent.ERROR);
         testTarget.setLevel(LogEvent.FATAL);
-        Assert.assertEquals(testTarget.getLevel(), LogEvent.FATAL);        
+        Assert.assertEquals(testTarget.getLevel(), LogEvent.FATAL);
         Assert.assertTrue(testTarget.getFilters().size() == 1);
         Log.addTarget(testTarget);
         Assert.assertEquals(Log.getTargetLevel(), LogEvent.FATAL);
         Assert.assertTrue(Log.getTargets().size() == 1);
     }
-    
-    public void testLogStateAfterAddRemoveTarget()
-    {
+
+    @Test
+    public void testLogStateAfterAddRemoveTarget() {
         testTarget.setLevel(LogEvent.FATAL);
         Log.addTarget(testTarget);
         Log.removeTarget(testTarget);
         Assert.assertEquals(Log.getTargetLevel(), LogEvent.NONE);
         Assert.assertTrue(Log.getTargets().size() == 0);
     }
-    
-    public void testAddTargetGetLogger()
-    {
+
+    @Test
+    public void testAddTargetGetLogger() {
         testTarget.setLevel(LogEvent.ALL);
         testTarget.addFilter("*");
         Assert.assertTrue(testTarget.getFilters().size() == 1);
@@ -107,9 +84,9 @@ public class LogTest extends TestCase
         testTarget.removeFilter("*");
         Assert.assertTrue(testTarget.getFilters().size() == 0);
     }
-    
-    public void testAddTargetGetLoggerThenRemoveFilter()
-    {
+
+    @Test
+    public void testAddTargetGetLoggerThenRemoveFilter() {
         testTarget.setLevel(LogEvent.ALL);
         testTarget.addFilter("foo.*");
         Assert.assertTrue(testTarget.getFilters().size() == 1);
@@ -119,60 +96,60 @@ public class LogTest extends TestCase
         testTarget.removeFilter("foo.*");
         Assert.assertTrue(testTarget.loggerCount == 0);
     }
-    
-    public void testGetLoggerAddTarget()
-    {
+
+    @Test
+    public void testGetLoggerAddTarget() {
         // First, remove the default "*" filter.
         testTarget.removeFilter("*");
-        
+
         Log.getLogger("foo");
         Log.getLogger("bar");
         Log.getLogger("baz"); // Shouldn't be added to the target later.
-        
+
         testTarget.setLevel(LogEvent.ALL);
-        Log.addTarget(testTarget);        
+        Log.addTarget(testTarget);
         Assert.assertTrue(testTarget.loggerCount == 0);
-        
+
         // Now add filters.
         List<String> filters = new ArrayList<String>();
         filters.add("foo");
-        filters.add("bar");        
-        testTarget.setFilters(filters);        
+        filters.add("bar");
+        testTarget.setFilters(filters);
         Assert.assertTrue(testTarget.loggerCount == 2);
     }
-        
-    public void testLogAddFilterNull()
-    {
+
+    @Test
+    public void testLogAddFilterNull() {
         // First, remove the default "*" filter.
         testTarget.removeFilter("*");
-        
+
         Log.getLogger("foo");
-        
+
         testTarget.setLevel(LogEvent.ALL);
-        Log.addTarget(testTarget);        
+        Log.addTarget(testTarget);
         Assert.assertTrue(testTarget.loggerCount == 0);
-        
+
         // Now null filters.
-        List filters = new ArrayList();        
-        testTarget.addFilter(null); 
-        testTarget.setFilters(filters);       
+        List filters = new ArrayList();
+        testTarget.addFilter(null);
+        testTarget.setFilters(filters);
         Assert.assertTrue(testTarget.loggerCount == 1);
     }
-        
-    public void testLogSetFilterNull()
-    {
+
+    @Test
+    public void testLogSetFilterNull() {
         // First, remove the default "*" filter.
         testTarget.removeFilter("*");
-        
+
         Log.getLogger("foo");
-        
+
         testTarget.setLevel(LogEvent.ALL);
-        Log.addTarget(testTarget);        
+        Log.addTarget(testTarget);
         Assert.assertTrue(testTarget.loggerCount == 0);
-        
+
         // Now null filters.
-        List filters = new ArrayList();        
-        testTarget.setFilters(filters);        
+        List filters = new ArrayList();
+        testTarget.setFilters(filters);
         Assert.assertTrue(testTarget.loggerCount == 1);
     }
 }

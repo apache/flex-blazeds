@@ -17,12 +17,13 @@
 
 package flex.messaging.io.amf.translator;
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.IdentityHashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import junit.framework.Test;
 
 /**
  * Simple test to check that the StrictReferenceTable
@@ -30,8 +31,7 @@ import junit.framework.Test;
  * out of bounds, and correct auto generates index-based
  * and incremented Integer values for added keys.
  */
-public class StrictReferenceTableTest extends TestCase
-{
+public class StrictReferenceTableTest {
     private Map<Object, Object> table;
 
     private static Object ONE = new Object();
@@ -43,109 +43,87 @@ public class StrictReferenceTableTest extends TestCase
 
     private static final int length = 2;
 
-    public StrictReferenceTableTest()
-    {
-    }
-
-    protected void setUp() throws Exception
-    {
+    @Before
+    public void setUp() throws Exception {
         table = new IdentityHashMap<Object, Object>(length);
     }
 
-    public static Test suite()
-    {
-        return new TestSuite(StrictReferenceTableTest.class);
+    @After
+    public void tearDown() throws Exception {
+        table = null;
     }
 
-    public void testCapacity()
-    {
+    @Test
+    public void testCapacity() {
         table.clear();
         int goal = length * 2;
 
-        for (int i = 0; i < goal; i++)
-        {
+        for (int i = 0; i < goal; i++) {
             table.put(objects[i], objects[i]);
         }
 
         Object one = table.get(ONE);
-        if (one != ONE)
-        {
-            fail();
+        if (one != ONE) {
+            Assert.fail();
         }
 
         Object two = table.get(TWO);
-        if (two != TWO)
-        {
-            fail();
+        if (two != TWO) {
+            Assert.fail();
         }
 
         Object three = table.get(THREE);
-        if (three != THREE)
-        {
-            fail();
+        if (three != THREE) {
+            Assert.fail();
         }
 
         Object four = table.get(FOUR);
-        if (four != FOUR)
-        {
-            fail();
+        if (four != FOUR) {
+            Assert.fail();
         }
 
         Object five = table.get(FIVE);
-        if (five != null)
-        {
-            fail();
+        if (five != null) {
+            Assert.fail();
         }
 
-        if (table.size() != 4)
-        {
-            fail();
+        if (table.size() != 4) {
+            Assert.fail();
         }
     }
 
-    public void testIndex()
-    {
+    @Test
+    public void testIndex() {
         table.clear();
         int goal = length * 2;
 
-        for (int i = 0; i < goal; i++)
-        {
+        for (int i = 0; i < goal; i++) {
             table.put(objects[i], table.size());
         }
 
-        Integer first = (Integer)table.get(ONE);
-        if (first != 0)
-        {
-            fail();
+        Integer first = (Integer) table.get(ONE);
+        if (first != 0) {
+            Assert.fail();
         }
 
-        Integer second = (Integer)table.get(TWO);
-        if (second != 1)
-        {
-            fail();
+        Integer second = (Integer) table.get(TWO);
+        if (second != 1) {
+            Assert.fail();
         }
 
-        Integer third = (Integer)table.get(THREE);
-        if (third != 2)
-        {
-            fail();
+        Integer third = (Integer) table.get(THREE);
+        if (third != 2) {
+            Assert.fail();
         }
 
-        Integer fourth = (Integer)table.get(FOUR);
-        if (fourth != 3)
-        {
-            fail();
+        Integer fourth = (Integer) table.get(FOUR);
+        if (fourth != 3) {
+            Assert.fail();
         }
 
         Object fifth = table.get(FIVE);
-        if (fifth != null)
-        {
-            fail();
+        if (fifth != null) {
+            Assert.fail();
         }
-    }
-
-    protected void tearDown() throws Exception
-    {
-        table = null;
     }
 }

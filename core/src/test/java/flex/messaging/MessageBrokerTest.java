@@ -17,136 +17,108 @@
 
 package flex.messaging;
 
-import java.util.List;
-import java.util.Map;
-
 import flex.messaging.config.ConfigurationConstants;
 import flex.messaging.config.ConfigurationException;
 import flex.messaging.factories.JavaFactory;
 import flex.messaging.services.MessageService;
 import flex.messaging.services.Service;
 import org.junit.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Important: While adding new tests, make sure you don't create dependencies
  * to other modules. (eg. don't use RemotingDestination as that would create
  * dependency on remoting module; instead add the test in remoting module).
  */
-public class MessageBrokerTest extends TestCase
-{
+public class MessageBrokerTest {
 
-    protected MessageBroker broker;
+    private MessageBroker broker;
 
-    public MessageBrokerTest(String name)
-    {
-        super(name);
-    }
-
-    public static Test suite()
-    {
-        return new TestSuite(MessageBrokerTest.class);
-    }
-
-    protected void setUp() throws Exception
-    {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
         broker = new MessageBroker(false);
         broker.initThreadLocals();
     }
 
-    protected void tearDown() throws Exception
-    {
-        super.tearDown();
-    }
-
-    public void testAddFactory()
-    {
-        String id = "java2";
-        JavaFactory expected = new JavaFactory();        
-        broker.addFactory("java2", expected);
-        
-        JavaFactory actual = (JavaFactory)broker.getFactory(id);
-        Assert.assertEquals(expected, actual);        
-    }
-    
-    public void testAddSameFactoryIdTwice()
-    {
-        String id = "java";
-        JavaFactory expected = new JavaFactory();        
-        try
-        {
-            broker.addFactory(id, expected);
-            fail("ConfigurationException expected");
-        }
-        catch (ConfigurationException ce)
-        {
-            int error = ConfigurationConstants.DUPLICATE_COMPONENT_ID;
-            Assert.assertTrue(ce.getNumber() == error);
-        }                
-    }
-    
-    public void testAddSameFactoryInstanceTwice()
-    {
+    @Test
+    public void testAddFactory() {
         String id = "java2";
         JavaFactory expected = new JavaFactory();
         broker.addFactory("java2", expected);
-        broker.addFactory("java2", expected);
-        
-        JavaFactory actual = (JavaFactory)broker.getFactory(id);
+
+        JavaFactory actual = (JavaFactory) broker.getFactory(id);
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testAddFactoryNullId()
-    {
-        String id = null;
+
+    @Test
+    public void testAddSameFactoryIdTwice() {
+        String id = "java";
         JavaFactory expected = new JavaFactory();
-        try
-        {
+        try {
             broker.addFactory(id, expected);
-            fail("ConfigurationException expected");
-        } 
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
+            int error = ConfigurationConstants.DUPLICATE_COMPONENT_ID;
+            Assert.assertTrue(ce.getNumber() == error);
+        }
+    }
+
+    @Test
+    public void testAddSameFactoryInstanceTwice() {
+        String id = "java2";
+        JavaFactory expected = new JavaFactory();
+        broker.addFactory("java2", expected);
+        broker.addFactory("java2", expected);
+
+        JavaFactory actual = (JavaFactory) broker.getFactory(id);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testAddFactoryNullId() {
+        JavaFactory expected = new JavaFactory();
+        try {
+            broker.addFactory(null, expected);
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             int error = ConfigurationConstants.NULL_COMPONENT_ID;
             Assert.assertTrue(ce.getNumber() == error);
         }
-    }    
-    
-    public void testGetFactories()
-    {
+    }
+
+    @Test
+    public void testGetFactories() {
         String id = "java2";
-        JavaFactory expected = new JavaFactory();        
+        JavaFactory expected = new JavaFactory();
         broker.addFactory(id, expected);
-        
+
         int size = broker.getFactories().size();
         Assert.assertEquals(2, size);
     }
-    
-    public void testRemoveFactory()
-    {
+
+    @Test
+    public void testRemoveFactory() {
         String id = "java";
         broker.removeFactory(id);
         FlexFactory actual = broker.getFactory(id);
 
-        Service expected = null;
-        Assert.assertEquals(expected, actual);        
+        Assert.assertEquals(null, actual);
     }
-    
-    public void testRemoveFactoryNonexistent()
-    {
+
+    @Test
+    public void testRemoveFactoryNonexistent() {
         String id = "nonexistent";
         FlexFactory actual = broker.removeFactory(id);
-        
+
         Assert.assertNull(actual);
     }
-    
-    
-    public void testAddService()
-    {
+
+    @Test
+    public void testAddService() {
         String id = "dummy-service";
         MessageService expected = new MessageService();
         expected.setId(id);
@@ -157,8 +129,8 @@ public class MessageBrokerTest extends TestCase
         Assert.assertEquals(expected.isManaged(), actual.isManaged());
     }
 
-    public void testAddServiceNonManaged()
-    {
+    @Test
+    public void testAddServiceNonManaged() {
         String id = "dummy-service";
         MessageService expected = new MessageService(false);
         expected.setId(id);
@@ -167,43 +139,36 @@ public class MessageBrokerTest extends TestCase
         Service actual = broker.getService(id);
         Assert.assertEquals(expected, actual);
         Assert.assertEquals(expected.isManaged(), actual.isManaged());
-    }    
-    
-    public void testAddServiceNull()
-    {
-        try
-        {
+    }
+
+    @Test
+    public void testAddServiceNull() {
+        try {
             broker.addService(null);
 
-            fail("ConfigurationException expected");
-        } 
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             int error = ConfigurationConstants.NULL_COMPONENT;
             Assert.assertTrue(ce.getNumber() == error);
         }
     }
 
-    public void testAddServiceNullId()
-    {
-        try
-        {
+    @Test
+    public void testAddServiceNullId() {
+        try {
             MessageService svc = new MessageService();
             broker.addService(svc);
 
-            fail("ConfigurationException expected");
-        } 
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             int error = ConfigurationConstants.NULL_COMPONENT_ID;
             Assert.assertTrue(ce.getNumber() == error);
         }
     }
 
-    public void testAddServiceExists()
-    {
-        try
-        {
+    @Test
+    public void testAddServiceExists() {
+        try {
             String id = "dummy-service";
             MessageService svc1 = new MessageService();
             svc1.setId(id);
@@ -212,17 +177,15 @@ public class MessageBrokerTest extends TestCase
             svc2.setId(id);
             broker.addService(svc2);
 
-            fail("ConfigurationException expected");
-        } 
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             int error = ConfigurationConstants.DUPLICATE_COMPONENT_ID;
             Assert.assertTrue(ce.getNumber() == error);
         }
     }
 
-    public void testCreateService()
-    {
+    @Test
+    public void testCreateService() {
 
         String serviceId = "message-service";
         String serviceClass = MessageService.class.getName();
@@ -232,45 +195,39 @@ public class MessageBrokerTest extends TestCase
         Assert.assertEquals(expected, actual);
     }
 
-    public void testCreateServiceNonexistingClass()
-    {
+    @Test
+    public void testCreateServiceNonexistingClass() {
         String serviceId = "remoting-service";
         String serviceClass = "NonexistingClass";
-        
-        try
-        {
+
+        try {
             broker.createService(serviceId, serviceClass);
-            fail ("MessageException expected");
-        }
-        catch (MessageException me)
-        {
+            Assert.fail("MessageException expected");
+        } catch (MessageException me) {
             int error = 10008;  //ClassUtil.TYPE_NOT_FOUND
             Assert.assertEquals(me.getNumber(), error);
         }
 
     }
-        
-    public void testCreateServiceWithExistingId()
-    {
+
+    @Test
+    public void testCreateServiceWithExistingId() {
         String id = "message-service";
         String serviceClass = MessageService.class.getName();
-        
+
         broker.createService(id, serviceClass);
-        try
-        {
+        try {
             broker.createService(id, serviceClass);
-            
-            fail("ConfigurationException expected");
-        }
-        catch (ConfigurationException ce)
-        {
-            int error = ConfigurationConstants.DUPLICATE_COMPONENT_ID; 
+
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
+            int error = ConfigurationConstants.DUPLICATE_COMPONENT_ID;
             Assert.assertEquals(ce.getNumber(), error);
-        }       
+        }
     }
-    
-    public void testRemoveService()
-    {
+
+    @Test
+    public void testRemoveService() {
         String id = "dummy-service";
         MessageService svc = new MessageService();
         svc.setId(id);
@@ -278,46 +235,45 @@ public class MessageBrokerTest extends TestCase
         broker.removeService(id);
         Service actual = broker.getService(id);
 
-        Service expected = null;
-        Assert.assertEquals(expected, actual);
+        Assert.assertEquals(null, actual);
     }
-    
-    public void testRemoveServiceNonexistent()
-    {
+
+    @Test
+    public void testRemoveServiceNonexistent() {
         Service actual = broker.removeService("id");
-        Assert.assertNull(actual);                        
+        Assert.assertNull(actual);
     }
-    
-    public void testGetService()
-    {
+
+    @Test
+    public void testGetService() {
         String id = "dummy-service";
         MessageService expected = new MessageService();
         expected.setId(id);
         broker.addService(expected);
-        
+
         Service actual = broker.getService(id);
         Assert.assertEquals(expected, actual);
     }
-    
- 
+
+
     //Get services_no AUthentication
-    public void testGetServices()
-    {
+    @Test
+    public void testGetServices() {
         String id = "remoting-service";
         MessageService expected1 = new MessageService();
         expected1.setId(id);
         id = "message-service";
         MessageService expected2 = new MessageService();
         expected2.setId(id);
-        
+
         broker.addService(expected1);
         broker.addService(expected2);
-        
+
         Map<String, Service> actual = broker.getServices();
         Assert.assertEquals(expected1, actual.get("remoting-service"));
         Assert.assertEquals(expected2, actual.get("message-service"));
     }
-    
+
     //GetServices should not return an AuthenticationService to the client
 //    public void testGetServicesNoAuthenticationSvc()
 //    {
@@ -336,15 +292,15 @@ public class MessageBrokerTest extends TestCase
 //        Assert.assertNotSame(notExpected, actual.get(1));
 //        Assert.assertEquals(1, actual.size());
 //    }
-    
-    public void testGetServiceNonExistent()
-    {
+
+    @Test
+    public void testGetServiceNonExistent() {
         Service actual = broker.getService("non-existent-id");
         Assert.assertNull(actual);
     }
-        
-    public void testGetChannelIdsNull()
-    {
+
+    @Test
+    public void testGetChannelIdsNull() {
         List<String> channelIds = broker.getChannelIds();
         Assert.assertNull(channelIds);
     }

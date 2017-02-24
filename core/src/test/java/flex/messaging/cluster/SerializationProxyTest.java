@@ -18,21 +18,18 @@ package flex.messaging.cluster;
 
 import flex.messaging.io.SerializationProxy;
 import flex.messaging.io.amf.ASObject;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import junit.framework.TestCase;
 
 
-public class SerializationProxyTest extends TestCase
+public class SerializationProxyTest
 {
-    public SerializationProxyTest(String valueExpression)
-    {
-        super(valueExpression);
-    }
-
     /**
      * For clustering, SerializationProxys must be serialized and
      * deserialized.  This is because any message with a SerializationProxy,
@@ -41,6 +38,7 @@ public class SerializationProxyTest extends TestCase
      * cluster.
      * Bug: LCDS-910
      */
+    @Test
     public void testRoundTripSerialization() throws Exception
     {
         ASObject as = new ASObject();
@@ -59,6 +57,6 @@ public class SerializationProxyTest extends TestCase
         ObjectInputStream ois = new ObjectInputStream(in);
         Object o = ois.readObject();
 
-        assertNotNull("The object should be correctly serialized/deserialized.", o);
+        Assert.assertNotNull("The object should be correctly serialized/deserialized.", o);
     }
 }

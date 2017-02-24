@@ -20,119 +20,77 @@ package flex.messaging.config;
 import flex.messaging.config.ThrottleSettings.Policy;
 import flex.messaging.services.messaging.ThrottleManager;
 import org.junit.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
 
-public class ThrottleSettingsTest extends TestCase
-{
+public class ThrottleSettingsTest {
     private static final String UNEXPECTED_EXCEPTION_STRING = "Unexpected exception: ";
 
-    public ThrottleSettingsTest(String name)
-    {
-        super(name);
-    }
-
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite();
-        suite.addTest(new ThrottleSettingsTest("testSetIncomingClientFrequencyHigherThanDestinationFrequency"));
-        suite.addTest(new ThrottleSettingsTest("testSetIncomingDestinationFrequencyLowerThanClientFrequency"));
-        suite.addTest(new ThrottleSettingsTest("testSetOutgoingClientFrequencyHigherThanDestinationFrequency"));
-        suite.addTest(new ThrottleSettingsTest("testSetOutgoingDestinationFrequencyLowerThanClientFrequency"));
-        suite.addTest(new ThrottleSettingsTest("testSetIncomingClientFrequencyWithZeroDestinationFrequency"));
-        suite.addTest(new ThrottleSettingsTest("testSetIncomingDestinationFrequencyWithZeroClientFrequency"));
-        suite.addTest(new ThrottleSettingsTest("testUnknownPolicy"));
-        suite.addTest(new ThrottleSettingsTest("testOutgoingPolicyError"));
-        return suite;
-    }
-
-    public void testSetIncomingClientFrequencyHigherThanDestinationFrequency()
-    {
+    @Test
+    public void testSetIncomingClientFrequencyHigherThanDestinationFrequency() {
         ThrottleSettings ts = new ThrottleSettings();
         ts.setIncomingDestinationFrequency(10);
-        try
-        {
+        try {
             ts.setIncomingClientFrequency(15);
-            fail("ConfigurationException expected");
-        }
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             // Success.
-        }
-        catch (Exception e)
-        {
-            fail(UNEXPECTED_EXCEPTION_STRING + e);
+        } catch (Exception e) {
+            Assert.fail(UNEXPECTED_EXCEPTION_STRING + e);
         }
     }
 
-    public void testSetIncomingDestinationFrequencyLowerThanClientFrequency()
-    {
+    @Test
+    public void testSetIncomingDestinationFrequencyLowerThanClientFrequency() {
         ThrottleSettings ts = new ThrottleSettings();
         ts.setIncomingClientFrequency(15);
-        try
-        {
+        try {
             ts.setIncomingDestinationFrequency(10);
-            fail("ConfigurationException expected");
-        }
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             // Success.
-        }
-        catch (Exception e)
-        {
-            fail(UNEXPECTED_EXCEPTION_STRING + e);
+        } catch (Exception e) {
+            Assert.fail(UNEXPECTED_EXCEPTION_STRING + e);
         }
     }
 
-    public void testSetOutgoingClientFrequencyHigherThanDestinationFrequency()
-    {
+    @Test
+    public void testSetOutgoingClientFrequencyHigherThanDestinationFrequency() {
         ThrottleSettings ts = new ThrottleSettings();
         ts.setOutgoingDestinationFrequency(10);
-        try
-        {
+        try {
             ts.setOutgoingClientFrequency(15);
-            fail("ConfigurationException expected");
-        }
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             // Success.
-        }
-        catch (Exception e)
-        {
-            fail(UNEXPECTED_EXCEPTION_STRING + e);
+        } catch (Exception e) {
+            Assert.fail(UNEXPECTED_EXCEPTION_STRING + e);
         }
     }
 
-    public void testSetOutgoingDestinationFrequencyLowerThanClientFrequency()
-    {
+    @Test
+    public void testSetOutgoingDestinationFrequencyLowerThanClientFrequency() {
         ThrottleSettings ts = new ThrottleSettings();
         ts.setOutgoingClientFrequency(15);
-        try
-        {
+        try {
             ts.setOutgoingDestinationFrequency(10);
-            fail("ConfigurationException expected");
-        }
-        catch (ConfigurationException ce)
-        {
+            Assert.fail("ConfigurationException expected");
+        } catch (ConfigurationException ce) {
             // Success.
-        }
-        catch (Exception e)
-        {
-            fail(UNEXPECTED_EXCEPTION_STRING + e);
+        } catch (Exception e) {
+            Assert.fail(UNEXPECTED_EXCEPTION_STRING + e);
         }
     }
 
-    public void testSetIncomingClientFrequencyWithZeroDestinationFrequency()
-    {
+    @Test
+    public void testSetIncomingClientFrequencyWithZeroDestinationFrequency() {
         ThrottleSettings ts = new ThrottleSettings();
         ts.setIncomingDestinationFrequency(0);
         ts.setIncomingClientFrequency(10);
         Assert.assertEquals(10, ts.getIncomingClientFrequency());
     }
 
-    public void testSetIncomingDestinationFrequencyWithZeroClientFrequency()
-    {
+    @Test
+    public void testSetIncomingDestinationFrequencyWithZeroClientFrequency() {
         ThrottleSettings ts = new ThrottleSettings();
         ts.setIncomingClientFrequency(0);
         ts.setIncomingDestinationFrequency(10);
@@ -142,41 +100,31 @@ public class ThrottleSettingsTest extends TestCase
     /**
      * Test that an UNKNOWN policy throws ConfigurationException.
      */
-    public void testUnknownPolicy()
-    {
-        try
-        {
+    @Test
+    public void testUnknownPolicy() {
+        try {
             ThrottleSettings.parsePolicy("UNKNOWN");
-        }
-        catch (ConfigurationException ce)
-        {
+        } catch (ConfigurationException ce) {
             // Success.
-        }
-        catch (Exception e)
-        {
-            fail(UNEXPECTED_EXCEPTION_STRING + e);
+        } catch (Exception e) {
+            Assert.fail(UNEXPECTED_EXCEPTION_STRING + e);
         }
     }
 
     /**
      * Test that outgoing policy of ERROR throws ConfigurationException.
      */
-    public void testOutgoingPolicyError()
-    {
+    @Test
+    public void testOutgoingPolicyError() {
         ThrottleManager manager = new ThrottleManager();
         ThrottleSettings ts = new ThrottleSettings();
         ts.setOutboundPolicy(Policy.ERROR);
-        try
-        {
+        try {
             manager.setThrottleSettings(ts);
-        }
-        catch (ConfigurationException ce)
-        {
+        } catch (ConfigurationException ce) {
             // Success.
-        }
-        catch (Exception e)
-        {
-            fail(UNEXPECTED_EXCEPTION_STRING + e);
+        } catch (Exception e) {
+            Assert.fail(UNEXPECTED_EXCEPTION_STRING + e);
         }
     }
 }

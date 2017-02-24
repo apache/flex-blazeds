@@ -20,42 +20,26 @@ package flex.messaging.io.amf.validators;
 import flex.messaging.config.ConfigMap;
 import flex.messaging.io.MessageDeserializer;
 import flex.messaging.io.SerializationContext;
-import flex.messaging.io.amf.ActionContext;
-import flex.messaging.io.amf.ActionMessage;
-import flex.messaging.io.amf.AmfMessageDeserializer;
-import flex.messaging.io.amf.AmfTrace;
-import flex.messaging.io.amf.MessageGenerator;
+import flex.messaging.io.amf.*;
 import flex.messaging.validators.DeserializationValidator;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import macromedia.util.UnitTrace;
+import org.junit.Assert;
+import org.junit.Test;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 
-public class AmfDeserializationValidatorTest extends TestCase
-{
-    public static Test suite()
-    {
-        return new TestSuite(AmfDeserializationValidatorTest.class);
-    }
-
-    public void testDeserializationValidator()
-    {
+public class AmfDeserializationValidatorTest {
+    @Test
+    public void testDeserializationValidator() {
         deserializateRequest(null);
 
         long duration1 = 0, duration2 = 0;
         DeserializationValidator validator = new TestDeserializationValidator();
         int n = 100; // Number of times to run the tests, use an even number.
 
-        for (int i = 0; i < n/2; i++)
-        {
+        for (int i = 0; i < n / 2; i++) {
             long start1 = System.currentTimeMillis();
             deserializateRequest(null);
             duration1 += (System.currentTimeMillis() - start1);
@@ -65,8 +49,7 @@ public class AmfDeserializationValidatorTest extends TestCase
             duration2 += (System.currentTimeMillis() - start2);
         }
 
-        for (int i = 0; i < n/2; i++)
-        {
+        for (int i = 0; i < n / 2; i++) {
             long start2 = System.currentTimeMillis();
             deserializateRequest(validator);
             duration2 += (System.currentTimeMillis() - start2);
@@ -83,10 +66,8 @@ public class AmfDeserializationValidatorTest extends TestCase
         }
     }
 
-    private void deserializateRequest(DeserializationValidator validator)
-    {
-        try
-        {
+    private void deserializateRequest(DeserializationValidator validator) {
+        try {
             // Find sample AMF data, or read the default file.
             String sample = System.getProperty("AMF_SAMPLE_FILE");
             if (sample == null || sample.length() < 1)
@@ -129,38 +110,31 @@ public class AmfDeserializationValidatorTest extends TestCase
 
             //if (UnitTrace.debug) // Print trace output.
             //    System.out.print(trace.toString());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
     }
 
     // A simple deserialization validator that simply returns true for all creation
     // and assignments validations.
-    class TestDeserializationValidator implements DeserializationValidator
-    {
-        public boolean validateAssignment(Object instance, int index, Object value)
-        {
+    class TestDeserializationValidator implements DeserializationValidator {
+        public boolean validateAssignment(Object instance, int index, Object value) {
             //System.out.println("validateAssign: [" + (instance == null? "null" : instance.getClass().getName()) + "," + index + "," + value + "]");
             return true;
         }
 
-        public boolean validateAssignment(Object instance, String propertyName, Object value)
-        {
+        public boolean validateAssignment(Object instance, String propertyName, Object value) {
             //System.out.println("validateAssign: [" + (instance == null? "null" : instance.getClass().getName()) + "," + propertyName + "," + value + "]");
             return true;
         }
 
-        public boolean validateCreation(Class<?> c)
-        {
+        public boolean validateCreation(Class<?> c) {
             //System.out.println("validateCreate: " + (c == null? "null" : c.getName()));
             return true;
         }
 
-        public void initialize(String id, ConfigMap configMap)
-        {
+        public void initialize(String id, ConfigMap configMap) {
             // No-op
         }
     }
