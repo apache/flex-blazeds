@@ -181,8 +181,8 @@
         </configuration>
       </plugin>
 
-      <!-- Diabled the Integration Tests as these seem to hang on the CI server -->
-      <!--plugin>
+      <!-- Disabled the Integration Tests as these seem to hang on the CI server -->
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <executions>
@@ -193,7 +193,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin-->
+      </plugin>
 
       <!-- Turned off till the JavaDoc tags are all correctly set -->
       <plugin>

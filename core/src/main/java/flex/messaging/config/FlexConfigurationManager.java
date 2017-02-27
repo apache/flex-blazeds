@@ -17,8 +17,8 @@
 package flex.messaging.config;
 
 import flex.messaging.LocalizedException;
-import flex.messaging.util.Trace;
 import flex.messaging.util.ClassUtil;
+import flex.messaging.util.Trace;
 
 import javax.servlet.ServletConfig;
 import java.io.File;
@@ -40,22 +40,18 @@ import java.io.File;
  * </p>
  *
  * @see ConfigurationParser
- *
  */
-public class FlexConfigurationManager implements ConfigurationManager
-{
+public class FlexConfigurationManager implements ConfigurationManager {
     private static final String DEFAULT_CONFIG_PATH = "/WEB-INF/flex/services-config.xml";
 
     private String configurationPath = null;
     private ConfigurationFileResolver configurationResolver = null;
     private ConfigurationParser parser = null;
 
-    public MessagingConfiguration getMessagingConfiguration(ServletConfig servletConfig)
-    {
+    public MessagingConfiguration getMessagingConfiguration(ServletConfig servletConfig) {
         MessagingConfiguration config = new MessagingConfiguration();
 
-        if (servletConfig != null)
-        {
+        if (servletConfig != null) {
             String serverInfo = servletConfig.getServletContext().getServerInfo();
             config.getSecuritySettings().setServerInfo(serverInfo);
         }
@@ -64,8 +60,7 @@ public class FlexConfigurationManager implements ConfigurationManager
 
         parser = getConfigurationParser(servletConfig);
 
-        if (parser == null)
-        {
+        if (parser == null) {
             // "Unable to create a parser to load messaging configuration."
             LocalizedException lme = new LocalizedException();
             lme.setMessage(10138);
@@ -75,41 +70,32 @@ public class FlexConfigurationManager implements ConfigurationManager
         setupConfigurationPathAndResolver(servletConfig);
         parser.parse(configurationPath, configurationResolver, config);
 
-        if (servletConfig != null)
-        {
+        if (servletConfig != null) {
             config.getSystemSettings().setPaths(servletConfig.getServletContext());
         }
 
         return config;
     }
 
-    public void reportTokens()
-    {
+    public void reportTokens() {
         parser.reportTokens();
     }
 
-    private ConfigurationParser getConfigurationParser(ServletConfig servletConfig)
-    {
+    private ConfigurationParser getConfigurationParser(ServletConfig servletConfig) {
         ConfigurationParser parser = null;
         Class parserClass;
         String className = null;
 
         // Check for Custom Parser Specification
-        if (servletConfig != null)
-        {
+        if (servletConfig != null) {
             String p = servletConfig.getInitParameter("services.configuration.parser");
-            if (p != null)
-            {
+            if (p != null) {
                 className = p.trim();
-                try
-                {
+                try {
                     parserClass = ClassUtil.createClass(className);
-                    parser = (ConfigurationParser)parserClass.newInstance();
-                }
-                catch (Throwable t)
-                {
-                    if (Trace.config)
-                    {
+                    parser = (ConfigurationParser) parserClass.newInstance();
+                } catch (Throwable t) {
+                    if (Trace.config) {
                         Trace.trace("Could not load configuration parser as: " + className);
                     }
                 }
@@ -118,47 +104,36 @@ public class FlexConfigurationManager implements ConfigurationManager
 
         // Always try Sun JRE 1.4 / Apache Xalan Based Implementation first to
         // avoid performance problems with Sun JRE 1.5 Based Implementation
-        if (parser == null)
-        {
-            try
-            {
+        if (parser == null) {
+            try {
                 ClassUtil.createClass("org.apache.xpath.CachedXPathAPI");
                 className = "flex.messaging.config.ApacheXPathServerConfigurationParser";
                 parserClass = ClassUtil.createClass(className);
-                parser = (ConfigurationParser)parserClass.newInstance();
-            }
-            catch (Throwable t)
-            {
-                if (Trace.config)
-                {
+                parser = (ConfigurationParser) parserClass.newInstance();
+            } catch (Throwable t) {
+                if (Trace.config) {
                     Trace.trace("Could not load configuration parser as: " + className);
                 }
             }
         }
 
         // Try Sun JRE 1.5 Based Implementation
-        if (parser == null)
-        {
-            try
-            {
+        if (parser == null) {
+            try {
                 className = "flex.messaging.config.XPathServerConfigurationParser";
                 parserClass = ClassUtil.createClass(className);
                 // double-check, on some systems the above loads but the import classes don't
                 ClassUtil.createClass("javax.xml.xpath.XPathExpressionException");
 
-                parser = (ConfigurationParser)parserClass.newInstance();
-            }
-            catch (Throwable t)
-            {
-                if (Trace.config)
-                {
+                parser = (ConfigurationParser) parserClass.newInstance();
+            } catch (Throwable t) {
+                if (Trace.config) {
                     Trace.trace("Could not load configuration parser as: " + className);
                 }
             }
         }
 
-        if (Trace.config && parser != null)
-        {
+        if (Trace.config && parser != null) {
             Trace.trace("Services Configuration Parser: " + parser.getClass().getName());
         }
 
@@ -171,28 +146,23 @@ public class FlexConfigurationManager implements ConfigurationManager
      * If an entry is specified for windows starting with '/', it's assumed to be in the web application.
      * If an entry is specified for windows not starting with '\', it's assumed to be on the local file system.
      * If an entry is specified for non-windows starting with '/', we will first look in the web application
-     *  then the the local file system.
+     * then the the local file system.
      *
      * @param servletConfig configuration
      */
-    private void setupConfigurationPathAndResolver(ServletConfig servletConfig)
-    {
-        if (servletConfig != null)
-        {
+    private void setupConfigurationPathAndResolver(ServletConfig servletConfig) {
+        if (servletConfig != null) {
             String p = servletConfig.getInitParameter("services.configuration.file");
-            if ((p == null) || (p.trim().length() == 0))
-            {
+            if ((p == null) || (p.trim().length() == 0)) {
                 // no entry specified in web.xml, always use default and ServletResourceResolver
                 configurationPath = DEFAULT_CONFIG_PATH;
                 configurationResolver = new ServletResourceResolver(servletConfig.getServletContext());
-            }
-            else
-            {
+            } else {
                 // an entry was specified in web.xml,
                 configurationPath = p.trim();
 
                 // If the uri starts with "classpath:" we need to use a different resolver.
-                if(configurationPath.startsWith("classpath:")) {
+                if (configurationPath.startsWith("classpath:")) {
                     configurationResolver = new ClasspathResourceResolver();
                 } else {
                     // on windows, all paths starting with '/' should be available via the servlet resource resolver
@@ -219,20 +189,17 @@ public class FlexConfigurationManager implements ConfigurationManager
         }
 
         // no entry specified in web.xml
-        else
-        {
-            ConfigurationException ce =  new ConfigurationException();
+        else {
+            ConfigurationException ce = new ConfigurationException();
             ce.setMessage("missing ServletConfig object");
             throw ce;
         }
 
 
-   }
+    }
 
-    private void verifyMinimumJavaVersion() throws ConfigurationException
-    {
-        try
-        {
+    private void verifyMinimumJavaVersion() throws ConfigurationException {
+        try {
             boolean minimum = false;
             String version = System.getProperty("java.version");
             String vendor = System.getProperty("java.vendor");
@@ -242,37 +209,24 @@ public class FlexConfigurationManager implements ConfigurationManager
             String[] split = version.split(":");
 
             int first = Integer.parseInt(split[0]);
-            if (first > 1)
-            {
+            if (first > 1) {
                 minimum = true;
-            }
-            else if (first == 1)
-            {
+            } else if (first == 1) {
                 int second = Integer.parseInt(split[1]);
-                if (second > 4)
-                {
+                if (second > 4) {
                     minimum = true;
-                }
-                else  if (second == 4)
-                {
+                } else if (second == 4) {
                     int third = Integer.parseInt(split[2]);
-                    if (third > 2)
-                    {
+                    if (third > 2) {
                         minimum = true;
-                    }
-                    else if (third == 2)
-                    {
-                        if ((vendor != null) && vendor.contains("Sun"))
-                        {
+                    } else if (third == 2) {
+                        if ((vendor != null) && vendor.contains("Sun")) {
                             // test at least 1.4.2_06 on Sun
                             int fourth = Integer.parseInt(split[3]);
-                            if (fourth >= 6)
-                            {
+                            if (fourth >= 6) {
                                 minimum = true;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             // test at least 1.4.2 on non-Sun
                             minimum = true;
                         }
@@ -280,34 +234,24 @@ public class FlexConfigurationManager implements ConfigurationManager
                 }
             }
 
-            if (!minimum)
-            {
+            if (!minimum) {
                 ConfigurationException cx = new ConfigurationException();
 
-                if ((vendor != null) && vendor.contains("Sun"))
-                {
+                if ((vendor != null) && vendor.contains("Sun")) {
                     // The minimum required Java version was not found. Please install JDK 1.4.2_06 or above. Current version is XX.
-                    cx.setMessage(10139, new Object[] { System.getProperty("java.version")});
-                }
-                else
-                {
+                    cx.setMessage(10139, new Object[]{System.getProperty("java.version")});
+                } else {
                     // The minimum required Java version was not found. Please install JDK 1.4.2 or above. Current version is XX.
-                    cx.setMessage(10140, new Object[] { System.getProperty("java.version")});
+                    cx.setMessage(10140, new Object[]{System.getProperty("java.version")});
                 }
 
                 throw cx;
             }
-        }
-        catch (Throwable t)
-        {
-            if (t instanceof ConfigurationException)
-            {
-                throw ((ConfigurationException)t);
-            }
-            else
-            {
-                if (Trace.config)
-                {
+        } catch (Throwable t) {
+            if (t instanceof ConfigurationException) {
+                throw ((ConfigurationException) t);
+            } else {
+                if (Trace.config) {
                     Trace.trace("Could not verified required java version. version=" + System.getProperty("java.version"));
                 }
             }

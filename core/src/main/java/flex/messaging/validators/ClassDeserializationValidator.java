@@ -210,6 +210,7 @@ public class ClassDeserializationValidator implements DeserializationValidator {
      * @param c The class that is being created.
      * @return True if the creation is valid.
      */
+    @Override
     public boolean validateCreation(Class<?> c) {
         String className = c == null ? null : c.getName();
         if (className == null) {

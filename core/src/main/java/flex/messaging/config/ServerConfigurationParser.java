@@ -16,18 +16,15 @@
  */
 package flex.messaging.config;
 
-import flex.messaging.validators.ClassDeserializationValidator;
+import flex.messaging.config.ThrottleSettings.Policy;
+import flex.messaging.util.LocaleUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
-
-import flex.messaging.config.ThrottleSettings.Policy;
-import flex.messaging.util.LocaleUtils;
 
 /**
  * Processes DOM representation of a messaging configuration file.
@@ -35,11 +32,8 @@ import flex.messaging.util.LocaleUtils;
  * Note: Since reference ids are used between elements, certain
  * sections of the document need to be parsed first.
  * </p>
- *
- *
  */
-public abstract class ServerConfigurationParser extends AbstractConfigurationParser
-{
+public abstract class ServerConfigurationParser extends AbstractConfigurationParser {
     /**
      * Used to verify that advanced messaging support has been registered if necessary.
      * If other configuration requires it, but it was not registered a ConfigurationException is thrown.
@@ -48,12 +42,10 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
     private boolean advancedMessagingSupportRegistered = false;
 
     @Override
-    protected void parseTopLevelConfig(Document doc)
-    {
+    protected void parseTopLevelConfig(Document doc) {
         Node root = selectSingleNode(doc, "/" + SERVICES_CONFIG_ELEMENT);
 
-        if (root != null)
-        {
+        if (root != null) {
             allowedChildElements(root, SERVICES_CONFIG_CHILDREN);
 
             securitySection(root); // Parse security before channels.
@@ -79,15 +71,12 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
             validators(root);
 
             // Validate that any dependencies on advanced messaging support can be satisified at runtime.
-            if (verifyAdvancedMessagingSupport && !advancedMessagingSupportRegistered)
-            {
+            if (verifyAdvancedMessagingSupport && !advancedMessagingSupportRegistered) {
                 ConfigurationException e = new ConfigurationException();
                 e.setMessage(REQUIRE_ADVANCED_MESSAGING_SUPPORT);
                 throw e;
             }
-        }
-        else
-        {
+        } else {
             // The services configuration root element must be '{SERVICES_CONFIG_ELEMENT}'.
             ConfigurationException e = new ConfigurationException();
             e.setMessage(INVALID_SERVICES_ROOT, new Object[]{SERVICES_CONFIG_ELEMENT});
@@ -95,16 +84,13 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void clusters(Node root)
-    {
+    private void clusters(Node root) {
         Node clusteringNode = selectSingleNode(root, CLUSTERS_ELEMENT);
-        if (clusteringNode != null)
-        {
+        if (clusteringNode != null) {
             allowedAttributesOrElements(clusteringNode, CLUSTERING_CHILDREN);
 
             NodeList clusters = selectNodeList(clusteringNode, CLUSTER_DEFINITION_ELEMENT);
-            for (int i = 0; i < clusters.getLength(); i++)
-            {
+            for (int i = 0; i < clusters.getLength(); i++) {
                 Node cluster = clusters.item(i);
                 requiredAttributesOrElements(cluster, CLUSTER_DEFINITION_CHILDREN);
                 String clusterName = getAttributeOrChildElement(cluster, ID_ATTR);
@@ -120,48 +106,40 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
                     clusterSettings.setImplementationClass(className);
 
                 String defaultValue = getAttributeOrChildElement(cluster, ClusterSettings.DEFAULT_ELEMENT);
-                if (defaultValue != null && defaultValue.length() > 0)
-                {
+                if (defaultValue != null && defaultValue.length() > 0) {
                     if (defaultValue.equalsIgnoreCase(TRUE_STRING))
                         clusterSettings.setDefault(true);
-                    else if (!defaultValue.equalsIgnoreCase(FALSE_STRING))
-                    {
+                    else if (!defaultValue.equalsIgnoreCase(FALSE_STRING)) {
                         ConfigurationException e = new ConfigurationException();
-                        e.setMessage(10215, new Object[] {clusterName, defaultValue});
+                        e.setMessage(10215, new Object[]{clusterName, defaultValue});
                         throw e;
                     }
                 }
                 String ulb = getAttributeOrChildElement(cluster, ClusterSettings.URL_LOAD_BALANCING);
-                if (ulb != null && ulb.length() > 0)
-                {
-                    if (ulb.equalsIgnoreCase(FALSE_STRING))
-                    {
+                if (ulb != null && ulb.length() > 0) {
+                    if (ulb.equalsIgnoreCase(FALSE_STRING)) {
                         clusterSettings.setURLLoadBalancing(false);
-                    }
-                    else if (!ulb.equalsIgnoreCase(TRUE_STRING))
-                    {
+                    } else if (!ulb.equalsIgnoreCase(TRUE_STRING)) {
                         ConfigurationException e = new ConfigurationException();
-                        e.setMessage(10216, new Object[] {clusterName, ulb});
+                        e.setMessage(10216, new Object[]{clusterName, ulb});
                         throw e;
                     }
                 }
 
                 NodeList properties = selectNodeList(cluster, PROPERTIES_ELEMENT + "/*");
-                if (properties.getLength() > 0)
-                {
+                if (properties.getLength() > 0) {
                     ConfigMap map = properties(properties, getSourceFileOf(cluster));
                     clusterSettings.addProperties(map);
                 }
 
-                ((MessagingConfiguration)config).addClusterSettings(clusterSettings);
+                ((MessagingConfiguration) config).addClusterSettings(clusterSettings);
 
             }
         }
     }
 
 
-    private void securitySection(Node root)
-    {
+    private void securitySection(Node root) {
         Node security = selectSingleNode(root, SECURITY_ELEMENT);
 
         if (security == null)
@@ -170,30 +148,26 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         allowedChildElements(security, SECURITY_CHILDREN);
 
         NodeList list = selectNodeList(security, SECURITY_CONSTRAINT_DEFINITION_ELEMENT);
-        for (int i = 0; i < list.getLength(); i++)
-        {
+        for (int i = 0; i < list.getLength(); i++) {
             Node constraint = list.item(i);
             securityConstraint(constraint, false);
         }
 
         list = selectNodeList(security, CONSTRAINT_INCLUDE_ELEMENT);
-        for (int i = 0; i < list.getLength(); i++)
-        {
+        for (int i = 0; i < list.getLength(); i++) {
             Node include = list.item(i);
             securityConstraintInclude(include);
         }
 
         list = selectNodeList(security, LOGIN_COMMAND_ELEMENT);
-        for (int i = 0; i < list.getLength(); i++)
-        {
+        for (int i = 0; i < list.getLength(); i++) {
             Node login = list.item(i);
-            LoginCommandSettings loginCommandSettings= new LoginCommandSettings();
+            LoginCommandSettings loginCommandSettings = new LoginCommandSettings();
             requiredAttributesOrElements(login, LOGIN_COMMAND_REQ_CHILDREN);
             allowedAttributesOrElements(login, LOGIN_COMMAND_CHILDREN);
 
             String server = getAttributeOrChildElement(login, SERVER_ATTR);
-            if (server.length() == 0)
-            {
+            if (server.length() == 0) {
                 // Attribute '{SERVER_ATTR}' must be specified for element '{LOGIN_COMMAND_ELEMENT}'
                 ConfigurationException e = new ConfigurationException();
                 e.setMessage(MISSING_ATTRIBUTE, new Object[]{SERVER_ATTR, LOGIN_COMMAND_ELEMENT});
@@ -202,8 +176,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
             loginCommandSettings.setServer(server);
 
             String loginClass = getAttributeOrChildElement(login, CLASS_ATTR);
-            if (loginClass.length() == 0)
-            {
+            if (loginClass.length() == 0) {
                 // Attribute '{CLASS_ATTR}' must be specified for element '{LOGIN_COMMAND_ELEMENT}'
                 ConfigurationException e = new ConfigurationException();
                 e.setMessage(MISSING_ATTRIBUTE, new Object[]{CLASS_ATTR, LOGIN_COMMAND_ELEMENT});
@@ -214,15 +187,14 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
             boolean isPerClientAuth = Boolean.valueOf(getAttributeOrChildElement(login, PER_CLIENT_AUTH));
             loginCommandSettings.setPerClientAuthentication(isPerClientAuth);
 
-            ((MessagingConfiguration)config).getSecuritySettings().addLoginCommandSettings(loginCommandSettings);
+            ((MessagingConfiguration) config).getSecuritySettings().addLoginCommandSettings(loginCommandSettings);
         }
 
         boolean recreateHttpSessionAfterLogin = Boolean.valueOf(getAttributeOrChildElement(security, RECREATE_HTTPSESSION_AFTER_LOGIN_ELEMENT));
-        ((MessagingConfiguration)config).getSecuritySettings().setRecreateHttpSessionAfterLogin(recreateHttpSessionAfterLogin);
+        ((MessagingConfiguration) config).getSecuritySettings().setRecreateHttpSessionAfterLogin(recreateHttpSessionAfterLogin);
     }
 
-    private SecurityConstraint securityConstraint(Node constraint, boolean inline)
-    {
+    private SecurityConstraint securityConstraint(Node constraint, boolean inline) {
         SecurityConstraint sc;
 
         // Validation
@@ -230,36 +202,27 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
         // Constraint by reference
         String ref = getAttributeOrChildElement(constraint, REF_ATTR);
-        if (ref.length() > 0)
-        {
-            allowedAttributesOrElements(constraint, new String[] {REF_ATTR});
+        if (ref.length() > 0) {
+            allowedAttributesOrElements(constraint, new String[]{REF_ATTR});
 
-            sc = ((MessagingConfiguration)config).getSecuritySettings().getConstraint(ref);
-            if (sc == null)
-            {
+            sc = ((MessagingConfiguration) config).getSecuritySettings().getConstraint(ref);
+            if (sc == null) {
                 // {SECURITY_CONSTRAINT_DEFINITION_ELEMENT} not found for reference '{ref}'.
                 ConfigurationException e = new ConfigurationException();
                 e.setMessage(REF_NOT_FOUND, new Object[]{SECURITY_CONSTRAINT_DEFINITION_ELEMENT, ref});
                 throw e;
             }
-        }
-        else
-        {
+        } else {
             // New security constraint
             String id = getAttributeOrChildElement(constraint, ID_ATTR);
 
             // If not inline, we must have a valid id to register the constraint!
-            if (inline)
-            {
+            if (inline) {
                 sc = new SecurityConstraint("");
-            }
-            else if (isValidID(id))
-            {
+            } else if (isValidID(id)) {
                 sc = new SecurityConstraint(id);
-                ((MessagingConfiguration)config).getSecuritySettings().addConstraint(sc);
-            }
-            else
-            {
+                ((MessagingConfiguration) config).getSecuritySettings().addConstraint(sc);
+            } else {
                 //Invalid {SECURITY_CONSTRAINT_DEFINITION_ELEMENT} id '{id}'.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(INVALID_ID, new Object[]{SECURITY_CONSTRAINT_DEFINITION_ELEMENT, id});
@@ -273,16 +236,13 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
             // Roles
             Node rolesNode = selectSingleNode(constraint, ROLES_ELEMENT);
-            if (rolesNode != null)
-            {
+            if (rolesNode != null) {
                 allowedChildElements(rolesNode, ROLES_CHILDREN);
                 NodeList roles = selectNodeList(rolesNode, ROLE_ELEMENT);
-                for (int r = 0; r < roles.getLength(); r++)
-                {
+                for (int r = 0; r < roles.getLength(); r++) {
                     Node roleNode = roles.item(r);
                     String role = evaluateExpression(roleNode, ".").toString().trim();
-                    if (role.length() > 0)
-                    {
+                    if (role.length() > 0) {
                         sc.addRole(role);
                     }
                 }
@@ -292,23 +252,17 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         return sc;
     }
 
-    private void securityConstraintInclude(Node constraintInclude)
-    {
+    private void securityConstraintInclude(Node constraintInclude) {
         // Validation
         allowedAttributesOrElements(constraintInclude, CONSTRAINT_INCLUDE_CHILDREN);
 
         String src = getAttributeOrChildElement(constraintInclude, SRC_ATTR);
         String dir = getAttributeOrChildElement(constraintInclude, DIRECTORY_ATTR);
-        if (src.length() > 0)
-        {
+        if (src.length() > 0) {
             constraintIncludeFile(src);
-        }
-        else if (dir.length() > 0)
-        {
+        } else if (dir.length() > 0) {
             constraintIncludeDirectory(dir);
-        }
-        else
-        {
+        } else {
             // The include element ''{0}'' must specify either the ''{1}'' or ''{2}'' attribute.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(MISSING_INCLUDE_ATTRIBUTES, new Object[]{constraintInclude.getNodeName(), SRC_ATTR, DIRECTORY_ATTR});
@@ -316,34 +270,27 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void constraintIncludeFile(String src)
-    {
+    private void constraintIncludeFile(String src) {
         Document doc = loadDocument(src, fileResolver.getIncludedFile(src));
         doc.getDocumentElement().normalize();
 
         // Check for <security-constraints> wrapping more than one definition
         Node servicesNode = selectSingleNode(doc, SECURITY_CONSTRAINTS_ELEMENT);
-        if (servicesNode != null)
-        {
+        if (servicesNode != null) {
             allowedChildElements(servicesNode, SECURITY_CONSTRAINTS_CHILDREN);
             NodeList constraints = selectNodeList(servicesNode, SECURITY_CONSTRAINT_ELEMENT);
-            for (int a = 0; a < constraints.getLength(); a++)
-            {
+            for (int a = 0; a < constraints.getLength(); a++) {
                 Node constraint = constraints.item(a);
                 securityConstraint(constraint, false);
             }
             fileResolver.popIncludedFile();
-        }
-        else // Check for single <security-constraint>
+        } else // Check for single <security-constraint>
         {
             Node constraint = selectSingleNode(doc, "/" + SECURITY_CONSTRAINT_ELEMENT);
-            if (constraint != null)
-            {
+            if (constraint != null) {
                 securityConstraint(constraint, false);
                 fileResolver.popIncludedFile();
-            }
-            else
-            {
+            } else {
                 // The {0} root element in file {1} must be ''{2}'' or ''{3}''.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(INVALID_INCLUDE_ROOT, new Object[]{CONSTRAINT_INCLUDE_ELEMENT, src, SECURITY_CONSTRAINTS_ELEMENT, SECURITY_CONSTRAINT_ELEMENT});
@@ -352,65 +299,54 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void constraintIncludeDirectory(String dir)
-    {
+    private void constraintIncludeDirectory(String dir) {
         List files = fileResolver.getFiles(dir);
-        for (int i = 0; i < files.size(); i++)
-        {
-            String src = (String) files.get(i);
+        for (Object file : files) {
+            String src = (String) file;
             constraintIncludeFile(src);
         }
     }
 
-    private void serversSection(Node root)
-    {
+    private void serversSection(Node root) {
         // Only MessagingConfiguration supports the servers element configuration.
         // The general ServicesConfiguration interface does not.
         if (!(config instanceof MessagingConfiguration))
             return;
 
         Node serversNode = selectSingleNode(root, SERVERS_ELEMENT);
-        if (serversNode != null)
-        {
+        if (serversNode != null) {
             // Validation
             allowedAttributesOrElements(serversNode, SERVERS_CHILDREN);
 
             NodeList servers = selectNodeList(serversNode, SERVER_ELEMENT);
-            for (int i = 0; i < servers.getLength(); i++)
-            {
+            for (int i = 0; i < servers.getLength(); i++) {
                 Node server = servers.item(i);
                 serverDefinition(server);
             }
         }
     }
 
-    private void serverDefinition(Node server)
-    {
+    private void serverDefinition(Node server) {
         // Validation
         requiredAttributesOrElements(server, SERVER_REQ_CHILDREN);
         allowedAttributesOrElements(server, SERVER_CHILDREN);
 
         String id = getAttributeOrChildElement(server, ID_ATTR);
-        if (isValidID(id))
-        {
+        if (isValidID(id)) {
             SharedServerSettings settings = new SharedServerSettings();
             settings.setId(id);
             settings.setSourceFile(getSourceFileOf(server));
             String className = getAttributeOrChildElement(server, CLASS_ATTR);
-            if (className.length() > 0)
-            {
+            if (className.length() > 0) {
                 settings.setClassName(className);
                 // Custom server properties.
                 NodeList properties = selectNodeList(server, PROPERTIES_ELEMENT + "/*");
-                if (properties.getLength() > 0)
-                {
+                if (properties.getLength() > 0) {
                     ConfigMap map = properties(properties, getSourceFileOf(server));
                     settings.addProperties(map);
                 }
-                ((MessagingConfiguration)config).addSharedServerSettings(settings);
-            }
-            else
-            {
+                ((MessagingConfiguration) config).addSharedServerSettings(settings);
+            } else {
                 // Class not specified for {MESSAGE_FILTER_ELEMENT} '{id}'.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(CLASS_NOT_SPECIFIED, new Object[]{SERVER_ELEMENT, id});
@@ -419,42 +355,35 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void channelsSection(Node root)
-    {
+    private void channelsSection(Node root) {
         Node channelsNode = selectSingleNode(root, CHANNELS_ELEMENT);
-        if (channelsNode != null)
-        {
+        if (channelsNode != null) {
             // Validation
             allowedAttributesOrElements(channelsNode, CHANNELS_CHILDREN);
 
             NodeList channels = selectNodeList(channelsNode, CHANNEL_DEFINITION_ELEMENT);
-            for (int i = 0; i < channels.getLength(); i++)
-            {
+            for (int i = 0; i < channels.getLength(); i++) {
                 Node channel = channels.item(i);
                 channelDefinition(channel);
             }
 
             NodeList includes = selectNodeList(channelsNode, CHANNEL_INCLUDE_ELEMENT);
-            for (int i = 0; i < includes.getLength(); i++)
-            {
+            for (int i = 0; i < includes.getLength(); i++) {
                 Node include = includes.item(i);
                 channelInclude(include);
             }
         }
     }
 
-    private void channelDefinition(Node channel)
-    {
+    private void channelDefinition(Node channel) {
         // Validation
         requiredAttributesOrElements(channel, CHANNEL_DEFINITION_REQ_CHILDREN);
         allowedAttributesOrElements(channel, CHANNEL_DEFINITION_CHILDREN);
 
         String id = getAttributeOrChildElement(channel, ID_ATTR);
-        if (isValidID(id))
-        {
+        if (isValidID(id)) {
             // Don't allow multiple channels with the same id
-            if (config.getChannelSettings(id) != null)
-            {
+            if (config.getChannelSettings(id) != null) {
                 // Cannot have multiple channels with the same id ''{0}''.
                 ConfigurationException e = new ConfigurationException();
                 e.setMessage(DUPLICATE_CHANNEL_ERROR, new Object[]{id});
@@ -470,8 +399,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
             // Endpoint
             Node endpoint = selectSingleNode(channel, ENDPOINT_ELEMENT);
-            if (endpoint != null)
-            {
+            if (endpoint != null) {
                 // Endpoint Validation
                 allowedAttributesOrElements(endpoint, ENDPOINT_CHILDREN);
 
@@ -491,8 +419,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
             // Server reference
             Node server = selectSingleNode(channel, SERVER_ELEMENT);
-            if (server != null)
-            {
+            if (server != null) {
                 requiredAttributesOrElements(server, CHANNEL_DEFINITION_SERVER_REQ_CHILDREN);
 
                 String serverId = getAttributeOrChildElement(server, REF_ATTR);
@@ -501,21 +428,17 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
             // Channel Properties
             NodeList properties = selectNodeList(channel, PROPERTIES_ELEMENT + "/*");
-            if (properties.getLength() > 0)
-            {
+            if (properties.getLength() > 0) {
                 ConfigMap map = properties(properties, getSourceFileOf(channel));
                 channelSettings.addProperties(map);
 
                 // Sniff for adaptive-frequency under flex-client-queue-processor hich requires advanced messaging support.
-                if (!verifyAdvancedMessagingSupport)
-                {
+                if (!verifyAdvancedMessagingSupport) {
                     ConfigMap outboundQueueProcessor = map.getPropertyAsMap(FLEX_CLIENT_OUTBOUND_QUEUE_PROCESSOR_ELEMENT, null);
-                    if (outboundQueueProcessor != null)
-                    {
+                    if (outboundQueueProcessor != null) {
                         // Flex client queue processor properties
                         ConfigMap queueProcessorProperties = outboundQueueProcessor.getPropertyAsMap(PROPERTIES_ELEMENT, null);
-                        if (queueProcessorProperties != null)
-                        {
+                        if (queueProcessorProperties != null) {
                             // Sniff for adaptive-frequency which requires advanced messaging support.
                             boolean adaptiveFrequency = queueProcessorProperties.getPropertyAsBoolean(ADAPTIVE_FREQUENCY, false);
                             if (adaptiveFrequency)
@@ -529,39 +452,29 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
             // Security-constraint short-cut attribute
             String ref = evaluateExpression(channel, "@" + SECURITY_CONSTRAINT_ATTR).toString().trim();
-            if (ref.length() > 0)
-            {
-                SecurityConstraint sc = ((MessagingConfiguration)config).getSecuritySettings().getConstraint(ref);
-                if (sc != null)
-                {
+            if (ref.length() > 0) {
+                SecurityConstraint sc = ((MessagingConfiguration) config).getSecuritySettings().getConstraint(ref);
+                if (sc != null) {
                     channelSettings.setConstraint(sc);
-                }
-                else
-                {
+                } else {
                     // {SECURITY_CONSTRAINT_ELEMENT} not found for reference '{ref}' in channel '{id}'.
                     ConfigurationException ex = new ConfigurationException();
                     ex.setMessage(REF_NOT_FOUND_IN_CHANNEL, new Object[]{SECURITY_CONSTRAINT_ATTR, ref, id});
                     throw ex;
                 }
-            }
-            else
-            {
+            } else {
                 // Inline security element
                 Node security = selectSingleNode(channel, SECURITY_ELEMENT);
-                if (security != null)
-                {
+                if (security != null) {
                     allowedChildElements(security, EMBEDDED_SECURITY_CHILDREN);
                     Node constraint = selectSingleNode(security, SECURITY_CONSTRAINT_ELEMENT);
-                    if (constraint != null)
-                    {
+                    if (constraint != null) {
                         SecurityConstraint sc = securityConstraint(constraint, true);
                         channelSettings.setConstraint(sc);
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             // Invalid {CHANNEL_DEFINITION_ELEMENT} id '{id}'.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(INVALID_ID, new Object[]{CHANNEL_DEFINITION_ELEMENT, id});
@@ -570,35 +483,31 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void channelServerOnlyAttribute(Node channel, ChannelSettings channelSettings)
-    {
+    private void channelServerOnlyAttribute(Node channel, ChannelSettings channelSettings) {
         String clientType = getAttributeOrChildElement(channel, CLASS_ATTR);
-        clientType = clientType.length() > 0? clientType : null;
+        clientType = clientType.length() > 0 ? clientType : null;
 
         String serverOnlyString = getAttributeOrChildElement(channel, SERVER_ONLY_ATTR);
-        boolean serverOnly = serverOnlyString.length() > 0? Boolean.valueOf(serverOnlyString) : false;
+        boolean serverOnly = serverOnlyString.length() > 0 ? Boolean.valueOf(serverOnlyString) : false;
 
         if (clientType == null && !serverOnly) // None set.
         {
             String url = channelSettings.getUri();
             boolean serverOnlyProtocol = (url.startsWith("samfsocket") || url.startsWith("amfsocket") || url.startsWith("ws"));
-            if (!serverOnlyProtocol)
-            {
+            if (!serverOnlyProtocol) {
                 // Endpoint ''{0}'' needs to have either class or server-only attribute defined.
                 ConfigurationException ce = new ConfigurationException();
                 ce.setMessage(CLASS_OR_SERVER_ONLY_ERROR, new Object[]{channelSettings.getId()});
                 throw ce;
             }
             channelSettings.setServerOnly(true);
-        }
-        else if (clientType != null && serverOnly) // Both set.
+        } else if (clientType != null && serverOnly) // Both set.
         {
             // Endpoint ''{0}'' cannot have both class and server-only attribute defined.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(CLASS_AND_SERVER_ONLY_ERROR, new Object[]{channelSettings.getId()});
             throw ce;
-        }
-        else // One of them set.
+        } else // One of them set.
         {
             if (serverOnly)
                 channelSettings.setServerOnly(true);
@@ -607,23 +516,17 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void channelInclude(Node channelInclude)
-    {
+    private void channelInclude(Node channelInclude) {
         // Validation
         allowedAttributesOrElements(channelInclude, CHANNEL_INCLUDE_CHILDREN);
 
         String src = getAttributeOrChildElement(channelInclude, SRC_ATTR);
         String dir = getAttributeOrChildElement(channelInclude, DIRECTORY_ATTR);
-        if (src.length() > 0)
-        {
+        if (src.length() > 0) {
             channelIncludeFile(src);
-        }
-        else if (dir.length() > 0)
-        {
+        } else if (dir.length() > 0) {
             channelIncludeDirectory(dir);
-        }
-        else
-        {
+        } else {
             // The include element ''{0}'' must specify either the ''{1}'' or ''{2}'' attribute.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(MISSING_INCLUDE_ATTRIBUTES, new Object[]{channelInclude.getNodeName(), SRC_ATTR, DIRECTORY_ATTR});
@@ -631,34 +534,27 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void channelIncludeFile(String src)
-    {
+    private void channelIncludeFile(String src) {
         Document doc = loadDocument(src, fileResolver.getIncludedFile(src));
         doc.getDocumentElement().normalize();
 
         // Check for multiple channels in a single file.
         Node channelsNode = selectSingleNode(doc, CHANNELS_ELEMENT);
-        if (channelsNode != null)
-        {
+        if (channelsNode != null) {
             allowedChildElements(channelsNode, CHANNELS_CHILDREN);
             NodeList channels = selectNodeList(channelsNode, CHANNEL_DEFINITION_ELEMENT);
-            for (int a = 0; a < channels.getLength(); a++)
-            {
+            for (int a = 0; a < channels.getLength(); a++) {
                 Node service = channels.item(a);
                 channelDefinition(service);
             }
             fileResolver.popIncludedFile();
-        }
-        else // Check for single channel in the file.
+        } else // Check for single channel in the file.
         {
             Node channel = selectSingleNode(doc, "/" + CHANNEL_DEFINITION_ELEMENT);
-            if (channel != null)
-            {
+            if (channel != null) {
                 channelDefinition(channel);
                 fileResolver.popIncludedFile();
-            }
-            else
-            {
+            } else {
                 // The {0} root element in file {1} must be '{CHANNELS_ELEMENT}' or '{CHANNEL_ELEMENT}'.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(INVALID_INCLUDE_ROOT, new Object[]{CHANNEL_INCLUDE_ELEMENT, src, CHANNELS_ELEMENT, CHANNEL_DEFINITION_ELEMENT});
@@ -667,73 +563,59 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void channelIncludeDirectory(String dir)
-    {
+    private void channelIncludeDirectory(String dir) {
         List files = fileResolver.getFiles(dir);
-        for (int i = 0; i < files.size(); i++)
-        {
-            String src = (String) files.get(i);
+        for (Object file : files) {
+            String src = (String) file;
             channelIncludeFile(src);
         }
     }
 
-    private void services(Node root)
-    {
+    private void services(Node root) {
         Node servicesNode = selectSingleNode(root, SERVICES_ELEMENT);
-        if (servicesNode != null)
-        {
+        if (servicesNode != null) {
             // Validation
             allowedChildElements(servicesNode, SERVICES_CHILDREN);
 
             // Default Channels for the application
             Node defaultChannels = selectSingleNode(servicesNode, DEFAULT_CHANNELS_ELEMENT);
-            if (defaultChannels != null)
-            {
+            if (defaultChannels != null) {
                 allowedChildElements(defaultChannels, DEFAULT_CHANNELS_CHILDREN);
                 NodeList channels = selectNodeList(defaultChannels, CHANNEL_ELEMENT);
-                for (int c = 0; c < channels.getLength(); c++)
-                {
+                for (int c = 0; c < channels.getLength(); c++) {
                     Node chan = channels.item(c);
-                    allowedAttributes(chan, new String[] {REF_ATTR});
+                    allowedAttributes(chan, new String[]{REF_ATTR});
                     defaultChannel(chan);
                 }
             }
 
             // Service Includes
             NodeList services = selectNodeList(servicesNode, SERVICE_INCLUDE_ELEMENT);
-            for (int i = 0; i < services.getLength(); i++)
-            {
+            for (int i = 0; i < services.getLength(); i++) {
                 Node service = services.item(i);
                 serviceInclude(service);
             }
 
             // Service
             services = selectNodeList(servicesNode, SERVICE_ELEMENT);
-            for (int i = 0; i < services.getLength(); i++)
-            {
+            for (int i = 0; i < services.getLength(); i++) {
                 Node service = services.item(i);
                 service(service);
             }
         }
     }
 
-    private void serviceInclude(Node serviceInclude)
-    {
+    private void serviceInclude(Node serviceInclude) {
         // Validation
         allowedAttributesOrElements(serviceInclude, SERVICE_INCLUDE_CHILDREN);
 
         String src = getAttributeOrChildElement(serviceInclude, SRC_ATTR);
         String dir = getAttributeOrChildElement(serviceInclude, DIRECTORY_ATTR);
-        if (src.length() > 0)
-        {
+        if (src.length() > 0) {
             serviceIncludeFile(src);
-        }
-        else if (dir.length() > 0)
-        {
+        } else if (dir.length() > 0) {
             serviceIncludeDirectory(dir);
-        }
-        else
-        {
+        } else {
             // The include element ''{0}'' must specify either the ''{1}'' or ''{2}'' attribute.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(MISSING_INCLUDE_ATTRIBUTES, new Object[]{serviceInclude.getNodeName(), SRC_ATTR, DIRECTORY_ATTR});
@@ -741,34 +623,27 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void serviceIncludeFile(String src)
-    {
+    private void serviceIncludeFile(String src) {
         Document doc = loadDocument(src, fileResolver.getIncludedFile(src));
         doc.getDocumentElement().normalize();
 
         // Check for multiple services defined in a <services> tag
         Node servicesNode = selectSingleNode(doc, SERVICES_ELEMENT);
-        if (servicesNode != null)
-        {
+        if (servicesNode != null) {
             allowedChildElements(servicesNode, SERVICES_CHILDREN);
             NodeList services = selectNodeList(servicesNode, SERVICE_ELEMENT);
-            for (int a = 0; a < services.getLength(); a++)
-            {
+            for (int a = 0; a < services.getLength(); a++) {
                 Node service = services.item(a);
                 service(service);
             }
             fileResolver.popIncludedFile();
-        }
-        else // Check for single <service> definition.
+        } else // Check for single <service> definition.
         {
             Node service = selectSingleNode(doc, "/" + SERVICE_ELEMENT);
-            if (service != null)
-            {
+            if (service != null) {
                 service(service);
                 fileResolver.popIncludedFile();
-            }
-            else
-            {
+            } else {
                 // The {0} root element in file {1} must be ''{2}'' or ''{3}''.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(INVALID_INCLUDE_ROOT, new Object[]{SERVICE_INCLUDE_ELEMENT, src, SERVICES_ELEMENT, SERVICE_ELEMENT});
@@ -777,34 +652,27 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void serviceIncludeDirectory(String dir)
-    {
+    private void serviceIncludeDirectory(String dir) {
         List files = fileResolver.getFiles(dir);
-        for (int i = 0; i < files.size(); i++)
-        {
-            String src = (String) files.get(i);
+        for (Object file : files) {
+            String src = (String) file;
             serviceIncludeFile(src);
         }
     }
 
-    private void service(Node service)
-    {
+    private void service(Node service) {
         // Validation
         requiredAttributesOrElements(service, SERVICE_REQ_CHILDREN);
         allowedAttributesOrElements(service, SERVICE_CHILDREN);
 
         String id = getAttributeOrChildElement(service, ID_ATTR);
-        if (isValidID(id))
-        {
+        if (isValidID(id)) {
             ServiceSettings serviceSettings = config.getServiceSettings(id);
-            if (serviceSettings == null)
-            {
+            if (serviceSettings == null) {
                 serviceSettings = new ServiceSettings(id);
                 serviceSettings.setSourceFile(getSourceFileOf(service));
                 config.addServiceSettings(serviceSettings);
-            }
-            else
-            {
+            } else {
                 // Duplicate service definition '{0}'.
                 ConfigurationException e = new ConfigurationException();
                 e.setMessage(DUPLICATE_SERVICE_ERROR, new Object[]{id});
@@ -813,16 +681,13 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
             // Service Class Name
             String className = getAttributeOrChildElement(service, CLASS_ATTR);
-            if (className.length() > 0)
-            {
+            if (className.length() > 0) {
                 serviceSettings.setClassName(className);
 
                 // Sniff for AdvancedMessagingSupport.
                 if (className.equals("flex.messaging.services.AdvancedMessagingSupport"))
                     advancedMessagingSupportRegistered = true;
-            }
-            else
-            {
+            } else {
                 // Class not specified for {SERVICE_ELEMENT} '{id}'.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(CLASS_NOT_SPECIFIED, new Object[]{SERVICE_ELEMENT, id});
@@ -833,31 +698,26 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
             // Service Properties
             NodeList properties = selectNodeList(service, PROPERTIES_ELEMENT + "/*");
-            if (properties.getLength() > 0)
-            {
+            if (properties.getLength() > 0) {
                 ConfigMap map = properties(properties, getSourceFileOf(service));
                 serviceSettings.addProperties(map);
             }
 
             // Default Channels
             Node defaultChannels = selectSingleNode(service, DEFAULT_CHANNELS_ELEMENT);
-            if (defaultChannels != null)
-            {
+            if (defaultChannels != null) {
                 allowedChildElements(defaultChannels, DEFAULT_CHANNELS_CHILDREN);
                 NodeList channels = selectNodeList(defaultChannels, CHANNEL_ELEMENT);
-                for (int c = 0; c < channels.getLength(); c++)
-                {
+                for (int c = 0; c < channels.getLength(); c++) {
                     Node chan = channels.item(c);
-                    allowedAttributes(chan, new String[] {REF_ATTR});
+                    allowedAttributes(chan, new String[]{REF_ATTR});
                     defaultChannel(chan, serviceSettings);
                 }
             }
             // Fall back on application's default channels
-            else if (config.getDefaultChannels().size() > 0)
-            {
-                for (Iterator iter = config.getDefaultChannels().iterator(); iter.hasNext();)
-                {
-                    String channelId = (String)iter.next();
+            else if (config.getDefaultChannels().size() > 0) {
+                for (Object o : config.getDefaultChannels()) {
+                    String channelId = (String) o;
                     ChannelSettings channel = config.getChannelSettings(channelId);
                     serviceSettings.addDefaultChannel(channel);
                 }
@@ -865,27 +725,22 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
             // Default Security Constraint
             Node defaultSecurityConstraint = selectSingleNode(service, DEFAULT_SECURITY_CONSTRAINT_ELEMENT);
-            if (defaultSecurityConstraint != null)
-            {
+            if (defaultSecurityConstraint != null) {
                 // Validation
-                requiredAttributesOrElements(defaultSecurityConstraint, new String[] {REF_ATTR});
-                allowedAttributesOrElements(defaultSecurityConstraint, new String[] {REF_ATTR});
+                requiredAttributesOrElements(defaultSecurityConstraint, new String[]{REF_ATTR});
+                allowedAttributesOrElements(defaultSecurityConstraint, new String[]{REF_ATTR});
 
                 String ref = getAttributeOrChildElement(defaultSecurityConstraint, REF_ATTR);
-                if (ref.length() > 0)
-                {
-                    SecurityConstraint sc = ((MessagingConfiguration)config).getSecuritySettings().getConstraint(ref);
-                    if (sc == null)
-                    {
+                if (ref.length() > 0) {
+                    SecurityConstraint sc = ((MessagingConfiguration) config).getSecuritySettings().getConstraint(ref);
+                    if (sc == null) {
                         // {SECURITY_CONSTRAINT_DEFINITION_ELEMENT} not found for reference '{ref}'.
                         ConfigurationException e = new ConfigurationException();
                         e.setMessage(REF_NOT_FOUND, new Object[]{SECURITY_CONSTRAINT_DEFINITION_ELEMENT, ref});
                         throw e;
                     }
                     serviceSettings.setConstraint(sc);
-                }
-                else
-                {
+                } else {
                     //Invalid default-security-constraint reference ''{0}'' in service ''{1}''.
                     ConfigurationException ex = new ConfigurationException();
                     ex.setMessage(INVALID_SECURITY_CONSTRAINT_REF, new Object[]{ref, id});
@@ -895,18 +750,15 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
             // Adapter Definitions
             Node adapters = selectSingleNode(service, ADAPTERS_ELEMENT);
-            if (adapters != null)
-            {
+            if (adapters != null) {
                 allowedChildElements(adapters, ADAPTERS_CHILDREN);
                 NodeList serverAdapters = selectNodeList(adapters, ADAPTER_DEFINITION_ELEMENT);
-                for (int a = 0; a < serverAdapters.getLength(); a++)
-                {
+                for (int a = 0; a < serverAdapters.getLength(); a++) {
                     Node adapter = serverAdapters.item(a);
                     adapterDefinition(adapter, serviceSettings);
                 }
                 NodeList adapterIncludes = selectNodeList(adapters, ADAPTER_INCLUDE_ELEMENT);
-                for (int a = 0; a < adapterIncludes.getLength(); a++)
-                {
+                for (int a = 0; a < adapterIncludes.getLength(); a++) {
                     Node include = adapterIncludes.item(a);
                     adapterInclude(include, serviceSettings);
                 }
@@ -914,22 +766,18 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
             // Destinations
             NodeList list = selectNodeList(service, DESTINATION_ELEMENT);
-            for (int i = 0; i < list.getLength(); i++)
-            {
+            for (int i = 0; i < list.getLength(); i++) {
                 Node dest = list.item(i);
                 destination(dest, serviceSettings);
             }
 
             // Destination Includes
             list = selectNodeList(service, DESTINATION_INCLUDE_ELEMENT);
-            for (int i = 0; i < list.getLength(); i++)
-            {
+            for (int i = 0; i < list.getLength(); i++) {
                 Node dest = list.item(i);
                 destinationInclude(dest, serviceSettings);
             }
-        }
-        else
-        {
+        } else {
             //Invalid {SERVICE_ELEMENT} id '{id}'.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(INVALID_ID, new Object[]{SERVICE_ELEMENT, id});
@@ -945,29 +793,23 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
      * &lt;channel ref="channel-id"/&gt;<br/>
      * &lt;default-channels&gt;
      * </p>
+     *
      * @param chan the channel node
      */
-    private void defaultChannel(Node chan)
-    {
+    private void defaultChannel(Node chan) {
         String ref = getAttributeOrChildElement(chan, REF_ATTR);
 
-        if (ref.length() > 0)
-        {
+        if (ref.length() > 0) {
             ChannelSettings channel = config.getChannelSettings(ref);
-            if (channel != null)
-            {
+            if (channel != null) {
                 config.addDefaultChannel(channel.getId());
-            }
-            else
-            {
+            } else {
                 // {0} not found for reference '{1}'
                 ConfigurationException e = new ConfigurationException();
                 e.setMessage(REF_NOT_FOUND, new Object[]{CHANNEL_ELEMENT, ref});
                 throw e;
             }
-        }
-        else
-        {
+        } else {
             //A default channel was specified without a reference for service '{0}'.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(INVALID_DEFAULT_CHANNEL, new Object[]{"MessageBroker"});
@@ -983,30 +825,24 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
      * &lt;channel ref="channel-id"/&gt;<br/>
      * &lt;default-channels&gt;
      * </p>
-     * @param chan the channel node
+     *
+     * @param chan            the channel node
      * @param serviceSettings service settings
      */
-    private void defaultChannel(Node chan, ServiceSettings serviceSettings)
-    {
+    private void defaultChannel(Node chan, ServiceSettings serviceSettings) {
         String ref = getAttributeOrChildElement(chan, REF_ATTR);
 
-        if (ref.length() > 0)
-        {
+        if (ref.length() > 0) {
             ChannelSettings channel = config.getChannelSettings(ref);
-            if (channel != null)
-            {
+            if (channel != null) {
                 serviceSettings.addDefaultChannel(channel);
-            }
-            else
-            {
+            } else {
                 // {0} not found for reference '{1}'
                 ConfigurationException e = new ConfigurationException();
                 e.setMessage(REF_NOT_FOUND, new Object[]{CHANNEL_ELEMENT, ref});
                 throw e;
             }
-        }
-        else
-        {
+        } else {
             //A default channel was specified without a reference for service '{0}'.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(INVALID_DEFAULT_CHANNEL, new Object[]{serviceSettings.getId()});
@@ -1014,8 +850,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void adapterDefinition(Node adapter, ServiceSettings serviceSettings)
-    {
+    private void adapterDefinition(Node adapter, ServiceSettings serviceSettings) {
         // Validation
         requiredAttributesOrElements(adapter, ADAPTER_DEFINITION_REQ_CHILDREN);
         allowedChildElements(adapter, ADAPTER_DEFINITION_CHILDREN);
@@ -1023,27 +858,23 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         String serviceId = serviceSettings.getId();
 
         String id = getAttributeOrChildElement(adapter, ID_ATTR);
-        if (isValidID(id))
-        {
+        if (isValidID(id)) {
             AdapterSettings adapterSettings = new AdapterSettings(id);
             adapterSettings.setSourceFile(getSourceFileOf(adapter));
             String className = getAttributeOrChildElement(adapter, CLASS_ATTR);
 
-            if (className.length() > 0)
-            {
+            if (className.length() > 0) {
                 adapterSettings.setClassName(className);
 
                 // Default Adapter Check
                 boolean isDefault = Boolean.valueOf(getAttributeOrChildElement(adapter, DEFAULT_ATTR));
-                if (isDefault)
-                {
-                    adapterSettings.setDefault(isDefault);
+                if (isDefault) {
+                    adapterSettings.setDefault(true);
 
                     AdapterSettings defaultAdapter;
                     defaultAdapter = serviceSettings.getDefaultAdapter();
 
-                    if (defaultAdapter != null)
-                    {
+                    if (defaultAdapter != null) {
                         // Duplicate default adapter '{0}' in service '{1}'. '{2}' has already been selected as the default.
                         ConfigurationException ex = new ConfigurationException();
                         ex.setMessage(DUPLICATE_DEFAULT_ADAPTER, new Object[]{id, serviceId, defaultAdapter.getId()});
@@ -1055,22 +886,17 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
                 // Adapter Properties
                 NodeList properties = selectNodeList(adapter, PROPERTIES_ELEMENT + "/*");
-                if (properties.getLength() > 0)
-                {
+                if (properties.getLength() > 0) {
                     ConfigMap map = properties(properties, getSourceFileOf(adapter));
                     adapterSettings.addProperties(map);
                 }
-            }
-            else
-            {
+            } else {
                 // Class not specified for {ADAPTER_DEFINITION_ELEMENT} '{id}'.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(CLASS_NOT_SPECIFIED, new Object[]{ADAPTER_DEFINITION_ELEMENT, id});
                 throw ex;
             }
-        }
-        else
-        {
+        } else {
             //Invalid {ADAPTER_DEFINITION_ELEMENT} id '{id}' for service '{serviceId}'.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(INVALID_ID_IN_SERVICE, new Object[]{ADAPTER_DEFINITION_ELEMENT, id, serviceId});
@@ -1078,23 +904,17 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void adapterInclude(Node adapterInclude, ServiceSettings serviceSettings)
-    {
+    private void adapterInclude(Node adapterInclude, ServiceSettings serviceSettings) {
         // Validation
         allowedAttributesOrElements(adapterInclude, ADAPTER_INCLUDE_CHILDREN);
 
         String src = getAttributeOrChildElement(adapterInclude, SRC_ATTR);
         String dir = getAttributeOrChildElement(adapterInclude, DIRECTORY_ATTR);
-        if (src.length() > 0)
-        {
+        if (src.length() > 0) {
             adapterIncludeFile(serviceSettings, src);
-        }
-        else if (dir.length() > 0)
-        {
+        } else if (dir.length() > 0) {
             adapterIncludeDirectory(serviceSettings, dir);
-        }
-        else
-        {
+        } else {
             // Attribute '{0}' must be specified for element '{1}'
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(MISSING_INCLUDE_ATTRIBUTES, new Object[]{adapterInclude.getNodeName(), SRC_ATTR, DIRECTORY_ATTR});
@@ -1102,44 +922,35 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void adapterIncludeDirectory(ServiceSettings serviceSettings, String dir)
-    {
+    private void adapterIncludeDirectory(ServiceSettings serviceSettings, String dir) {
         List files = fileResolver.getFiles(dir);
-        for (int i = 0; i < files.size(); i++)
-        {
-            String src = (String) files.get(i);
+        for (Object file : files) {
+            String src = (String) file;
             adapterIncludeFile(serviceSettings, src);
         }
     }
 
-    private void adapterIncludeFile(ServiceSettings serviceSettings, String src)
-    {
+    private void adapterIncludeFile(ServiceSettings serviceSettings, String src) {
         Document doc = loadDocument(src, fileResolver.getIncludedFile(src));
         doc.getDocumentElement().normalize();
 
         // Check for multiple adapters defined in file wrapped in an <adapters> element
         Node adaptersNode = selectSingleNode(doc, ADAPTERS_ELEMENT);
-        if (adaptersNode != null)
-        {
+        if (adaptersNode != null) {
             allowedChildElements(adaptersNode, ADAPTERS_CHILDREN);
             NodeList adapters = selectNodeList(adaptersNode, ADAPTER_DEFINITION_ELEMENT);
-            for (int a = 0; a < adapters.getLength(); a++)
-            {
+            for (int a = 0; a < adapters.getLength(); a++) {
                 Node adapter = adapters.item(a);
                 adapterDefinition(adapter, serviceSettings);
             }
             fileResolver.popIncludedFile();
-        }
-        else // Check for single adapter
+        } else // Check for single adapter
         {
             Node adapter = selectSingleNode(doc, "/" + ADAPTER_DEFINITION_ELEMENT);
-            if (adapter != null)
-            {
+            if (adapter != null) {
                 adapterDefinition(adapter, serviceSettings);
                 fileResolver.popIncludedFile();
-            }
-            else
-            {
+            } else {
                 // The {0} root element in file {1} must be ''{2}'' or ''{3}''.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(INVALID_INCLUDE_ROOT, new Object[]{ADAPTER_INCLUDE_ELEMENT, src, ADAPTERS_ELEMENT, ADAPTER_DEFINITION_ELEMENT});
@@ -1148,23 +959,17 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void destinationInclude(Node destInclude, ServiceSettings serviceSettings)
-    {
+    private void destinationInclude(Node destInclude, ServiceSettings serviceSettings) {
         // Validation
         allowedAttributesOrElements(destInclude, DESTINATION_INCLUDE_CHILDREN);
 
         String src = getAttributeOrChildElement(destInclude, SRC_ATTR);
         String dir = getAttributeOrChildElement(destInclude, DIRECTORY_ATTR);
-        if (src.length() > 0)
-        {
+        if (src.length() > 0) {
             destinationIncludeFile(serviceSettings, src);
-        }
-        else if (dir.length() > 0)
-        {
+        } else if (dir.length() > 0) {
             destinationIncludeDirectory(serviceSettings, dir);
-        }
-        else
-        {
+        } else {
             // The include element ''{0}'' must specify either the ''{1}'' or ''{2}'' attribute.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(MISSING_INCLUDE_ATTRIBUTES, new Object[]{destInclude.getNodeName(), SRC_ATTR, DIRECTORY_ATTR});
@@ -1172,44 +977,35 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void destinationIncludeDirectory(ServiceSettings serviceSettings, String dir)
-    {
+    private void destinationIncludeDirectory(ServiceSettings serviceSettings, String dir) {
         List files = fileResolver.getFiles(dir);
-        for (int i = 0; i < files.size(); i++)
-        {
-            String src = (String) files.get(i);
+        for (Object file : files) {
+            String src = (String) file;
             destinationIncludeFile(serviceSettings, src);
         }
     }
 
-    private void destinationIncludeFile(ServiceSettings serviceSettings, String src)
-    {
+    private void destinationIncludeFile(ServiceSettings serviceSettings, String src) {
         Document doc = loadDocument(src, fileResolver.getIncludedFile(src));
         doc.getDocumentElement().normalize();
 
         // Check for multiple destination defined in file.
         Node destinationsNode = selectSingleNode(doc, DESTINATIONS_ELEMENT);
-        if (destinationsNode != null)
-        {
+        if (destinationsNode != null) {
             allowedChildElements(destinationsNode, DESTINATIONS_CHILDREN);
             NodeList destinations = selectNodeList(destinationsNode, DESTINATION_ELEMENT);
-            for (int a = 0; a < destinations.getLength(); a++)
-            {
+            for (int a = 0; a < destinations.getLength(); a++) {
                 Node dest = destinations.item(a);
                 destination(dest, serviceSettings);
             }
             fileResolver.popIncludedFile();
-        }
-        else // Check for single destination definition.
+        } else // Check for single destination definition.
         {
             Node dest = selectSingleNode(doc, "/" + DESTINATION_ELEMENT);
-            if (dest != null)
-            {
+            if (dest != null) {
                 destination(dest, serviceSettings);
                 fileResolver.popIncludedFile();
-            }
-            else
-            {
+            } else {
                 // The {0} root element in file {1} must be ''{2}'' or ''{3}''.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(INVALID_INCLUDE_ROOT, new Object[]{DESTINATION_INCLUDE_ELEMENT, src, DESTINATIONS_ELEMENT, DESTINATION_ELEMENT});
@@ -1218,8 +1014,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void destination(Node dest, ServiceSettings serviceSettings)
-    {
+    private void destination(Node dest, ServiceSettings serviceSettings) {
         // Validation
         requiredAttributesOrElements(dest, DESTINATION_REQ_CHILDREN);
         allowedAttributes(dest, DESTINATION_ATTR);
@@ -1229,11 +1024,9 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
         DestinationSettings destinationSettings;
         String id = getAttributeOrChildElement(dest, ID_ATTR);
-        if (isValidID(id))
-        {
-            destinationSettings = (DestinationSettings)serviceSettings.getDestinationSettings().get(id);
-            if (destinationSettings != null)
-            {
+        if (isValidID(id)) {
+            destinationSettings = (DestinationSettings) serviceSettings.getDestinationSettings().get(id);
+            if (destinationSettings != null) {
                 // Duplicate destination definition '{id}' in service '{serviceId}'.
                 ConfigurationException e = new ConfigurationException();
                 e.setMessage(DUPLICATE_DESTINATION_ERROR, new Object[]{id, serviceId});
@@ -1243,9 +1036,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
             destinationSettings = new DestinationSettings(id);
             destinationSettings.setSourceFile(getSourceFileOf(dest));
             serviceSettings.addDestinationSettings(destinationSettings);
-        }
-        else
-        {
+        } else {
             //Invalid {DESTINATION_ELEMENT} id '{id}' for service '{serviceId}'.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(INVALID_ID_IN_SERVICE, new Object[]{DESTINATION_ELEMENT, id, serviceId});
@@ -1254,39 +1045,30 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
         // Destination Properties
         NodeList properties = selectNodeList(dest, PROPERTIES_ELEMENT + "/*");
-        if (properties.getLength() > 0)
-        {
+        if (properties.getLength() > 0) {
             ConfigMap map = properties(properties, getSourceFileOf(dest));
             destinationSettings.addProperties(map);
 
             // Sniff for <network><reliable>true|false</reliable></network> setting.
             // Also sniff for inbound and outbound throttle policies of buffer and conflate.
             // All these features are only supported when advanced messaging support is enabled.
-            if (!verifyAdvancedMessagingSupport)
-            {
+            if (!verifyAdvancedMessagingSupport) {
                 ConfigMap networkSettings = map.getPropertyAsMap(NetworkSettings.NETWORK_ELEMENT, null);
-                if (networkSettings != null)
-                {
+                if (networkSettings != null) {
                     String reliable = networkSettings.getPropertyAsString(NetworkSettings.RELIABLE_ELEMENT, null);
-                    if (reliable != null && Boolean.valueOf(reliable))
-                    {
+                    if (reliable != null && Boolean.valueOf(reliable)) {
                         verifyAdvancedMessagingSupport = true;
-                    }
-                    else
-                    {
+                    } else {
                         ConfigMap inbound = networkSettings.getPropertyAsMap(ThrottleSettings.ELEMENT_INBOUND, null);
-                        if (inbound != null)
-                        {
+                        if (inbound != null) {
                             String policy = inbound.getPropertyAsString(ThrottleSettings.ELEMENT_POLICY, null);
                             if (policy != null && (Policy.BUFFER.toString().equalsIgnoreCase(policy)
                                     || Policy.CONFLATE.toString().equalsIgnoreCase(policy)))
                                 verifyAdvancedMessagingSupport = true;
                         }
-                        if (!verifyAdvancedMessagingSupport)
-                        {
+                        if (!verifyAdvancedMessagingSupport) {
                             ConfigMap outbound = networkSettings.getPropertyAsMap(ThrottleSettings.ELEMENT_OUTBOUND, null);
-                            if (outbound != null)
-                            {
+                            if (outbound != null) {
                                 String policy = outbound.getPropertyAsString(ThrottleSettings.ELEMENT_POLICY, null);
                                 if (policy != null && (Policy.BUFFER.toString().equalsIgnoreCase(policy)
                                         || Policy.CONFLATE.toString().equalsIgnoreCase(policy)))
@@ -1308,87 +1090,66 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         destinationAdapter(dest, destinationSettings, serviceSettings);
     }
 
-    private void destinationChannels(Node dest, DestinationSettings destinationSettings, ServiceSettings serviceSettings)
-    {
+    private void destinationChannels(Node dest, DestinationSettings destinationSettings, ServiceSettings serviceSettings) {
         String destId = destinationSettings.getId();
 
         // Channels attribute
         String channelsList = evaluateExpression(dest, "@" + CHANNELS_ATTR).toString().trim();
-        if (channelsList.length() > 0)
-        {
+        if (channelsList.length() > 0) {
             StringTokenizer st = new StringTokenizer(channelsList, LIST_DELIMITERS);
-            while (st.hasMoreTokens())
-            {
+            while (st.hasMoreTokens()) {
                 String ref = st.nextToken().trim();
                 ChannelSettings channel = config.getChannelSettings(ref);
-                if (channel != null)
-                {
+                if (channel != null) {
                     destinationSettings.addChannelSettings(channel);
-                }
-                else
-                {
+                } else {
                     // {CHANNEL_ELEMENT} not found for reference '{ref}' in destination '{destId}'.
                     ConfigurationException ex = new ConfigurationException();
                     ex.setMessage(REF_NOT_FOUND_IN_DEST, new Object[]{CHANNEL_ELEMENT, ref, destId});
                     throw ex;
                 }
             }
-        }
-        else
-        {
+        } else {
             // Channels element
             Node channelsNode = selectSingleNode(dest, CHANNELS_ELEMENT);
-            if (channelsNode != null)
-            {
+            if (channelsNode != null) {
                 allowedChildElements(channelsNode, DESTINATION_CHANNELS_CHILDREN);
                 NodeList channels = selectNodeList(channelsNode, CHANNEL_ELEMENT);
-                for (int c = 0; c < channels.getLength(); c++)
-                {
+                for (int c = 0; c < channels.getLength(); c++) {
                     Node chan = channels.item(c);
 
                     // Validation
                     requiredAttributesOrElements(chan, DESTINATION_CHANNEL_REQ_CHILDREN);
 
                     String ref = getAttributeOrChildElement(chan, REF_ATTR);
-                    if (ref.length() > 0)
-                    {
+                    if (ref.length() > 0) {
                         ChannelSettings channel = config.getChannelSettings(ref);
-                        if (channel != null)
-                        {
+                        if (channel != null) {
                             destinationSettings.addChannelSettings(channel);
-                        }
-                        else
-                        {
+                        } else {
                             // {CHANNEL_ELEMENT} not found for reference '{ref}' in destination '{destId}'.
                             ConfigurationException ex = new ConfigurationException();
                             ex.setMessage(REF_NOT_FOUND_IN_DEST, new Object[]{CHANNEL_ELEMENT, ref, destId});
                             throw ex;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         //Invalid {0} ref '{1}' in destination '{2}'.
                         ConfigurationException ex = new ConfigurationException();
                         ex.setMessage(INVALID_REF_IN_DEST, new Object[]{CHANNEL_ELEMENT, ref, destId});
                         throw ex;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 // Finally, we fall back to the service's default channels
                 List defaultChannels = serviceSettings.getDefaultChannels();
-                Iterator it = defaultChannels.iterator();
-                while (it.hasNext())
-                {
-                    ChannelSettings channel = (ChannelSettings)it.next();
+                for (Object defaultChannel : defaultChannels) {
+                    ChannelSettings channel = (ChannelSettings) defaultChannel;
                     destinationSettings.addChannelSettings(channel);
                 }
             }
         }
 
-        if (destinationSettings.getChannelSettings().size() <= 0)
-        {
+        if (destinationSettings.getChannelSettings().size() <= 0) {
             // Destination '{id}' must specify at least one channel.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(DEST_NEEDS_CHANNEL, new Object[]{destId});
@@ -1396,87 +1157,66 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void destinationSecurity(Node dest, DestinationSettings destinationSettings, ServiceSettings serviceSettings)
-    {
+    private void destinationSecurity(Node dest, DestinationSettings destinationSettings, ServiceSettings serviceSettings) {
         String destId = destinationSettings.getId();
 
         // Security-constraint short-cut attribute
         String ref = evaluateExpression(dest, "@" + SECURITY_CONSTRAINT_ATTR).toString().trim();
-        if (ref.length() > 0)
-        {
-            SecurityConstraint sc = ((MessagingConfiguration)config).getSecuritySettings().getConstraint(ref);
-            if (sc != null)
-            {
+        if (ref.length() > 0) {
+            SecurityConstraint sc = ((MessagingConfiguration) config).getSecuritySettings().getConstraint(ref);
+            if (sc != null) {
                 destinationSettings.setConstraint(sc);
-            }
-            else
-            {
+            } else {
                 // {SECURITY_CONSTRAINT_ELEMENT} not found for reference '{ref}' in destination '{destId}'.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(REF_NOT_FOUND_IN_DEST, new Object[]{SECURITY_CONSTRAINT_ATTR, ref, destId});
                 throw ex;
             }
-        }
-        else
-        {
+        } else {
             // Inline security element
             Node security = selectSingleNode(dest, SECURITY_ELEMENT);
-            if (security != null)
-            {
+            if (security != null) {
                 allowedChildElements(security, EMBEDDED_SECURITY_CHILDREN);
                 Node constraint = selectSingleNode(security, SECURITY_CONSTRAINT_ELEMENT);
-                if (constraint != null)
-                {
+                if (constraint != null) {
                     SecurityConstraint sc = securityConstraint(constraint, true);
                     destinationSettings.setConstraint(sc);
                 }
-            }
-            else
-            {
+            } else {
                 // Finally, we fall back to the service's default security constraint
                 SecurityConstraint sc = serviceSettings.getConstraint();
-                if (sc != null)
-                {
+                if (sc != null) {
                     destinationSettings.setConstraint(sc);
                 }
             }
         }
     }
 
-    private void destinationAdapter(Node dest, DestinationSettings destinationSettings, ServiceSettings serviceSettings)
-    {
+    private void destinationAdapter(Node dest, DestinationSettings destinationSettings, ServiceSettings serviceSettings) {
         String destId = destinationSettings.getId();
 
         // Adapter attribute
         String ref = evaluateExpression(dest, "@" + ADAPTER_ATTR).toString().trim();
-        if (ref.length() > 0)
-        {
+        if (ref.length() > 0) {
             adapterReference(ref, destinationSettings, serviceSettings);
-        }
-        else
-        {
+        } else {
             Node adapter = selectSingleNode(dest, ADAPTER_ELEMENT);
 
             // Adapter element
-            if (adapter != null)
-            {
+            if (adapter != null) {
                 allowedAttributesOrElements(adapter, DESTINATION_ADAPTER_CHILDREN);
                 ref = getAttributeOrChildElement(adapter, REF_ATTR);
                 adapterReference(ref, destinationSettings, serviceSettings);
-            }
-            else
-            {
+            } else {
                 // Default Adapter (optionally set at the service level)
                 AdapterSettings adapterSettings = serviceSettings.getDefaultAdapter();
-                if (adapterSettings != null)
-                {
+                if (adapterSettings != null) {
                     destinationSettings.setAdapterSettings(adapterSettings);
                 }
             }
         }
 
-        if (destinationSettings.getAdapterSettings() == null)
-        {
+        if (destinationSettings.getAdapterSettings() == null) {
             // Destination '{id}' must specify at least one adapter.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(DEST_NEEDS_ADAPTER, new Object[]{destId});
@@ -1484,26 +1224,19 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void adapterReference(String ref, DestinationSettings destinationSettings, ServiceSettings serviceSettings)
-    {
+    private void adapterReference(String ref, DestinationSettings destinationSettings, ServiceSettings serviceSettings) {
         String destId = destinationSettings.getId();
-        if (ref.length() > 0)
-        {
+        if (ref.length() > 0) {
             AdapterSettings adapterSettings = serviceSettings.getAdapterSettings(ref);
-            if (adapterSettings != null)
-            {
+            if (adapterSettings != null) {
                 destinationSettings.setAdapterSettings(adapterSettings);
-            }
-            else
-            {
+            } else {
                 // {ADAPTER_ELEMENT} not found for reference '{ref}' in destination '{destId}'.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(REF_NOT_FOUND_IN_DEST, new Object[]{ADAPTER_ELEMENT, ref, destId});
                 throw ex;
             }
-        }
-        else
-        {
+        } else {
             //Invalid {ADAPTER_ELEMENT} ref '{ref}' in destination '{destId}'.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(INVALID_REF_IN_DEST, new Object[]{ADAPTER_ELEMENT, ref, destId});
@@ -1511,11 +1244,9 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void logging(Node root)
-    {
+    private void logging(Node root) {
         Node logging = selectSingleNode(root, LOGGING_ELEMENT);
-        if (logging != null)
-        {
+        if (logging != null) {
             // Validation
             allowedAttributesOrElements(logging, LOGGING_CHILDREN);
 
@@ -1523,15 +1254,13 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
             // Log Properties
             NodeList properties = selectNodeList(logging, PROPERTIES_ELEMENT + "/*");
-            if (properties.getLength() > 0)
-            {
+            if (properties.getLength() > 0) {
                 ConfigMap map = properties(properties, getSourceFileOf(logging));
                 settings.addProperties(map);
             }
 
             NodeList targets = selectNodeList(logging, TARGET_ELEMENT);
-            for (int i = 0; i < targets.getLength(); i++)
-            {
+            for (int i = 0; i < targets.getLength(); i++) {
                 Node targetNode = targets.item(i);
 
                 // Target Validation
@@ -1540,8 +1269,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
                 String className = getAttributeOrChildElement(targetNode, CLASS_ATTR);
 
-                if (className.length() > 0)
-                {
+                if (className.length() > 0) {
                     TargetSettings targetSettings = new TargetSettings(className);
                     String targetLevel = getAttributeOrChildElement(targetNode, LEVEL_ATTR);
 
@@ -1550,12 +1278,10 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
                     // Filters
                     Node filtersNode = selectSingleNode(targetNode, FILTERS_ELEMENT);
-                    if (filtersNode != null)
-                    {
+                    if (filtersNode != null) {
                         allowedChildElements(filtersNode, FILTERS_CHILDREN);
                         NodeList filters = selectNodeList(filtersNode, PATTERN_ELEMENT);
-                        for (int f = 0; f < filters.getLength(); f++)
-                        {
+                        for (int f = 0; f < filters.getLength(); f++) {
                             Node pattern = filters.item(f);
                             String filter = evaluateExpression(pattern, ".").toString().trim();
                             targetSettings.addFilter(filter);
@@ -1564,8 +1290,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
                     // Target Properties
                     properties = selectNodeList(targetNode, PROPERTIES_ELEMENT + "/*");
-                    if (properties.getLength() > 0)
-                    {
+                    if (properties.getLength() > 0) {
                         ConfigMap map = properties(properties, getSourceFileOf(targetNode));
                         targetSettings.addProperties(map);
                     }
@@ -1578,14 +1303,12 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void system(Node root)
-    {
+    private void system(Node root) {
         Node system = selectSingleNode(root, SYSTEM_ELEMENT);
-        if (system == null)
-        {
+        if (system == null) {
             // Create a default instance of SystemSettings which by default has setManagable as true
             // and has setRedeployEnabled as false.
-            ((MessagingConfiguration)config).setSystemSettings(new SystemSettings());
+            ((MessagingConfiguration) config).setSystemSettings(new SystemSettings());
             return;
         }
 
@@ -1600,11 +1323,10 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         redeploy(system, settings);
         uuidGenerator(system, settings);
 
-        ((MessagingConfiguration)config).setSystemSettings(settings);
+        ((MessagingConfiguration) config).setSystemSettings(settings);
     }
 
-    private void redeploy(Node system, SystemSettings settings)
-    {
+    private void redeploy(Node system, SystemSettings settings) {
         Node redeployNode = selectSingleNode(system, REDEPLOY_ELEMENT);
         if (redeployNode == null)
             return;
@@ -1615,36 +1337,30 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         settings.setRedeployEnabled(enabled);
 
         String interval = getAttributeOrChildElement(redeployNode, WATCH_INTERVAL_ELEMENT);
-        if (interval.length() > 0)
-        {
+        if (interval.length() > 0) {
             settings.setWatchInterval(interval);
         }
 
         NodeList watches = selectNodeList(redeployNode, WATCH_FILE_ELEMENT);
-        for (int i = 0; i < watches.getLength(); i++)
-        {
+        for (int i = 0; i < watches.getLength(); i++) {
             Node watchNode = watches.item(i);
             String watch = evaluateExpression(watchNode, ".").toString().trim();
-            if (watch.length() > 0)
-            {
+            if (watch.length() > 0) {
                 settings.addWatchFile(watch);
             }
         }
 
         NodeList touches = selectNodeList(redeployNode, TOUCH_FILE_ELEMENT);
-        for (int i = 0; i < touches.getLength(); i++)
-        {
+        for (int i = 0; i < touches.getLength(); i++) {
             Node touchNode = touches.item(i);
             String touch = evaluateExpression(touchNode, ".").toString().trim();
-            if (touch.length() > 0)
-            {
+            if (touch.length() > 0) {
                 settings.addTouchFile(touch);
             }
         }
     }
 
-    private void locale(Node system, SystemSettings settings)
-    {
+    private void locale(Node system, SystemSettings settings) {
         Node localeNode = selectSingleNode(system, LOCALE_ELEMENT);
         if (localeNode == null)
             return;
@@ -1652,12 +1368,11 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         allowedAttributesOrElements(localeNode, LOCALE_CHILDREN);
 
         String defaultLocaleString = getAttributeOrChildElement(localeNode, DEFAULT_LOCALE_ELEMENT);
-        Locale defaultLocale = defaultLocaleString.length() > 0? LocaleUtils.buildLocale(defaultLocaleString) : LocaleUtils.buildLocale(null);
+        Locale defaultLocale = defaultLocaleString.length() > 0 ? LocaleUtils.buildLocale(defaultLocaleString) : LocaleUtils.buildLocale(null);
         settings.setDefaultLocale(defaultLocale);
     }
 
-    private void uuidGenerator(Node system, SystemSettings settings)
-    {
+    private void uuidGenerator(Node system, SystemSettings settings) {
         Node uuidGenerator = selectSingleNode(system, UUID_GENERATOR_ELEMENT);
         if (uuidGenerator == null)
             return;
@@ -1665,8 +1380,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         requiredAttributesOrElements(uuidGenerator, UUID_GENERATOR_REQ_CHILDREN);
 
         String className = getAttributeOrChildElement(uuidGenerator, CLASS_ATTR);
-        if (className.length() == 0)
-        {
+        if (className.length() == 0) {
             // Class not specified for {UUID_GENERATOR_ELEMENT} '{id}'.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(CLASS_NOT_SPECIFIED, new Object[]{UUID_GENERATOR_ELEMENT, ""});
@@ -1676,11 +1390,9 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         settings.setUUIDGeneratorClassName(className);
     }
 
-    private void flexClient(Node root)
-    {
+    private void flexClient(Node root) {
         Node flexClient = selectSingleNode(root, FLEX_CLIENT_ELEMENT);
-        if (flexClient != null)
-        {
+        if (flexClient != null) {
             // Validation
             allowedChildElements(flexClient, FLEX_CLIENT_CHILDREN);
 
@@ -1688,48 +1400,37 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
             // Timeout
             String timeout = getAttributeOrChildElement(flexClient, FLEX_CLIENT_TIMEOUT_MINUTES_ELEMENT);
-            if (timeout.length() > 0)
-            {
-                try
-                {
+            if (timeout.length() > 0) {
+                try {
                     long timeoutMinutes = Long.parseLong(timeout);
-                    if (timeoutMinutes < 0)
-                    {
+                    if (timeoutMinutes < 0) {
                         // Invalid timeout minutes value ''{0}'' in the <flex-client> configuration section. Please specify a positive value or leave the element undefined in which case flex client instances on the server will be timed out when all associated sessions/connections have shut down.
                         ConfigurationException e = new ConfigurationException();
                         e.setMessage(INVALID_FLEX_CLIENT_TIMEOUT, new Object[]{timeout});
                         throw e;
                     }
                     flexClientSettings.setTimeoutMinutes(timeoutMinutes);
-                }
-                catch (NumberFormatException nfe)
-                {
+                } catch (NumberFormatException nfe) {
                     // Invalid timeout minutes value ''{0}'' in the <flex-client> configuration section. Please specify a positive value or leave the element undefined in which case flex client instances on the server will be timed out when all associated sessions/connections have shut down.
                     ConfigurationException e = new ConfigurationException();
                     e.setMessage(INVALID_FLEX_CLIENT_TIMEOUT, new Object[]{timeout});
                     throw e;
                 }
-            }
-            else
-            {
+            } else {
                 flexClientSettings.setTimeoutMinutes(0); // Default to 0; in this case FlexClients are invalidated when all associated sessions have been invalidated.
             }
 
             // Flex client queue processor
             Node outboundQueueProcessor = selectSingleNode(flexClient, FLEX_CLIENT_OUTBOUND_QUEUE_PROCESSOR_ELEMENT);
-            if (outboundQueueProcessor != null)
-            {
+            if (outboundQueueProcessor != null) {
                 // Validation
                 requiredAttributesOrElements(outboundQueueProcessor, FLEX_CLIENT_OUTBOUND_QUEUE_PROCESSOR_REQ_CHILDREN);
 
                 // Flex client queue processor class
                 String outboundQueueProcessClass = getAttributeOrChildElement(outboundQueueProcessor, CLASS_ATTR);
-                if (outboundQueueProcessClass.length() > 0)
-                {
+                if (outboundQueueProcessClass.length() > 0) {
                     flexClientSettings.setFlexClientOutboundQueueProcessorClassName(outboundQueueProcessClass);
-                }
-                else
-                {
+                } else {
                     // Class not specified for {FLEX_CLIENT_OUTBOUND_QUEUE_PROCESSOR_ELEMENT} '{id}'.
                     ConfigurationException ex = new ConfigurationException();
                     ex.setMessage(CLASS_NOT_SPECIFIED, new Object[]{FLEX_CLIENT_OUTBOUND_QUEUE_PROCESSOR_ELEMENT, ""});
@@ -1738,8 +1439,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
                 // Flex client queue processor properties
                 NodeList properties = selectNodeList(outboundQueueProcessor, PROPERTIES_ELEMENT + "/*");
-                if (properties.getLength() > 0)
-                {
+                if (properties.getLength() > 0) {
                     ConfigMap map = properties(properties, getSourceFileOf(outboundQueueProcessor));
                     flexClientSettings.setFlexClientOutboundQueueProcessorProperties(map);
                     // Sniff for adaptive-frequency which requires advanced messaging support.
@@ -1748,49 +1448,41 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
                         verifyAdvancedMessagingSupport = true;
                 }
             }
-            ((MessagingConfiguration)config).setFlexClientSettings(flexClientSettings);
+            ((MessagingConfiguration) config).setFlexClientSettings(flexClientSettings);
         }
     }
 
-    private void factories(Node root)
-    {
+    private void factories(Node root) {
         Node factories = selectSingleNode(root, FACTORIES_ELEMENT);
-        if (factories != null)
-        {
+        if (factories != null) {
             // Validation
             allowedAttributesOrElements(factories, FACTORIES_CHILDREN);
 
             NodeList factoryList = selectNodeList(factories, FACTORY_ELEMENT);
-            for (int i = 0; i < factoryList.getLength(); i++)
-            {
+            for (int i = 0; i < factoryList.getLength(); i++) {
                 Node factory = factoryList.item(i);
                 factory(factory);
             }
         }
     }
 
-    private void factory(Node factory)
-    {
+    private void factory(Node factory) {
         // Validation
         requiredAttributesOrElements(factory, FACTORY_REQ_CHILDREN);
 
         String id = getAttributeOrChildElement(factory, ID_ATTR);
         String className = getAttributeOrChildElement(factory, CLASS_ATTR);
-        if (isValidID(id))
-        {
+        if (isValidID(id)) {
             FactorySettings factorySettings = new FactorySettings(id, className);
 
             // Factory Properties
             NodeList properties = selectNodeList(factory, PROPERTIES_ELEMENT + "/*");
-            if (properties.getLength() > 0)
-            {
+            if (properties.getLength() > 0) {
                 ConfigMap map = properties(properties, getSourceFileOf(factory));
                 factorySettings.addProperties(map);
             }
-            ((MessagingConfiguration)config).addFactorySettings(id, factorySettings);
-        }
-        else
-        {
+            ((MessagingConfiguration) config).addFactorySettings(id, factorySettings);
+        } else {
             // Invalid {FACTORY_ELEMENT} id '{id}'.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(INVALID_ID, new Object[]{FACTORY_ELEMENT, id});
@@ -1799,14 +1491,12 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void messageFilters(Node root)
-    {
+    private void messageFilters(Node root) {
         typedMessageFilters(root, ASYNC_MESSAGE_FILTERS_ELEMENT, ASYNC_MESSAGE_FILTERS_ELEMENT_CHILDREN);
         typedMessageFilters(root, SYNC_MESSAGE_FILTERS_ELEMENT, SYNC_MESSAGE_FILTERS_ELEMENT_CHILDREN);
     }
 
-    private void typedMessageFilters(Node root, String filterTypeElement, String[] childrenElements)
-    {
+    private void typedMessageFilters(Node root, String filterTypeElement, String[] childrenElements) {
         Node messageFiltersNode = selectSingleNode(root, filterTypeElement);
         if (messageFiltersNode == null)
             return;
@@ -1816,45 +1506,38 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
         // Message filter
         NodeList messageFilters = selectNodeList(messageFiltersNode, FILTER_ELEMENT);
-        for (int i = 0; i < messageFilters.getLength(); i++)
-        {
+        for (int i = 0; i < messageFilters.getLength(); i++) {
             Node messageFilter = messageFilters.item(i);
             messageFilter(messageFilter, filterTypeElement);
         }
     }
 
-    private void messageFilter(Node messageFilter, String filterType)
-    {
+    private void messageFilter(Node messageFilter, String filterType) {
         // Validation
         requiredAttributesOrElements(messageFilter, FILTER_REQ_CHILDREN);
         allowedAttributesOrElements(messageFilter, FILTER_CHILDREN);
 
         String id = getAttributeOrChildElement(messageFilter, ID_ATTR);
-        if (isValidID(id))
-        {
+        if (isValidID(id)) {
             // Message filter class name
             String className = getAttributeOrChildElement(messageFilter, CLASS_ATTR);
-            if (className.length() > 0)
-            {
+            if (className.length() > 0) {
                 MessageFilterSettings messageFilterSettings = new MessageFilterSettings();
                 messageFilterSettings.setId(id);
                 messageFilterSettings.setClassName(className);
                 // Record type of filter.
                 MessageFilterSettings.FilterType type = filterType.equals(ASYNC_MESSAGE_FILTERS_ELEMENT) ?
-                                                        MessageFilterSettings.FilterType.ASYNC :
-                                                        MessageFilterSettings.FilterType.SYNC;
+                        MessageFilterSettings.FilterType.ASYNC :
+                        MessageFilterSettings.FilterType.SYNC;
                 messageFilterSettings.setFilterType(type);
                 // Custom server properties.
                 NodeList properties = selectNodeList(messageFilter, PROPERTIES_ELEMENT + "/*");
-                if (properties.getLength() > 0)
-                {
+                if (properties.getLength() > 0) {
                     ConfigMap map = properties(properties, getSourceFileOf(messageFilter));
                     messageFilterSettings.addProperties(map);
                 }
-                ((MessagingConfiguration)config).addMessageFilterSettings(messageFilterSettings);
-            }
-            else
-            {
+                ((MessagingConfiguration) config).addMessageFilterSettings(messageFilterSettings);
+            } else {
                 // Class not specified for {FILTER_ELEMENT} '{id}'.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(CLASS_NOT_SPECIFIED, new Object[]{FILTER_ELEMENT, id});
@@ -1863,8 +1546,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void validators(Node root)
-    {
+    private void validators(Node root) {
         Node validatorsNode = selectSingleNode(root, VALIDATORS_ELEMENT);
         if (validatorsNode == null) {
             return;
@@ -1875,7 +1557,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
         // Validator
         NodeList validators = selectNodeList(validatorsNode, VALIDATOR_ELEMENT);
-        if(validators.getLength() > 0) {
+        if (validators.getLength() > 0) {
             for (int i = 0; i < validators.getLength(); i++) {
                 Node validator = validators.item(i);
                 validator(validator);
@@ -1883,8 +1565,7 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
         }
     }
 
-    private void validator(Node validator)
-    {
+    private void validator(Node validator) {
         // Validation
         requiredAttributesOrElements(validator, VALIDATOR_REQ_CHILDREN);
         allowedAttributesOrElements(validator, VALIDATOR_CHILDREN);
@@ -1893,12 +1574,9 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
         // Validator class name
         String className = getAttributeOrChildElement(validator, CLASS_ATTR);
-        if (className.length() > 0)
-        {
+        if (className.length() > 0) {
             validatorSettings.setClassName(className);
-        }
-        else
-        {
+        } else {
             // Class not specified for {VALIDATOR_ELEMENT} '{id}'.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(CLASS_NOT_SPECIFIED, new Object[]{VALIDATOR_ELEMENT, ""});
@@ -1912,12 +1590,11 @@ public abstract class ServerConfigurationParser extends AbstractConfigurationPar
 
         // Validator properties
         NodeList properties = selectNodeList(validator, PROPERTIES_ELEMENT + "/*");
-        if (properties.getLength() > 0)
-        {
+        if (properties.getLength() > 0) {
             ConfigMap map = properties(properties, getSourceFileOf(validator));
             validatorSettings.addProperties(map);
         }
 
-        ((MessagingConfiguration)config).addValidatorSettings(validatorSettings);
+        ((MessagingConfiguration) config).addValidatorSettings(validatorSettings);
     }
 }
