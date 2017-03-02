@@ -54,7 +54,6 @@ public class ClassDeserializationValidator implements DeserializationValidator {
             "flex.messaging.messages.HTTPMessage",
             "flex.messaging.messages.RemotingMessage",
             "flex.messaging.messages.SOAPMessage",
-            "java.io.Externalizable",
             "java.lang.Boolean",
             "java.lang.Byte",
             "java.lang.Character",

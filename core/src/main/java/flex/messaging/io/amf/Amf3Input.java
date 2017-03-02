@@ -822,8 +822,6 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     {
         if (object instanceof Externalizable)
         {
-            ClassUtil.validateCreation(Externalizable.class);
-
             if (isDebug)
                 trace.startExternalizableObject(className, objectTable.size() - 1);
 
