@@ -1,8 +1,86 @@
+Apache Flex BlazeDS 4.7.3
+=======================
+
+Apache Flex BlazeDS 4.7.3 is an update to 4.7.2 which adds a new
+blazeds-spring-boot-starter module for easily setting up a BlazeDS server with
+Spring Boot. It also provides Maven archetypes for easily creating new spring-boot
+project that make use of BlazeDS. We also did quite a lot of fine-tuning of the
+security default settings to make BlazeDS more secure.
+
+Starting with 4.7.3 BlazeDS Deserialization of XML is disabled completely per default
+but can easily be enabled in your services-config.xml:
+
+    <channels>
+        <channel-definition id="amf" class="mx.messaging.channels.AMFChannel">
+            <endpoint url="http://{server.name}:{server.port}/{context.root}/messagebroker/amf"
+                      class="flex.messaging.endpoints.AMFEndpoint"/>
+            <properties>
+                <serialization>
+                    <allow-xml>true</allow-xml>
+                </serialization>
+            </properties>
+        </channel-definition>
+    </channels>
+
+Also we now enable the ClassDeserializationValidator per default to only allow
+deserialization of whitelisted classes. BlazeDS internally comes with the following
+whitelist:
+
+    flex.messaging.io.amf.ASObject
+    flex.messaging.io.amf.SerializedObject
+    flex.messaging.io.ArrayCollection
+    flex.messaging.io.ArrayList
+    flex.messaging.messages.AcknowledgeMessage
+    flex.messaging.messages.AcknowledgeMessageExt
+    flex.messaging.messages.AsyncMessage
+    flex.messaging.messages.AsyncMessageExt
+    flex.messaging.messages.CommandMessage
+    flex.messaging.messages.CommandMessageExt
+    flex.messaging.messages.ErrorMessage
+    flex.messaging.messages.HTTPMessage
+    flex.messaging.messages.RemotingMessage
+    flex.messaging.messages.SOAPMessage
+    java.lang.Boolean
+    java.lang.Byte
+    java.lang.Character
+    java.lang.Double
+    java.lang.Float
+    java.lang.Integer
+    java.lang.Long
+    java.lang.Object
+    java.lang.Short
+    java.lang.String
+    java.util.ArrayList
+    java.util.Date
+    java.util.HashMap
+    org.w3c.dom.Document
+
+If you need to deserialize any other classes, be sure to register them in your
+services-config.xml:
+
+    <validators>
+        <validator class="flex.messaging.validators.ClassDeserializationValidator">
+            <properties>
+                <allow-classes>
+                    <class name="org.mycoolproject.*"/>
+                    <class name="flex.messaging.messages.*"/>
+                    <class name="flex.messaging.io.amf.ASObject"/>
+                </allow-classes>
+            </properties>
+        </validator>
+    </validators>
+
+(Beware, by manually providing a whitelist the default whitelist is disabled)
+
+Known Issues
+_____________
+FLEX-34648 Memory Leak occurred in AsyncMessage when sending a lot of messages
+
 Apache Flex BlazeDS 4.7.2
 =======================
 
 Apache Flex BlazeDS 4.7.2 is an update to 4.7.1 to allow configuration control
-over allowind document type declarations inside an AMF XML payload.
+over allowing document type declarations inside an AMF XML payload.
 
 Known Issues
 _____________
