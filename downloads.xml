@@ -440,7 +440,7 @@
     </target>
     
     <target name="download-doclet-java" unless="doclet.zip.exists">
-        <get src="http://sixlegs.com/misc/ExcludeDoclet.java" 
+        <get src="https://github.com/couchbase/couchbase-lite-java-core/blob/master/extra/doclet/ExcludeDoclet.java" 
             dest="${modules.core.dir}/src/ExcludeDoclet.java" 
             verbose="false"/>
     </target>
