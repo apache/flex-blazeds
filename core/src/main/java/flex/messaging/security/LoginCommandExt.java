@@ -25,10 +25,10 @@ public interface LoginCommandExt
     /**
      * Classes that implement the flex.messaging.security.LoginCommand interface, should also
      * implement this interface if the name stored in java.security.Principal created as a result
-     * of a succesfull authentication differs from the username that is actually passed in to
+     * of a successful authentication differs from the username that is actually passed in to
      * the authentication.
      *
-     * Implementing this interace gives such LoginCommand's a chance to return the resulting
+     * Implementing this interface gives such LoginCommand's a chance to return the resulting
      * username so that it can be compared to the one stored in Principal.
      *
      * Returns the value that would be returned by java.security.Principal.getName() if

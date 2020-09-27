@@ -57,7 +57,7 @@ public interface LoginCommand
      * The gateway calls this method to perform programmatic authorization.
      * <p>
      * A typical implementation would simply iterate over the supplied roles and
-     * check that atleast one of the roles returned true from a call to
+     * check that at least one of the roles returned true from a call to
      * HttpServletRequest.isUserInRole(String role).
      * </p>
      *
