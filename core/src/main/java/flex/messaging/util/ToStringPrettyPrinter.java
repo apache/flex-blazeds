@@ -220,12 +220,12 @@ public class ToStringPrettyPrinter extends BasicPrettyPrinter
         }
         else
         {
-            rememberObject(o);
+            putObject(o);
         }
         return (ref != null);
     }
     
-    private void rememberObject(Object o)
+    private void putObject(Object o)
     {
         knownObjects.put(o, new Integer(knownObjectsCount++));
     }
