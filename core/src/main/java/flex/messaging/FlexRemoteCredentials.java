@@ -25,8 +25,7 @@ package flex.messaging;
  * the FlexSession methods getRemoteCredentials and putRemoteCredentials to associate
  * the remote credentials with a specific destination.
  */
-public class FlexRemoteCredentials
-{
+public class FlexRemoteCredentials {
     private String service;
 
     private String destination;
@@ -40,14 +39,14 @@ public class FlexRemoteCredentials
      * created automatically when the client specifies them via the setRemoteCredentials
      * method in ActionScript.  You'd use this if you wanted to set your remote credentials
      * on the server and not have them specified on the client.
-     * @param service the service id
+     *
+     * @param service     the service id
      * @param destination the destination id
-     * @param username the user name
+     * @param username    the user name
      * @param credentials the user credentials
      */
-    public FlexRemoteCredentials(String service, String destination, 
-            String username, Object credentials)
-    {
+    public FlexRemoteCredentials(String service, String destination,
+                                 String username, Object credentials) {
         super();
         this.service = service;
         this.destination = destination;
@@ -57,37 +56,37 @@ public class FlexRemoteCredentials
 
     /**
      * Returns the user name from the remote credentials.
+     *
      * @return String the user name
      */
-    public String getUsername()
-    {
+    public String getUsername() {
         return username;
     }
 
     /**
      * Returns the credentials themselves (usually a password).
+     *
      * @return Object the credentials object
      */
-    public Object getCredentials()
-    {
+    public Object getCredentials() {
         return credentials;
     }
 
     /**
      * Returns the id of the service these credentials are registered for.
+     *
      * @return String the service id
      */
-    public String getService()
-    {
+    public String getService() {
         return service;
     }
 
     /**
      * Returns the destination for the service.
+     *
      * @return String the destination id
      */
-    public String getDestination()
-    {
+    public String getDestination() {
         return destination;
     }
 }

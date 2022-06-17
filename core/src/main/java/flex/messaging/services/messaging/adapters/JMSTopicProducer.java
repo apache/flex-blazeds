@@ -33,58 +33,48 @@ import java.util.Map;
 
 /**
  * A <code>JMSProducer</code> subclass specifically for JMS Topic publishers.
- *
- *
  */
-public class JMSTopicProducer extends JMSProducer
-{
+public class JMSTopicProducer extends JMSProducer {
     /* JMS related variables */
     private TopicPublisher publisher;
 
     /**
      * Starts <code>JMSTopicProducer</code>.
      */
-    public void start() throws NamingException, JMSException
-    {
+    public void start() throws NamingException, JMSException {
         super.start();
 
         // Establish topic
         Topic topic = null;
-        try
-        {
-            topic = (Topic)destination;
-        }
-        catch (ClassCastException cce)
-        {
+        try {
+            topic = (Topic) destination;
+        } catch (ClassCastException cce) {
             // JMS topic proxy for JMS destination ''{0}'' has a destination type of ''{1}'' which is not Topic.
             MessageException me = new MessageException();
-            me.setMessage(JMSConfigConstants.NON_TOPIC_DESTINATION, new Object[] {destinationJndiName, destination.getClass().getName()});
+            me.setMessage(JMSConfigConstants.NON_TOPIC_DESTINATION, new Object[]{destinationJndiName, destination.getClass().getName()});
             throw me;
         }
 
         // Create connection
-        try
-        {
-            TopicConnectionFactory topicFactory = (TopicConnectionFactory)connectionFactory;
+        try {
+            TopicConnectionFactory topicFactory = (TopicConnectionFactory) connectionFactory;
             if (connectionCredentials != null)
                 connection = topicFactory.createTopicConnection(connectionCredentials.getUsername(), connectionCredentials.getPassword());
             else
                 connection = topicFactory.createTopicConnection();
-        }
-        catch (ClassCastException cce)
-        {
+        } catch (ClassCastException cce) {
             // JMS topic proxy for JMS destination ''{0}'' has a connection factory of type ''{1}'' which is not TopicConnectionFactory.
             MessageException me = new MessageException();
-            me.setMessage(JMSConfigConstants.NON_TOPIC_FACTORY, new Object[] {destinationJndiName, connectionFactory.getClass().getName()});
+            me.setMessage(JMSConfigConstants.NON_TOPIC_FACTORY, new Object[]{destinationJndiName, connectionFactory.getClass().getName()});
             throw me;
         }
 
         // Create topic session on the connection
-        TopicConnection topicConnection = (TopicConnection)connection;
+        TopicConnection topicConnection = (TopicConnection) connection;
         session = topicConnection.createTopicSession(false /* Always nontransacted */, getAcknowledgeMode());
 
         // Create publisher on the topic session
-        TopicSession topicSession = (TopicSession)session;
+        TopicSession topicSession = (TopicSession) session;
         publisher = topicSession.createPublisher(topic);
         producer = publisher;
 
@@ -92,8 +82,7 @@ public class JMSTopicProducer extends JMSProducer
         connection.start();
     }
 
-    void sendObjectMessage(Serializable obj, Map properties) throws JMSException
-    {
+    void sendObjectMessage(Serializable obj, Map properties) throws JMSException {
         if (obj == null)
             return;
 
@@ -103,8 +92,7 @@ public class JMSTopicProducer extends JMSProducer
         publisher.publish(message, getDeliveryMode(), messagePriority, getTimeToLive(properties));
     }
 
-    void sendTextMessage(String text, Map properties) throws JMSException
-    {
+    void sendTextMessage(String text, Map properties) throws JMSException {
         if (text == null)
             return;
 
@@ -115,8 +103,7 @@ public class JMSTopicProducer extends JMSProducer
     }
 
     @Override
-    void sendMapMessage(Map<String, ?> map, Map properties) throws JMSException
-    {
+    void sendMapMessage(Map<String, ?> map, Map properties) throws JMSException {
         if (map == null)
             return;
 

@@ -19,40 +19,38 @@ package flex.messaging.util.concurrent;
 /**
  * This interface allows different Executor implementations to be chosen and used
  * without creating a direct dependency upon <code>java.util.concurrent.Executor</code>
- * added in Java 1.5, the Java 1.4.x-friendly backport of the <code>java.util.concurrent</code> APIs 
+ * added in Java 1.5, the Java 1.4.x-friendly backport of the <code>java.util.concurrent</code> APIs
  * which has a different package structure, or alternative work execution frameworks such as
- * IBM WebSphere 5's <code>com.ibm.websphere.asynchbeans.WorkManager</code> or the 
+ * IBM WebSphere 5's <code>com.ibm.websphere.asynchbeans.WorkManager</code> or the
  * <code>commonj.work.WorkManager</code> available in IBM WebSphere 6, BEA WebLogic 9 or
  * other application servers that support the <code>commonj</code> API.
- * Implementations should notify clients of any failure with executing a command by invoking 
+ * Implementations should notify clients of any failure with executing a command by invoking
  * the callback on the <code>FailedExecutionHandler</code> if one has been set.
- * 
- * @see java.util.concurrent.Executor
  *
- */ 
-public interface Executor
-{
+ * @see java.util.concurrent.Executor
+ */
+public interface Executor {
     /**
      * Executes the given command at some time in the future.
-     * The command may execute in a new thread, in a pooled thread, or in the calling thread, at the 
+     * The command may execute in a new thread, in a pooled thread, or in the calling thread, at the
      * discretion of the <code>Executor</code> implementation.
      * Implementation classes are free to throw a <code>RuntimeException</code> if the command can not
      * be executed.
-     * 
+     *
      * @param command The command to execute.
      */
     void execute(Runnable command);
-    
+
     /**
      * Returns the current handler for failed executions.
-     * 
+     *
      * @return The current handler.
      */
     FailedExecutionHandler getFailedExecutionHandler();
-    
+
     /**
      * Sets the handler for failed executions.
-     * 
+     *
      * @param handler The new handler.
      */
     void setFailedExecutionHandler(FailedExecutionHandler handler);

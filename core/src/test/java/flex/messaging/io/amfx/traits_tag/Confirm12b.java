@@ -22,18 +22,14 @@ import flex.messaging.io.amf.MessageBody;
 import flex.messaging.io.amf.ASObject;
 import flex.messaging.MessageException;
 
-public class Confirm12b extends DeserializationConfirmation
-{
+public class Confirm12b extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm12b()
-    {
+    public Confirm12b() {
     }
 
-    public ActionMessage getExpectedMessage()
-    {
-        if (EXPECTED_VALUE == null)
-        {
+    public ActionMessage getExpectedMessage() {
+        if (EXPECTED_VALUE == null) {
             ActionMessage m = new ActionMessage();
             MessageBody body = new MessageBody();
             m.addBody(body);
@@ -64,8 +60,7 @@ public class Confirm12b extends DeserializationConfirmation
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

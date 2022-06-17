@@ -18,57 +18,48 @@ package flex.messaging.io.amf;
 
 import java.io.Serializable;
 
-public class MessageHeader implements Serializable
-{
+public class MessageHeader implements Serializable {
     static final long serialVersionUID = -4535655145953153945L;
 
     private String name;
     private boolean mustUnderstand;
     private Object data;
 
-    public MessageHeader()
-    {
+    public MessageHeader() {
     }
 
-    public MessageHeader(String name, boolean mustUnderstand, Object data)
-    {
+    public MessageHeader(String name, boolean mustUnderstand, Object data) {
         this.name = name;
         this.mustUnderstand = mustUnderstand;
         this.data = data;
     }
 
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
 
-    public boolean getMustUnderstand()
-    {
+    public boolean getMustUnderstand() {
         return mustUnderstand;
     }
 
 
-    public void setMustUnderstand(boolean mustUnderstand)
-    {
+    public void setMustUnderstand(boolean mustUnderstand) {
         this.mustUnderstand = mustUnderstand;
     }
 
 
-    public Object getData()
-    {
+    public Object getData() {
         return data;
     }
 
-    public void setData(Object data)
-    {
+    public void setData(Object data) {
         this.data = data;
     }
 

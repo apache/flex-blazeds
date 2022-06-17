@@ -23,18 +23,15 @@ import flex.messaging.client.FlexClientManager;
 /**
  *
  */
-public class FlexClientManagerControl extends BaseControl implements FlexClientManagerControlMBean
-{
+public class FlexClientManagerControl extends BaseControl implements FlexClientManagerControlMBean {
     private FlexClientManager flexClientManager;
-    
-    public FlexClientManagerControl(BaseControl parent, FlexClientManager manager)
-    {
-        super(parent);        
+
+    public FlexClientManagerControl(BaseControl parent, FlexClientManager manager) {
+        super(parent);
         flexClientManager = manager;
     }
-    
-    public void onRegistrationComplete()
-    {
+
+    public void onRegistrationComplete() {
         String name = getObjectName().getCanonicalName();
         getRegistrar().registerObject(AdminConsoleTypes.GENERAL_POLLABLE, name, "FlexClientCount");
     }
@@ -42,56 +39,49 @@ public class FlexClientManagerControl extends BaseControl implements FlexClientM
     /* (non-Javadoc)
      * @see flex.management.BaseControl#getId()
      */
-    public String getId()
-    {
+    public String getId() {
         return flexClientManager.getId();
     }
 
     /* (non-Javadoc)
      * @see flex.management.BaseControl#getType()
      */
-    public String getType()
-    {
+    public String getType() {
         return flexClientManager.getId();
     }
 
     /* (non-Javadoc)
      * @see flex.management.runtime.messaging.client.FlexClientManagerControlMBean#getClientIds()
      */
-    public String[] getClientIds() 
-    {
+    public String[] getClientIds() {
         return flexClientManager.getClientIds();
     }
 
     /* (non-Javadoc)
      * @see flex.management.runtime.messaging.client.FlexClientManagerControlMBean#getClientLastUse(java.lang.String)
      */
-    public Long getClientLastUse(String clientId)
-    {
+    public Long getClientLastUse(String clientId) {
         return new Long(flexClientManager.getFlexClient(clientId).getLastUse());
     }
 
     /* (non-Javadoc)
      * @see flex.management.runtime.messaging.client.FlexClientManagerControlMBean#getClientSessionCount(java.lang.String)
      */
-    public Integer getClientSessionCount(String clientId)
-    {
+    public Integer getClientSessionCount(String clientId) {
         return new Integer(flexClientManager.getFlexClient(clientId).getSessionCount());
     }
 
     /* (non-Javadoc)
      * @see flex.management.runtime.messaging.client.FlexClientManagerControlMBean#getClientSubscriptionCount(java.lang.String)
      */
-    public Integer getClientSubscriptionCount(String clientId)
-    {
+    public Integer getClientSubscriptionCount(String clientId) {
         return new Integer(flexClientManager.getFlexClient(clientId).getSubscriptionCount());
     }
-    
+
     /* (non-Javadoc)
      * @see flex.management.runtime.messaging.client.FlexClientManagerControlMBean#getFlexClientCount()
      */
-    public Integer getFlexClientCount() 
-    {
+    public Integer getFlexClientCount() {
         return new Integer(flexClientManager.getFlexClientCount());
-    }    
+    }
 }

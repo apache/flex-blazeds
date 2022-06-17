@@ -17,11 +17,9 @@
 package flex.messaging.services.http.proxy;
 
 /**
- *
  * Contants related to the proxy (shared with .NET).
  */
-public class ProxyConstants
-{
+public class ProxyConstants {
     public static final String METHOD_GET = "GET";
     public static final String METHOD_HEAD = "HEAD";
     public static final String METHOD_OPTIONS = "OPTIONS";

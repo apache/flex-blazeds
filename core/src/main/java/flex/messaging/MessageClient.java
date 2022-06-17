@@ -36,8 +36,6 @@ import flex.messaging.messages.CommandMessage;
 import flex.messaging.messages.Message;
 import flex.messaging.services.MessageService;
 import flex.messaging.services.messaging.Subtopic;
-import flex.messaging.services.messaging.selector.JMSSelector;
-import flex.messaging.services.messaging.selector.JMSSelectorException;
 import flex.messaging.util.ExceptionUtil;
 import flex.messaging.util.TimeoutAbstractObject;
 import flex.messaging.util.StringUtils;
@@ -47,19 +45,18 @@ import flex.messaging.util.StringUtils;
  * Currently a server-side MessageClient is only created if its client-side counterpart has subscribed
  * to a destination for pushed data (e.g. Consumer). Client-side Producers do not result in the creation of
  * corresponding server-side MessageClient instances.
- *
+ * <p>
  * Client-side MessageAgents communicate with the server over a Channel that corresponds to a FlexSession.
  * Server-side MessageClient instances are always created in the context of a FlexSession and when the FlexSession
  * is invalidated any associated MessageClients are invalidated as well.
- *
+ * <p>
  * MessageClients may also be timed out on a per-destination basis and this is based on subscription inactivity.
  * If no messages are pushed to the MessageClient within the destination's subscription timeout period the
  * MessageClient will be shutdown even if the associated FlexSession is still active and connected.
  * Per-destination subscription timeout is an optional configuration setting, and should only be used when inactive
  * subscriptions should be shut down opportunistically to preserve server resources.
  */
-public class MessageClient extends TimeoutAbstractObject implements Serializable
-{
+public class MessageClient extends TimeoutAbstractObject implements Serializable {
     //--------------------------------------------------------------------------
     //
     // Public Static Variables
@@ -103,12 +100,10 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     /**
      * Adds a MessageClient created listener.
      *
-     * @see flex.messaging.MessageClientListener
-     *
      * @param listener The listener to add.
+     * @see flex.messaging.MessageClientListener
      */
-    public static void addMessageClientCreatedListener(MessageClientListener listener)
-    {
+    public static void addMessageClientCreatedListener(MessageClientListener listener) {
         if (listener != null)
             createdListeners.addIfAbsent(listener);
     }
@@ -116,12 +111,10 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     /**
      * Removes a MessageClient created listener.
      *
-     * @see flex.messaging.MessageClientListener
-     *
      * @param listener The listener to remove.
+     * @see flex.messaging.MessageClientListener
      */
-    public static void removeMessageClientCreatedListener(MessageClientListener listener)
-    {
+    public static void removeMessageClientCreatedListener(MessageClientListener listener) {
         if (listener != null)
             createdListeners.remove(listener);
     }
@@ -135,16 +128,14 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     /**
      * Utility method.
      */
-    private static boolean equalStrings(String a, String b)
-    {
+    private static boolean equalStrings(String a, String b) {
         return a == b || (a != null && a.equals(b));
     }
 
     /**
      * Utility method.
      */
-    static int compareStrings(String a, String b)
-    {
+    static int compareStrings(String a, String b) {
         if (a == b)
             return 0;
 
@@ -164,29 +155,25 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     //--------------------------------------------------------------------------
 
     /**
-     *
      * Constructs a new MessageClient for local use.
      *
-     * @param clientId The clientId for the MessageClient.
+     * @param clientId    The clientId for the MessageClient.
      * @param destination The destination the MessageClient is subscribed to.
-     * @param endpointId The Id of the endpoint this MessageClient subscription was created over.
+     * @param endpointId  The Id of the endpoint this MessageClient subscription was created over.
      */
-    public MessageClient(Object clientId, Destination destination, String endpointId)
-    {
+    public MessageClient(Object clientId, Destination destination, String endpointId) {
         this(clientId, destination, endpointId, true);
     }
 
     /**
-     *
      * Constructs a new MessageClient.
      *
-     * @param clientId The clientId for the MessageClient.
+     * @param clientId    The clientId for the MessageClient.
      * @param destination The destination the MessageClient is subscribed to.
-     * @param endpointId The Id of the endpoint this MessageClient subscription was created over.
-     * @param useSession RemoteMessageClient instances should not be associated with a FlexSession (pass false).
+     * @param endpointId  The Id of the endpoint this MessageClient subscription was created over.
+     * @param useSession  RemoteMessageClient instances should not be associated with a FlexSession (pass false).
      */
-    public MessageClient(Object clientId, Destination destination, String endpointId, boolean useSession)
-    {
+    public MessageClient(Object clientId, Destination destination, String endpointId, boolean useSession) {
         valid = true;
         this.clientId = clientId;
         this.destination = destination;
@@ -195,8 +182,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         updateLastUse(); // Initialize last use timestamp to construct time.
 
         /* If this is for a remote server, we do not associate with the session. */
-        if (useSession)
-        {
+        if (useSession) {
             flexSession = FlexContext.getFlexSession();
             flexSession.registerMessageClient(this);
 
@@ -206,9 +192,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
             // SubscriptionManager will notify the created listeners, once
             // subscription state is setup completely.
             // notifyCreatedListeners();
-        }
-        else
-        {
+        } else {
             flexClient = null;
             flexSession = null;
             // Use an instance level lock.
@@ -227,18 +211,18 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     //--------------------------------------------------------------------------
 
     /**
-     *  This flag is set to true when the client channel that this subscription was
-     *  established over is disconnected.
-     *  It supports cleaning up per-endpoint outbound queues maintained by the FlexClient.
-     *  If the client notifies the server that its channel is disconnecting, the FlexClient
-     *  does not need to maintain an outbound queue containing a subscription invalidation
-     *  message for this MessageClient to send to the client.
+     * This flag is set to true when the client channel that this subscription was
+     * established over is disconnected.
+     * It supports cleaning up per-endpoint outbound queues maintained by the FlexClient.
+     * If the client notifies the server that its channel is disconnecting, the FlexClient
+     * does not need to maintain an outbound queue containing a subscription invalidation
+     * message for this MessageClient to send to the client.
      */
     private volatile boolean clientChannelDisconnected;
 
     /**
-     *  The clientId for the MessageClient.
-     *  This value is specified by the client directly or is autogenerated on the client.
+     * The clientId for the MessageClient.
+     * This value is specified by the client directly or is autogenerated on the client.
      */
     protected final Object clientId;
 
@@ -248,7 +232,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     protected final Destination destination;
 
     /**
-     *  The destination the MessageClient is subscribed to.
+     * The destination the MessageClient is subscribed to.
      */
     protected final String destinationId;
 
@@ -333,8 +317,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      *
      * @return The clientId for the MessageClient.
      */
-    public Object getClientId()
-    {
+    public Object getClientId() {
         return clientId; // Field is final; no need to sync.
     }
 
@@ -343,8 +326,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      *
      * @return The destination the MessageClient is subscribed to.
      */
-    public Destination getDestination()
-    {
+    public Destination getDestination() {
         return destination; // Field is final; no need to sync.
     }
 
@@ -353,8 +335,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      *
      * @return The id of the destination the MessageClient is subscribed to.
      */
-    public String getDestinationId()
-    {
+    public String getDestinationId() {
         return destinationId; // Field is final; no need to sync.
     }
 
@@ -363,8 +344,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      *
      * @return The Id for the endpoint the MessageClient subscription was created over.
      */
-    public String getEndpointId()
-    {
+    public String getEndpointId() {
         return endpointId; // Field is final; no need to sync.
     }
 
@@ -373,8 +353,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      *
      * @return The FlexClient assocaited with this MessageClient.
      */
-    public FlexClient getFlexClient()
-    {
+    public FlexClient getFlexClient() {
         return flexClient; // Field is final; no need to sync.
     }
 
@@ -383,10 +362,8 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      *
      * @return The FlexSession associated with this MessageClient.
      */
-    public FlexSession getFlexSession()
-    {
-        synchronized (lock)
-        {
+    public FlexSession getFlexSession() {
+        synchronized (lock) {
             return flexSession;
         }
     }
@@ -396,20 +373,17 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      *
      * @return The number of subscriptions associated with this MessageClient.
      */
-    public int getSubscriptionCount()
-    {
+    public int getSubscriptionCount() {
         int count;
 
-        synchronized (lock)
-        {
-            count = subscriptions != null? subscriptions.size() : 0;
+        synchronized (lock) {
+            count = subscriptions != null ? subscriptions.size() : 0;
         }
 
         return count;
     }
 
     /**
-     *
      * This is used for FlexClient outbound queue management. When a MessageClient is invalidated
      * if it is attempting to notify the client, then we must leave the outbound queue containing
      * the notification in place. Otherwise, any messages queued for the subscription may be
@@ -417,13 +391,11 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      *
      * @return true if the MessageClient is currently trying to notify the client about it's invalidation.
      */
-    public boolean isAttemptingInvalidationClientNotification()
-    {
+    public boolean isAttemptingInvalidationClientNotification() {
         return attemptingInvalidationClientNotification;
     }
 
     /**
-     *
      * This is set to true when the MessageClient is invalidated due to the client
      * channel the subscription was established over disconnecting.
      * It allows the FlexClient class to cleanup the outbound queue for the channel's
@@ -432,56 +404,46 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      *
      * @param value true if the MessageClient is invalidated due to the client being disconnected
      */
-    public void setClientChannelDisconnected(boolean value)
-    {
+    public void setClientChannelDisconnected(boolean value) {
         clientChannelDisconnected = value;
     }
 
     /**
      * @return true if the MessageClient is invalidated due to the client being disconnected
      */
-    public boolean isClientChannelDisconnected()
-    {
+    public boolean isClientChannelDisconnected() {
         return clientChannelDisconnected;
     }
 
     /**
-     *
      * This is true when some code other than the SubscriptionManager
      * is maintaining subscriptions for this message client.  It ensures
      * that we have this MessageClient kept around until the session
      * expires.
      */
-    public void setRegistered(boolean reg)
-    {
+    public void setRegistered(boolean reg) {
         registered = reg;
     }
 
     /**
      *
      */
-    public boolean isRegistered()
-    {
+    public boolean isRegistered() {
         return registered;
     }
 
     /**
      * Adds a MessageClient destroy listener.
      *
-     * @see flex.messaging.MessageClientListener
-     *
      * @param listener The listener to add.
+     * @see flex.messaging.MessageClientListener
      */
-    public void addMessageClientDestroyedListener(MessageClientListener listener)
-    {
-        if (listener != null)
-        {
+    public void addMessageClientDestroyedListener(MessageClientListener listener) {
+        if (listener != null) {
             checkValid();
 
-            if (destroyedListeners == null)
-            {
-                synchronized (lock)
-                {
+            if (destroyedListeners == null) {
+                synchronized (lock) {
                     if (destroyedListeners == null)
                         destroyedListeners = new CopyOnWriteArrayList();
                 }
@@ -494,30 +456,25 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     /**
      * Removes a MessageClient destroyed listener.
      *
-     * @see flex.messaging.MessageClientListener
-     *
      * @param listener The listener to remove.
+     * @see flex.messaging.MessageClientListener
      */
-    public void removeMessageClientDestroyedListener(MessageClientListener listener)
-    {
+    public void removeMessageClientDestroyedListener(MessageClientListener listener) {
         // No need to check validity; removing a listener is always ok.
         if (listener != null && destroyedListeners != null)
             destroyedListeners.remove(listener);
     }
 
     /**
-     *
      * Adds a subscription to the subscription set for this MessageClient.
      *
-     * @param selector The selector expression used for the subscription.
-     * @param subtopic The subtopic used for the subscription.
+     * @param selector     The selector expression used for the subscription.
+     * @param subtopic     The subtopic used for the subscription.
      * @param maxFrequency The maximum number of messages the client wants to
-     * receive per second (0 disables this limit).
+     *                     receive per second (0 disables this limit).
      */
-    public void addSubscription(String selector, String subtopic, int maxFrequency)
-    {
-        synchronized (lock)
-        {
+    public void addSubscription(String selector, String subtopic, int maxFrequency) {
+        synchronized (lock) {
             checkValid();
 
             incrementReferences();
@@ -531,26 +488,22 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     *
      * Registers  the subscription with the outbound queue processor's throttle
      * manager, if one exists.
      *
      * @param si The subscription info object.
      */
-    public void registerSubscriptionWithThrottleManager(SubscriptionInfo si)
-    {
+    public void registerSubscriptionWithThrottleManager(SubscriptionInfo si) {
         // Register the destination that will setup client level outbound throttling.
         ThrottleSettings ts = destination.getNetworkSettings().getThrottleSettings();
-        if (ts.getOutboundPolicy() != Policy.NONE && (ts.isOutboundClientThrottleEnabled() || si.maxFrequency > 0))
-        {
+        if (ts.getOutboundPolicy() != Policy.NONE && (ts.isOutboundClientThrottleEnabled() || si.maxFrequency > 0)) {
             // Setup the client level outbound throttling, and register the destination
             // only if the policy is not NONE, and a throttling limit is specified
             // either at the destination or by consumer.
             OutboundQueueThrottleManager throttleManager = getThrottleManager(true);
             if (throttleManager != null)
                 throttleManager.registerDestination(destinationId, ts.getOutgoingClientFrequency(), ts.getOutboundPolicy());
-        }
-        else if (si.maxFrequency > 0) // Let the client know that maxFrequency will be ignored.
+        } else if (si.maxFrequency > 0) // Let the client know that maxFrequency will be ignored.
         {
             if (Log.isWarn())
                 Log.getLogger(MESSAGE_CLIENT_LOG_CATEGORY).warn("MessageClient with clientId '"
@@ -566,25 +519,19 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     *
      * Removes a subscription from the subscription set for this MessageClient.
      *
      * @param selector The selector expression for the subscription.
      * @param subtopic The subtopic for the subscription.
      * @return true if no subscriptions remain for this MessageClient; otherwise false.
      */
-    public boolean removeSubscription(String selector, String subtopic)
-    {
-        synchronized (lock)
-        {
+    public boolean removeSubscription(String selector, String subtopic) {
+        synchronized (lock) {
             SubscriptionInfo si = new SubscriptionInfo(selector, subtopic);
-            if (subscriptions.remove(si))
-            {
+            if (subscriptions.remove(si)) {
                 unregisterSubscriptionWithThrottleManager(si);
                 return decrementReferences();
-            }
-            else if (Log.isError())
-            {
+            } else if (Log.isError()) {
                 Log.getLogger(MessageService.LOG_CATEGORY).error("Error - unable to find subscription to remove for MessageClient: "
                         + clientId + " selector: " + selector + " subtopic: " + subtopic);
             }
@@ -593,33 +540,25 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     *
      * We use the same MessageClient for more than one subscription with different
      * selection criteria.  This tracks the number of subscriptions that are active
      * so that we know when we are finished.
      */
-    public void incrementReferences()
-    {
-        synchronized (lock)
-        {
+    public void incrementReferences() {
+        synchronized (lock) {
             numReferences++;
         }
     }
 
     /**
-     *
      * Decrements the numReferences variable and returns true if this was the last reference.
      */
-    public boolean decrementReferences()
-    {
-        synchronized (lock)
-        {
-            if (--numReferences == 0)
-            {
+    public boolean decrementReferences() {
+        synchronized (lock) {
+            if (--numReferences == 0) {
                 cancelTimeout();
-                if (destination instanceof MessageDestination)
-                {
-                    MessageDestination msgDestination = (MessageDestination)destination;
+                if (destination instanceof MessageDestination) {
+                    MessageDestination msgDestination = (MessageDestination) destination;
                     if (msgDestination.getThrottleManager() != null)
                         msgDestination.getThrottleManager().removeClientThrottleMark(clientId);
                 }
@@ -630,36 +569,30 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     *
      * Invoked by SubscriptionManager once the subscription state is setup completely
      * for the MessageClient..
      */
-    public void notifyCreatedListeners()
-    {
+    public void notifyCreatedListeners() {
         // Notify MessageClient created listeners.
-        if (!createdListeners.isEmpty())
-        {
+        if (!createdListeners.isEmpty()) {
             // CopyOnWriteArrayList is iteration-safe from ConcurrentModificationExceptions.
-            for (Iterator iter = createdListeners.iterator(); iter.hasNext();)
-                ((MessageClientListener)iter.next()).messageClientCreated(this);
+            for (Iterator iter = createdListeners.iterator(); iter.hasNext(); )
+                ((MessageClientListener) iter.next()).messageClientCreated(this);
         }
     }
 
     /**
-     *
      * Invoked by SubscriptionManager while handling a subscribe request.
      * If the request is updating an existing subscription the 'push' state in the associated FlexClient
      * may need to be updated to ensure that the correct endpoint is used for this subscription.
      *
      * @param newEndpointId The id for the new endpoint that the subscription may have failed over to.
      */
-    public void resetEndpoint(String newEndpointId)
-    {
+    public void resetEndpoint(String newEndpointId) {
         String oldEndpointId = null;
         FlexSession oldSession = null;
         FlexSession newSession = FlexContext.getFlexSession();
-        synchronized (lock)
-        {
+        synchronized (lock) {
             // If anything is null, or nothing has changed, no need for a reset.
             if (endpointId == null || newEndpointId == null || flexSession == null || newSession == null || (endpointId.equals(newEndpointId) && flexSession.equals(newSession)))
                 return;
@@ -687,8 +620,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         if (flexClient != null)
             flexClient.registerMessageClient(this);
 
-        if (Log.isDebug())
-        {
+        if (Log.isDebug()) {
             String msg = "MessageClient with clientId '" + clientId + "' for destination '" + destinationId + "' has been reset as a result of a resubscribe.";
             if (oldEndpointId != null && !oldEndpointId.equals(newEndpointId))
                 msg += " Endpoint change [" + oldEndpointId + " -> " + newEndpointId + "]";
@@ -700,7 +632,6 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     *
      * Used to test whether this client should receive this message
      * based on the list of subscriptions we have recorded for it.
      * It must match both the subtopic and the selector expression.
@@ -711,14 +642,11 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      *
      * @param message The message to test.
      */
-    public boolean testMessage(Message message, MessageDestination destination)
-    {
+    public boolean testMessage(Message message, MessageDestination destination) {
         String subtopic = (String) message.getHeader(AsyncMessage.SUBTOPIC_HEADER_NAME);
         String subtopicSeparator = destination.getServerSettings().getSubtopicSeparator();
-        synchronized (lock)
-        {
-            for (SubscriptionInfo si : subscriptions)
-            {
+        synchronized (lock) {
+            for (SubscriptionInfo si : subscriptions) {
                 if (si.matches(message, subtopic, subtopicSeparator))
                     return true;
             }
@@ -731,19 +659,16 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      *
      * @return true if the MessageClient is valid; otherwise false.
      */
-    public boolean isValid()
-    {
-        synchronized (lock)
-        {
+    public boolean isValid() {
+        synchronized (lock) {
             return valid;
         }
     }
-    
+
     /**
      * Invalidates the MessageClient.
      */
-    public void invalidate()
-    {
+    public void invalidate() {
         invalidate(false /* don't attempt to notify the client */);
     }
 
@@ -757,10 +682,8 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      * @param notifyClient <code>true</code> to notify the client that its subscription has been
      *                     invalidated.
      */
-    public void invalidate(boolean notifyClient)
-    {
-        synchronized (lock)
-        {
+    public void invalidate(boolean notifyClient) {
+        synchronized (lock) {
             if (!valid || invalidating)
                 return; // Already shutting down.
 
@@ -772,31 +695,26 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         attemptingInvalidationClientNotification = notifyClient;
 
         // Build a subscription invalidation message and push to the client if it is still valid.
-        if (notifyClient && flexClient != null && flexClient.isValid())
-        {
+        if (notifyClient && flexClient != null && flexClient.isValid()) {
             CommandMessage msg = new CommandMessage();
             msg.setDestination(destination.getId());
             msg.setClientId(clientId);
             msg.setOperation(CommandMessage.SUBSCRIPTION_INVALIDATE_OPERATION);
             Set subscriberIds = new TreeSet();
             subscriberIds.add(clientId);
-            try
-            {
-                if (destination instanceof MessageDestination)
-                {
-                    MessageDestination msgDestination = (MessageDestination)destination;
-                    ((MessageService)msgDestination.getService()).pushMessageToClients(msgDestination, subscriberIds, msg, false /* don't eval selector */);
+            try {
+                if (destination instanceof MessageDestination) {
+                    MessageDestination msgDestination = (MessageDestination) destination;
+                    ((MessageService) msgDestination.getService()).pushMessageToClients(msgDestination, subscriberIds, msg, false /* don't eval selector */);
                 }
+            } catch (MessageException ignore) {
             }
-            catch (MessageException ignore) {}
         }
 
         // Notify messageClientDestroyed listeners that we're being invalidated.
-        if (destroyedListeners != null && !destroyedListeners.isEmpty())
-        {
-            for (Iterator iter = destroyedListeners.iterator(); iter.hasNext();)
-            {
-                ((MessageClientListener)iter.next()).messageClientDestroyed(this);
+        if (destroyedListeners != null && !destroyedListeners.isEmpty()) {
+            for (Iterator iter = destroyedListeners.iterator(); iter.hasNext(); ) {
+                ((MessageClientListener) iter.next()).messageClientDestroyed(this);
             }
             destroyedListeners.clear();
         }
@@ -807,10 +725,8 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         // is that some adapters manage their own subscription state (i.e. JMS) in addition to us keeping track of
         // things with our SubscriptionManager.
         ArrayList<CommandMessage> unsubMessages = new ArrayList<CommandMessage>();
-        synchronized (lock)
-        {
-            for (SubscriptionInfo subInfo : subscriptions)
-            {
+        synchronized (lock) {
+            for (SubscriptionInfo subInfo : subscriptions) {
                 CommandMessage unsubMessage = new CommandMessage();
                 unsubMessage.setDestination(destination.getId());
                 unsubMessage.setClientId(clientId);
@@ -822,21 +738,16 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
             }
         }
         // Release the lock and send the unsub messages.
-        for (CommandMessage unsubMessage : unsubMessages)
-        {
-            try
-            {
+        for (CommandMessage unsubMessage : unsubMessages) {
+            try {
                 destination.getService().serviceCommand(unsubMessage);
-            }
-            catch (MessageException me)
-            {
+            } catch (MessageException me) {
                 if (Log.isDebug())
                     Log.getLogger(MESSAGE_CLIENT_LOG_CATEGORY).debug("MessageClient: " + getClientId() + " issued an unsubscribe message during invalidation that was not processed but will continue with invalidation. Reason: " + ExceptionUtil.toString(me));
             }
         }
 
-        synchronized (lock)
-        {
+        synchronized (lock) {
             // If we didn't clean up all subscriptions log an error and continue with shutdown.
             int remainingSubscriptionCount = subscriptions.size();
             if (remainingSubscriptionCount > 0 && Log.isError())
@@ -846,10 +757,9 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
         // If someone registered this message client, invalidating it will free
         // their reference which will typically also remove this message client.
         if (registered && destination instanceof MessageDestination)
-            ((MessageDestination)destination).getSubscriptionManager().releaseMessageClient(this);
+            ((MessageDestination) destination).getSubscriptionManager().releaseMessageClient(this);
 
-        synchronized (lock)
-        {
+        synchronized (lock) {
             valid = false;
             invalidating = false;
         }
@@ -862,37 +772,30 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      * Pushes the supplied message and then invalidates the MessageClient.
      *
      * @param message The message to push to the client before invalidating.
-     * When message is null, MessageClient is invalidated silently.
+     *                When message is null, MessageClient is invalidated silently.
      */
-    public void invalidate(Message message)
-    {
-        if (message != null)
-        {
+    public void invalidate(Message message) {
+        if (message != null) {
             message.setDestination(destination.getId());
             message.setClientId(clientId);
 
             Set subscriberIds = new TreeSet();
             subscriberIds.add(clientId);
-            try
-            {
-                if (destination instanceof MessageDestination)
-                {
-                    MessageDestination msgDestination = (MessageDestination)destination;
-                    ((MessageService)msgDestination.getService()).pushMessageToClients(msgDestination, subscriberIds, message, false /* don't eval selector */);
+            try {
+                if (destination instanceof MessageDestination) {
+                    MessageDestination msgDestination = (MessageDestination) destination;
+                    ((MessageService) msgDestination.getService()).pushMessageToClients(msgDestination, subscriberIds, message, false /* don't eval selector */);
                 }
+            } catch (MessageException ignore) {
             }
-            catch (MessageException ignore) {}
 
             invalidate(true /* attempt to notify remote client */);
-        }
-        else
-        {
+        } else {
             invalidate();
         }
     }
 
     /**
-     *
      * Compares this MessageClient to the specified object. The result is true if
      * the argument is not null and is a MessageClient instance with a matching
      * clientId value.
@@ -900,10 +803,8 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      * @param o The object to compare this MessageClient to.
      * @return true if the MessageClient is equal; otherwise false.
      */
-    public boolean equals(Object o)
-    {
-        if (o instanceof MessageClient)
-        {
+    public boolean equals(Object o) {
+        if (o instanceof MessageClient) {
             MessageClient c = (MessageClient) o;
             if (c != null && c.getClientId().equals(clientId))
                 return true;
@@ -912,27 +813,23 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     }
 
     /**
-     *
      * Returns the hash code for this MessageClient. The returned value is
      * the hash code for the MessageClient's clientId property.
      *
      * @return The hash code value for this MessageClient.
      */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return getClientId().hashCode();
     }
 
     /**
-     *
      * The String representation of this MessageClient is returned (its clientId value).
      *
      * @return The clientId value for this MessageClient.
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.valueOf(clientId);
     }
 
@@ -941,43 +838,35 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
     //----------------------------------
 
     /**
-     *
      * Implements TimeoutCapable.
      * This method returns the timeout value configured for the MessageClient's destination.
      */
     @Override
-    public long getTimeoutPeriod()
-    {
-        return (destination instanceof MessageDestination) ? 
-                ((MessageDestination)destination).getSubscriptionManager().getSubscriptionTimeoutMillis() : 0;
+    public long getTimeoutPeriod() {
+        return (destination instanceof MessageDestination) ?
+                ((MessageDestination) destination).getSubscriptionManager().getSubscriptionTimeoutMillis() : 0;
     }
 
     /**
-     *
      * Implements TimeoutCapable.
      * This method is invoked when the MessageClient has timed out and it
      * invalidates the MessageClient.
      */
-    public void timeout()
-    {
+    public void timeout() {
         invalidate(true /* notify client */);
     }
 
     /**
-     *
      * Returns true if a timeout task is running for this MessageClient.
      */
-    public boolean isTimingOut()
-    {
+    public boolean isTimingOut() {
         return willTimeout;
     }
 
     /**
-     *
      * Records whether a timeout task is running for this MessageClient.
      */
-    public void setTimingOut(boolean value)
-    {
+    public void setTimingOut(boolean value) {
         willTimeout = value;
     }
 
@@ -991,30 +880,24 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      * Utility method that tests validity and throws an exception if the instance
      * has been invalidated.
      */
-    private void checkValid()
-    {
-        synchronized (lock)
-        {
-            if (!valid)
-            {
+    private void checkValid() {
+        synchronized (lock) {
+            if (!valid) {
                 throw new RuntimeException("MessageClient has been invalidated."); // TODO - localize
             }
         }
     }
 
-    private OutboundQueueThrottleManager getThrottleManager(boolean create)
-    {
-        if (flexClient != null)
-        {
+    private OutboundQueueThrottleManager getThrottleManager(boolean create) {
+        if (flexClient != null) {
             FlexClientOutboundQueueProcessor processor = flexClient.getOutboundQueueProcessor(endpointId);
             if (processor != null)
-                return create? processor.getOrCreateOutboundQueueThrottleManager() : processor.getOutboundQueueThrottleManager();
+                return create ? processor.getOrCreateOutboundQueueThrottleManager() : processor.getOutboundQueueThrottleManager();
         }
         return null;
     }
 
-    private void unregisterSubscriptionWithThrottleManager(SubscriptionInfo si)
-    {
+    private void unregisterSubscriptionWithThrottleManager(SubscriptionInfo si) {
         OutboundQueueThrottleManager throttleManager = getThrottleManager(false);
         if (throttleManager != null)
             throttleManager.unregisterSubscription(destinationId, si);
@@ -1031,51 +914,45 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
      * It captures the optional selector expression and subtopic for the
      * subscription.
      */
-    public static class SubscriptionInfo implements Comparable
-    {
+    public static class SubscriptionInfo implements Comparable {
         public String selector, subtopic;
         public int maxFrequency; // maxFrequency per subscription. Not used in BlazeDS.
 
-        public SubscriptionInfo(String sel, String sub)
-        {
+        public SubscriptionInfo(String sel, String sub) {
             this(sel, sub, 0);
         }
 
-        public SubscriptionInfo(String sel, String sub, int maxFrequency)
-        {
+        public SubscriptionInfo(String sel, String sub, int maxFrequency) {
             this.selector = sel;
             this.subtopic = sub;
             this.maxFrequency = maxFrequency;
         }
 
         @Override
-        public boolean equals(Object o)
-        {
-            if (o instanceof SubscriptionInfo)
-            {
+        public boolean equals(Object o) {
+            if (o instanceof SubscriptionInfo) {
                 SubscriptionInfo other = (SubscriptionInfo) o;
                 return equalStrings(other.selector, selector) &&
-                       equalStrings(other.subtopic, subtopic);
+                        equalStrings(other.subtopic, subtopic);
             }
             return false;
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return (selector == null ? 0 : selector.hashCode()) +
-                   (subtopic == null ? 1 : subtopic.hashCode());
+                    (subtopic == null ? 1 : subtopic.hashCode());
         }
 
         /**
          * Compares the two subscription infos (being careful to
          * ensure we compare in a consistent way if the arguments
          * are switched).
+         *
          * @param o the object to compare
          * @return int the compare result
          */
-        public int compareTo(Object o)
-        {
+        public int compareTo(Object o) {
             SubscriptionInfo other = (SubscriptionInfo) o;
             int result;
 
@@ -1089,19 +966,18 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
 
         /**
          * Check whether the message matches with selected subtopic.
-         * @param message current message
-         * @param subtopicToMatch subtopc string
-         * @param subtopicSeparator suptopic separator 
+         *
+         * @param message           current message
+         * @param subtopicToMatch   subtopc string
+         * @param subtopicSeparator suptopic separator
          * @return true if the message matches the subtopic
          */
-        public boolean matches(Message message, String subtopicToMatch, String subtopicSeparator)
-        {
+        public boolean matches(Message message, String subtopicToMatch, String subtopicSeparator) {
             if ((subtopicToMatch == null && subtopic != null) || (subtopicToMatch != null && subtopic == null))
                 return false; // If either defines a subtopic, they both must define one.
 
             // If both define a subtopic, they must match.
-            if (subtopicToMatch != null && subtopic != null)
-            {
+            if (subtopicToMatch != null && subtopic != null) {
                 Subtopic consumerSubtopic = new Subtopic(subtopic, subtopicSeparator);
                 Subtopic messageSubtopic = new Subtopic(subtopicToMatch, subtopicSeparator);
                 if (!consumerSubtopic.matches(messageSubtopic))
@@ -1111,7 +987,7 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
             if (selector == null)
                 return true;
 
-            JMSSelector jmsSelector = new JMSSelector(selector);
+            /*JMSSelector jmsSelector = new JMSSelector(selector);
             try
             {
                 if (jmsSelector.match(message))
@@ -1127,16 +1003,16 @@ public class MessageClient extends TimeoutAbstractObject implements Serializable
                          "  incomingMessage: " + message + StringUtils.NEWLINE +
                          "  selector: " + selector + StringUtils.NEWLINE);
                 }
-            }
+            }*/
             return false;
         }
 
         /**
          * Returns a String representation of the subscription info.
+         *
          * @return String the string representation of the subscription info
          */
-        public String toString()
-        {
+        public String toString() {
             StringBuffer sb = new StringBuffer();
             sb.append("Subtopic: " + subtopic + StringUtils.NEWLINE);
             sb.append("Selector: " + selector + StringUtils.NEWLINE);

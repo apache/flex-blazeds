@@ -23,8 +23,7 @@ import flex.messaging.io.SerializationContext;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class AmfMessageSerializer implements MessageSerializer
-{
+public class AmfMessageSerializer implements MessageSerializer {
     public static final int UNKNOWN_CONTENT_LENGTH = 1; //-1;
 
     protected Amf0Output amfOut;
@@ -33,17 +32,14 @@ public class AmfMessageSerializer implements MessageSerializer
     protected AmfTrace debugTrace;
     protected int version;
 
-    public AmfMessageSerializer()
-    {
+    public AmfMessageSerializer() {
     }
 
-    public void setVersion(int value)
-    {
+    public void setVersion(int value) {
         version = value;
     }
 
-    public void initialize(SerializationContext context, OutputStream out, AmfTrace trace)
-    {
+    public void initialize(SerializationContext context, OutputStream out, AmfTrace trace) {
         amfOut = new Amf0Output(context);
         amfOut.setOutputStream(out);
         amfOut.setAvmPlus(version >= MessageIOConstants.AMF3);
@@ -59,8 +55,7 @@ public class AmfMessageSerializer implements MessageSerializer
      * @param m message to serialize
      * @throws IOException
      */
-    public void writeMessage(ActionMessage m) throws IOException
-    {
+    public void writeMessage(ActionMessage m) throws IOException {
         if (isDebug)
             debugTrace.startResponse("Serializing AMF/HTTP response");
 
@@ -77,8 +72,7 @@ public class AmfMessageSerializer implements MessageSerializer
         // Write out headers
         int headerCount = m.getHeaderCount();
         amfOut.writeShort(headerCount);
-        for (int i = 0; i < headerCount; ++i)
-        {
+        for (int i = 0; i < headerCount; ++i) {
             MessageHeader header = m.getHeader(i);
 
             if (isDebug)
@@ -93,8 +87,7 @@ public class AmfMessageSerializer implements MessageSerializer
         // Write out the bodies
         int bodyCount = m.getBodyCount();
         amfOut.writeShort(bodyCount);
-        for (int i = 0; i < bodyCount; ++i)
-        {
+        for (int i = 0; i < bodyCount; ++i) {
             MessageBody body = m.getBody(i);
 
             if (isDebug)
@@ -113,8 +106,7 @@ public class AmfMessageSerializer implements MessageSerializer
      * @param h header to serialize
      * @throws IOException if write fails.
      */
-    public void writeHeader(MessageHeader h) throws IOException
-    {
+    public void writeHeader(MessageHeader h) throws IOException {
         amfOut.writeUTF(h.getName());
         amfOut.writeBoolean(h.getMustUnderstand());
         amfOut.writeInt(UNKNOWN_CONTENT_LENGTH);
@@ -128,8 +120,7 @@ public class AmfMessageSerializer implements MessageSerializer
      * @param b body to serialize
      * @throws IOException if write fails.
      */
-    public void writeBody(MessageBody b) throws IOException
-    {
+    public void writeBody(MessageBody b) throws IOException {
         if (b.getTargetURI() == null)
             amfOut.writeUTF("null");
         else
@@ -152,8 +143,7 @@ public class AmfMessageSerializer implements MessageSerializer
      *
      * @param value - the Object to write to the AMF stream.
      */
-    public void writeObject(Object value) throws IOException
-    {
+    public void writeObject(Object value) throws IOException {
         amfOut.writeObject(value);
     }
 }

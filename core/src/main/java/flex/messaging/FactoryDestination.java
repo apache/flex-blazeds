@@ -20,78 +20,75 @@ import flex.messaging.config.ConfigMap;
 import flex.messaging.config.ConfigurationException;
 import flex.messaging.log.Log;
 
-public abstract class FactoryDestination extends Destination
-{   
-    private static final String FACTORY = "factory";       
+public abstract class FactoryDestination extends Destination {
+    private static final String FACTORY = "factory";
     private static final String DEFAULT_FACTORY = "java";
-    
+
     // Errors
     private static int INVALID_FACTORY = 11103;
     private static int FACTORY_CANNOT_BE_RETURNED = 11118;
-    
+
     // FactoryDestination's properties 
     private FlexFactory factory;
     private String source;
     private String scope = FlexFactory.SCOPE_REQUEST;
-    
+
     // FactoryDestination internal
     private String factoryId = DEFAULT_FACTORY;
-    private FactoryInstance factoryInstance; 
+    private FactoryInstance factoryInstance;
     private ConfigMap factoryProperties;
-    
+
     //--------------------------------------------------------------------------
     //
     // Constructor
     //
     //--------------------------------------------------------------------------
-    
+
     /**
      * Constructs an unmanaged <code>FactoryDestination</code> instance.
      */
-    public FactoryDestination()
-    {
+    public FactoryDestination() {
         this(false);
     }
-    
+
     /**
      * Constructs a <code>FactoryDestination</code> with the indicated management.
-     * 
+     *
      * @param enableManagement <code>true</code> if the <code>FactoryDestination</code>
-     * is manageable; otherwise <code>false</code>.
+     *                         is manageable; otherwise <code>false</code>.
      */
-    public FactoryDestination(boolean enableManagement)
-    {
+    public FactoryDestination(boolean enableManagement) {
         super(enableManagement);
     }
-    
+
     //--------------------------------------------------------------------------
     //
     // Initialize, validate, start, and stop methods. 
     //
     //--------------------------------------------------------------------------
-    
+
     /**
-     * Initializes the <code>FactoryDestination</code> with the properties. 
-     * @param id the factory id
+     * Initializes the <code>FactoryDestination</code> with the properties.
+     *
+     * @param id         the factory id
      * @param properties Properties for the <code>FactoryDestination</code>.
      */
-    public void initialize(String id, ConfigMap properties)
-    {  
+    public void initialize(String id, ConfigMap properties) {
         super.initialize(id, properties);
-        
+
         if (properties == null || properties.size() == 0)
             return;
 
         // Need to cache this for later. TODO: We shouldn't need to do this.
         factoryProperties = properties;
 
-        factoryId = properties.getPropertyAsString(FACTORY, factoryId);        
+        factoryId = properties.getPropertyAsString(FACTORY, factoryId);
         scope = properties.getPropertyAsString(FlexFactory.SCOPE, scope);
         source = properties.getPropertyAsString(FlexFactory.SOURCE, source);
 
         if (source == null)
             source = getId();
-        
+
         if (factory != null)
             factory.initialize(getId(), factoryProperties);
     }
@@ -100,34 +97,30 @@ public abstract class FactoryDestination extends Destination
      * Verifies that the <code>FactoryDestination</code> is in valid state before
      * it is started.
      */
-    protected void validate()
-    {               
+    protected void validate() {
         if (isValid())
-            return; 
-       
+            return;
+
         super.validate();
 
-        if (factory == null)
-        {
-            if (factoryId == null)
-            {
+        if (factory == null) {
+            if (factoryId == null) {
                 factoryId = DEFAULT_FACTORY;
             }
             MessageBroker broker = getService().getMessageBroker();
             FlexFactory f = broker.getFactory(factoryId);
-            if (f == null)
-            {
+            if (f == null) {
                 ConfigurationException ex = new ConfigurationException();
-                ex.setMessage(INVALID_FACTORY, new Object[] {getId(), factoryId});
+                ex.setMessage(INVALID_FACTORY, new Object[]{getId(), factoryId});
                 throw ex;
             }
             factory = f;
         }
-        
+
         if (scope == null)
             scope = FlexFactory.SCOPE_REQUEST;
-        
-        if (source == null)        
+
+        if (source == null)
             source = getId();
     }
 
@@ -136,41 +129,36 @@ public abstract class FactoryDestination extends Destination
     // Public Getters and Setters for Destination properties
     //         
     //--------------------------------------------------------------------------    
-    
+
     /**
      * Returns the factory of the <code>FactoryDestination</code>. Before a valid
      * <code>FlexFactory</code> can be returned, <code>MessageBroker</code> and
      * hence <code>Service</code> of the <code>Destination</code> has to be set.
+     *
      * @return FlexFactory the FlexFactory object
      */
-    public FlexFactory getFactory()
-    {
-        if (factory == null)
-        {
-            if (factoryId == null)
-            {
+    public FlexFactory getFactory() {
+        if (factory == null) {
+            if (factoryId == null) {
                 factoryId = DEFAULT_FACTORY;
             }
-            if (getService() == null)
-            {
+            if (getService() == null) {
                 // Factory cannot be returned without ''{0}'' set.
                 ConfigurationException ex = new ConfigurationException();
-                ex.setMessage(FACTORY_CANNOT_BE_RETURNED, new Object[] {"Service"});
+                ex.setMessage(FACTORY_CANNOT_BE_RETURNED, new Object[]{"Service"});
                 throw ex;
             }
-            if (getService().getMessageBroker() == null)
-            {
+            if (getService().getMessageBroker() == null) {
                 // Factory cannot be returned without ''{0}'' set.
                 ConfigurationException ex = new ConfigurationException();
-                ex.setMessage(FACTORY_CANNOT_BE_RETURNED, new Object[] {"MessageBroker"});
+                ex.setMessage(FACTORY_CANNOT_BE_RETURNED, new Object[]{"MessageBroker"});
                 throw ex;
             }
             MessageBroker broker = getService().getMessageBroker();
             FlexFactory f = broker.getFactory(factoryId);
-            if (f == null)
-            {
+            if (f == null) {
                 ConfigurationException ex = new ConfigurationException();
-                ex.setMessage(INVALID_FACTORY, new Object[] {getId(), factoryId});
+                ex.setMessage(INVALID_FACTORY, new Object[]{getId(), factoryId});
                 throw ex;
             }
             factory = f;
@@ -179,59 +167,54 @@ public abstract class FactoryDestination extends Destination
     }
 
     /**
-     * Sets the factory of the <code>FactoryDestination</code>. 
+     * Sets the factory of the <code>FactoryDestination</code>.
      * <code>MessageBroker</code> has to know the factory before it can be
-     * assigned to the destination. 
-     * 
+     * assigned to the destination.
+     *
      * @param id The id of the factory.
-     */    
-    public void setFactory(String id)
-    {        
-        if (isStarted())
-        {
+     */
+    public void setFactory(String id) {
+        if (isStarted()) {
             MessageBroker broker = getService().getMessageBroker();
             FlexFactory factory = broker.getFactory(id);
-            if (factory == null)
-            {
+            if (factory == null) {
                 ConfigurationException ex = new ConfigurationException();
-                ex.setMessage(INVALID_FACTORY, new Object[] {getId(), factory});
+                ex.setMessage(INVALID_FACTORY, new Object[]{getId(), factory});
                 throw ex;
             }
             setFactory(factory);
         }
         factoryId = id;
     }
-    
+
     /**
-     * Sets the factory of the <code>FactoryDestination</code>. 
-     * 
+     * Sets the factory of the <code>FactoryDestination</code>.
+     *
      * @param factory the FlexFactory object
      */
-    public void setFactory(FlexFactory factory)
-    {
+    public void setFactory(FlexFactory factory) {
         this.factory = factory;
     }
-    
+
     /**
-     * Returns the <code>FactoryInstance</code>. <code>FactoryInstance</code> 
+     * Returns the <code>FactoryInstance</code>. <code>FactoryInstance</code>
      * stores configuration state used for retrieving an instance from
      * the factory. This needs to be called after calling <code>setSource</code>
      * and <code>setScope</code> methods.
-     * @return FactoryInstance current FactoryInstance object 
+     *
+     * @return FactoryInstance current FactoryInstance object
      */
-    public FactoryInstance getFactoryInstance()
-    {
+    public FactoryInstance getFactoryInstance() {
         // This is needed for HibernateAssembler
         return getFactoryInstance(factoryProperties);
     }
-    
+
     /**
      * Returns a <code>FactoryInstance</code> using the properties passed in.
-     * 
-     * @param properties Properties to be used while creating the <code>FactoryInstance</code>. 
+     *
+     * @param properties Properties to be used while creating the <code>FactoryInstance</code>.
      */
-    private FactoryInstance getFactoryInstance(ConfigMap properties)
-    {
+    private FactoryInstance getFactoryInstance(ConfigMap properties) {
         // Automatically create a factory instance if not already set  
         if (factoryInstance == null)
             factoryInstance = createFactoryInstance(properties);
@@ -241,27 +224,25 @@ public abstract class FactoryDestination extends Destination
 
     /**
      * Creates a factory instance using the properties passed in.
-     * 
-     * @param properties Properties to be used while creating the <code>FactoryInstance</code>. 
+     *
+     * @param properties Properties to be used while creating the <code>FactoryInstance</code>.
      */
-    private FactoryInstance createFactoryInstance(ConfigMap properties)
-    {   
+    private FactoryInstance createFactoryInstance(ConfigMap properties) {
         if (properties == null)
             properties = new ConfigMap();
-        
+
         properties.put(FlexFactory.SOURCE, source);
         properties.put(FlexFactory.SCOPE, scope);
         FactoryInstance factoryInstance = getFactory().createFactoryInstance(getId(), properties);
         return factoryInstance;
     }
-    
+
     /**
      * Returns the scope of the <code>FactoryDestination</code>.
-     * 
+     *
      * @return scope of the <code>FactoryDestination</code>.
      */
-    public String getScope()
-    {
+    public String getScope() {
         return scope;
     }
 
@@ -269,73 +250,64 @@ public abstract class FactoryDestination extends Destination
      * Sets the scope of the <code>FactoryDestination</code> that is used
      * in <code>FactoryInstance</code> creation. Scope cannot be changed to and
      * from application scope once <code>FactoryInstance</code> is initialized.
-     * 
+     *
      * @param scope the scope
      */
-    public void setScope(String scope)
-    {        
-        if (factoryInstance != null)
-        {
-            if (FlexFactory.SCOPE_APPLICATION.equals(this.scope) 
-                    && !FlexFactory.SCOPE_APPLICATION.equals(scope))
-            {
+    public void setScope(String scope) {
+        if (factoryInstance != null) {
+            if (FlexFactory.SCOPE_APPLICATION.equals(this.scope)
+                    && !FlexFactory.SCOPE_APPLICATION.equals(scope)) {
                 if (Log.isWarn())
                     Log.getLogger(getLogCategory()).warn(
-                            "Current scope is "+FlexFactory.SCOPE_APPLICATION
-                            +" and it cannot be changed to "+scope
-                            +" once factory instance is initialized.");
+                            "Current scope is " + FlexFactory.SCOPE_APPLICATION
+                                    + " and it cannot be changed to " + scope
+                                    + " once factory instance is initialized.");
                 return;
-            }
-            else if (!FlexFactory.SCOPE_APPLICATION.equals(this.scope) 
-                        && FlexFactory.SCOPE_APPLICATION.equals(scope))
-            {
+            } else if (!FlexFactory.SCOPE_APPLICATION.equals(this.scope)
+                    && FlexFactory.SCOPE_APPLICATION.equals(scope)) {
                 if (Log.isWarn())
                     Log.getLogger(getLogCategory()).warn(
-                            "Current scope is "+this.scope
-                            +" and it cannot be changed to "+FlexFactory.SCOPE_APPLICATION
-                            +" once factory instance is initialized.");
+                            "Current scope is " + this.scope
+                                    + " and it cannot be changed to " + FlexFactory.SCOPE_APPLICATION
+                                    + " once factory instance is initialized.");
                 return;
             }
             factoryInstance.setScope(scope);
         }
         this.scope = scope;
     }
-    
+
     /**
-     * Gets the source of the <code>FactoryDestination</code>. 
-     * 
-     * @return the source of the <code>FactoryDestination</code>. 
+     * Gets the source of the <code>FactoryDestination</code>.
+     *
+     * @return the source of the <code>FactoryDestination</code>.
      */
-    public String getSource()
-    {
+    public String getSource() {
         return source;
     }
 
     /**
      * Sets the source of the <code>FactoryDestination</code> that is used
-     * in <code>FactoryInstance</code> creation. Source cannot be changed once  
+     * in <code>FactoryInstance</code> creation. Source cannot be changed once
      * <code>FactoryInstance</code> is initialized and the scope is application.
-     * 
+     *
      * @param source the source string
      */
-    public void setSource(String source)
-    {   
-        if (factoryInstance != null)     
-        {
-            if (FlexFactory.SCOPE_APPLICATION.equals(scope))
-            {
+    public void setSource(String source) {
+        if (factoryInstance != null) {
+            if (FlexFactory.SCOPE_APPLICATION.equals(scope)) {
                 if (Log.isWarn())
                     Log.getLogger(getLogCategory()).warn(
                             "Source of the destination cannot be changed once "
-                            + "factory instance is already initialized and it has "
-                            + FlexFactory.SCOPE_APPLICATION +" scope");
+                                    + "factory instance is already initialized and it has "
+                                    + FlexFactory.SCOPE_APPLICATION + " scope");
                 return;
-            }            
+            }
             factoryInstance.setSource(source);
         }
         this.source = source;
-    }   
-    
+    }
+
     /**
      * This method first calls stop on its superclass <code>Destination</code> and then
      * removes any assemblers from the ServletContext or Session that are ready for removal.
@@ -344,18 +316,14 @@ public abstract class FactoryDestination extends Destination
      * then it is only removed if its reference count (maintained in <code>MessageBroker</code>) is
      * down to zero
      */
-    public void stop()
-    {
-        if (isStarted())
-        {
+    public void stop() {
+        if (isStarted()) {
             super.stop();
             // destroy factory instance to free up resources
             if (factory != null && (factory instanceof DestructibleFlexFactory))
-                ((DestructibleFlexFactory)factory).destroyFactoryInstance(factoryInstance);    
-        }
-        else
-        {
+                ((DestructibleFlexFactory) factory).destroyFactoryInstance(factoryInstance);
+        } else {
             super.stop();
         }
-    }    
+    }
 }

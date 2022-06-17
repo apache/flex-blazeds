@@ -35,8 +35,7 @@ import flex.messaging.services.messaging.ThrottleManager.ThrottleResult.Result;
  * of the outbound queue and flushes all queued messages to the network as quickly as possible.
  * It also handles the outbound client-level throttling specified at the destination level.
  */
-public class FlexClientOutboundQueueProcessor
-{
+public class FlexClientOutboundQueueProcessor {
     //--------------------------------------------------------------------------
     //
     // Variables
@@ -71,13 +70,11 @@ public class FlexClientOutboundQueueProcessor
     //--------------------------------------------------------------------------
 
     /**
-     *
      * Stores the Id for the outbound queue's endpoint.
      *
      * @param value The Id for the outbound queue's endpoint.
      */
-    public void setEndpointId(String value)
-    {
+    public void setEndpointId(String value) {
         endpointId = value;
     }
 
@@ -86,19 +83,16 @@ public class FlexClientOutboundQueueProcessor
      *
      * @return The Id for the outbound queue's endpoint.
      */
-    public String getEndpointId()
-    {
+    public String getEndpointId() {
         return endpointId;
     }
 
     /**
-     *
      * Sets the associated FlexClient.
      *
      * @param value The associated FlexClient.
      */
-    public void setFlexClient(FlexClient value)
-    {
+    public void setFlexClient(FlexClient value) {
         client = value;
     }
 
@@ -107,8 +101,7 @@ public class FlexClientOutboundQueueProcessor
      *
      * @return The associated FlexClient.
      */
-    public FlexClient getFlexClient()
-    {
+    public FlexClient getFlexClient() {
         return client;
     }
 
@@ -117,9 +110,8 @@ public class FlexClientOutboundQueueProcessor
      *
      * @return The outbound queue throttle manager.
      */
-    public OutboundQueueThrottleManager getOutboundQueueThrottleManager()
-    {
-       return outboundQueueThrottleManager;
+    public OutboundQueueThrottleManager getOutboundQueueThrottleManager() {
+        return outboundQueueThrottleManager;
     }
 
     /**
@@ -128,8 +120,7 @@ public class FlexClientOutboundQueueProcessor
      *
      * @return The outbound queue throttle manager.
      */
-    public OutboundQueueThrottleManager getOrCreateOutboundQueueThrottleManager()
-    {
+    public OutboundQueueThrottleManager getOrCreateOutboundQueueThrottleManager() {
         if (outboundQueueThrottleManager == null)
             outboundQueueThrottleManager = new OutboundQueueThrottleManager(this);
         return outboundQueueThrottleManager;
@@ -142,16 +133,16 @@ public class FlexClientOutboundQueueProcessor
      *
      * @param properties A ConfigMap containing any custom initialization properties.
      */
-    public void initialize(ConfigMap properties) {}
+    public void initialize(ConfigMap properties) {
+    }
 
     /**
      * Always adds a new message to the tail of the queue.
      *
      * @param outboundQueue The queue of outbound messages.
-     * @param message The new message to add to the queue.
+     * @param message       The new message to add to the queue.
      */
-    public void add(List<Message> outboundQueue, Message message)
-    {
+    public void add(List<Message> outboundQueue, Message message) {
         outboundQueue.add(message);
     }
 
@@ -160,11 +151,10 @@ public class FlexClientOutboundQueueProcessor
      *
      * @param outboundQueue The queue of outbound messages.
      * @return A FlushResult containing the messages that have been removed from the outbound queue
-     *         to be written to the network and a wait time for the next flush of the outbound queue
-     *         that is the default for the underlying Channel/Endpoint.
+     * to be written to the network and a wait time for the next flush of the outbound queue
+     * that is the default for the underlying Channel/Endpoint.
      */
-    public FlushResult flush(List<Message> outboundQueue)
-    {
+    public FlushResult flush(List<Message> outboundQueue) {
         return flush(null /* no client distinction */, outboundQueue);
     }
 
@@ -176,18 +166,15 @@ public class FlexClientOutboundQueueProcessor
      * @param messageClient The specific MessageClient to return messages for.
      * @param outboundQueue The queue of outbound messages.
      * @return A FlushResult containing the messages that have been removed from the outbound queue
-     *         to be written to the network for this MessageClient.
+     * to be written to the network for this MessageClient.
      */
-    public FlushResult flush(MessageClient messageClient, List<Message> outboundQueue)
-    {
+    public FlushResult flush(MessageClient messageClient, List<Message> outboundQueue) {
         FlushResult flushResult = new FlushResult();
         List<Message> messagesToFlush = null;
 
-        for (Iterator<Message> iter = outboundQueue.iterator(); iter.hasNext();)
-        {
+        for (Iterator<Message> iter = outboundQueue.iterator(); iter.hasNext(); ) {
             Message message = iter.next();
-            if (messageClient == null || (message.getClientId().equals(messageClient.getClientId())))
-            {
+            if (messageClient == null || (message.getClientId().equals(messageClient.getClientId()))) {
                 if (isMessageExpired(message)) // Don't flush expired messages.
                 {
                     iter.remove();
@@ -205,13 +192,11 @@ public class FlexClientOutboundQueueProcessor
                 Result result = throttleResult.getResult();
 
                 // No destination level throttling; check destination-client level throttling.
-                if (Result.OK == result)
-                {
+                if (Result.OK == result) {
                     throttleResult = throttleOutgoingClientLevel(messageClientForCurrentMessage, message, false);
                     result = throttleResult.getResult();
                     // If no throttling, simply add the message to the list.
-                    if (Result.OK == result)
-                    {
+                    if (Result.OK == result) {
                         updateMessageFrequencyOutgoing(messageClientForCurrentMessage, message);
                         if (messagesToFlush == null)
                             messagesToFlush = new ArrayList<Message>();
@@ -237,11 +222,9 @@ public class FlexClientOutboundQueueProcessor
      * not yet expired.
      *
      * @param message The message to test for expiration.
-     *
      * @return true if the message has a timeToLive value that has expired; otherwise false.
      */
-    public boolean isMessageExpired(Message message)
-    {
+    public boolean isMessageExpired(Message message) {
         return (message.getTimeToLive() > 0 &&
                 (System.currentTimeMillis() - message.getTimestamp()) >= message.getTimeToLive());
     }
@@ -250,17 +233,15 @@ public class FlexClientOutboundQueueProcessor
      * Attempts to throttle the outgoing message at the destination level.
      *
      * @param msgClient The client the message is intended for.
-     * @param message The message to consider to throttle.
-     * @param buffered Whether the message has already been buffered. In that case,
-     * parts of regular throttling code is skipped.
+     * @param message   The message to consider to throttle.
+     * @param buffered  Whether the message has already been buffered. In that case,
+     *                  parts of regular throttling code is skipped.
      * @return The result of throttling attempt.
      */
     protected ThrottleResult throttleOutgoingDestinationLevel(
-            MessageClient msgClient, Message message, boolean buffered)
-    {
+            MessageClient msgClient, Message message, boolean buffered) {
         ThrottleManager throttleManager = getThrottleManager(msgClient);
-        if (throttleManager != null)
-        {
+        if (throttleManager != null) {
             // In already buffered messages, don't use ThrottleManager#throttleOutgoingMessage
             // to avoid regular throttling handling as the message has already been buffered.
             if (buffered)
@@ -276,18 +257,16 @@ public class FlexClientOutboundQueueProcessor
      * Attempts to throttle the outgoing message at the destination-client level.
      *
      * @param msgClient The client the message is intended for.
-     * @param message The message to consider to throttle.
-     * @param buffered Whether the message has already been buffered. In that case,
-     * parts of regular throttling code is skipped.
+     * @param message   The message to consider to throttle.
+     * @param buffered  Whether the message has already been buffered. In that case,
+     *                  parts of regular throttling code is skipped.
      * @return The result of throttling attempt.
      */
-    protected ThrottleResult throttleOutgoingClientLevel(MessageClient msgClient, Message message, boolean buffered)
-    {
+    protected ThrottleResult throttleOutgoingClientLevel(MessageClient msgClient, Message message, boolean buffered) {
         if (outboundQueueThrottleManager != null) // Means client level throttling enabled.
         {
             ThrottleResult throttleResult = outboundQueueThrottleManager.throttleOutgoingClientLevel(message);
-            if (!buffered)
-            {
+            if (!buffered) {
                 ThrottleManager throttleManager = getThrottleManager(msgClient);
                 if (throttleManager != null)
                     throttleManager.handleOutgoingThrottleResult(message, throttleResult, true /*isClientLevel*/);
@@ -303,18 +282,15 @@ public class FlexClientOutboundQueueProcessor
      * @param message The message.
      * @return The message client that the message is intended to.
      */
-    protected MessageClient getMessageClient(Message message)
-    {
+    protected MessageClient getMessageClient(Message message) {
         // First try using the cached message client.
-        if (lastMessageClient != null && message.getClientId().equals(lastMessageClient.getClientId()))
+        if (lastMessageClient != null && message.getClientId().equals(lastMessageClient.getClientId())) {
+            return lastMessageClient;
+        } else // Go ahead with the lookup.
         {
+            lastMessageClient = client.getMessageClient((String) message.getClientId());
             return lastMessageClient;
         }
-        else // Go ahead with the lookup.
-        {
-            lastMessageClient = client.getMessageClient((String)message.getClientId());
-            return lastMessageClient;
-        } 
     }
 
     /**
@@ -324,21 +300,19 @@ public class FlexClientOutboundQueueProcessor
      * @param msgClient The message client; it can be null.
      * @return The throttle manager.
      */
-    protected ThrottleManager getThrottleManager(MessageClient msgClient)
-    {
-        Destination destination = msgClient != null? msgClient.getDestination() : null;
-        return (destination != null && destination instanceof MessageDestination)? 
-                ((MessageDestination)destination).getThrottleManager() : null;
+    protected ThrottleManager getThrottleManager(MessageClient msgClient) {
+        Destination destination = msgClient != null ? msgClient.getDestination() : null;
+        return (destination != null && destination instanceof MessageDestination) ?
+                ((MessageDestination) destination).getThrottleManager() : null;
     }
 
     /**
      * Updates the outgoing message's message frequency.
      *
      * @param msgClient The MessageClient that might have been passed to the flush; it can be null.
-     * @param message The message.
+     * @param message   The message.
      */
-    protected void updateMessageFrequencyOutgoing(MessageClient msgClient, Message message)
-    {
+    protected void updateMessageFrequencyOutgoing(MessageClient msgClient, Message message) {
         // Update the destination level message frequency.
         ThrottleManager throttleManager = getThrottleManager(msgClient);
         if (throttleManager != null)

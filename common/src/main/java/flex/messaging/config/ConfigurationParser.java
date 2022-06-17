@@ -19,11 +19,8 @@ package flex.messaging.config;
 /**
  * Configuration parser for Flex Data Services. The parser reads in
  * a configuration file and populates a ServicesConfiguration instance.
- *
- *
  */
-public interface ConfigurationParser
-{
+public interface ConfigurationParser {
     void parse(String path, ConfigurationFileResolver fileResolver, ServicesConfiguration config);
 
     void reportTokens();

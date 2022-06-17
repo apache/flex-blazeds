@@ -27,9 +27,10 @@ import flex.messaging.messages.Message;
 /**
  * The ServiceAdapter class is the base definition of a service adapter.
  */
-public abstract class ServiceAdapter extends ManageableComponent
-{
-    /** Log category for <code>ServiceAdapter</code>. */
+public abstract class ServiceAdapter extends ManageableComponent {
+    /**
+     * Log category for <code>ServiceAdapter</code>.
+     */
     public static final String LOG_CATEGORY = Destination.LOG_CATEGORY;
 
     //--------------------------------------------------------------------------
@@ -41,8 +42,7 @@ public abstract class ServiceAdapter extends ManageableComponent
     /**
      * Constructs an unmanaged <code>ServiceAdapter</code> instance.
      */
-    public ServiceAdapter()
-    {
+    public ServiceAdapter() {
         this(false);
     }
 
@@ -50,10 +50,9 @@ public abstract class ServiceAdapter extends ManageableComponent
      * Constructs a <code>ServiceAdapter</code> instance.
      *
      * @param enableManagement <code>true</code> if the <code>ServiceAdapter</code> has a
-     * corresponding MBean control for management; otherwise <code>false</code>.
+     *                         corresponding MBean control for management; otherwise <code>false</code>.
      */
-    public ServiceAdapter(boolean enableManagement)
-    {
+    public ServiceAdapter(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -66,10 +65,8 @@ public abstract class ServiceAdapter extends ManageableComponent
     /**
      * Verifies that the <code>ServiceAdapter</code> is in valid state before
      * it is started. If subclasses override, they must call <code>super.validate()</code>.
-     *
      */
-    protected void validate()
-    {
+    protected void validate() {
         if (isValid())
             return;
 
@@ -81,31 +78,26 @@ public abstract class ServiceAdapter extends ManageableComponent
      * and if the adapter is not already running. If subclasses override, they
      * must call <code>super.start()</code>.
      */
-    public void start()
-    {
-        if (isStarted())
-        {
+    public void start() {
+        if (isStarted()) {
             return;
         }
 
         // Check if the Destination is started
         Destination destination = getDestination();
-        if (!destination.isStarted())
-        {
-            if (Log.isWarn())
-            {
+        if (!destination.isStarted()) {
+            if (Log.isWarn()) {
                 Log.getLogger(getLogCategory()).warn("Adapter with id '{0}' cannot be started" +
-                        " when its Destination with id '{1}' is not started.",
+                                " when its Destination with id '{1}' is not started.",
                         new Object[]{getId(), destination.getId()});
             }
             return;
         }
 
         // Set up management
-        if (isManaged() && destination.isManaged())
-        {
+        if (isManaged() && destination.isManaged()) {
             setupAdapterControl(destination);
-            DestinationControl controller = (DestinationControl)destination.getControl();
+            DestinationControl controller = (DestinationControl) destination.getControl();
             if (getControl() != null)
                 controller.setAdapter(getControl().getObjectName());
 
@@ -117,22 +109,17 @@ public abstract class ServiceAdapter extends ManageableComponent
     /**
      * Stops the <code>ServiceAdapter</code>.
      * If subclasses override, they must call <code>super.start()</code>.
-     *
      */
-    public void stop()
-    {
-        if (!isStarted())
-        {
+    public void stop() {
+        if (!isStarted()) {
             return;
         }
 
         super.stop();
 
         // Remove management
-        if (isManaged() && getDestination().isManaged())
-        {
-            if (getControl() != null)
-            {
+        if (isManaged() && getDestination().isManaged()) {
+            if (getControl() != null) {
                 getControl().unregister();
                 setControl(null);
             }
@@ -152,9 +139,8 @@ public abstract class ServiceAdapter extends ManageableComponent
      *
      * @return The <code>Destination</code> of the <code>ServiceAdapter</code>.
      */
-    public Destination getDestination()
-    {
-        return (Destination)getParent();
+    public Destination getDestination() {
+        return (Destination) getParent();
     }
 
     /**
@@ -164,8 +150,7 @@ public abstract class ServiceAdapter extends ManageableComponent
      *
      * @param destination The <code>Destination</code> of the <code>ServiceAdapter</code>.
      */
-    public void setDestination(Destination destination)
-    {
+    public void setDestination(Destination destination) {
         Destination oldDestination = getDestination();
 
         setParent(destination);
@@ -174,8 +159,7 @@ public abstract class ServiceAdapter extends ManageableComponent
             oldDestination.setAdapter(null);
 
         // Set destination's adapter if needed
-        if (destination.getAdapter() != this)
-        {
+        if (destination.getAdapter() != this) {
             destination.setAdapter(this);
         }
     }
@@ -200,7 +184,6 @@ public abstract class ServiceAdapter extends ManageableComponent
      *
      * @param message the message as sent by the client intended for this adapter
      * @return the body of the acknowledge message (or null if there is no body)
-     *
      * @see flex.messaging.messages.Message
      * @see flex.messaging.messages.AsyncMessage
      */
@@ -230,14 +213,12 @@ public abstract class ServiceAdapter extends ManageableComponent
      * up for this client.
      * </p>
      *
-     * @see flex.messaging.messages.CommandMessage
-     * @see flex.messaging.messages.AsyncMessage
-     *
      * @param commandMessage The command message to manage.
      * @return The result of manage. The default implementation returns null.
+     * @see flex.messaging.messages.CommandMessage
+     * @see flex.messaging.messages.AsyncMessage
      */
-    public Object manage(CommandMessage commandMessage)
-    {
+    public Object manage(CommandMessage commandMessage) {
         return null;
     }
 
@@ -250,8 +231,7 @@ public abstract class ServiceAdapter extends ManageableComponent
      * @return The state of the adapter. The default implementations throws
      * <code>UnsupportedOperationException</code>.
      */
-    public Object getAdapterState()
-    {
+    public Object getAdapterState() {
         throw new UnsupportedOperationException();
     }
 
@@ -263,8 +243,7 @@ public abstract class ServiceAdapter extends ManageableComponent
      *
      * @param adapterState The object representing the adapter state.
      */
-    public void setAdapterState(Object adapterState)
-    {
+    public void setAdapterState(Object adapterState) {
         throw new UnsupportedOperationException();
     }
 
@@ -276,11 +255,10 @@ public abstract class ServiceAdapter extends ManageableComponent
      * @return <code>true</code> if the adapter performs custom subscription management.
      * The default return value is <code>false</code>.
      */
-    public boolean handlesSubscriptions()
-    {
+    public boolean handlesSubscriptions() {
         return false;
     }
-    
+
     //--------------------------------------------------------------------------
     //
     // Protected/private APIs
@@ -293,8 +271,7 @@ public abstract class ServiceAdapter extends ManageableComponent
      *
      * @return The log category.
      */
-    protected String getLogCategory()
-    {
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
@@ -304,8 +281,7 @@ public abstract class ServiceAdapter extends ManageableComponent
      *
      * @param destination The associated <code>Destination</code> for the adapter.
      */
-    protected void setupAdapterControl(Destination destination)
-    {
+    protected void setupAdapterControl(Destination destination) {
         setManaged(false);
     }
 

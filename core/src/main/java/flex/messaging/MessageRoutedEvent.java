@@ -21,14 +21,12 @@ import flex.messaging.messages.Message;
 import java.util.EventObject;
 
 /**
- *
  * This event indicates that the source message has been routed to the outbound message queues
  * for all target clients.
- * This can be used as the trigger for performing optimized IO to flush these queued messages to 
+ * This can be used as the trigger for performing optimized IO to flush these queued messages to
  * remote hosts over the network.
  */
-public class MessageRoutedEvent extends EventObject
-{
+public class MessageRoutedEvent extends EventObject {
     /**
      *
      */
@@ -36,19 +34,17 @@ public class MessageRoutedEvent extends EventObject
 
     /**
      * Constructs a new <tt>MessageRoutedEvent</tt> using the supplied source <tt>Message</tt>.
-     * 
+     *
      * @param message The message that has been routed.
      */
-    public MessageRoutedEvent(Message message)
-    {
+    public MessageRoutedEvent(Message message) {
         super(message);
     }
-    
+
     /**
      * Returns the message that has been routed.
      */
-    public Message getMessage()
-    {
-        return (Message)getSource();
+    public Message getMessage() {
+        return (Message) getSource();
     }
 }

@@ -26,8 +26,7 @@ import javax.management.ObjectName;
 /**
  * Defines the runtime monitoring and management interface for managed destinations.
  */
-public interface DestinationControlMBean extends BaseControlMBean
-{
+public interface DestinationControlMBean extends BaseControlMBean {
     /**
      * Returns the <code>ObjectName</code> for the adapter associated with this
      * managed destination.
@@ -35,7 +34,9 @@ public interface DestinationControlMBean extends BaseControlMBean
      * @return The <code>ObjectName</code> for the adapter.
      * @throws IOException Throws IOException.
      */
-    ObjectName getAdapter() throws IOException;;
+    ObjectName getAdapter() throws IOException;
+
+    ;
 
     /**
      * Returns <code>true</code> if the <code>Destination</code> is running.

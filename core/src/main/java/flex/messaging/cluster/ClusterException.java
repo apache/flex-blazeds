@@ -19,11 +19,9 @@ package flex.messaging.cluster;
 import flex.messaging.MessageException;
 
 /**
- *
  * Exception type for cluster errors.
  */
-public class ClusterException extends MessageException
-{
+public class ClusterException extends MessageException {
     /**
      * Serializable version uid.
      */

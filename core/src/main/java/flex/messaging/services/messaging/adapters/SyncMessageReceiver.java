@@ -29,11 +29,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * A <code>MessageReceiver</code> that receives messages from JMS using
  * synchronous <code>javax.jms.MessageConsumer.receive</code> call.
- *
- *
  */
-class SyncMessageReceiver implements MessageReceiver
-{
+class SyncMessageReceiver implements MessageReceiver {
     private ScheduledExecutorService messageReceiverService;
     private boolean isScheduled = false;
 
@@ -47,8 +44,7 @@ class SyncMessageReceiver implements MessageReceiver
      *
      * @param jmsConsumer JMSConsumer associated with the SynMessageReceiver.
      */
-    public SyncMessageReceiver(JMSConsumer jmsConsumer)
-    {
+    public SyncMessageReceiver(JMSConsumer jmsConsumer) {
         this.jmsConsumer = jmsConsumer;
         syncReceiveIntervalMillis = JMSConfigConstants.defaultSyncReceiveIntervalMillis;
         syncReceiveWaitMillis = JMSConfigConstants.defaultSyncReceiveWaitMillis;
@@ -60,8 +56,7 @@ class SyncMessageReceiver implements MessageReceiver
      *
      * @return The interval of the sync receive message call.
      */
-    public long getSyncReceiveIntervalMillis()
-    {
+    public long getSyncReceiveIntervalMillis() {
         return syncReceiveIntervalMillis;
     }
 
@@ -70,10 +65,9 @@ class SyncMessageReceiver implements MessageReceiver
      * is optional and defaults to 100.
      *
      * @param syncReceiveIntervalMillis A positive long that indicates
-     * the interval of the receive message call.
+     *                                  the interval of the receive message call.
      */
-    public void setSyncReceiveIntervalMillis(long syncReceiveIntervalMillis)
-    {
+    public void setSyncReceiveIntervalMillis(long syncReceiveIntervalMillis) {
         if (syncReceiveIntervalMillis < 1)
             syncReceiveIntervalMillis = JMSConfigConstants.defaultSyncReceiveIntervalMillis;
         this.syncReceiveIntervalMillis = syncReceiveIntervalMillis;
@@ -84,8 +78,7 @@ class SyncMessageReceiver implements MessageReceiver
      *
      * @return How long a JMS proxy waits for a message before returning.
      */
-    public long getSyncReceiveWaitMillis()
-    {
+    public long getSyncReceiveWaitMillis() {
         return syncReceiveWaitMillis;
     }
 
@@ -94,11 +87,10 @@ class SyncMessageReceiver implements MessageReceiver
      * This property is optional and defaults to zero (no wait).
      *
      * @param syncReceiveWaitMillis A non-negative value that indicates how
-     * long a JMS proxy waits for a message before returning. Zero means no
-     * wait, negative one means wait until a message arrives.
+     *                              long a JMS proxy waits for a message before returning. Zero means no
+     *                              wait, negative one means wait until a message arrives.
      */
-    public void setSyncReceiveWaitMillis(long syncReceiveWaitMillis)
-    {
+    public void setSyncReceiveWaitMillis(long syncReceiveWaitMillis) {
         if (syncReceiveWaitMillis < -1)
             syncReceiveWaitMillis = JMSConfigConstants.defaultSyncReceiveWaitMillis;
         this.syncReceiveWaitMillis = syncReceiveWaitMillis;
@@ -107,10 +99,8 @@ class SyncMessageReceiver implements MessageReceiver
     /**
      * Implements MessageReceiver.startReceive.
      */
-    public void startReceive()
-    {
-        if (!isScheduled)
-        {
+    public void startReceive() {
+        if (!isScheduled) {
             if (Log.isDebug())
                 Log.getLogger(JMSAdapter.LOG_CATEGORY).debug(Thread.currentThread()
                         + " JMS consumer sync receive thread for JMS destination '"
@@ -126,8 +116,7 @@ class SyncMessageReceiver implements MessageReceiver
     /**
      * Implements MessageReceivers.stopReceive.
      */
-    public void stopReceive()
-    {
+    public void stopReceive() {
         if (messageReceiverService != null)
             messageReceiverService.shutdown();
     }
@@ -135,8 +124,7 @@ class SyncMessageReceiver implements MessageReceiver
     /**
      * Used internally to receive messages as determined by syncReceiveWaitMillis.
      */
-    private Message receiveMessage() throws JMSException
-    {
+    private Message receiveMessage() throws JMSException {
         if (syncReceiveWaitMillis == -1)
             return jmsConsumer.receive();
         else if (syncReceiveWaitMillis == 0)
@@ -149,8 +137,7 @@ class SyncMessageReceiver implements MessageReceiver
     /**
      * Thread Factory used to create message receive threads.
      */
-    class MessageReceiveThreadFactory implements ThreadFactory
-    {
+    class MessageReceiveThreadFactory implements ThreadFactory {
 
         /**
          * Used to uniquely identify each new message receive thread created.
@@ -163,8 +150,7 @@ class SyncMessageReceiver implements MessageReceiver
          *
          * @param r The runnable to assign to the new thread.
          */
-        public synchronized Thread newThread(Runnable r)
-        {
+        public synchronized Thread newThread(Runnable r) {
             Thread t = new Thread(r);
             t.setName("MessageReceiveThread" + "-" + receiveThreadCount++);
             t.setDaemon(true);
@@ -179,21 +165,15 @@ class SyncMessageReceiver implements MessageReceiver
      * Message receive threads that perform sync javax.jms.MessageConsumer.receive
      * calls.
      */
-    class MessageReceiveThread implements Runnable
-    {
-        public void run()
-        {
-            try
-            {
-                while (true)
-                {
+    class MessageReceiveThread implements Runnable {
+        public void run() {
+            try {
+                while (true) {
                     Message message = receiveMessage();
                     if (message == null) break;
                     jmsConsumer.onMessage(message);
                 }
-            }
-            catch (JMSException jmsEx)
-            {
+            } catch (JMSException jmsEx) {
                 jmsConsumer.onException(jmsEx);
             }
         }

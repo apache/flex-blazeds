@@ -25,7 +25,7 @@
                 <string>prop1</string>
             </traits>
             <string>Hydrogen</string>
-            <string id="5" />
+            <string id="5"/>
         </object>
     </body>
 </amfx>

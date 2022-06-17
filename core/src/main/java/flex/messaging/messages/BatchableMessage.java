@@ -18,15 +18,12 @@ package flex.messaging.messages;
 
 /**
  * Implemented by messages that may be batched.
- *
- *
  */
-public interface BatchableMessage
-{
+public interface BatchableMessage {
     /**
      * Returns true if the message is batched.
-     * 
+     *
      * @return true if this message is batched
-    */
+     */
     boolean isBatched();
 }

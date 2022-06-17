@@ -22,18 +22,17 @@ package flex.messaging;
  * To listen for MessageClient destruction, the implementation class instance must add itself as a listener to
  * a specific MessageClient instance via the <code>addMessageClientDestroyedListener()</code> method.
  */
-public interface MessageClientListener 
-{
+public interface MessageClientListener {
     /**
      * Notification that a MessageClient was created.
-     * 
+     *
      * @param messageClient The MessageClient that was created.
      */
     void messageClientCreated(MessageClient messageClient);
-    
+
     /**
      * Notification that a MessageClient is about to be destroyed.
-     * 
+     *
      * @param messageClient The MessageClient that will be destroyed.
      */
     void messageClientDestroyed(MessageClient messageClient);

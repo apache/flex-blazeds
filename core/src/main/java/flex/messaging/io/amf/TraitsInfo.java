@@ -25,33 +25,26 @@ import java.util.List;
  * serializing the traits of a type once, and then
  * sending only the values of each instance of the type
  * as it occurs in the stream.
- *
- *
  */
-public class TraitsInfo
-{
+public class TraitsInfo {
     private final String className;
     private final boolean dynamic;
     private final boolean externalizable;
     private List<String> properties;
 
-    public TraitsInfo(String className)
-    {
+    public TraitsInfo(String className) {
         this(className, false, false, 10);
     }
 
-    public TraitsInfo(String className, int initialCount)
-    {
+    public TraitsInfo(String className, int initialCount) {
         this(className, false, false, initialCount);
     }
 
-    public TraitsInfo(String className, boolean dynamic, boolean externalizable, int initialCount)
-    {
+    public TraitsInfo(String className, boolean dynamic, boolean externalizable, int initialCount) {
         this(className, dynamic, externalizable, new ArrayList<String>(initialCount));
     }
-    
-    public TraitsInfo(String className, boolean dynamic, boolean externalizable, List<String> properties)
-    {
+
+    public TraitsInfo(String className, boolean dynamic, boolean externalizable, List<String> properties) {
         if (className == null)
             className = "";
 
@@ -61,85 +54,69 @@ public class TraitsInfo
         this.externalizable = externalizable;
     }
 
-    public boolean isDynamic()
-    {
+    public boolean isDynamic() {
         return dynamic;
     }
 
-    public boolean isExternalizable()
-    {
+    public boolean isExternalizable() {
         return externalizable;
     }
 
-    public int length()
-    {
-        return properties != null? properties.size() : 0;
+    public int length() {
+        return properties != null ? properties.size() : 0;
     }
 
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
-    public void addProperty(String name)
-    {
+    public void addProperty(String name) {
         if (properties == null)
             properties = new ArrayList<String>();
         properties.add(name);
     }
-    
-    public void addAllProperties(Collection props)
-    {
+
+    public void addAllProperties(Collection props) {
         if (properties == null)
             properties = new ArrayList<String>();
         properties.addAll(props);
     }
 
-    public String getProperty(int i)
-    {
-        return properties != null? properties.get(i) : null;
+    public String getProperty(int i) {
+        return properties != null ? properties.get(i) : null;
     }
-    
-    public List<String> getProperties()
-    {
+
+    public List<String> getProperties() {
         return properties;
     }
 
-    public boolean equals(Object obj)
-    {
-        if (obj == this)
-        {
+    public boolean equals(Object obj) {
+        if (obj == this) {
             return true;
         }
 
-        if (obj instanceof TraitsInfo)
-        {
-            TraitsInfo other = (TraitsInfo)obj;
+        if (obj instanceof TraitsInfo) {
+            TraitsInfo other = (TraitsInfo) obj;
 
-            if (!this.className.equals(other.className))
-            {
+            if (!this.className.equals(other.className)) {
                 return false;
             }
 
-            if (!(this.dynamic == other.dynamic))
-            {
+            if (!(this.dynamic == other.dynamic)) {
                 return false;
             }
 
             List thisProperties = this.properties;
             List otherProperties = other.properties;
-            
-            if (thisProperties != otherProperties)
-            {
+
+            if (thisProperties != otherProperties) {
                 int thisCount = thisProperties.size();
 
-                if (thisCount != otherProperties.size())
-                {
+                if (thisCount != otherProperties.size()) {
                     return false;
                 }
 
-                for (int i = 0; i < thisCount; i++)
-                {
+                for (int i = 0; i < thisCount; i++) {
                     Object thisProp = thisProperties.get(i);
                     Object otherProp = otherProperties.get(i);
                     if (thisProp != null && otherProp != null && !thisProp.equals(otherProp))
@@ -157,11 +134,11 @@ public class TraitsInfo
      * Instances of types with the same classname and number of properties may
      * return the same hash code, however, an equality test will fully
      * test whether they match exactly on individual property names.
+     *
      * @return int the hash code of the TraitsInfo object
      */
-    public int hashCode()
-    {
-        int size = properties != null? properties.size() : 0;
+    public int hashCode() {
+        int size = properties != null ? properties.size() : 0;
         int c = className.hashCode();
         c = dynamic ? c << 2 : c << 1;
         c = c | (size << 24);

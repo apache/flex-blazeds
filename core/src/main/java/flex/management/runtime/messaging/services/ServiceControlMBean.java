@@ -25,8 +25,7 @@ import javax.management.ObjectName;
 /**
  * Defines the runtime monitoring and management interface for managed services.
  */
-public interface ServiceControlMBean extends BaseControlMBean
-{
+public interface ServiceControlMBean extends BaseControlMBean {
 
     /**
      * Returns <code>true</code> if the <code>Service</code> is running.

@@ -30,8 +30,7 @@ import flex.messaging.log.LogCategories;
 /**
  * AMF based endpoint for Flex Messaging. Based on the Flash Remoting gateway servlet.
  */
-public class AMFEndpoint extends BasePollingHTTPEndpoint
-{
+public class AMFEndpoint extends BasePollingHTTPEndpoint {
     /**
      * The log category for this endpoint.
      */
@@ -46,8 +45,7 @@ public class AMFEndpoint extends BasePollingHTTPEndpoint
     /**
      * Constructs an unmanaged <code>AMFEndpoint</code>.
      */
-    public AMFEndpoint()
-    {
+    public AMFEndpoint() {
         this(false);
     }
 
@@ -55,10 +53,9 @@ public class AMFEndpoint extends BasePollingHTTPEndpoint
      * Constructs an <code>AMFEndpoint</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>AMFEndpoint</code>
-     * is manageable; <code>false</code> otherwise.
+     *                         is manageable; <code>false</code> otherwise.
      */
-    public AMFEndpoint(boolean enableManagement)
-    {
+    public AMFEndpoint(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -72,22 +69,19 @@ public class AMFEndpoint extends BasePollingHTTPEndpoint
      * Create the gateway filters that transform action requests
      * and responses.
      */
-    @Override protected AMFFilter createFilterChain()
-    {
+    @Override
+    protected AMFFilter createFilterChain() {
         AMFFilter serializationFilter = new SerializationFilter(getLogCategory());
         AMFFilter batchFilter = new BatchProcessFilter();
-        AMFFilter sessionFilter = sessionRewritingEnabled? new SessionFilter() : null;
+        AMFFilter sessionFilter = sessionRewritingEnabled ? new SessionFilter() : null;
         AMFFilter envelopeFilter = new LegacyFilter(this);
         AMFFilter messageBrokerFilter = new MessageBrokerFilter(this);
 
         serializationFilter.setNext(batchFilter);
-        if (sessionFilter != null)
-        {
+        if (sessionFilter != null) {
             batchFilter.setNext(sessionFilter);
             sessionFilter.setNext(envelopeFilter);
-        }
-        else
-        {
+        } else {
             batchFilter.setNext(envelopeFilter);
         }
         envelopeFilter.setNext(messageBrokerFilter);
@@ -100,8 +94,8 @@ public class AMFEndpoint extends BasePollingHTTPEndpoint
      *
      * @return MessageIOConstants.AMF_CONTENT_TYPE
      */
-    @Override protected String getResponseContentType()
-    {
+    @Override
+    protected String getResponseContentType() {
         return MessageIOConstants.AMF_CONTENT_TYPE;
     }
 
@@ -110,8 +104,8 @@ public class AMFEndpoint extends BasePollingHTTPEndpoint
      *
      * @return The log category of the endpoint.
      */
-    @Override protected String getLogCategory()
-    {
+    @Override
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
@@ -120,8 +114,8 @@ public class AMFEndpoint extends BasePollingHTTPEndpoint
      *
      * @return The deserializer class name used by the endpoint.
      */
-    @Override protected String getDeserializerClassName()
-    {
+    @Override
+    protected String getDeserializerClassName() {
         return "flex.messaging.io.amf.AmfMessageDeserializer";
     }
 
@@ -130,8 +124,8 @@ public class AMFEndpoint extends BasePollingHTTPEndpoint
      *
      * @return The serializer class name used by the endpoint.
      */
-    @Override protected String getSerializerClassName()
-    {
+    @Override
+    protected String getSerializerClassName() {
         return "flex.messaging.io.amf.AmfMessageSerializer";
     }
 
@@ -141,10 +135,10 @@ public class AMFEndpoint extends BasePollingHTTPEndpoint
      * corresponding MBean control.
      *
      * @param broker The <code>MessageBroker</code> that manages this
-     * <code>AMFEndpoint</code>.
+     *               <code>AMFEndpoint</code>.
      */
-    @Override protected void setupEndpointControl(MessageBroker broker)
-    {
+    @Override
+    protected void setupEndpointControl(MessageBroker broker) {
         controller = new AMFEndpointControl(this, broker.getControl());
         controller.register();
         setControl(controller);

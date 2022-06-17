@@ -33,8 +33,7 @@ import flex.messaging.messages.Message;
  * on the other. The Service interface defines the contract between
  * the MessageBroker and all Service implementations.
  */
-public interface Service extends Manageable, FlexComponent
-{
+public interface Service extends Manageable, FlexComponent {
     /**
      * Returns the adapters registered with the <code>Service</code>.
      *
@@ -45,7 +44,7 @@ public interface Service extends Manageable, FlexComponent
     /**
      * Registers the adapter with the <code>Service</code>.
      *
-     * @param id The id of the adapter.
+     * @param id        The id of the adapter.
      * @param className The class of the adapter.
      * @return The previous adapter class that the id was associated with.
      */

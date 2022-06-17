@@ -25,45 +25,35 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
-public abstract class Persistable
-{
+public abstract class Persistable {
     protected long id = -1;
 
-    public boolean exists(MetricsDatabase database) throws SQLException
-    {
-        if (database != null)
-        {
+    public boolean exists(MetricsDatabase database) throws SQLException {
+        if (database != null) {
             PreparedStatement statement = null;
             ResultSet rs = null;
 
-            try
-            {
+            try {
                 int count = 0;
                 statement = get(database);
                 rs = statement.executeQuery();
 
                 count = MetricsDatabase.countRecords(rs);
 
-                if (count > 0)
-                {
+                if (count > 0) {
                     rs.first();
                     Object val = rs.getObject("id");
-                    if (val != null)
-                    {
+                    if (val != null) {
                         id = MetricsDatabase.getId(val);
                         return id >= 0;
                     }
                 }
-            }
-            catch (SQLException ex)
-            {
+            } catch (SQLException ex) {
                 if (UnitTrace.errors)
                     System.err.println("Error checking if " + getIdentity() + " exists." + ex == null ? "" : ex.getMessage());
 
                 throw ex;
-            }
-            finally
-            {
+            } finally {
                 closeResultSet(rs);
                 closeStatement(statement);
             }
@@ -72,92 +62,66 @@ public abstract class Persistable
         return false;
     }
 
-    protected PreparedStatement get(MetricsDatabase database) throws SQLException
-    {
+    protected PreparedStatement get(MetricsDatabase database) throws SQLException {
         PreparedStatement statement = null;
         statement = database.select(null, getTables(), getClauses(), null);
         return statement;
     }
 
-    protected void closeResultSet(ResultSet rs)
-    {
-        if (rs != null)
-        {
-            try
-            {
+    protected void closeResultSet(ResultSet rs) {
+        if (rs != null) {
+            try {
                 rs.close();
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
             }
         }
     }
 
-    protected void closeStatement(Statement stmt)
-    {
-        if (stmt != null)
-        {
-            try
-            {
+    protected void closeStatement(Statement stmt) {
+        if (stmt != null) {
+            try {
                 stmt.close();
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
             }
         }
     }
 
 
-    public void save(MetricsDatabase database) throws SQLException
-    {
+    public void save(MetricsDatabase database) throws SQLException {
         PreparedStatement statement = null;
 
-        try
-        {
-            if (exists(database))
-            {
+        try {
+            if (exists(database)) {
                 statement = database.update(getTableName(), getUpdates(), getClauses(), null);
                 statement.executeUpdate();
-            }
-            else
-            {
+            } else {
                 statement = database.insert(getTableName(), getInserts(), null, null);
                 statement.executeUpdate();
                 load(database);
             }
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             if (UnitTrace.errors)
                 System.err.println("Error saving " + getIdentity() + ". " + ex == null ? "" : ex.getMessage());
 
             throw ex;
-        }
-        finally
-        {
+        } finally {
             closeStatement(statement);
         }
     }
 
-    public void insert(MetricsDatabase database) throws SQLException
-    {
+    public void insert(MetricsDatabase database) throws SQLException {
         PreparedStatement statement = null;
 
-        try
-        {
+        try {
             statement = database.insert(getTableName(), getInserts(), null, null);
             statement.executeUpdate();
             load(database);
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             if (UnitTrace.errors)
                 System.err.println("Error saving " + getIdentity() + ". " + ex == null ? "" : ex.getMessage());
 
             throw ex;
-        }
-        finally
-        {
+        } finally {
             closeStatement(statement);
         }
     }

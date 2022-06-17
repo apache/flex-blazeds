@@ -31,11 +31,9 @@ import java.util.Set;
 import org.apache.commons.httpclient.Cookie;
 
 /**
- *
  * Store all the information needed for a proxy request.
  */
-public class ProxyContext extends SharedProxyContext
-{
+public class ProxyContext extends SharedProxyContext {
     private HttpMethodBase httpMethod;
     private HttpClient httpClient;
 
@@ -51,7 +49,7 @@ public class ProxyContext extends SharedProxyContext
     private boolean contentChunked;
 
     private String credentialsHeader;
-    
+
     // set up by ProxtContextFilter
     private UsernamePasswordCredentials proxyCredentials;
     private HttpConnectionManager connectionManager;
@@ -66,245 +64,200 @@ public class ProxyContext extends SharedProxyContext
     private Map requestHeaders;
     private Map responseHeaders;
     private Object response;
-    
+
     // We need to record the request cookies
-    
+
     private Set requestCookies;
 
 
     /*          PROXY COMMUNICATION           */
 
-    public HttpConnectionManager getConnectionManager()
-    {
+    public HttpConnectionManager getConnectionManager() {
         return connectionManager;
     }
 
-    public void setConnectionManager(HttpConnectionManager connectionManager)
-    {
+    public void setConnectionManager(HttpConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
     }
 
-    public HttpMethodBase getHttpMethod()
-    {
+    public HttpMethodBase getHttpMethod() {
         return httpMethod;
     }
 
-    public void setHttpMethod(HttpMethodBase httpMethod)
-    {
+    public void setHttpMethod(HttpMethodBase httpMethod) {
         this.httpMethod = httpMethod;
     }
 
-    public HttpClient getHttpClient()
-    {
+    public HttpClient getHttpClient() {
         return httpClient;
     }
 
-    public void setHttpClient(HttpClient httpClient)
-    {
+    public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
 
     /*          INPUT           */
 
-    public Map getHeaders()
-    {
+    public Map getHeaders() {
         return headers;
     }
 
-    public void setHeaders(Map headers)
-    {
+    public void setHeaders(Map headers) {
         this.headers = headers;
     }
 
-    public String getContentType()
-    {
+    public String getContentType() {
         return contentType;
     }
 
-    public void setContentType(String type)
-    {
+    public void setContentType(String type) {
         contentType = type;
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public void setUrl(String s)
-    {
+    public void setUrl(String s) {
         url = s;
     }
 
-    public Target getTarget()
-    {
+    public Target getTarget() {
         return target;
     }
 
-    public void setTarget(Target target)
-    {
+    public void setTarget(Target target) {
         this.target = target;
     }
 
-    public Protocol getProtocol()
-    {
+    public Protocol getProtocol() {
         return protocol;
     }
 
-    public void setProtocol(Protocol protocol)
-    {
+    public void setProtocol(Protocol protocol) {
         this.protocol = protocol;
     }
 
-    public Object getBody()
-    {
+    public Object getBody() {
         return body;
     }
 
-    public void setBody(Object body)
-    {
+    public void setBody(Object body) {
         this.body = body;
     }
 
-    public String getCredentialsHeader()
-    {
+    public String getCredentialsHeader() {
         return credentialsHeader;
     }
 
-    public void setCredentialsHeader(String credentialsHeader)
-    {
+    public void setCredentialsHeader(String credentialsHeader) {
         this.credentialsHeader = credentialsHeader;
     }
 
-    public UsernamePasswordCredentials getProxyCredentials()
-    {
+    public UsernamePasswordCredentials getProxyCredentials() {
         return proxyCredentials;
     }
 
-    public void setProxyCredentials(UsernamePasswordCredentials proxyCredentials)
-    {
+    public void setProxyCredentials(UsernamePasswordCredentials proxyCredentials) {
         this.proxyCredentials = proxyCredentials;
     }
 
-    public int getCookieLimit()
-    {
+    public int getCookieLimit() {
         return cookieLimit;
     }
 
-    public void setCookieLimit(int cookieLimit)
-    {
+    public void setCookieLimit(int cookieLimit) {
         this.cookieLimit = cookieLimit;
     }
 
-    public boolean allowLaxSSL()
-    {
+    public boolean allowLaxSSL() {
         return allowLaxSSL;
     }
 
-    public void setAllowLaxSSL(boolean allowLaxSSL)
-    {
+    public void setAllowLaxSSL(boolean allowLaxSSL) {
         this.allowLaxSSL = allowLaxSSL;
     }
 
-    public ExternalProxySettings getExternalProxySettings()
-    {
+    public ExternalProxySettings getExternalProxySettings() {
         return externalProxySettings;
     }
 
-    public void setExternalProxySettings(ExternalProxySettings externalProxySettings)
-    {
+    public void setExternalProxySettings(ExternalProxySettings externalProxySettings) {
         this.externalProxySettings = externalProxySettings;
     }
 
-    public boolean getRecordHeaders()
-    {
+    public boolean getRecordHeaders() {
         return recordHeaders;
     }
 
-    public void setRecordHeaders(boolean recordHeaders)
-    {
+    public void setRecordHeaders(boolean recordHeaders) {
         this.recordHeaders = recordHeaders;
     }
 
-    public boolean getContentChunked()
-    {
+    public boolean getContentChunked() {
         return contentChunked;
     }
-    
-    public void setContentChunked(boolean value)
-    {
+
+    public void setContentChunked(boolean value) {
         contentChunked = value;
     }
 
 
     /*          OUTPUT           */
 
-    public int getStatusCode()
-    {
+    public int getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(int originalStatusCode)
-    {
+    public void setStatusCode(int originalStatusCode) {
         this.statusCode = originalStatusCode;
     }
 
-    public Object getResponse()
-    {
+    public Object getResponse() {
         return response;
     }
 
-    public void setResponse(Object r)
-    {
+    public void setResponse(Object r) {
         response = r;
     }
 
-    public boolean streamResponseToClient()
-    {
+    public boolean streamResponseToClient() {
         return streamResponseToClient;
     }
 
-    public void setStreamResponseToClient(boolean s)
-    {
+    public void setStreamResponseToClient(boolean s) {
         this.streamResponseToClient = s;
     }
-    
-    public Map getRequestHeaders()
-    {
+
+    public Map getRequestHeaders() {
         return requestHeaders;
     }
 
-    public void setRequestHeaders(Map requestHeaders)
-    {
+    public void setRequestHeaders(Map requestHeaders) {
         this.requestHeaders = requestHeaders;
     }
 
-    public Map getResponseHeaders()
-    {
+    public Map getResponseHeaders() {
         return responseHeaders;
     }
 
-    public void setResponseHeaders(Map responseHeaders)
-    {
+    public void setResponseHeaders(Map responseHeaders) {
         this.responseHeaders = responseHeaders;
     }
-    
-    public void clearRequestCookies()
-    {
+
+    public void clearRequestCookies() {
         requestCookies = null;
     }
-    
-    public void addRequestCookie(Cookie cookie)
-    {
+
+    public void addRequestCookie(Cookie cookie) {
         if (requestCookies == null)
             requestCookies = new HashSet();
         requestCookies.add(cookie);
     }
-    
-    public Set getRequestCookies()
-    {
+
+    public Set getRequestCookies() {
         return requestCookies;
     }
-    
+
 }

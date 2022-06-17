@@ -19,8 +19,7 @@ package flex.messaging.endpoints;
 /**
  * Secure version of AMFEndpoint.
  */
-public class SecureAMFEndpoint extends AMFEndpoint
-{
+public class SecureAMFEndpoint extends AMFEndpoint {
     //--------------------------------------------------------------------------
     //
     // Constructor
@@ -30,8 +29,7 @@ public class SecureAMFEndpoint extends AMFEndpoint
     /**
      * Constructs an unmanaged <code>SecureAMFEndpoint</code>.
      */
-    public SecureAMFEndpoint()
-    {
+    public SecureAMFEndpoint() {
         this(false);
     }
 
@@ -39,10 +37,9 @@ public class SecureAMFEndpoint extends AMFEndpoint
      * Constructs a <code>SecureAMFEndpoint</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>SecureAMFEndpoint</code>
-     * is manageable; <code>false</code> otherwise.
+     *                         is manageable; <code>false</code> otherwise.
      */
-    public SecureAMFEndpoint(boolean enableManagement)
-    {
+    public SecureAMFEndpoint(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -57,8 +54,7 @@ public class SecureAMFEndpoint extends AMFEndpoint
      *
      * @return <code>true</code> if the endpoint is secure, <code>false</code> otherwise.
      */
-    public boolean isSecure()
-    {
+    public boolean isSecure() {
         return true;
     }
 }

@@ -23,8 +23,7 @@ import javax.management.ObjectName;
  * The base MBean interface for management beans that control aspects of
  * Flex behavior on the server.
  */
-public interface BaseControlMBean
-{
+public interface BaseControlMBean {
     /**
      * Returns the id for this MBean. This is the value that is set for the
      * <code>id</code> key in the <code>ObjectName</code> for this MBean.

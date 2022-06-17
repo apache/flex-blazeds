@@ -20,14 +20,11 @@ import flex.messaging.log.Log;
 
 /**
  * Simple utility to trace an Object graph out to a StringBuffer.
- *
+ * <p>
  * Note that new lines are NOT added after the individual values
  * in complex type properties.
- *
- *
  */
-public class ObjectTrace
-{
+public class ObjectTrace {
 
 
     /* This boolean is used for suppressing debug output for selected properties.
@@ -35,57 +32,48 @@ public class ObjectTrace
      */
     public boolean nextElementExclude;
 
-    public ObjectTrace()
-    {
+    public ObjectTrace() {
         buffer = new StringBuffer(4096);
     }
 
-    public ObjectTrace(int bufferSize)
-    {
+    public ObjectTrace(int bufferSize) {
         buffer = new StringBuffer(bufferSize);
     }
 
-    public String toString()
-    {
+    public String toString() {
         return buffer.toString();
     }
 
-    public void write(Object o)
-    {
+    public void write(Object o) {
         if (m_nested <= 0)
             buffer.append(indentString());
 
         buffer.append(String.valueOf(o));
     }
 
-    public void writeNull()
-    {
+    public void writeNull() {
         if (m_nested <= 0)
             buffer.append(indentString());
 
         buffer.append("null");
     }
 
-    public void writeRef(int ref)
-    {
+    public void writeRef(int ref) {
         if (m_nested <= 0)
             buffer.append(indentString());
 
         buffer.append("(Ref #").append(ref).append(")");
     }
 
-    public void writeString(String s)
-    {
+    public void writeString(String s) {
         if (m_nested <= 0)
             buffer.append(indentString());
 
         buffer.append("\"").append(s).append("\"");
     }
 
-    public void startArray(String header)
-    {
-        if (header != null && header.length() > 0)
-        {
+    public void startArray(String header) {
+        if (header != null && header.length() > 0) {
             if (m_nested <= 0)
                 buffer.append(indentString());
 
@@ -96,21 +84,17 @@ public class ObjectTrace
         m_nested++;
     }
 
-    public void arrayElement(int index)
-    {
+    public void arrayElement(int index) {
         buffer.append(indentString()).append("[").append(index).append("] = ");
     }
 
-    public void endArray()
-    {
+    public void endArray() {
         m_indent--;
         m_nested--;
     }
 
-    public void startObject(String header)
-    {
-        if (header != null && header.length() > 0)
-        {
+    public void startObject(String header) {
+        if (header != null && header.length() > 0) {
             if (m_nested <= 0)
                 buffer.append(indentString());
 
@@ -121,29 +105,24 @@ public class ObjectTrace
         m_nested++;
     }
 
-    public void namedElement(String name)
-    {
-        if (Log.isExcludedProperty(name))
-        {
+    public void namedElement(String name) {
+        if (Log.isExcludedProperty(name)) {
             nextElementExclude = true;
         }
 
         buffer.append(indentString()).append(name).append(" = ");
     }
 
-    public void endObject()
-    {
+    public void endObject() {
         m_indent--;
         m_nested--;
     }
 
-    public void newLine()
-    {
+    public void newLine() {
         boolean alreadyPadded = false;
         int length = buffer.length();
 
-        if (length > 3)
-        {
+        if (length > 3) {
             String tail = buffer.substring(length - 3, length - 1); //Get last two chars in buffer
             alreadyPadded = tail.equals(newLine);
         }
@@ -158,11 +137,9 @@ public class ObjectTrace
      *
      * @return the ident string.
      */
-    protected String indentString()
-    {
+    protected String indentString() {
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < m_indent; ++i)
-        {
+        for (int i = 0; i < m_indent; ++i) {
             sb.append("  ");
         }
         return sb.toString();

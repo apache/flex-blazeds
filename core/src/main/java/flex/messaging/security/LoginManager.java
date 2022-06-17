@@ -39,12 +39,11 @@ import flex.messaging.log.LogCategories;
  * differently, a separate LoginCommand needs to be written for
  * each server.
  * </p>
- *
- *
  */
-public class LoginManager implements FlexComponent
-{
-    /** Log category for LoginManager. */
+public class LoginManager implements FlexComponent {
+    /**
+     * Log category for LoginManager.
+     */
     public static final String LOG_CATEGORY = LogCategories.SECURITY;
 
     private static final String NIOHTTP_FLEX_SESSION_TYPE = "flex.messaging.endpoints.NIOHTTPFlexSession";
@@ -74,8 +73,7 @@ public class LoginManager implements FlexComponent
     /**
      * Creates a new <code>LoginManager</code> instance.
      */
-    public LoginManager()
-    {
+    public LoginManager() {
         perClientAuthentication = false;
     }
 
@@ -90,21 +88,18 @@ public class LoginManager implements FlexComponent
      * This is no-op for LoginManager as it does not have an id and all
      * its properties are directly settable.
      *
-     * @param id The id of the component.
+     * @param id        The id of the component.
      * @param configMap The properties for configuring component.
      */
-    public void initialize(String id, ConfigMap configMap)
-    {
+    public void initialize(String id, ConfigMap configMap) {
         // No-op
     }
 
     /**
      * Validates the LoginManager before it is started.
      */
-    protected void validate()
-    {
-        if (perClientAuthentication && loginCommand instanceof AppServerLoginCommand)
-        {
+    protected void validate() {
+        if (perClientAuthentication && loginCommand instanceof AppServerLoginCommand) {
             // Cannot use application server authentication together with per client authentication.
             ConfigurationException configException = new ConfigurationException();
             configException.setMessage(PER_CLIENT_ANT_APPSERVER);
@@ -116,8 +111,7 @@ public class LoginManager implements FlexComponent
      * Implements FlexComponent.start.
      * Starts the <code>LoginManager</code>.
      */
-    public void start()
-    {
+    public void start() {
         if (started)
             return;
 
@@ -133,8 +127,7 @@ public class LoginManager implements FlexComponent
      * Implements FlexComponents.stop.
      * Stops the <code>LoginManager</code>.
      */
-    public void stop()
-    {
+    public void stop() {
         if (!started)
             return;
 
@@ -156,8 +149,7 @@ public class LoginManager implements FlexComponent
      * @return <code>true</code> if per client authentication is enabled;
      * otherwise <code>false</code>.
      */
-    public boolean isPerClientAuthentication()
-    {
+    public boolean isPerClientAuthentication() {
         return perClientAuthentication;
     }
 
@@ -165,10 +157,9 @@ public class LoginManager implements FlexComponent
      * Sets whether per client authentication is enabled or not.
      *
      * @param perClientAuthentication <code>true</code> if per client authentication
-     * is enabled; otherwise <code>false</code>.
+     *                                is enabled; otherwise <code>false</code>.
      */
-    public void setPerClientAuthentication(boolean perClientAuthentication)
-    {
+    public void setPerClientAuthentication(boolean perClientAuthentication) {
         this.perClientAuthentication = perClientAuthentication;
     }
 
@@ -178,8 +169,7 @@ public class LoginManager implements FlexComponent
      *
      * @return <code>true</code> if the LoginManager is started; otherwise <code>false</code>.
      */
-    public boolean isStarted()
-    {
+    public boolean isStarted() {
         return started;
     }
 
@@ -188,8 +178,7 @@ public class LoginManager implements FlexComponent
      *
      * @return loginCommand The login command used.
      */
-    public LoginCommand getLoginCommand()
-    {
+    public LoginCommand getLoginCommand() {
         return loginCommand;
     }
 
@@ -198,8 +187,7 @@ public class LoginManager implements FlexComponent
      *
      * @param value The login command to set.
      */
-    public void setLoginCommand(LoginCommand value)
-    {
+    public void setLoginCommand(LoginCommand value) {
         if (loginCommand == value)
             return;
 
@@ -211,15 +199,12 @@ public class LoginManager implements FlexComponent
     /**
      * Perform login with username and credentials.
      *
-     * @param username Username to use to login.
+     * @param username    Username to use to login.
      * @param credentials Credentials to use to login.
      */
-    public void login(String username, Object credentials)
-    {
-        if (getCurrentPrincipal() == null)
-        {
-            if (loginCommand == null)
-            {
+    public void login(String username, Object credentials) {
+        if (getCurrentPrincipal() == null) {
+            if (loginCommand == null) {
                 // Client needs to be externally authenticated via Basic Authentication or some other method.
                 SecurityException se = new SecurityException();
                 se.setMessage(NO_LOGIN_COMMAND);
@@ -227,8 +212,7 @@ public class LoginManager implements FlexComponent
                 throw se;
             }
 
-            if (username != null && credentials != null)
-            {
+            if (username != null && credentials != null) {
                 Principal authenticated = loginCommand.doAuthentication(username, credentials);
 
                 if (authenticated == null) // Invalid login.
@@ -239,29 +223,24 @@ public class LoginManager implements FlexComponent
                     throw se;
                 }
                 setCurrentPrincipal(authenticated);
-            }
-            else
-            {
+            } else {
                 // Login is required but the client passed null principal and credentials.
                 SecurityException se = new SecurityException();
                 se.setMessage(LOGIN_REQ);
                 se.setCode(SecurityException.CLIENT_AUTHENTICATION_CODE);
                 throw se;
             }
-        }
-        else
-        {
+        } else {
             // It is possible that the username passed in from the client and that stored in the
             // Principal on the session may be different. To facilitate this case a LoginCommand
             // must implement LoginCommandExt and the user stored in the Principal is retrieved
             // here for comparison.
-            String comparisonUsername = loginCommand instanceof LoginCommandExt?
-                    ((LoginCommandExt)loginCommand).getPrincipalNameFromCredentials(username, credentials) : username;
+            String comparisonUsername = loginCommand instanceof LoginCommandExt ?
+                    ((LoginCommandExt) loginCommand).getPrincipalNameFromCredentials(username, credentials) : username;
 
             // If we have a username and a different existing principal then we must raise an exception
             // as we don't allow re-authentication for a given session.
-            if (comparisonUsername != null && !comparisonUsername.equals(getCurrentPrincipal().getName()))
-            {
+            if (comparisonUsername != null && !comparisonUsername.equals(getCurrentPrincipal().getName())) {
                 // Cannot re-authenticate in the same session.
                 SecurityException se = new SecurityException();
                 se.setMessage(CANNOT_REAUTH);
@@ -274,10 +253,8 @@ public class LoginManager implements FlexComponent
     /**
      * Perform logout.
      */
-    public void logout()
-    {
-        if (loginCommand == null)
-        {
+    public void logout() {
+        if (loginCommand == null) {
             FlexContext.getFlexSession().invalidate();
 
             // External login command required. Please check your security configuration.
@@ -290,12 +267,9 @@ public class LoginManager implements FlexComponent
         // Always invoke the command's logout hook.
         loginCommand.logout(getCurrentPrincipal());
 
-        if (FlexContext.isPerClientAuthentication())
-        {
+        if (FlexContext.isPerClientAuthentication()) {
             FlexContext.setUserPrincipal(null);
-        }
-        else
-        {
+        } else {
             FlexSession session = FlexContext.getFlexSession();
             session.invalidate();
         }
@@ -309,40 +283,33 @@ public class LoginManager implements FlexComponent
      *
      * @param constraint Constraint against which the current user is authorized.
      */
-    public void checkConstraint(SecurityConstraint constraint)
-    {
+    public void checkConstraint(SecurityConstraint constraint) {
         if (constraint == null)
             return;
 
         Principal currentPrincipal = getCurrentPrincipal();
 
-        if (currentPrincipal != null)
-        {
+        if (currentPrincipal != null) {
             List roles = constraint.getRoles();
             boolean authorized = roles == null || checkRoles(currentPrincipal, roles);
 
-            if (!authorized)
-            {
+            if (!authorized) {
                 // Access denied. User not authorized.
                 SecurityException se = new SecurityException();
                 se.setMessage(ACCESS_DENIED);
                 se.setCode(SecurityException.CLIENT_AUTHORIZATION_CODE);
                 throw se;
             }
-        }
-        else
-        {
-            if (!isCustomAuth(constraint))
-            {
+        } else {
+            if (!isCustomAuth(constraint)) {
                 // Some endpoints (NIO) do not support HTTP Basic authentication.
-                if (FlexContext.getHttpResponse() == null)
-                {
+                if (FlexContext.getHttpResponse() == null) {
                     Endpoint endpoint = FlexContext.getEndpoint();
                     String endpointId = (endpoint != null) ? endpoint.getId() : "unknown";
                     // A resource protected by a security constraint that specifies Basic security was accessed via the ''{0}''
                     // endpoint which does not support HTTP Basic security. Please use custom security or an alternate endpoint.
-                    SecurityException se =new SecurityException();
-                    se.setMessage(NO_BASIC_SECURITY, new Object[] {constraint.getId(), endpointId});
+                    SecurityException se = new SecurityException();
+                    se.setMessage(NO_BASIC_SECURITY, new Object[]{constraint.getId(), endpointId});
                     se.setCode(SecurityException.CLIENT_AUTHORIZATION_CODE);
                     throw se;
                 }
@@ -363,18 +330,17 @@ public class LoginManager implements FlexComponent
      * roles in the passed in list of roles.
      *
      * @param principal Principal to check against roles
-     * @param roles list of roles
+     * @param roles     list of roles
      * @return true if principal belongs to at least one of the roles in the list
      */
-    public boolean checkRoles(Principal principal, List roles)
-    {
+    public boolean checkRoles(Principal principal, List roles) {
         if (loginCommand == null) // This should not happen but just in case.
         {
             if (Log.isWarn())
                 Log.getLogger(LOG_CATEGORY).warn
-                ("Login command is null. Please ensure that the login-command"
-                        + " tag has the correct server attribute value"
-                        + ", or use 'all' to use the login command regardless of the server.");
+                        ("Login command is null. Please ensure that the login-command"
+                                + " tag has the correct server attribute value"
+                                + ", or use 'all' to use the login command regardless of the server.");
             return false;
         }
         return loginCommand.doAuthorization(principal, roles);
@@ -386,18 +352,15 @@ public class LoginManager implements FlexComponent
     //
     //--------------------------------------------------------------------------
 
-    private Principal getCurrentPrincipal()
-    {
+    private Principal getCurrentPrincipal() {
         return FlexContext.getUserPrincipal();
     }
 
-    private void setCurrentPrincipal(Principal p)
-    {
+    private void setCurrentPrincipal(Principal p) {
         FlexContext.setUserPrincipal(p);
     }
 
-    private boolean isCustomAuth(SecurityConstraint constraint)
-    {
+    private boolean isCustomAuth(SecurityConstraint constraint) {
         return SecurityConstraint.CUSTOM_AUTH_METHOD.equals(constraint.getMethod());
     }
 }

@@ -19,13 +19,11 @@ package flex.messaging.util;
 /**
  *
  */
-public class DoubleUtil
-{
+public class DoubleUtil {
     /**
      *
      */
-    public static long doubleToRawLongBits(double d)
-    {
+    public static long doubleToRawLongBits(double d) {
         return Double.doubleToRawLongBits(d);
     }
 }

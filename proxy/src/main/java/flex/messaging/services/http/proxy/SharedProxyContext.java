@@ -17,11 +17,9 @@
 package flex.messaging.services.http.proxy;
 
 /**
- *
  * Store all the information needed for a proxy request that's used in flex.server.common.proxy.
  */
-public class SharedProxyContext
-{
+public class SharedProxyContext {
     // POST, GET, HEAD etc
     private String method;
 
@@ -41,98 +39,79 @@ public class SharedProxyContext
     // whether target URL came from the client
     private boolean clientTarget;
 
-    public String getMethod()
-    {
+    public String getMethod() {
         return method;
     }
 
-    public void setMethod(String method)
-    {
+    public void setMethod(String method) {
         this.method = method;
     }
 
-    public boolean isSoapRequest()
-    {
+    public boolean isSoapRequest() {
         return isSoapRequest;
     }
 
-    public void setSoapRequest(boolean s)
-    {
+    public void setSoapRequest(boolean s) {
         isSoapRequest = s;
     }
 
-    public boolean isHttpRequest()
-    {
+    public boolean isHttpRequest() {
         return isHttpRequest;
     }
 
-    public void setHttpRequest(boolean h)
-    {
+    public void setHttpRequest(boolean h) {
         isHttpRequest = h;
     }
 
-    public boolean isClientHttps()
-    {
+    public boolean isClientHttps() {
         return isClientHttps;
     }
 
-    public void setClientHttps(boolean h)
-    {
+    public void setClientHttps(boolean h) {
         isClientHttps = h;
     }
 
-    public boolean hasAuthorization()
-    {
+    public boolean hasAuthorization() {
         return hasAuthorization;
     }
 
-    public void setAuthorization(boolean hasAuthorization)
-    {
+    public void setAuthorization(boolean hasAuthorization) {
         this.hasAuthorization = hasAuthorization;
     }
 
-    public boolean isLocalDomain()
-    {
+    public boolean isLocalDomain() {
         return localDomain;
     }
 
-    public void setLocalDomain(boolean localDomain)
-    {
+    public void setLocalDomain(boolean localDomain) {
         this.localDomain = localDomain;
     }
-    
-    public boolean isLocalPort()
-    {
+
+    public boolean isLocalPort() {
         return localPort;
     }
-  
-    public void setLocalPort(boolean localPort)
-    {
+
+    public void setLocalPort(boolean localPort) {
         this.localPort = localPort;
     }
-    
-    public boolean isLocalDomainAndPort()
-    {
+
+    public boolean isLocalDomainAndPort() {
         return localDomain && localPort;
     }
 
-    public boolean disableCaching()
-    {
+    public boolean disableCaching() {
         return disableCaching;
     }
 
-    public void setDisableCaching(boolean disableCaching)
-    {
+    public void setDisableCaching(boolean disableCaching) {
         this.disableCaching = disableCaching;
     }
 
-    public boolean isClientTarget()
-    {
+    public boolean isClientTarget() {
         return clientTarget;
     }
 
-    public void setClientTarget(boolean clientTarget)
-    {
+    public void setClientTarget(boolean clientTarget) {
         this.clientTarget = clientTarget;
     }
 }

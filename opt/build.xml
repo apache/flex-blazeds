@@ -46,53 +46,54 @@
     <property name="build.number" value=""/>
 
     <condition property="javacexecutable" value="javac.exe">
-        <os family="windows" />
+        <os family="windows"/>
     </condition>
     <property name="javacexecutable" value="javac"/>
- 
+
     <path id="base.classpath">
         <fileset dir="${lib.dir}" erroronmissingdir="false" includes="flex-messaging-common.jar"/>
         <fileset dir="${lib.dir}" erroronmissingdir="false" includes="flex-messaging-core.jar"/>
         <fileset dir="${servlet.dir}" erroronmissingdir="false" includes="servlet-api-${servlet.version}.jar"/>
-        <fileset dir="${httpclient.dir}" erroronmissingdir="false" includes="commons-httpclient-${httpclient.version}.jar"/>
+        <fileset dir="${httpclient.dir}" erroronmissingdir="false"
+                 includes="commons-httpclient-${httpclient.version}.jar"/>
     </path>
-    
+
     <path id="jrun.classpath">
         <path refid="base.classpath"/>
         <fileset dir="${jrun.dir}/lib" includes="jrun.jar"/>
     </path>
-    
+
     <path id="tomcat-4150.classpath">
         <path refid="base.classpath"/>
         <fileset dir="${catalina4.dir}">
             <include name="catalina-${catalina4.version}.jar"/>
-<!--            <include name="mx4j-jmx.jar"/> -->
+            <!--            <include name="mx4j-jmx.jar"/> -->
         </fileset>
     </path>
-        
+
     <path id="tomcat.classpath">
         <path refid="base.classpath"/>
         <fileset dir="${catalina.dir}">
             <include name="catalina-${catalina.version}.jar"/>
-<!--            <include name="mx4j-jmx.jar"/> -->
+            <!--            <include name="mx4j-jmx.jar"/> -->
         </fileset>
     </path>
-    
+
     <path id="tomcat-708.classpath">
         <path refid="base.classpath"/>
         <fileset dir="${catalina7.dir}">
             <include name="tomcat-catalina-${catalina7.version}.jar"/>
-<!--            <include name="mx4j-jmx.jar"/> -->
+            <!--            <include name="mx4j-jmx.jar"/> -->
         </fileset>
     </path>
-    
+
     <path id="weblogic.classpath">
         <path refid="base.classpath"/>
         <fileset dir="${module.lib.dir}">
             <include name="weblogic.jar"/>
         </fileset>
     </path>
-    
+
     <path id="websphere.classpath">
         <path refid="base.classpath"/>
         <fileset dir="${module.lib.dir}">
@@ -123,40 +124,40 @@
         <depend cache="${module.classes}" srcdir="${jrun.src}" destdir="${module.classes}"/>
         <depend cache="${module.classes}" srcdir="${tomcat.src}" destdir="${module.classes}"/>
     </target>
-    
+
     <target name="compile-jrun" depends="prepare" description="compile the jrun-related classes">
-		<mkdir dir="${jrun.src}"/>
+        <mkdir dir="${jrun.src}"/>
         <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${jrun.src}"
-            classpathref="jrun.classpath">
+               classpathref="jrun.classpath">
             <include name="**/*.java"/>
         </javac>
     </target>
 
     <target name="compile-tomcat" depends="prepare" description="compile the tomcat-related classes">
-		<mkdir dir="${tomcat.src}"/>
-		<javac debug="${src.debug}" destdir="${module.classes}" srcdir="${tomcat.src}"
-            classpathref="tomcat-4150.classpath">
+        <mkdir dir="${tomcat.src}"/>
+        <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${tomcat.src}"
+               classpathref="tomcat-4150.classpath">
             <include name="**/*.java"/>
             <exclude name="flex/messaging/security/TomcatValve.java"/>
             <exclude name="flex/messaging/security/Tomcat7Valve.java"/>
         </javac>
         <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${tomcat.src}"
-            classpathref="tomcat.classpath">
+               classpathref="tomcat.classpath">
             <include name="**/*.java"/>
             <exclude name="flex/messaging/security/TomcatValve4150.java"/>
             <exclude name="flex/messaging/security/Tomcat7Valve.java"/>
         </javac>
-        <antcall target="build.for.tomcat7"/>           
+        <antcall target="build.for.tomcat7"/>
     </target>
-    
-    <target name="build.for.tomcat7" if="env.JAVA16_HOME">  
+
+    <target name="build.for.tomcat7" if="env.JAVA16_HOME">
         <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${tomcat.src}"
                fork="yes" compiler="javac1.6" executable="${env.JAVA16_HOME}/bin/${javacexecutable}"
                classpathref="tomcat-708.classpath">
-             <include name="**/*.java"/>
-             <exclude name="flex/messaging/security/TomcatValve.java"/>
-             <exclude name="flex/messaging/security/TomcatValve4150.java"/>
-         </javac>   
+            <include name="**/*.java"/>
+            <exclude name="flex/messaging/security/TomcatValve.java"/>
+            <exclude name="flex/messaging/security/TomcatValve4150.java"/>
+        </javac>
     </target>
 
     <target name="jar-tomcat" depends="compile-tomcat" description="create the tomcat specific jars">
@@ -172,7 +173,7 @@
             <manifest>
                 <attribute name="Sealed" value="${manifest.sealed}"/>
                 <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Tomcat 4.1 Value"/>
-                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/>
                 <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
             </manifest>
         </jar>
@@ -186,7 +187,7 @@
             <manifest>
                 <attribute name="Sealed" value="${manifest.sealed}"/>
                 <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Tomcat 5 Valve"/>
-                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/>
                 <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
             </manifest>
         </jar>
@@ -196,94 +197,94 @@
         </delete>
         <copy todir="${tomcat.jar.dir}" file="${tomcat.src}/flex/messaging/security/${tomcat.valve}"/>
     </target>
-    
-    <target name="jar.for.tomcat7" >
+
+    <target name="jar.for.tomcat7">
         <jar destfile="${tomcat-server-708.jar}" basedir="${module.classes}">
-              <include name="flex/messaging/security/Tomcat7Valve.class"/>
-              <include name="flex/messaging/security/Tomcat7Valve$*"/>
-              <include name="flex/messaging/security/tomcat-descriptor.xml"/>
-              <include name="flex/messaging/security/TomcatLogin.class"/>
-              <include name="flex/messaging/security/TomcatLoginCommand.class"/>
-              <include name="flex/messaging/security/TomcatLoginHolder*.class"/>
-              <manifest>
-                  <attribute name="Sealed" value="${manifest.sealed}"/>
-                  <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Tomcat 7 Valve"/>
-                  <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
-                  <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
-             </manifest>
-         </jar>
-    </target>
-    
-	<!--Edit Starts here; Making the dependencies of weblogic.jar, asynchbeans.jar, jazncore.jar and oc4j-api.jar conditional-->
-	<target name="compile-weblogic" depends="prepare" description="compile the weblogic-related classes">
-		<mkdir dir="${weblogic.src}"/>
-		<available file="${module.lib.dir}/weblogic.jar" property="isWeblogic"/>
-		<antcall target="actual.weblogic.compile" />
-	</target>
-
-    <target name="check.weblogic" unless="isWeblogic" >
-        <echo message="**** compiling without weblogic jar ****" />
+            <include name="flex/messaging/security/Tomcat7Valve.class"/>
+            <include name="flex/messaging/security/Tomcat7Valve$*"/>
+            <include name="flex/messaging/security/tomcat-descriptor.xml"/>
+            <include name="flex/messaging/security/TomcatLogin.class"/>
+            <include name="flex/messaging/security/TomcatLoginCommand.class"/>
+            <include name="flex/messaging/security/TomcatLoginHolder*.class"/>
+            <manifest>
+                <attribute name="Sealed" value="${manifest.sealed}"/>
+                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Tomcat 7 Valve"/>
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/>
+                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+            </manifest>
+        </jar>
     </target>
 
-    <target name="actual.weblogic.compile" depends="check.weblogic" if="isWeblogic" >
-        <echo message="**** compiling with weblogic jar ****" />
+    <!--Edit Starts here; Making the dependencies of weblogic.jar, asynchbeans.jar, jazncore.jar and oc4j-api.jar conditional-->
+    <target name="compile-weblogic" depends="prepare" description="compile the weblogic-related classes">
+        <mkdir dir="${weblogic.src}"/>
+        <available file="${module.lib.dir}/weblogic.jar" property="isWeblogic"/>
+        <antcall target="actual.weblogic.compile"/>
+    </target>
+
+    <target name="check.weblogic" unless="isWeblogic">
+        <echo message="**** compiling without weblogic jar ****"/>
+    </target>
+
+    <target name="actual.weblogic.compile" depends="check.weblogic" if="isWeblogic">
+        <echo message="**** compiling with weblogic jar ****"/>
         <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${weblogic.src}"
-            classpathref="weblogic.classpath">
+               classpathref="weblogic.classpath">
             <include name="**/*.java"/>
-        </javac>    
+        </javac>
     </target>
-    
-	<!--If asynchbeans.jar is present it looks for sas.jar and wsexception.jar otherwise the build will fail -->
-	<target name="compile-websphere" depends="prepare" description="compile the websphere-related classes">
-		<mkdir dir="${websphere.src}"/>
-		<condition property="isWebsphere">
-			<and>
-				<available file="${module.lib.dir}/asynchbeans.jar"/>
-				<available file="${module.lib.dir}/sas.jar"/>
-				<available file="${module.lib.dir}/wsexception.jar"/>
-			</and>
-		</condition>
-        <antcall target="actual.websphere.compile" />
-	</target>
-    
-    <target name="check.websphere" unless="isWebsphere" >
-        <echo message="**** compiling without websphere jars: asynchbeans jar, sas.jar and wsexception.jar ****" />
+
+    <!--If asynchbeans.jar is present it looks for sas.jar and wsexception.jar otherwise the build will fail -->
+    <target name="compile-websphere" depends="prepare" description="compile the websphere-related classes">
+        <mkdir dir="${websphere.src}"/>
+        <condition property="isWebsphere">
+            <and>
+                <available file="${module.lib.dir}/asynchbeans.jar"/>
+                <available file="${module.lib.dir}/sas.jar"/>
+                <available file="${module.lib.dir}/wsexception.jar"/>
+            </and>
+        </condition>
+        <antcall target="actual.websphere.compile"/>
     </target>
-    
-    <target name="actual.websphere.compile" depends="check.websphere" if="isWebsphere" >
-        <echo message="**** compiling with websphere jars: asynchbeans jar, sas.jar and wsexception.jar ****" />
+
+    <target name="check.websphere" unless="isWebsphere">
+        <echo message="**** compiling without websphere jars: asynchbeans jar, sas.jar and wsexception.jar ****"/>
+    </target>
+
+    <target name="actual.websphere.compile" depends="check.websphere" if="isWebsphere">
+        <echo message="**** compiling with websphere jars: asynchbeans jar, sas.jar and wsexception.jar ****"/>
         <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${websphere.src}"
-            classpathref="websphere.classpath">
+               classpathref="websphere.classpath">
             <include name="**/*.java"/>
         </javac>
     </target>
-	
-	<!-- Both the jar "jazncore and oc4j-api" files are in and condition because both are interdependent and with the absense of either one jar the build will fail.-->
-	<target name="compile-oracle" depends="prepare" description="compile the oracle-related classes">
-		<mkdir dir="${oracle.src}"/>
-		<condition property="isOracle">
-			<and>
-				<available file="${module.lib.dir}/jazncore.jar"/>
-				<available file="${module.lib.dir}/oc4j-api.jar"/>
-			</and>
-		</condition>
-        <antcall target="actual.oracle.compile" />
-	</target>
-    
-    <target name="check.oracle" unless="isOracle" >
-        <echo message="**** compiling without oracle jar ****" />
+
+    <!-- Both the jar "jazncore and oc4j-api" files are in and condition because both are interdependent and with the absense of either one jar the build will fail.-->
+    <target name="compile-oracle" depends="prepare" description="compile the oracle-related classes">
+        <mkdir dir="${oracle.src}"/>
+        <condition property="isOracle">
+            <and>
+                <available file="${module.lib.dir}/jazncore.jar"/>
+                <available file="${module.lib.dir}/oc4j-api.jar"/>
+            </and>
+        </condition>
+        <antcall target="actual.oracle.compile"/>
     </target>
-    
-    <target name="actual.oracle.compile" depends="check.oracle" if="isOracle" >
-        <echo message="**** compiling with oracle jar ****" />
+
+    <target name="check.oracle" unless="isOracle">
+        <echo message="**** compiling without oracle jar ****"/>
+    </target>
+
+    <target name="actual.oracle.compile" depends="check.oracle" if="isOracle">
+        <echo message="**** compiling with oracle jar ****"/>
         <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${oracle.src}"
-            classpathref="oracle.classpath">
+               classpathref="oracle.classpath">
             <include name="**/*.java"/>
         </javac>
     </target>
-    
-	<!--Edit Ends here; Making the dependencies of weblogic.jar, asynchbeans.jar, jazncore.jar and oc4j-api.jar conditional-->
-	      
+
+    <!--Edit Ends here; Making the dependencies of weblogic.jar, asynchbeans.jar, jazncore.jar and oc4j-api.jar conditional-->
+
     <target name="jar" depends="compile-jrun,jar-tomcat,compile-oracle,compile-weblogic,compile-websphere">
         <echo file="${module.classes}/flex/messaging/version.properties" append="false">build=${build.number}</echo>
         <copy todir="${module.classes}/flex/messaging" overwrite="true">
@@ -307,8 +308,8 @@
         <delete file="${tomcat-server.jar}" failonerror="false"/>
         <delete file="${tomcat-server-708.jar}" failonerror="false"/>
         <delete file="${tomcat.jar.dir}/${tomcat.valve}" failonerror="false"/>
-        <delete dir="${appserver.dir}/lib/blazeds" failonerror="false" />
-        <delete dir="${module.classes}" failonerror="false" />
+        <delete dir="${appserver.dir}/lib/blazeds" failonerror="false"/>
+        <delete dir="${module.classes}" failonerror="false"/>
         <echo>modules/opt clean</echo>
     </target>
 

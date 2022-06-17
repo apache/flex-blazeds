@@ -26,8 +26,7 @@ import java.util.Map;
 /**
  *
  */
-public class ClientConfiguration implements ServicesConfiguration
-{
+public class ClientConfiguration implements ServicesConfiguration {
     protected final Map channelSettings;
     protected final List defaultChannels;
     protected final List serviceSettings;
@@ -36,8 +35,7 @@ public class ClientConfiguration implements ServicesConfiguration
     protected final Map clusterSettings;
     protected FlexClientSettings flexClientSettings;
 
-    public ClientConfiguration()
-    {
+    public ClientConfiguration() {
         channelSettings = new HashMap();
         defaultChannels = new ArrayList(4);
         clusterSettings = new HashMap();
@@ -49,31 +47,26 @@ public class ClientConfiguration implements ServicesConfiguration
      * CHANNEL CONFIGURATION
      */
 
-    public void addChannelSettings(String id, ChannelSettings settings)
-    {
+    public void addChannelSettings(String id, ChannelSettings settings) {
         channelSettings.put(id, settings);
     }
 
-    public ChannelSettings getChannelSettings(String ref)
-    {
-        return (ChannelSettings)channelSettings.get(ref);
+    public ChannelSettings getChannelSettings(String ref) {
+        return (ChannelSettings) channelSettings.get(ref);
     }
 
-    public Map getAllChannelSettings()
-    {
+    public Map getAllChannelSettings() {
         return channelSettings;
     }
 
     /*
      * DEFAULT CHANNELS CONFIGURATION
      */
-    public void addDefaultChannel(String id)
-    {
+    public void addDefaultChannel(String id) {
         defaultChannels.add(id);
     }
 
-    public List getDefaultChannels()
-    {
+    public List getDefaultChannels() {
         return defaultChannels;
     }
 
@@ -81,15 +74,12 @@ public class ClientConfiguration implements ServicesConfiguration
      * SERVICE CONFIGURATION
      */
 
-    public void addServiceSettings(ServiceSettings settings)
-    {
+    public void addServiceSettings(ServiceSettings settings) {
         serviceSettings.add(settings);
     }
 
-    public ServiceSettings getServiceSettings(String serviceType)
-    {
-        for (Iterator iter = serviceSettings.iterator(); iter.hasNext();)
-        {
+    public ServiceSettings getServiceSettings(String serviceType) {
+        for (Iterator iter = serviceSettings.iterator(); iter.hasNext(); ) {
             ServiceSettings serviceSettings = (ServiceSettings) iter.next();
             if (serviceSettings.getId().equals(serviceType))
                 return serviceSettings;
@@ -97,8 +87,7 @@ public class ClientConfiguration implements ServicesConfiguration
         return null;
     }
 
-    public List getAllServiceSettings()
-    {
+    public List getAllServiceSettings() {
         return serviceSettings;
     }
 
@@ -106,35 +95,28 @@ public class ClientConfiguration implements ServicesConfiguration
      * CLUSTER CONFIGURATION
      */
 
-    public void addClusterSettings(ClusterSettings settings)
-    {
-        if (settings.isDefault())
-        {
-            for (Iterator it = clusterSettings.values().iterator(); it.hasNext(); )
-            {
+    public void addClusterSettings(ClusterSettings settings) {
+        if (settings.isDefault()) {
+            for (Iterator it = clusterSettings.values().iterator(); it.hasNext(); ) {
                 ClusterSettings cs = (ClusterSettings) it.next();
 
-                if (cs.isDefault())
-                {
+                if (cs.isDefault()) {
                     ConfigurationException cx = new ConfigurationException();
-                    cx.setMessage(10214, new Object[] { settings.getClusterName(), cs.getClusterName() });
+                    cx.setMessage(10214, new Object[]{settings.getClusterName(), cs.getClusterName()});
                     throw cx;
                 }
             }
         }
-        if (clusterSettings.containsKey(settings.getClusterName()))
-        {
+        if (clusterSettings.containsKey(settings.getClusterName())) {
             ConfigurationException cx = new ConfigurationException();
-            cx.setMessage(10206, new Object[] { settings.getClusterName() });
+            cx.setMessage(10206, new Object[]{settings.getClusterName()});
             throw cx;
         }
         clusterSettings.put(settings.getClusterName(), settings);
     }
 
-    public ClusterSettings getClusterSettings(String clusterId)
-    {
-        for (Iterator it = clusterSettings.values().iterator(); it.hasNext(); )
-        {
+    public ClusterSettings getClusterSettings(String clusterId) {
+        for (Iterator it = clusterSettings.values().iterator(); it.hasNext(); ) {
             ClusterSettings cs = (ClusterSettings) it.next();
             if (cs.getClusterName() == null && clusterId == null)
                 return cs; // handle null case
@@ -144,10 +126,8 @@ public class ClientConfiguration implements ServicesConfiguration
         return null;
     }
 
-    public ClusterSettings getDefaultCluster()
-    {
-        for (Iterator it = clusterSettings.values().iterator(); it.hasNext(); )
-        {
+    public ClusterSettings getDefaultCluster() {
+        for (Iterator it = clusterSettings.values().iterator(); it.hasNext(); ) {
             ClusterSettings cs = (ClusterSettings) it.next();
             if (cs.isDefault())
                 return cs;
@@ -158,34 +138,28 @@ public class ClientConfiguration implements ServicesConfiguration
     /*
      * LOGGING CONFIGURATION
      */
-    public void setLoggingSettings(LoggingSettings settings)
-    {
+    public void setLoggingSettings(LoggingSettings settings) {
         loggingSettings = settings;
     }
 
-    public LoggingSettings getLoggingSettings()
-    {
+    public LoggingSettings getLoggingSettings() {
         return loggingSettings;
     }
 
 
-    public void addConfigPath(String path, long modified)
-    {
+    public void addConfigPath(String path, long modified) {
         configPaths.put(path, new Long(modified));
     }
 
-    public Map getConfigPaths()
-    {
+    public Map getConfigPaths() {
         return configPaths;
     }
-    
-    public void setFlexClientSettings(FlexClientSettings value)
-    {
+
+    public void setFlexClientSettings(FlexClientSettings value) {
         flexClientSettings = value;
     }
-    
-    public FlexClientSettings getFlexClientSettings()
-    {
+
+    public FlexClientSettings getFlexClientSettings() {
         return flexClientSettings;
     }
 

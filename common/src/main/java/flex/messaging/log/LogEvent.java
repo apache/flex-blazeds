@@ -19,8 +19,7 @@ package flex.messaging.log;
 /**
  *
  */
-public class LogEvent
-{
+public class LogEvent {
     public static final short NONE = 2000;
     public static final short FATAL = 1000;
     public static final short ERROR = 8;
@@ -75,10 +74,9 @@ public class LogEvent
      * @param lgr Logger instance that raised the log event.
      * @param msg Message that was logged.
      * @param lvl The level for the log event.
-     * @param t Related exception, if applicable.
+     * @param t   Related exception, if applicable.
      */
-    public LogEvent(Logger lgr, String msg, short lvl, Throwable t)
-    {
+    public LogEvent(Logger lgr, String msg, short lvl, Throwable t) {
         logger = lgr;
         message = msg;
         level = lvl;
@@ -91,10 +89,8 @@ public class LogEvent
      * @param value the level a string is desired for.
      * @return the level specified in english
      */
-    public static String getLevelString(short value)
-    {
-        switch (value)
-        {
+    public static String getLevelString(short value) {
+        switch (value) {
             case NONE:
                 return ("NONE");
             case FATAL:

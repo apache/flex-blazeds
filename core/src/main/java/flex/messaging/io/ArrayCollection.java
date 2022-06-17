@@ -26,8 +26,7 @@ import java.util.Collection;
 /**
  * Used to map to client mx.collections.ArrayCollection to java.util.Lists in Java.
  */
-public class ArrayCollection extends ArrayList implements Externalizable
-{
+public class ArrayCollection extends ArrayList implements Externalizable {
     private static final long serialVersionUID = 8037277879661457358L;
 
     private SerializationDescriptor descriptor = null;
@@ -35,8 +34,7 @@ public class ArrayCollection extends ArrayList implements Externalizable
     /**
      * Default constructor.
      */
-    public ArrayCollection()
-    {
+    public ArrayCollection() {
         super();
     }
 
@@ -45,8 +43,7 @@ public class ArrayCollection extends ArrayList implements Externalizable
      *
      * @param c Collection.
      */
-    public ArrayCollection(Collection c)
-    {
+    public ArrayCollection(Collection c) {
         super(c);
     }
 
@@ -55,8 +52,7 @@ public class ArrayCollection extends ArrayList implements Externalizable
      *
      * @param initialCapacity The initial capacity.
      */
-    public ArrayCollection(int initialCapacity)
-    {
+    public ArrayCollection(int initialCapacity) {
         super(initialCapacity);
     }
 
@@ -65,8 +61,7 @@ public class ArrayCollection extends ArrayList implements Externalizable
      *
      * @return The backing Array.
      */
-    public Object[] getSource()
-    {
+    public Object[] getSource() {
         return toArray();
     }
 
@@ -75,8 +70,7 @@ public class ArrayCollection extends ArrayList implements Externalizable
      *
      * @param desc The serialization descriptor.
      */
-    public void setDescriptor(SerializationDescriptor desc)
-    {
+    public void setDescriptor(SerializationDescriptor desc) {
         this.descriptor = desc;
     }
 
@@ -85,10 +79,8 @@ public class ArrayCollection extends ArrayList implements Externalizable
      *
      * @param s The source Array.
      */
-    public void setSource(Object[] s)
-    {
-        if (s == null)
-        {
+    public void setSource(Object[] s) {
+        if (s == null) {
             clear();
             return;
         }
@@ -105,8 +97,7 @@ public class ArrayCollection extends ArrayList implements Externalizable
      *
      * @param s The source Collection.
      */
-    public void setSource(Collection s)
-    {
+    public void setSource(Collection s) {
         addAll(s);
     }
 
@@ -115,12 +106,11 @@ public class ArrayCollection extends ArrayList implements Externalizable
      *
      * @param input The object input.
      */
-    public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException
-    {
+    public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
         Object s = input.readObject();
         if (s instanceof Collection)
-            s = ((Collection)s).toArray();
-        Object[] source = (Object[])s;
+            s = ((Collection) s).toArray();
+        Object[] source = (Object[]) s;
         setSource(source);
     }
 
@@ -129,32 +119,25 @@ public class ArrayCollection extends ArrayList implements Externalizable
      *
      * @param output The object output.
      */
-    public void writeExternal(ObjectOutput output) throws IOException
-    {
-        if (descriptor == null)
-        {
+    public void writeExternal(ObjectOutput output) throws IOException {
+        if (descriptor == null) {
             output.writeObject(getSource());
             return;
         }
 
         Object[] source = getSource();
-        if (source == null)
-        {
+        if (source == null) {
             output.writeObject(null);
             return;
         }
 
-        for (int i = 0; i < source.length; i++)
-        {
+        for (int i = 0; i < source.length; i++) {
             Object item = source[i];
-            if (item == null)
-            {
+            if (item == null) {
                 source[i] = null;
-            }
-            else
-            {
+            } else {
                 PropertyProxy proxy = PropertyProxyRegistry.getProxy(item);
-                proxy = (PropertyProxy)proxy.clone();
+                proxy = (PropertyProxy) proxy.clone();
                 proxy.setDescriptor(descriptor);
                 proxy.setDefaultInstance(item);
                 source[i] = proxy;

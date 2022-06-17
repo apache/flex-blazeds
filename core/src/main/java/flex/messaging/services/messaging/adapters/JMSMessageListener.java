@@ -23,8 +23,7 @@ import java.util.EventListener;
  * consumer. Implementations of this interface may add themselves as listeners
  * via <code>JMSConsumer.addJMSMessageListener</code>.
  */
-public interface JMSMessageListener extends EventListener
-{
+public interface JMSMessageListener extends EventListener {
     /**
      * Notification that a JMS message was received.
      *

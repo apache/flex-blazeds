@@ -22,18 +22,14 @@ import flex.messaging.io.amf.MessageBody;
 import flex.messaging.io.amf.ASObject;
 import flex.messaging.MessageException;
 
-public class Confirm2f extends DeserializationConfirmation
-{
+public class Confirm2f extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm2f()
-    {
+    public Confirm2f() {
     }
 
-    public ActionMessage getExpectedMessage()
-    {
-        if (EXPECTED_VALUE == null)
-        {
+    public ActionMessage getExpectedMessage() {
+        if (EXPECTED_VALUE == null) {
             ActionMessage m = new ActionMessage();
             MessageBody body = new MessageBody();
             m.addBody(body);
@@ -59,24 +55,21 @@ public class Confirm2f extends DeserializationConfirmation
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 
-    protected boolean bodyValuesMatch(Object o1, Object o2)
-    {
+    protected boolean bodyValuesMatch(Object o1, Object o2) {
         boolean match = super.bodyValuesMatch(o1, o2);
 
         // Also check that by-reference serialization of the array restored
         // the pointers to the original array in the parent object's sub property...
-        if (match)
-        {
-            ASObject aso1 = (ASObject)o1;
-            ASObject aso2 = (ASObject)o2;
+        if (match) {
+            ASObject aso1 = (ASObject) o1;
+            ASObject aso2 = (ASObject) o2;
 
-            ASObject prop01 = (ASObject)aso1.get("prop0");
-            ASObject prop02 = (ASObject)aso2.get("prop0");
+            ASObject prop01 = (ASObject) aso1.get("prop0");
+            ASObject prop02 = (ASObject) aso2.get("prop0");
 
             Object subprop01 = prop01.get("subprop0");
             Object subprop02 = prop02.get("subprop0");

@@ -35,34 +35,35 @@
 
             <date>1119647239994</date>
 
-            <date>1119647239994  </date>
+            <date>1119647239994</date>
 
             <!-- Both sides with spaces -->
-            <date>  1119647239994  </date>
+            <date>1119647239994</date>
 
             <!-- Leading new line -->
             <date>
-1119647239994</date>
+                1119647239994
+            </date>
             <!-- Trailing new line -->
             <date>1119647239994
-</date>
+            </date>
 
             <!-- Both sides with new lines -->
-<date>
-1119647239994
-</date>
+            <date>
+                1119647239994
+            </date>
             <!-- Leading tab -->
-            <date>	1119647239994</date>
+            <date>1119647239994</date>
 
             <!-- Trailing tab -->
-            <date>1119647239994	</date>
+            <date>1119647239994</date>
 
             <!-- Both sides with tab -->
-            <date>	1119647239994	</date>
+            <date>1119647239994</date>
 
             <!-- Mixed -->
             <date>
-	      1119647239994
+                1119647239994
 
             </date>
 

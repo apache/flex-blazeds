@@ -36,8 +36,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * The base for FlexSession implementations.
  */
-public abstract class FlexSession extends TimeoutAbstractObject implements FlexClientListener, MessageClientListener
-{
+public abstract class FlexSession extends TimeoutAbstractObject implements FlexClientListener, MessageClientListener {
     //--------------------------------------------------------------------------
     //
     // Public Static Variables
@@ -77,22 +76,18 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //--------------------------------------------------------------------------
 
     /**
-     *
      * @deprecated Post 2.6.1 releases require use of the constructor that takes an <tt>AbstractFlexSessionProvider</tt> argument.
      */
-    public FlexSession()
-    {
+    public FlexSession() {
         this(null);
     }
 
     /**
-     *
      * Constructs a new FlexSession instance.
      *
      * @param sessionProvider The provider that instantiated this instance.
      */
-    public FlexSession(AbstractFlexSessionProvider sessionProvider)
-    {
+    public FlexSession(AbstractFlexSessionProvider sessionProvider) {
         this.sessionProvider = sessionProvider;
     }
 
@@ -106,12 +101,10 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      * Adds a session created listener that will be notified when new sessions
      * are created.
      *
-     * @see flex.messaging.FlexSessionListener
-     *
      * @param listener The listener to add.
+     * @see flex.messaging.FlexSessionListener
      */
-    public static void addSessionCreatedListener(FlexSessionListener listener)
-    {
+    public static void addSessionCreatedListener(FlexSessionListener listener) {
         if (listener != null)
             createdListeners.addIfAbsent(listener);
     }
@@ -119,12 +112,10 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     /**
      * Removes a session created listener.
      *
-     * @see flex.messaging.FlexSessionListener
-     *
      * @param listener The listener to remove.
+     * @see flex.messaging.FlexSessionListener
      */
-    public static void removeSessionCreatedListener(FlexSessionListener listener)
-    {
+    public static void removeSessionCreatedListener(FlexSessionListener listener) {
         if (listener != null)
             createdListeners.remove(listener);
     }
@@ -197,9 +188,8 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //----------------------------------
 
     /**
-     *
      * Used internally to manage async long-polls; not for public use.
-     *
+     * <p>
      * A map of endpoint to async poll objects that keeps track of what
      * client is parked on a long-poll with what endpoint.
      * We only want an endpoint to have a single connection to a client.
@@ -221,13 +211,11 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     private final AbstractFlexSessionProvider sessionProvider;
 
     /**
-     *
      * Returns the session provider that created this instance.
      *
      * @return The session provider that created this instance.
      */
-    public AbstractFlexSessionProvider getFlexSessionProvider()
-    {
+    public AbstractFlexSessionProvider getFlexSessionProvider() {
         return sessionProvider;
     }
 
@@ -245,16 +233,14 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      * this method for backwards compatibility.  This method will produce
      * correct results when perClientAuthentication is false.  However, it will
      * not return correct results when perClientAuthentication is true.
-     *
+     * <p>
      * Returns the principal associated with the session. If the client has not
      * authenticated the principal will be null.
      *
      * @return The principal associated with the session.
      */
-    public Principal getUserPrincipal()
-    {
-        synchronized (lock)
-        {
+    public Principal getUserPrincipal() {
+        synchronized (lock) {
             checkValid();
             return userPrincipal;
         }
@@ -267,10 +253,8 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      *
      * @param userPrincipal The principal to associate with the session.
      */
-    public void setUserPrincipal(Principal userPrincipal)
-    {
-        synchronized (lock)
-        {
+    public void setUserPrincipal(Principal userPrincipal) {
+        synchronized (lock) {
             checkValid();
             this.userPrincipal = userPrincipal;
         }
@@ -281,7 +265,6 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //----------------------------------
 
     /**
-     *
      * Used internally by streaming endpoints to enforce session level streaming
      * connection limits; not for public use.
      * This flag is volatile to allow for consistent reads across thread without
@@ -294,7 +277,6 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //----------------------------------
 
     /**
-     *
      * Used internally by streaming and long polling endpoints to enforce session
      * level streaming connection limits; not for public use. Default value is -1
      * (limitless)
@@ -306,18 +288,16 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //----------------------------------
 
     /**
-     *
      * Used internally by streaming and long polling endpoints to enforce
      * session level streaming connection limits; not for public use.
-     *
+     * <p>
      * Some browsers put limits on the number of connections per session. For
      * example, Firefox has network.http.max-connections-per-server=8 limit which
      * limits the number of streaming connections per session to 7. Similarly,
      * IE has a limit of 2 per session.
-     *
+     * <p>
      * This variable is used by streaming and long polling endpoint to keep
      * track of open connections per session and disallow them when needed.
-     *
      */
     public int streamingConnectionsCount;
 
@@ -331,26 +311,23 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     private boolean useSmallMessages;
 
     /**
-     *
      * Determines whether the server can attempt to send small messages
      * for those messages that have a small form. This setting can be overridden
      * by an endpoint's enableSmallMessages switch which controls whether
      * small messages should be sent, even if they are supported.
-     *
+     * <p>
      * The default is false.
      *
      * @return true if the server can attempt to send small messages.
      */
-    public boolean useSmallMessages()
-    {
+    public boolean useSmallMessages() {
         return useSmallMessages;
     }
 
     /**
      * @param value true if the server can attempt to send small messages.
      */
-    public void setUseSmallMessages(boolean value)
-    {
+    public void setUseSmallMessages(boolean value) {
         useSmallMessages = value;
     }
 
@@ -359,9 +336,8 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     //----------------------------------
 
     /**
-     *
      * Used internally to manage wait()-based long-polls; not for public use.
-     *
+     * <p>
      * This is the monitor that a request handling thread associated with this
      * FlexSession is waiting on. Normally, the waiting request handling thread will wait until
      * a new message arrives that can be returned in a poll response or its wait interval times out.
@@ -381,16 +357,12 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      *
      * @param listener The listener to add.
      */
-    public void addSessionAttributeListener(FlexSessionAttributeListener listener)
-    {
-        if (listener != null)
-        {
+    public void addSessionAttributeListener(FlexSessionAttributeListener listener) {
+        if (listener != null) {
             checkValid();
 
-            if (attributeListeners == null)
-            {
-                synchronized (lock)
-                {
+            if (attributeListeners == null) {
+                synchronized (lock) {
                     if (attributeListeners == null)
                         attributeListeners = new CopyOnWriteArrayList<FlexSessionAttributeListener>();
                 }
@@ -406,20 +378,15 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      * have been unbound from the session and any FlexSessionBindingListeners
      * and FlexSessionAttributeListeners have been notified.
      *
-     * @see flex.messaging.FlexSessionListener
-     *
      * @param listener The listener to add.
+     * @see flex.messaging.FlexSessionListener
      */
-    public void addSessionDestroyedListener(FlexSessionListener listener)
-    {
-        if (listener != null)
-        {
+    public void addSessionDestroyedListener(FlexSessionListener listener) {
+        if (listener != null) {
             checkValid();
 
-            if (destroyedListeners == null)
-            {
-                synchronized (lock)
-                {
+            if (destroyedListeners == null) {
+                synchronized (lock) {
                     if (destroyedListeners == null)
                         destroyedListeners = new CopyOnWriteArrayList<FlexSessionListener>();
                 }
@@ -436,10 +403,8 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      * @param name The name the target attribute is bound to.
      * @return The attribute bound to the specified name.
      */
-    public Object getAttribute(String name)
-    {
-        synchronized (lock)
-        {
+    public Object getAttribute(String name) {
+        synchronized (lock) {
             checkValid();
 
             return (attributes == null) ? null : attributes.get(name);
@@ -451,10 +416,8 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      *
      * @return A snapshot of the names of all attributes bound to the session.
      */
-    public Enumeration<String> getAttributeNames()
-    {
-        synchronized (lock)
-        {
+    public Enumeration<String> getAttributeNames() {
+        synchronized (lock) {
             checkValid();
 
             if (attributes == null)
@@ -467,28 +430,25 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     }
 
     /**
-     *
      * Implements MessageClientListener.
      * Handling created events is a no-op.
      *
      * @param messageClient The new MessageClient.
      */
-    public void messageClientCreated(MessageClient messageClient) {}
+    public void messageClientCreated(MessageClient messageClient) {
+    }
 
     /**
-     *
      * Implements MessageClientListener.
      * Notification that an associated MessageClient was destroyed.
      *
      * @param messageClient The MessageClient that was destroyed.
      */
-    public void messageClientDestroyed(MessageClient messageClient)
-    {
+    public void messageClientDestroyed(MessageClient messageClient) {
         unregisterMessageClient(messageClient);
     }
 
     /**
-     *
      * FlexClient invokes this to determine whether the session can be used to push messages
      * to the client.
      *
@@ -497,13 +457,11 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     public abstract boolean isPushSupported();
 
     /**
-     *
      * FlexClient invokes this to push a message to a remote client.
      *
      * @param message The message to push.
      */
-    public void push(Message message)
-    {
+    public void push(Message message) {
         throw new UnsupportedOperationException("Push not supported.");
     }
 
@@ -512,12 +470,10 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      *
      * @param name The name of the attribute to remove.
      */
-    public void removeAttribute(String name)
-    {
+    public void removeAttribute(String name) {
         Object value; // Used for event dispatch after the attribute is removed.
 
-        synchronized (lock)
-        {
+        synchronized (lock) {
             checkValid(); // Re-enters lock but should be fast because we're already holding it.
 
             value = (attributes != null) ? attributes.remove(name) : null;
@@ -536,8 +492,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      *
      * @param listener The listener to remove.
      */
-    public void removeSessionAttributeListener(FlexSessionAttributeListener listener)
-    {
+    public void removeSessionAttributeListener(FlexSessionAttributeListener listener) {
         // No need to check validity; removing a listener is always ok.
         if (listener != null && attributeListeners != null)
             attributeListeners.remove(listener);
@@ -546,12 +501,10 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     /**
      * Removes a session destroy listener.
      *
-     * @see flex.messaging.FlexSessionListener
-     *
      * @param listener The listener to remove.
+     * @see flex.messaging.FlexSessionListener
      */
-    public void removeSessionDestroyedListener(FlexSessionListener listener)
-    {
+    public void removeSessionDestroyedListener(FlexSessionListener listener) {
         // No need to check validity; removing a listener is always ok.
         if (listener != null && destroyedListeners != null)
             destroyedListeners.remove(listener);
@@ -560,14 +513,12 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     /**
      * Binds an attribute value to the session under the specified name.
      *
-     * @param name The name to bind the attribute under.
+     * @param name  The name to bind the attribute under.
      * @param value The value of the attribute.
      */
-    public void setAttribute(String name, Object value)
-    {
+    public void setAttribute(String name, Object value) {
         // Null value is the same as removeAttribute().
-        if (value == null)
-        {
+        if (value == null) {
             removeAttribute(name);
             return;
         }
@@ -575,8 +526,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
         Object oldValue; // Used to determine which events to dispatch after the set is performed.
 
         // Only synchronize for the attribute mutation; event dispatch doesn't require it.
-        synchronized (lock)
-        {
+        synchronized (lock) {
             checkValid(); // Re-enters lock but should be fast because we're already holding it.
 
             if (attributes == null)
@@ -585,13 +535,10 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
             oldValue = attributes.put(name, value);
         }
 
-        if (oldValue == null)
-        {
+        if (oldValue == null) {
             notifyAttributeBound(name, value);
             notifyAttributeAdded(name, value);
-        }
-        else
-        {
+        } else {
             notifyAttributeUnbound(name, oldValue);
             notifyAttributeReplaced(name, oldValue);
             notifyAttributeBound(name, value);
@@ -603,26 +550,20 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      *
      * @param credentials The remote credentials.
      */
-    public void putRemoteCredentials(FlexRemoteCredentials credentials)
-    {
-        if (credentials != null)
-        {
+    public void putRemoteCredentials(FlexRemoteCredentials credentials) {
+        if (credentials != null) {
             // We only need to hold the lock to lazy-init the remoteCredentials variable.
-            if (remoteCredentials == null)
-            {
-                synchronized (lock)
-                {
+            if (remoteCredentials == null) {
+                synchronized (lock) {
                     // Init size to 4 because that's the number of shipping service types
                     // (messaging, remoting, proxy, data management).
                     if (remoteCredentials == null)
                         remoteCredentials = new HashMap(4);
                 }
             }
-            synchronized (remoteCredentials)
-            {
-                Map serviceMap = (Map)remoteCredentials.get(credentials.getService());
-                if (serviceMap == null)
-                {
+            synchronized (remoteCredentials) {
+                Map serviceMap = (Map) remoteCredentials.get(credentials.getService());
+                if (serviceMap == null) {
                     // Init size to half the normal number of buckets; most services won't have a large
                     // number of destinations with remote credentials.
                     serviceMap = new HashMap(7);
@@ -636,20 +577,17 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     /**
      * Returns the remote credentials stored in the session for the specified service destination.
      *
-     * @param serviceId The service id.
+     * @param serviceId     The service id.
      * @param destinationId The destination id.
      * @return The stored remote credentials for the specified service destination.
      */
-    public FlexRemoteCredentials getRemoteCredentials(String serviceId, String destinationId)
-    {
-        if (serviceId != null && destinationId != null)
-        {
+    public FlexRemoteCredentials getRemoteCredentials(String serviceId, String destinationId) {
+        if (serviceId != null && destinationId != null) {
             if (remoteCredentials == null)
                 return null;
-            synchronized (remoteCredentials)
-            {
-                Map serviceMap = (Map)remoteCredentials.get(serviceId);
-                return (serviceMap != null) ? (FlexRemoteCredentials)serviceMap.get(destinationId) : null;
+            synchronized (remoteCredentials) {
+                Map serviceMap = (Map) remoteCredentials.get(serviceId);
+                return (serviceMap != null) ? (FlexRemoteCredentials) serviceMap.get(destinationId) : null;
             }
         }
         return null;
@@ -658,20 +596,16 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     /**
      * Clears any stored remote credentials from the session for the specified service destination.
      *
-     * @param serviceId The service Id.
+     * @param serviceId     The service Id.
      * @param destinationId The destination Id.
      */
-    public void clearRemoteCredentials(String serviceId, String destinationId)
-    {
-        if (serviceId != null && destinationId != null)
-        {
+    public void clearRemoteCredentials(String serviceId, String destinationId) {
+        if (serviceId != null && destinationId != null) {
             if (remoteCredentials == null)
                 return;
-            synchronized (remoteCredentials)
-            {
-                Map serviceMap = (Map)remoteCredentials.get(serviceId);
-                if (serviceMap != null)
-                {
+            synchronized (remoteCredentials) {
+                Map serviceMap = (Map) remoteCredentials.get(serviceId);
+                if (serviceMap != null) {
                     serviceMap.put(destinationId, null);
                 }
             }
@@ -681,10 +615,8 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     /**
      * Invalidates the FlexSession.
      */
-    public void invalidate()
-    {
-        synchronized (lock)
-        {
+    public void invalidate() {
+        synchronized (lock) {
             if (!valid || invalidating)
                 return; // Already shutting down.
 
@@ -695,17 +627,14 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
         }
 
         // Unregister all FlexClients.
-        if (!flexClients.isEmpty())
-        {
-            for (FlexClient flexClient :  flexClients)
+        if (!flexClients.isEmpty()) {
+            for (FlexClient flexClient : flexClients)
                 unregisterFlexClient(flexClient);
         }
 
         // Invalidate associated MessageClient subscriptions.
-        if (messageClients != null && !messageClients.isEmpty())
-        {
-            for (Iterator<MessageClient> iter = messageClients.iterator(); iter.hasNext();)
-            {
+        if (messageClients != null && !messageClients.isEmpty()) {
+            for (Iterator<MessageClient> iter = messageClients.iterator(); iter.hasNext(); ) {
                 MessageClient messageClient = iter.next();
                 messageClient.removeMessageClientDestroyedListener(this);
                 messageClient.invalidate();
@@ -715,18 +644,15 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
 
 
         // Notify destroy listeners that we're shutting the FlexSession down.
-        if (destroyedListeners != null && !destroyedListeners.isEmpty())
-        {
-            for (FlexSessionListener destroyListener : destroyedListeners)
-            {
+        if (destroyedListeners != null && !destroyedListeners.isEmpty()) {
+            for (FlexSessionListener destroyListener : destroyedListeners) {
                 destroyListener.sessionDestroyed(this);
             }
             destroyedListeners.clear();
         }
 
         // Unbind all attributes.
-        if (attributes != null && !attributes.isEmpty())
-        {
+        if (attributes != null && !attributes.isEmpty()) {
             Set<String> keySet = attributes.keySet();
             String[] keys = keySet.toArray(new String[keySet.size()]);
             for (String key : keys)
@@ -737,19 +663,15 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
 
         internalInvalidate();
 
-        synchronized (lock)
-        {
+        synchronized (lock) {
             valid = false;
             invalidating = false;
         }
 
         // Notify any waiting threads.
-        if (waitMonitor != null)
-        {
-            for (FlexClient.EndpointQueue endpointQueue : waitMonitor.values())
-            {
-                synchronized (endpointQueue)
-                {
+        if (waitMonitor != null) {
+            for (FlexClient.EndpointQueue endpointQueue : waitMonitor.values()) {
+                synchronized (endpointQueue) {
                     endpointQueue.notifyAll();
                 }
             }
@@ -761,7 +683,8 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      * Invoked after the FlexSession has performed generic shutdown but right before the session's valid
      * property flips to false.
      */
-    protected void internalInvalidate() {}
+    protected void internalInvalidate() {
+    }
 
     /**
      * Returns a snapshot of the FlexClients associated with the FlexSession
@@ -771,11 +694,9 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      *
      * @return A snapshot of the current list of FlexSessions associated with the FlexClient.
      */
-    public List<FlexClient> getFlexClients()
-    {
+    public List<FlexClient> getFlexClients() {
         List<FlexClient> currentFlexClients = null;
-        synchronized (lock)
-        {
+        synchronized (lock) {
             checkValid(); // Re-enters lock but should be fast because we're already holding it.
 
             currentFlexClients = new ArrayList<FlexClient>(flexClients); // Make a copy of the current list to return.
@@ -791,15 +712,13 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      *
      * @return A snapshot of the current list of MessageClients associated with the FlexSession.
      */
-    public List<MessageClient> getMessageClients()
-    {
+    public List<MessageClient> getMessageClients() {
         List<MessageClient> currentMessageClients = null;
-        synchronized (lock)
-        {
+        synchronized (lock) {
             checkValid(); // Re-enters lock but should be fast because we're already holding it.
 
             currentMessageClients = (messageClients != null) ? new ArrayList<MessageClient>(messageClients) // Make a copy of the current list to return.
-                                                             : new ArrayList<MessageClient>(); // Return an empty list.
+                    : new ArrayList<MessageClient>(); // Return an empty list.
         }
         return currentMessageClients;
     }
@@ -817,8 +736,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      * @param role The role to test.
      * @return true if the user is in the role; otherwise false.
      */
-    public boolean isUserInRole(String role)
-    {
+    public boolean isUserInRole(String role) {
         ArrayList list = new ArrayList();
         list.add(role);
         return FlexContext.getMessageBroker().getLoginManager().checkRoles(userPrincipal, list);
@@ -829,16 +747,13 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      *
      * @return true if the session is valid; otherwise false.
      */
-    public boolean isValid()
-    {
-        synchronized (lock)
-        {
+    public boolean isValid() {
+        synchronized (lock) {
             return valid;
         }
     }
 
     /**
-     *
      * Implements FlexClientListener interface.
      * Notification that a FlexClient was created.
      * This is a no-op because the FlexSession is never added as a static FlexClient created listener
@@ -847,62 +762,51 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      *
      * @param flexClient The FlexClient that was created.
      */
-    public void clientCreated(FlexClient flexClient) {}
+    public void clientCreated(FlexClient flexClient) {
+    }
 
     /**
-     *
      * Implements FlexClientListener interface.
      * Notification that an associated FlexClient was destroyed.
      *
      * @param flexClient The FlexClient that was destroyed.
      */
-    public void clientDestroyed(FlexClient flexClient)
-    {
+    public void clientDestroyed(FlexClient flexClient) {
         unregisterFlexClient(flexClient);
     }
 
     /**
-     *
      * Used internally to associate a FlexClient with the FlexSession.
      *
      * @param flexClient The FlexClient to assocaite with the session.
      */
-    public void registerFlexClient(FlexClient flexClient)
-    {
-        if (flexClients.addIfAbsent(flexClient))
-        {
+    public void registerFlexClient(FlexClient flexClient) {
+        if (flexClients.addIfAbsent(flexClient)) {
             flexClient.addClientDestroyedListener(this);
             flexClient.registerFlexSession(this);
         }
     }
 
     /**
-     *
      * Used internally to disassociate a FlexClient from the FlexSession.
      *
      * @param flexClient The FlexClient to disassociate from the session.
      */
-    public void unregisterFlexClient(FlexClient flexClient)
-    {
-        if (flexClients.remove(flexClient))
-        {
+    public void unregisterFlexClient(FlexClient flexClient) {
+        if (flexClients.remove(flexClient)) {
             flexClient.removeClientDestroyedListener(this);
             flexClient.unregisterFlexSession(this);
         }
     }
 
     /**
-     *
      * Used internally to associate a MessagClient (subscription) with the FlexSession.
      *
      * @param messageClient The MessageClient to associate with the session.
      */
-    public void registerMessageClient(MessageClient messageClient)
-    {
-        if (messageClients == null)
-        {
-            synchronized (lock)
-            {
+    public void registerMessageClient(MessageClient messageClient) {
+        if (messageClients == null) {
+            synchronized (lock) {
                 if (messageClients == null)
                     messageClients = new CopyOnWriteArrayList<MessageClient>();
             }
@@ -913,13 +817,11 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     }
 
     /**
-     *
      * Used internally to disassociate a MessageClient (subscription) from a FlexSession.
      *
      * @param messageClient The MessageClient to disassociate from the session.
      */
-    public void unregisterMessageClient(MessageClient messageClient)
-    {
+    public void unregisterMessageClient(MessageClient messageClient) {
         if (messageClients != null && messageClients.remove(messageClient))
             messageClient.removeMessageClientDestroyedListener(this);
     }
@@ -929,8 +831,7 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      *
      * @see flex.messaging.util.TimeoutCapable#timeout()
      */
-    public void timeout()
-    {
+    public void timeout() {
         invalidate();
     }
 
@@ -943,12 +844,9 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     /**
      * Ensures that the session has not been invalidated.
      */
-    protected void checkValid()
-    {
-        synchronized (lock)
-        {
-            if (!valid)
-            {
+    protected void checkValid() {
+        synchronized (lock) {
+            if (!valid) {
                 LocalizedException e = new LocalizedException();
                 e.setMessage(FLEX_SESSION_INVALIDATED);
                 throw e;
@@ -959,13 +857,11 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     /**
      * Notify attribute listeners that an attribute has been added.
      *
-     * @param name The name of the attribute.
+     * @param name  The name of the attribute.
      * @param value The new value of the attribute.
      */
-    protected void notifyAttributeAdded(String name, Object value)
-    {
-        if (attributeListeners != null && !attributeListeners.isEmpty())
-        {
+    protected void notifyAttributeAdded(String name, Object value) {
+        if (attributeListeners != null && !attributeListeners.isEmpty()) {
             FlexSessionBindingEvent event = new FlexSessionBindingEvent(this, name, value);
             // CopyOnWriteArrayList is iteration-safe from ConcurrentModificationExceptions.
             for (FlexSessionAttributeListener attribListener : attributeListeners)
@@ -976,28 +872,24 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     /**
      * Notify binding listener that it has been bound to the session.
      *
-     * @param name The attribute name.
+     * @param name  The attribute name.
      * @param value The attribute that has been bound.
      */
-    protected void notifyAttributeBound(String name, Object value)
-    {
-        if ((value != null) && (value instanceof FlexSessionBindingListener))
-        {
+    protected void notifyAttributeBound(String name, Object value) {
+        if ((value != null) && (value instanceof FlexSessionBindingListener)) {
             FlexSessionBindingEvent bindingEvent = new FlexSessionBindingEvent(this, name);
-            ((FlexSessionBindingListener)value).valueBound(bindingEvent);
+            ((FlexSessionBindingListener) value).valueBound(bindingEvent);
         }
     }
 
     /**
      * Notify attribute listeners that an attribute has been removed.
      *
-     * @param name The name of the attribute.
+     * @param name  The name of the attribute.
      * @param value The previous value of the attribute.
      */
-    protected void notifyAttributeRemoved(String name, Object value)
-    {
-        if (attributeListeners != null && !attributeListeners.isEmpty())
-        {
+    protected void notifyAttributeRemoved(String name, Object value) {
+        if (attributeListeners != null && !attributeListeners.isEmpty()) {
             FlexSessionBindingEvent event = new FlexSessionBindingEvent(this, name, value);
             // CopyOnWriteArrayList is iteration-safe from ConcurrentModificationExceptions.
             for (FlexSessionAttributeListener attribListener : attributeListeners)
@@ -1008,13 +900,11 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     /**
      * Notify attribute listeners that an attribute has been replaced.
      *
-     * @param name The name of the attribute.
+     * @param name  The name of the attribute.
      * @param value The previous value of the attribute.
      */
-    protected void notifyAttributeReplaced(String name, Object value)
-    {
-        if (attributeListeners != null && !attributeListeners.isEmpty())
-        {
+    protected void notifyAttributeReplaced(String name, Object value) {
+        if (attributeListeners != null && !attributeListeners.isEmpty()) {
             FlexSessionBindingEvent event = new FlexSessionBindingEvent(this, name, value);
             // CopyOnWriteArrayList is iteration-safe from ConcurrentModificationExceptions.
             for (FlexSessionAttributeListener attribListener : attributeListeners)
@@ -1025,15 +915,13 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
     /**
      * Notify binding listener that it has been unbound from the session.
      *
-     * @param name The attribute name.
+     * @param name  The attribute name.
      * @param value The attribute that has been unbound.
      */
-    protected void notifyAttributeUnbound(String name, Object value)
-    {
-        if ((value != null) && (value instanceof FlexSessionBindingListener))
-        {
+    protected void notifyAttributeUnbound(String name, Object value) {
+        if ((value != null) && (value instanceof FlexSessionBindingListener)) {
             FlexSessionBindingEvent bindingEvent = new FlexSessionBindingEvent(this, name);
-            ((FlexSessionBindingListener)value).valueUnbound(bindingEvent);
+            ((FlexSessionBindingListener) value).valueUnbound(bindingEvent);
         }
     }
 
@@ -1042,22 +930,19 @@ public abstract class FlexSession extends TimeoutAbstractObject implements FlexC
      * session create listeners of the event.
      * This method must be invoked in the subclass constructor.
      */
-    protected void notifyCreated()
-    {
+    protected void notifyCreated() {
         // This guard is here only to prevent duplicate notifications if there's a coding error
         // in the subclass. Not likely..
-        synchronized (lock)
-        {
+        synchronized (lock) {
             if (creationNotified)
                 return;
 
             creationNotified = true;
         }
 
-        if (!createdListeners.isEmpty())
-        {
+        if (!createdListeners.isEmpty()) {
             // CopyOnWriteArrayList is iteration-safe from ConcurrentModificationExceptions.
-            for (Iterator<FlexSessionListener> iter = createdListeners.iterator(); iter.hasNext();)
+            for (Iterator<FlexSessionListener> iter = createdListeners.iterator(); iter.hasNext(); )
                 iter.next().sessionCreated(this);
         }
     }

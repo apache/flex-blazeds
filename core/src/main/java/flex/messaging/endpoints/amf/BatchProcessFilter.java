@@ -24,24 +24,19 @@ import flex.messaging.io.RecoverableSerializationException;
 /**
  * Filter that breaks down the batched message buffer into individual invocations.
  */
-public class BatchProcessFilter extends AMFFilter
-{
-    public BatchProcessFilter()
-    {
+public class BatchProcessFilter extends AMFFilter {
+    public BatchProcessFilter() {
     }
 
-    public void invoke(final ActionContext context)
-    {
+    public void invoke(final ActionContext context) {
         // Process each action in the body
         int bodyCount = context.getRequestMessage().getBodyCount();
 
         // Report batch size in Debug mode
         //gateway.getLogger().logDebug("Processing batch of " + bodyCount + " request(s)");
 
-        for (context.setMessageNumber(0); context.getMessageNumber() < bodyCount; context.incrementMessageNumber())
-        {
-            try
-            {
+        for (context.setMessageNumber(0); context.getMessageNumber() < bodyCount; context.incrementMessageNumber()) {
+            try {
                 // create the response body
                 MessageBody responseBody = new MessageBody();
                 responseBody.setTargetURI(context.getRequestMessageBody().getResponseURI());
@@ -52,18 +47,15 @@ public class BatchProcessFilter extends AMFFilter
                 //Check that deserialized message body data type was valid. If not, skip this message.
                 Object o = context.getRequestMessageBody().getData();
 
-                if (o != null && o instanceof RecoverableSerializationException)
-                {
-                    context.getResponseMessageBody().setData(((RecoverableSerializationException)o).createErrorMessage());
+                if (o != null && o instanceof RecoverableSerializationException) {
+                    context.getResponseMessageBody().setData(((RecoverableSerializationException) o).createErrorMessage());
                     context.getResponseMessageBody().setReplyMethod(MessageIOConstants.STATUS_METHOD);
                     continue;
                 }
 
                 // invoke next filter in the chain
                 next.invoke(context);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 // continue invoking on next message body despite error
             }
         }

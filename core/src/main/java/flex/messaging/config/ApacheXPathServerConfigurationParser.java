@@ -19,6 +19,7 @@ package flex.messaging.config;
 import org.apache.xpath.CachedXPathAPI;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import javax.xml.transform.TransformerException;
 
 /**
@@ -28,60 +29,43 @@ import javax.xml.transform.TransformerException;
  * Note: Since reference ids are used between elements, certain
  * sections of the document need to be parsed first.
  * </p>
- *
- *
  */
-public class ApacheXPathServerConfigurationParser extends ServerConfigurationParser
-{
+public class ApacheXPathServerConfigurationParser extends ServerConfigurationParser {
     private CachedXPathAPI xpath;
 
-    protected void initializeExpressionQuery()
-    {
+    protected void initializeExpressionQuery() {
         this.xpath = new CachedXPathAPI();
     }
 
-    protected Node selectSingleNode(Node source, String expression)
-    {
-        try
-        {
+    protected Node selectSingleNode(Node source, String expression) {
+        try {
             return xpath.selectSingleNode(source, expression);
-        }
-        catch (TransformerException transformerException)
-        {
+        } catch (TransformerException transformerException) {
             throw wrapException(transformerException);
         }
     }
 
-    protected NodeList selectNodeList(Node source, String expression)
-    {
-        try
-        {
+    protected NodeList selectNodeList(Node source, String expression) {
+        try {
             return xpath.selectNodeList(source, expression);
-        }
-        catch (TransformerException transformerException)
-        {
+        } catch (TransformerException transformerException) {
             throw wrapException(transformerException);
         }
     }
 
-    protected Object evaluateExpression(Node source, String expression)
-    {
-        try
-        {
+    protected Object evaluateExpression(Node source, String expression) {
+        try {
             return xpath.eval(source, expression);
-        }
-        catch (TransformerException transformerException)
-        {
+        } catch (TransformerException transformerException) {
             throw wrapException(transformerException);
         }
     }
 
-    private ConfigurationException wrapException(TransformerException exception)
-    {
-       ConfigurationException result = new ConfigurationException();
-       result.setDetails(PARSER_INTERNAL_ERROR);
-       result.setRootCause(exception);
-       return result;
+    private ConfigurationException wrapException(TransformerException exception) {
+        ConfigurationException result = new ConfigurationException();
+        result.setDetails(PARSER_INTERNAL_ERROR);
+        result.setRootCause(exception);
+        return result;
     }
 
 

@@ -28,43 +28,44 @@ import flex.messaging.util.UUIDUtils;
  * client and server. Subscribe/unsubscribe operations result in
  * CommandMessage transmissions, as do polling operations.
  */
-public class CommandMessage extends AsyncMessage
-{
-    /** Log category for <code>CommandMessage</code>.*/
+public class CommandMessage extends AsyncMessage {
+    /**
+     * Log category for <code>CommandMessage</code>.
+     */
     public static final String LOG_CATEGORY = LogCategories.MESSAGE_COMMAND;
 
     // THESE VALUES MUST BE THE SAME ON CLIENT AND SERVER
     /**
-     *  This operation is used to subscribe to a remote destination.
+     * This operation is used to subscribe to a remote destination.
      */
     public static final int SUBSCRIBE_OPERATION = 0;
 
     /**
-     *  This operation is used to unsubscribe from a remote destination.
+     * This operation is used to unsubscribe from a remote destination.
      */
     public static final int UNSUBSCRIBE_OPERATION = 1;
 
     /**
-     *  This operation is used to poll a remote destination for pending,
-     *  undelivered messages.
+     * This operation is used to poll a remote destination for pending,
+     * undelivered messages.
      */
     public static final int POLL_OPERATION = 2;
 
     /**
-     *  This operation is used by a remote destination to sync missed or cached messages
-     *  back to a client as a result of a client issued poll command.
+     * This operation is used by a remote destination to sync missed or cached messages
+     * back to a client as a result of a client issued poll command.
      */
     public static final int CLIENT_SYNC_OPERATION = 4;
 
     /**
-     *  This operation is used to test connectivity over the current channel to
-     *  the remote endpoint.
+     * This operation is used to test connectivity over the current channel to
+     * the remote endpoint.
      */
     public static final int CLIENT_PING_OPERATION = 5;
 
     /**
-     *  This operation is used to request a list of failover endpoint URIs
-     *  for the remote destination based on cluster membership.
+     * This operation is used to request a list of failover endpoint URIs
+     * for the remote destination based on cluster membership.
      */
     public static final int CLUSTER_REQUEST_OPERATION = 7;
 
@@ -98,14 +99,14 @@ public class CommandMessage extends AsyncMessage
      * This operation is used to indicate that a channel has disconnected.
      */
     public static final int DISCONNECT_OPERATION = 12;
-    
-    /**
-     *  This operation is used to trigger a client connect attempt.
-     */
-    public static final int TRIGGER_CONNECT_OPERATION = 13;     
 
     /**
-     *  This is the default operation for new CommandMessage instances.
+     * This operation is used to trigger a client connect attempt.
+     */
+    public static final int TRIGGER_CONNECT_OPERATION = 13;
+
+    /**
+     * This is the default operation for new CommandMessage instances.
      */
     public static final int UNKNOWN_OPERATION = 10000;
 
@@ -128,10 +129,10 @@ public class CommandMessage extends AsyncMessage
     public static final String SUBSCRIPTION_INVALIDATED_HEADER = "DSSubscriptionInvalidated";
 
     /**
-     *  Durable JMS subscriptions are preserved when an unsubscribe message
-     *  has this parameter set to true in its header.
+     * Durable JMS subscriptions are preserved when an unsubscribe message
+     * has this parameter set to true in its header.
      */
-    public static final String PRESERVE_DURABLE_HEADER= "DSPreserveDurable";
+    public static final String PRESERVE_DURABLE_HEADER = "DSPreserveDurable";
 
     /**
      * Header to indicate that the Channel needs the configuration from the
@@ -171,7 +172,6 @@ public class CommandMessage extends AsyncMessage
     public static final String NO_OP_POLL_HEADER = "DSNoOpPoll";
 
     /**
-     *
      * Internal header used to tag poll messages when a poll-wait must be suppressed.
      */
     public static final String SUPPRESS_POLL_WAIT_HEADER = "DSSuppressPollWait";
@@ -183,11 +183,11 @@ public class CommandMessage extends AsyncMessage
     public static final String CREDENTIALS_CHARSET_HEADER = "DSCredentialsCharset";
 
     /**
-     * Header to indicate the maximum number of messages a Consumer wants to 
+     * Header to indicate the maximum number of messages a Consumer wants to
      * receive per second.
      */
     public static final String MAX_FREQUENCY_HEADER = "DSMaxFrequency";
-    
+
     /**
      * Header that indicates the message is a heartbeat.
      */
@@ -197,14 +197,13 @@ public class CommandMessage extends AsyncMessage
      * Header that indicates the client application has successfully registered for push notifications.
      */
     public static final String PUSH_NOTIFICATION_REGISTERED_HEADER = "DSApplicationRegisteredForPush";
-    
+
     /**
      * Header that provides additional meta-information when the client has registered for push notifications.
      */
     public static final String PUSH_REGISTRATION_INFORMATION = "DSPushRegisteredInformation";
 
     /**
-     *
      * The position of the operation flag within all flags.
      * Constant used during serialization.
      */
@@ -221,10 +220,10 @@ public class CommandMessage extends AsyncMessage
      * The operation names that map to each of the operation constants above.
      * The constants in this list should remain parallel to the above constants
      */
-    static final String [] operationNames  = {
-        "subscribe", "unsubscribe", "poll", "unused3", "client_sync", "client_ping",
-        "unused6", "cluster_request", "login", "logout", "subscription_invalidate",
-        "multi_subscribe", "disconnect", "trigger_connect", "state_change"
+    static final String[] operationNames = {
+            "subscribe", "unsubscribe", "poll", "unused3", "client_sync", "client_ping",
+            "unused6", "cluster_request", "login", "logout", "subscription_invalidate",
+            "multi_subscribe", "disconnect", "trigger_connect", "state_change"
     };
 
     /**
@@ -238,8 +237,7 @@ public class CommandMessage extends AsyncMessage
      * timestamp for the message is set to the current system timestamp.
      * The operation is set to a default value of <code>UNKNOWN_OPERATION</code>.
      */
-    public CommandMessage()
-    {
+    public CommandMessage() {
         this.messageId = UUIDUtils.createUUID();
         this.timestamp = System.currentTimeMillis();
     }
@@ -251,8 +249,7 @@ public class CommandMessage extends AsyncMessage
      *
      * @param operation The operation for the <code>CommandMessage</code>; one of the operation constants.
      */
-    public CommandMessage(int operation)
-    {
+    public CommandMessage(int operation) {
         this();
         this.operation = operation;
     }
@@ -262,8 +259,7 @@ public class CommandMessage extends AsyncMessage
      *
      * @return The operation for this <code>CommandMessage</code>.
      */
-    public int getOperation()
-    {
+    public int getOperation() {
         return operation;
     }
 
@@ -272,21 +268,18 @@ public class CommandMessage extends AsyncMessage
      *
      * @param operation The operation for this <code>CommandMessage</code>.
      */
-    public void setOperation(int operation)
-    {
+    public void setOperation(int operation) {
         this.operation = operation;
     }
 
     /**
      *
      */
-    public Message getSmallMessage()
-    {
+    public Message getSmallMessage() {
         // We shouldn't use small messages for PING or LOGIN operations as the
         // messaging version handshake would not yet be complete... for now just
         // optimize POLL operations.
-        if (operation == POLL_OPERATION)
-        {
+        if (operation == POLL_OPERATION) {
             return new CommandMessageExt(this);
         }
 
@@ -294,12 +287,10 @@ public class CommandMessage extends AsyncMessage
     }
 
     /**
-     *
      * Debugging function which returns the name of the operation for
      * a given operation code.
      */
-    public static String operationToString(int operation)
-    {
+    public static String operationToString(int operation) {
         if (operation < 0 || operation >= operationNames.length)
             return "invalid." + operation;
         return operationNames[operation];
@@ -308,32 +299,26 @@ public class CommandMessage extends AsyncMessage
     /**
      *
      */
-    public void readExternal(ObjectInput input)throws IOException, ClassNotFoundException
-    {
+    public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
         super.readExternal(input);
 
         short[] flagsArray = readFlags(input);
-        for (int i = 0; i < flagsArray.length; i++)
-        {
+        for (int i = 0; i < flagsArray.length; i++) {
             short flags = flagsArray[i];
             short reservedPosition = 0;
 
-            if (i == 0)
-            {
+            if (i == 0) {
                 if ((flags & OPERATION_FLAG) != 0)
-                    operation = ((Number)input.readObject()).intValue();
+                    operation = ((Number) input.readObject()).intValue();
 
                 reservedPosition = 1;
             }
 
             // For forwards compatibility, read in any other flagged objects
             // to preserve the integrity of the input stream...
-            if ((flags >> reservedPosition) != 0)
-            {
-                for (short j = reservedPosition; j < 6; j++)
-                {
-                    if (((flags >> j) & 1) != 0)
-                    {
+            if ((flags >> reservedPosition) != 0) {
+                for (short j = reservedPosition; j < 6; j++) {
+                    if (((flags >> j) & 1) != 0) {
                         input.readObject();
                     }
                 }
@@ -342,24 +327,19 @@ public class CommandMessage extends AsyncMessage
     }
 
     /**
-     *
      * Utility method to pretty print a <code>CommandMessage</code>.
      *
      * @param indentLevel This method may be invoked recursively so this argument
-     *        allows nested messages to print relative to the current print stack.
+     *                    allows nested messages to print relative to the current print stack.
      */
-    protected String toStringFields(int indentLevel)
-    {
+    protected String toStringFields(int indentLevel) {
         String sep = getFieldSeparator(indentLevel);
         String s = sep + "operation = " + operationToString(operation);
         if (operation == SUBSCRIBE_OPERATION)
             s += sep + "selector = " + getHeader(SELECTOR_HEADER);
-        if (operation != LOGIN_OPERATION)
-        {
+        if (operation != LOGIN_OPERATION) {
             s += super.toStringFields(indentLevel);
-        }
-        else
-        {
+        } else {
             s += sep + "clientId =  " + clientId;
             s += sep + "destination =  " + destination;
             s += sep + "messageId =  " + messageId;
@@ -373,8 +353,7 @@ public class CommandMessage extends AsyncMessage
     /**
      *
      */
-    public void writeExternal(ObjectOutput output) throws IOException
-    {
+    public void writeExternal(ObjectOutput output) throws IOException {
         super.writeExternal(output);
 
         short flags = 0;
@@ -389,11 +368,9 @@ public class CommandMessage extends AsyncMessage
     }
 
     /**
-     *
      * Utility method to build the log category to use for logging <code>CommandMessage</code>s.
      */
-    public String logCategory()
-    {
+    public String logCategory() {
         return LOG_CATEGORY + "." + operationToString(operation);
     }
 }

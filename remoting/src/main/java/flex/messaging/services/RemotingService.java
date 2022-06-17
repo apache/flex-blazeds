@@ -45,8 +45,7 @@ import flex.messaging.messages.MessagePerformanceUtils;
  * adapter before invocation.
  * </p>
  */
-public class RemotingService extends AbstractService
-{
+public class RemotingService extends AbstractService {
     /**
      * Log category for <code>RemotingService</code>.
      */
@@ -69,8 +68,7 @@ public class RemotingService extends AbstractService
     /**
      * Constructs an unmanaged <code>RemotingService</code>.
      */
-    public RemotingService()
-    {
+    public RemotingService() {
         this(false);
     }
 
@@ -78,10 +76,9 @@ public class RemotingService extends AbstractService
      * Constructs a <code>RemotingService</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>RemotingService</code>
-     * is manageable; otherwise <code>false</code>.
+     *                         is manageable; otherwise <code>false</code>.
      */
-    public RemotingService(boolean enableManagement)
-    {
+    public RemotingService(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -100,8 +97,7 @@ public class RemotingService extends AbstractService
      * @param id The id of the <code>RemotingDestination</code>.
      * @return The <code>Destination</code> instanced created.
      */
-    public Destination createDestination(String id)
-    {
+    public Destination createDestination(String id) {
         RemotingDestination destination = new RemotingDestination();
         destination.setId(id);
         destination.setManaged(isManaged());
@@ -116,9 +112,8 @@ public class RemotingService extends AbstractService
      *
      * @param destination The <code>Destination</code> instance to be added.
      */
-    public void addDestination(Destination destination)
-    {
-        RemotingDestination remotingDest = (RemotingDestination)destination;
+    public void addDestination(Destination destination) {
+        RemotingDestination remotingDest = (RemotingDestination) destination;
         super.addDestination(remotingDest);
     }
 
@@ -127,11 +122,11 @@ public class RemotingService extends AbstractService
     // Other Public APIs
     //
     //--------------------------------------------------------------------------
+
     /**
      *
      */
-    public MethodMatcher getMethodMatcher()
-    {
+    public MethodMatcher getMethodMatcher() {
         if (methodMatcher == null)
             methodMatcher = new MethodMatcher();
 
@@ -147,11 +142,11 @@ public class RemotingService extends AbstractService
      * practice for the &quot;<code>MessageBroker</code> to <code>Service</code>&quot;
      * contract.
      * </p>
+     *
      * @param msg the <code>RemotingMessage</code> to process
      * @return Object the result of the service message invocation.
      */
-    public Object serviceMessage(Message msg)
-    {
+    public Object serviceMessage(Message msg) {
         // TODO: fix by adding this method to the MBean.
         /*
         if (isManaged())
@@ -160,13 +155,11 @@ public class RemotingService extends AbstractService
         }
         */
 
-        if (msg instanceof RemotingMessage)
-        {
-            RemotingMessage message = (RemotingMessage)msg;
-            RemotingDestination destination = (RemotingDestination)getDestination(msg);
+        if (msg instanceof RemotingMessage) {
+            RemotingMessage message = (RemotingMessage) msg;
+            RemotingDestination destination = (RemotingDestination) getDestination(msg);
 
-            if (destination != null)
-            {
+            if (destination != null) {
                 RemotingDestinationControl destinationControl = (destination.isManaged()) ?
                         (RemotingDestinationControl) destination.getControl() : null;
 
@@ -174,64 +167,51 @@ public class RemotingService extends AbstractService
                 long startTime = 0;
                 if (destinationControl != null)
                     startTime = System.currentTimeMillis();
-                try
-                {
+                try {
                     MessagePerformanceUtils.markServerPreAdapterTime(message);
                     Object result = adapter.invoke(message);
                     MessagePerformanceUtils.markServerPostAdapterTime(message);
 
-                    if (Log.isDebug())
-                    {
+                    if (Log.isDebug()) {
                         Log.getLogger(LOG_CATEGORY).debug("Adapter '{0}' called '{1}.{2}({3})'",
-                                new Object[] {adapter.getId(),
-                                              message.getSource(),
-                                              message.getOperation(),
-                                              message.getParameters()});
-                        Log.getLogger(LOG_CATEGORY).debug("Result: '{0}'", new Object[] {result});
+                                new Object[]{adapter.getId(),
+                                        message.getSource(),
+                                        message.getOperation(),
+                                        message.getParameters()});
+                        Log.getLogger(LOG_CATEGORY).debug("Result: '{0}'", new Object[]{result});
                     }
 
-                    if (destinationControl != null)
-                    {
+                    if (destinationControl != null) {
                         // Record a successful invocation and its processing duration.
                         // Cast to an int is safe because no remoting invocation will have a longer duration in millis than Integer.MAX_VALUE.
-                        destinationControl.incrementInvocationSuccessCount((int)(System.currentTimeMillis() - startTime));
+                        destinationControl.incrementInvocationSuccessCount((int) (System.currentTimeMillis() - startTime));
                     }
 
                     return result;
-                }
-                catch (MessageException ex)
-                {
-                    if (destinationControl != null)
-                    {
+                } catch (MessageException ex) {
+                    if (destinationControl != null) {
                         // Record a faulted invocation and its processing duration.
                         // Cast to an int is safe because no remoting invocation will have a longer duration in millis than Integer.MAX_VALUE.
-                        destinationControl.incrementInvocationFaultCount((int)(System.currentTimeMillis() - startTime));
+                        destinationControl.incrementInvocationFaultCount((int) (System.currentTimeMillis() - startTime));
                     }
 
                     throw ex;
-                }
-                catch (Throwable t)
-                {
-                    if (destinationControl != null)
-                    {
+                } catch (Throwable t) {
+                    if (destinationControl != null) {
                         // Record a faulted invocation and its processing duration.
                         // Cast to an int is safe because no remoting invocation will have a longer duration in millis than Integer.MAX_VALUE.
-                        destinationControl.incrementInvocationFaultCount((int)(System.currentTimeMillis() - startTime));
+                        destinationControl.incrementInvocationFaultCount((int) (System.currentTimeMillis() - startTime));
                     }
 
                     throw new MessageException(t);
                 }
-            }
-            else
-            {
+            } else {
                 // Destination '{id}' is not registered on the Remoting Service.
                 ServiceException e = new ServiceException();
-                e.setMessage(UNKNOWN_DESTINATION, new Object[] {msg.getDestination()});
+                e.setMessage(UNKNOWN_DESTINATION, new Object[]{msg.getDestination()});
                 throw e;
             }
-        }
-        else
-        {
+        } else {
             // The 'Remoting' Service can only process messages of type 'RemotingMessage'.
             ServiceException e = new ServiceException();
             e.setMessage(UNKNOWN_MESSAGE_TYPE, new Object[]{"Remoting", "RemotingMessage"});
@@ -250,8 +230,7 @@ public class RemotingService extends AbstractService
      *
      * @return The log category of the component.
      */
-    protected String getLogCategory()
-    {
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
@@ -261,8 +240,7 @@ public class RemotingService extends AbstractService
      *
      * @param broker The <code>MessageBroker</code> that manages this <code>RemotingService</code>.
      */
-    protected void setupServiceControl(MessageBroker broker)
-    {
+    protected void setupServiceControl(MessageBroker broker) {
         controller = new RemotingServiceControl(this, broker.getControl());
         controller.register();
         setControl(controller);

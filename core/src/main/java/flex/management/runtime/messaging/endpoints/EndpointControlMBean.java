@@ -24,8 +24,7 @@ import java.util.Date;
 /**
  * Defines the runtime monitoring and management interface for managed endpoints.
  */
-public interface EndpointControlMBean extends BaseControlMBean
-{
+public interface EndpointControlMBean extends BaseControlMBean {
     /**
      * Returns <code>true</code> if the <code>Endpoint</code> is running.
      *

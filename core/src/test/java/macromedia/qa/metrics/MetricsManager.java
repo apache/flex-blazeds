@@ -21,56 +21,45 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.Calendar;
 
-public class MetricsManager
-{
+public class MetricsManager {
     private Project project;
     private Build build;
     private MetricsDatabase database;
     private Run currentRun;
     private Metric currentMetric;
 
-    public MetricsManager(String projectName, String buildNumber, File props) throws SQLException
-    {
+    public MetricsManager(String projectName, String buildNumber, File props) throws SQLException {
         validate(projectName, buildNumber, props);
 
-        try
-        {
+        try {
             this.database = new MetricsDatabase(props);
             initProject(projectName);
             initBuild(buildNumber);
-        }
-        catch (SQLException ex)
-        {
-            try
-            {
+        } catch (SQLException ex) {
+            try {
                 database.dispose();
+            } catch (Throwable t) {
             }
-            catch(Throwable t) {}
 
             throw ex;
         }
     }
 
-    private void initProject(String projectName) throws SQLException
-    {
+    private void initProject(String projectName) throws SQLException {
         project = new Project(projectName);
-        if (!project.exists(database))
-        {
+        if (!project.exists(database)) {
             project.save(database);
         }
     }
 
-    private void initBuild(String buildNumber) throws SQLException
-    {
+    private void initBuild(String buildNumber) throws SQLException {
         build = new Build(project, buildNumber);
-        if (!build.exists(database))
-        {
+        if (!build.exists(database)) {
             build.save(database);
         }
     }
 
-    public Run newRun() throws SQLException
-    {
+    public Run newRun() throws SQLException {
         currentRun = new Run(build);
         currentRun.time = Calendar.getInstance().getTime().getTime();
 
@@ -82,18 +71,15 @@ public class MetricsManager
         return getCurrentRun();
     }
 
-    public Run getCurrentRun()
-    {
+    public Run getCurrentRun() {
         return currentRun;
     }
 
-    public Metric newMetric(String name, String units) throws SQLException
-    {
+    public Metric newMetric(String name, String units) throws SQLException {
         currentMetric = new Metric(name);
         currentMetric.units = units;
 
-        if (!currentMetric.exists(database))
-        {
+        if (!currentMetric.exists(database)) {
             if (currentMetric.id >= 0)
                 currentMetric.save(database);
             else
@@ -103,29 +89,24 @@ public class MetricsManager
         return getCurrentMetric();
     }
 
-    public Metric getCurrentMetric()
-    {
+    public Metric getCurrentMetric() {
         return currentMetric;
     }
 
-    public Value createValue(double val)
-    {
+    public Value createValue(double val) {
         Value v = new Value(currentRun, currentMetric);
         v.numberValue = new Double(val);
         return v;
     }
 
-    public Value createValue(String val)
-    {
+    public Value createValue(String val) {
         Value v = new Value(currentRun, currentMetric);
         v.textValue = val;
         return v;
     }
 
-    public void saveValue(Value val) throws SQLException
-    {
-        if (val != null)
-        {
+    public void saveValue(Value val) throws SQLException {
+        if (val != null) {
             if (val.id >= 0)
                 val.save(database); //Attempt an update as we have an id
             else
@@ -134,10 +115,7 @@ public class MetricsManager
     }
 
 
-
-
-    private void validate(String project, String buildNumber, File props)
-    {
+    private void validate(String project, String buildNumber, File props) {
         if (!validProjectName(project))
             throw new IllegalStateException("Invalid project " + project);
 
@@ -148,18 +126,15 @@ public class MetricsManager
             throw new IllegalStateException("Invalid database properties " + props);
     }
 
-    private static boolean validProjectName(String project)
-    {
+    private static boolean validProjectName(String project) {
         return project != null && project.trim().length() > 0;
     }
 
-    private static boolean validBuildNumber(String buildNumber)
-    {
+    private static boolean validBuildNumber(String buildNumber) {
         return buildNumber != null && buildNumber.trim().length() > 0;
     }
 
-    private static boolean validProps(File props)
-    {
+    private static boolean validProps(File props) {
         return props != null && props.exists() && props.canRead();
     }
 

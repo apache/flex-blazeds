@@ -21,14 +21,14 @@ import java.util.Date;
 
 /**
  * Primitive run-time tracing class
- *
+ * <p>
  * Code as follows:
  * if (Trace.foo)
- *     Trace.trace("trace msg"...);
- *
+ * Trace.trace("trace msg"...);
+ * <p>
  * Enable as follows:
  * java -Dtrace.foo -Dtrace.foo2 -Dtrace.foo3 or -Dtrace.all
- *
+ * <p>
  * Special flags:
  * -Dtrace.flex                  -- enables all tracing
  * -Dtrace.foo                   -- enables tracing on foo subsystem
@@ -36,14 +36,11 @@ import java.util.Date;
  * -Dtrace.caller                -- print the Class:method caller
  * -Dtrace.stackLines=10         -- print 10 stack lines
  * -Dtrace.stackPrefix=java.lang -- print the stack up to java.lang
- *
+ * <p>
  * Add new xxx members as desired.
- *
- *
  */
 
-public class Trace 
-{
+public class Trace {
     public static final boolean config = (System.getProperty("trace.config") != null);
 
     public static final boolean amf = (System.getProperty("trace.amf") != null);
@@ -67,15 +64,14 @@ public class Trace
 
     // print this number of stack lines
     public static int stackLines = 0;
+
     static {
-        try 
-        {
+        try {
             stackLines = Integer.parseInt(System.getProperty("trace.stackLines"));
-        } 
-        catch (NumberFormatException e) 
-        {
+        } catch (NumberFormatException e) {
         }
     }
+
     // print a timestamp with each line
     public static final boolean timeStamp = (System.getProperty("trace.timeStamp") != null);
 
@@ -83,15 +79,14 @@ public class Trace
      * Write the string as a line to the trace stream. If the
      * "stack" property is enabled, then the caller's stack call
      * is also shown in the date.
-     * 
+     *
      * @param str string to write to the trace stream
      */
-    public static void trace(String str) 
-    {
+    public static void trace(String str) {
         if (timeStamp)
             System.err.print(new Date());
 
-        if(caller)
+        if (caller)
             System.err.print(ExceptionUtil.getCallAt(new Throwable(), 1) + " ");
 
         System.err.println(str);

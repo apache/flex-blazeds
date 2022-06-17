@@ -24,8 +24,7 @@ import flex.management.runtime.messaging.services.ServiceAdapterControl;
  * The <code>ActionScriptAdapterControl</code> class is the MBean implemenation
  * for monitoring and managing <code>ActionScriptAdapter</code>s at runtime.
  */
-public class ActionScriptAdapterControl extends ServiceAdapterControl implements ActionScriptAdapterControlMBean
-{
+public class ActionScriptAdapterControl extends ServiceAdapterControl implements ActionScriptAdapterControlMBean {
     private static final String TYPE = "ActionScriptAdapter";
 
     /**
@@ -33,16 +32,16 @@ public class ActionScriptAdapterControl extends ServiceAdapterControl implements
      * <code>ActionScriptAdapter</code> and parent MBean.
      *
      * @param serviceAdapter The <code>ActionScriptAdapter</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent         The parent MBean in the management hierarchy.
      */
-    public ActionScriptAdapterControl(ActionScriptAdapter serviceAdapter, BaseControl parent)
-    {
+    public ActionScriptAdapterControl(ActionScriptAdapter serviceAdapter, BaseControl parent) {
         super(serviceAdapter, parent);
     }
 
-    /** {@inheritDoc} */
-    public String getType()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public String getType() {
         return TYPE;
     }
 

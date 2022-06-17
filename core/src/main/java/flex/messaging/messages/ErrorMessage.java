@@ -23,11 +23,8 @@ import java.util.Map;
 
 /**
  * A message describing a MessageException.
- *
- *
  */
-public class ErrorMessage extends AcknowledgeMessage
-{
+public class ErrorMessage extends AcknowledgeMessage {
     /**
      * This number was generated using the 'serialver' command line tool.
      * This number should remain consistent with the version used by
@@ -41,36 +38,30 @@ public class ErrorMessage extends AcknowledgeMessage
     public Object rootCause;
     public Map extendedData;
 
-    public ErrorMessage(MessageException mxe)
-    {
+    public ErrorMessage(MessageException mxe) {
         faultCode = mxe.getCode();
         faultString = mxe.getMessage();
         faultDetail = mxe.getDetails();
-        if (mxe.getRootCause() != null)
-        {
+        if (mxe.getRootCause() != null) {
             rootCause = mxe.getRootCauseErrorMessage();
         }
         Map extendedData = mxe.getExtendedData();
-        if (extendedData != null)
-        {
+        if (extendedData != null) {
             this.extendedData = extendedData;
         }
     }
 
-    public ErrorMessage()
-    {
+    public ErrorMessage() {
     }
 
     /**
      *
      */
-    public Message getSmallMessage()
-    {
+    public Message getSmallMessage() {
         return null;
     }
 
-    protected String toStringFields(int indentLevel) 
-    {
+    protected String toStringFields(int indentLevel) {
         String sep = getFieldSeparator(indentLevel);
         String s = super.toStringFields(indentLevel);
         s += sep + "code =  " + faultCode;

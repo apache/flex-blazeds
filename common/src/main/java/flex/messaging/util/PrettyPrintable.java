@@ -19,11 +19,8 @@ package flex.messaging.util;
 /**
  * Allows an Object to customize how it is pretty printed in
  * logging/debugging output.
- *
- *
  */
-public interface PrettyPrintable
-{
+public interface PrettyPrintable {
     String toStringHeader();
 
     String toStringCustomProperty(String name);

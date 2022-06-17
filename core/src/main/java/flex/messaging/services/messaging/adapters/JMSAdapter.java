@@ -52,8 +52,7 @@ import flex.messaging.services.messaging.adapters.JMSSettings.DeliverySettings;
  * This adapter for the MessageService integrates Flex messaging
  * with Java Message Service destinations.
  */
-public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, JMSExceptionListener, JMSMessageListener, MessageClientListener
-{
+public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, JMSExceptionListener, JMSMessageListener, MessageClientListener {
     public static final String LOG_CATEGORY = LogCategories.SERVICE_MESSAGE_JMS;
     private static final String DURABLE_SUBSCRIBER_NAME_PREFIX = "FlexClient_";
 
@@ -80,8 +79,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
     /**
      * Constructs an unmanaged <code>JMSAdapter</code> instance.
      */
-    public JMSAdapter()
-    {
+    public JMSAdapter() {
         this(false);
     }
 
@@ -89,10 +87,9 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      * Constructs a <code>JMSAdapter</code> instance.
      *
      * @param enableManagement <code>true</code> if the <code>JMSAdapter</code>
-     * has a corresponding MBean control for management; otherwise <code>false</code>.
+     *                         has a corresponding MBean control for management; otherwise <code>false</code>.
      */
-    public JMSAdapter(boolean enableManagement)
-    {
+    public JMSAdapter(boolean enableManagement) {
         super(enableManagement);
         consumerToClientId = new ConcurrentHashMap<JMSConsumer, Object>();
         messageClients = new ConcurrentHashMap<Object, MessageClient>();
@@ -112,12 +109,11 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
     /**
      * Initializes the <code>JMSAdapter</code> with the properties.
      *
-     * @param id The id of the <code>JMSAdapter</code>.
+     * @param id         The id of the <code>JMSAdapter</code>.
      * @param properties Properties for the <code>JMSAdapter</code>.
      */
     @Override
-    public void initialize(String id, ConfigMap properties)
-    {
+    public void initialize(String id, ConfigMap properties) {
         super.initialize(id, properties);
 
         if (properties == null || properties.size() == 0)
@@ -132,34 +128,30 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      * it is started.
      */
     @Override
-    protected void validate()
-    {
+    protected void validate() {
         if (isValid())
             return;
 
         super.validate();
 
-        if (settings.getConnectionFactory() == null)
-        {
+        if (settings.getConnectionFactory() == null) {
             // JMS connection factory of message destinations with JMS Adapters must be specified.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(MISSING_CONNECTION_FACTORY);
             throw ce;
         }
 
-        if (settings.getDestinationJNDIName() == null)
-        {
+        if (settings.getDestinationJNDIName() == null) {
             // JNDI names for message destinations with JMS Adapters must be specified.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(JMSConfigConstants.MISSING_DESTINATION_JNDI_NAME);
             throw ce;
         }
 
-        if (settings.getMessageType() == null)
-        {
+        if (settings.getMessageType() == null) {
             // Unsupported JMS Message Type ''{0}''. Valid values are javax.jms.TextMessage, javax.jms.ObjectMessage, and javax.jms.MapMessage.
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(INVALID_JMS_MESSAGE_TYPE, new Object[] {null});
+            ce.setMessage(INVALID_JMS_MESSAGE_TYPE, new Object[]{null});
             throw ce;
         }
     }
@@ -168,8 +160,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      * Starts the adapter.
      */
     @Override
-    public void start()
-    {
+    public void start() {
         if (isStarted())
             return;
 
@@ -184,8 +175,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      * Stops the adapter.
      */
     @Override
-    public void stop()
-    {
+    public void stop() {
         if (!isStarted())
             return;
 
@@ -208,9 +198,8 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      * @param destination The destination of the adapter.
      */
     @Override
-    public void setDestination(Destination destination)
-    {
-        MessageDestination dest = (MessageDestination)destination;
+    public void setDestination(Destination destination) {
+        MessageDestination dest = (MessageDestination) destination;
         super.setDestination(dest);
     }
 
@@ -219,18 +208,16 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      *
      * @return <code>JMSSettings</code> of the <code>JMSAdapter</code>.
      */
-    public JMSSettings getJMSSettings()
-    {
+    public JMSSettings getJMSSettings() {
         return settings;
     }
 
     /**
      * Sets the <code>JMSSettings</code> of the <code>JMSAdapter</code>.
      *
-     * @param jmsSettings  <code>JMSSettings</code> of the <code>JMSAdapter</code>.
+     * @param jmsSettings <code>JMSSettings</code> of the <code>JMSAdapter</code>.
      */
-    public void setJMSSettings(JMSSettings jmsSettings)
-    {
+    public void setJMSSettings(JMSSettings jmsSettings) {
         this.settings = jmsSettings;
     }
 
@@ -239,8 +226,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      *
      * @return The count of queue consumers managed by this adapter.
      */
-    public int getQueueConsumerCount()
-    {
+    public int getQueueConsumerCount() {
         return queueConsumers.size();
     }
 
@@ -249,11 +235,9 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      *
      * @return The ids of all queue consumers.
      */
-    public String[] getQueueConsumerIds()
-    {
+    public String[] getQueueConsumerIds() {
         Set<Object> consumerIds = queueConsumers.keySet();
-        if (consumerIds != null)
-        {
+        if (consumerIds != null) {
             String[] ids = new String[consumerIds.size()];
             return consumerIds.toArray(ids);
         }
@@ -265,8 +249,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      *
      * @return The count of topic consumers currently managed by this adapter.
      */
-    public int getTopicConsumerCount()
-    {
+    public int getTopicConsumerCount() {
         return topicConsumers.size();
     }
 
@@ -275,11 +258,9 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      *
      * @return The ids of all topic consumers.
      */
-    public String[] getTopicConsumerIds()
-    {
+    public String[] getTopicConsumerIds() {
         Set<Object> consumerIds = topicConsumers.keySet();
-        if (consumerIds != null)
-        {
+        if (consumerIds != null) {
             String[] ids = new String[consumerIds.size()];
             return consumerIds.toArray(ids);
         }
@@ -291,8 +272,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      *
      * @return The count of topic producers currently managed by this adapter.
      */
-    public int getTopicProducerCount()
-    {
+    public int getTopicProducerCount() {
         return topicProducers.size();
     }
 
@@ -301,8 +281,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      *
      * @return The count of queue producers currently managed by this adapter.
      */
-    public int getQueueProducerCount()
-    {
+    public int getQueueProducerCount() {
         return queueProducers.size();
     }
 
@@ -314,14 +293,13 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      *
      * @param evt The <code>JMSExceptionEvent</code>.
      */
-    public void exceptionThrown(JMSExceptionEvent evt)
-    {
-        JMSConsumer consumer = (JMSConsumer)evt.getSource();
+    public void exceptionThrown(JMSExceptionEvent evt) {
+        JMSConsumer consumer = (JMSConsumer) evt.getSource();
         JMSException jmsEx = evt.getJMSException();
 
         // Client is unsubscribed because its corresponding JMS consumer for JMS destination ''{0}'' encountered an error during message delivery: {1}
         MessageException messageEx = new MessageException();
-        messageEx.setMessage(JMSConfigConstants.CLIENT_UNSUBSCRIBE_DUE_TO_MESSAGE_DELIVERY_ERROR, new Object[] {consumer.getDestinationJndiName(), jmsEx.getMessage()});
+        messageEx.setMessage(JMSConfigConstants.CLIENT_UNSUBSCRIBE_DUE_TO_MESSAGE_DELIVERY_ERROR, new Object[]{consumer.getDestinationJndiName(), jmsEx.getMessage()});
         removeConsumer(consumer, true, true, messageEx.createErrorMessage());
     }
 
@@ -331,8 +309,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      * @return <code>true</code>.
      */
     @Override
-    public boolean handlesSubscriptions()
-    {
+    public boolean handlesSubscriptions() {
         return true;
     }
 
@@ -344,58 +321,40 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      */
     @SuppressWarnings("unchecked")
     @Override
-    public Object invoke(Message message)
-    {
+    public Object invoke(Message message) {
         JMSProducer producer = null;
 
         // named Flex message props become JMS headers
         Map msgProps = message.getHeaders();
         msgProps.put(JMSConfigConstants.TIME_TO_LIVE, new Long(message.getTimeToLive()));
 
-        if (settings.getDestinationType().equals(TOPIC))
-        {
-            synchronized (topicProducers)
-            {
-                if (topicProducers.size() < settings.getMaxProducers())
-                {
+        if (settings.getDestinationType().equals(TOPIC)) {
+            synchronized (topicProducers) {
+                if (topicProducers.size() < settings.getMaxProducers()) {
                     producer = new JMSTopicProducer();
-                    try
-                    {
+                    try {
                         producer.initialize(settings);
                         producer.start();
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         throw constructMessageException(e);
                     }
-                }
-                else
-                {
+                } else {
                     producer = topicProducers.removeFirst();
                 }
 
                 topicProducers.addLast(producer);
             }
-        }
-        else if (settings.getDestinationType().equals(QUEUE))
-        {
-            synchronized (queueProducers)
-            {
-                if (queueProducers.size() < settings.getMaxProducers())
-                {
+        } else if (settings.getDestinationType().equals(QUEUE)) {
+            synchronized (queueProducers) {
+                if (queueProducers.size() < settings.getMaxProducers()) {
                     producer = new JMSQueueProducer();
-                    try
-                    {
+                    try {
                         producer.initialize(settings);
                         producer.start();
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         throw constructMessageException(e);
                     }
-                }
-                else
-                {
+                } else {
                     producer = queueProducers.removeFirst();
                 }
 
@@ -403,32 +362,22 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
             }
         }
 
-        try
-        {
+        try {
             if (producer != null)
                 producer.sendMessage(message);
-        }
-        catch (JMSException jmsEx)
-        {
+        } catch (JMSException jmsEx) {
             // At this point we give up on this producer, so we just
             // stop and remove it from the pool.
-            if (settings.getDestinationType().equals(TOPIC))
-            {
-                synchronized (topicProducers)
-                {
-                    if (producer != null)
-                    {
+            if (settings.getDestinationType().equals(TOPIC)) {
+                synchronized (topicProducers) {
+                    if (producer != null) {
                         producer.stop();
                         topicProducers.remove(producer);
                     }
                 }
-            }
-            else if (settings.getDestinationType().equals(QUEUE))
-            {
-                synchronized (queueProducers)
-                {
-                    if (producer != null)
-                    {
+            } else if (settings.getDestinationType().equals(QUEUE)) {
+                synchronized (queueProducers) {
+                    if (producer != null) {
                         producer.stop();
                         queueProducers.remove(producer);
                     }
@@ -445,26 +394,22 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      * Handle a CommandMessage sent by this adapter's service.
      *
      * @param commandMessage The command message to manage.
-     * @return  The result of manage which is null in this case.
+     * @return The result of manage which is null in this case.
      */
     @Override
-    public Object manage(CommandMessage commandMessage)
-    {
+    public Object manage(CommandMessage commandMessage) {
         JMSConsumer consumer = null;
         Object clientId = commandMessage.getClientId();
 
-        if (commandMessage.getOperation() == CommandMessage.SUBSCRIBE_OPERATION)
-        {
+        if (commandMessage.getOperation() == CommandMessage.SUBSCRIBE_OPERATION) {
             // Keep track of the selector expression.
             Object selectorExpression = commandMessage.getHeaders().get(CommandMessage.SELECTOR_HEADER);
 
             // Create a JMSConsumer for this destination and associate it with the client id
-            if (settings.getDestinationType().equals(TOPIC))
-            {
+            if (settings.getDestinationType().equals(TOPIC)) {
                 MessageClient existingMessageClient = null;
                 // This could happen when client disconnects without unsubscribing first.
-                if (topicConsumers.containsKey(clientId))
-                {
+                if (topicConsumers.containsKey(clientId)) {
                     removeConsumer(clientId, true /*unsubscribe*/, false /*invalidate*/, null);
                     existingMessageClient = messageClients.get(clientId);
                 }
@@ -472,9 +417,9 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
                 consumer = new JMSTopicConsumer();
                 consumer.initialize(settings);
                 if (selectorExpression != null)
-                    consumer.setSelectorExpression((String)selectorExpression);
+                    consumer.setSelectorExpression((String) selectorExpression);
                 // Need to build a subscription name, in case durable subscriptions are used.
-                ((JMSTopicConsumer)consumer).setDurableSubscriptionName(buildSubscriptionName(clientId));
+                ((JMSTopicConsumer) consumer).setDurableSubscriptionName(buildSubscriptionName(clientId));
                 consumer.setMessageReceiver(buildMessageReceiver(consumer));
 
                 // Add JMSAdapter as JMS exception and message listener.
@@ -488,12 +433,9 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
                 // wired up with the new JMS consumer properly.
                 if (existingMessageClient != null)
                     messageClientCreated(existingMessageClient);
-            }
-            else if (settings.getDestinationType().equals(QUEUE))
-            {
+            } else if (settings.getDestinationType().equals(QUEUE)) {
                 MessageClient existingMessageClient = null;
-                if (queueConsumers.containsKey(clientId))
-                {
+                if (queueConsumers.containsKey(clientId)) {
                     removeConsumer(clientId, true /*unsubscribe*/, false /*invalidate*/, null);
                     existingMessageClient = messageClients.get(clientId);
                 }
@@ -501,7 +443,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
                 consumer = new JMSQueueConsumer();
                 consumer.initialize(settings);
                 if (selectorExpression != null)
-                    consumer.setSelectorExpression((String)selectorExpression);
+                    consumer.setSelectorExpression((String) selectorExpression);
                 consumer.setMessageReceiver(buildMessageReceiver(consumer));
 
                 // Add JMSAdapter as JMS exception and message listener.
@@ -516,22 +458,19 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
                 if (existingMessageClient != null)
                     messageClientCreated(existingMessageClient);
             }
-        }
-
-        else if (commandMessage.getOperation() == CommandMessage.UNSUBSCRIBE_OPERATION)
-        {
+        } else if (commandMessage.getOperation() == CommandMessage.UNSUBSCRIBE_OPERATION) {
             // Determines if the durable subscription should be unsubscribed
             // when the JMS consumer is removed.
             boolean unsubscribe = true;
 
             boolean preserveDurable = false;
             if (commandMessage.getHeader(CommandMessage.PRESERVE_DURABLE_HEADER) != null)
-                preserveDurable = ((Boolean)(commandMessage.getHeader(CommandMessage.PRESERVE_DURABLE_HEADER))).booleanValue();
+                preserveDurable = ((Boolean) (commandMessage.getHeader(CommandMessage.PRESERVE_DURABLE_HEADER))).booleanValue();
 
             // Don't destroy a durable subscription if the MessageClient's session has been invalidated.
             // or this is a JMS durable connection that has requested to be undestroyed
             if (commandMessage.getHeader(CommandMessage.SUBSCRIPTION_INVALIDATED_HEADER) != null
-                    && ((Boolean)commandMessage.getHeader(CommandMessage.SUBSCRIPTION_INVALIDATED_HEADER)).booleanValue()
+                    && ((Boolean) commandMessage.getHeader(CommandMessage.SUBSCRIPTION_INVALIDATED_HEADER)).booleanValue()
                     || preserveDurable)
                 unsubscribe = false;
 
@@ -554,8 +493,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      *
      * @param messageClient The newly created MessageClient.
      */
-    public void messageClientCreated(MessageClient messageClient)
-    {
+    public void messageClientCreated(MessageClient messageClient) {
         Object clientId = messageClient.getClientId();
         JMSConsumer consumer = null;
         if (topicConsumers.containsKey(clientId))
@@ -565,22 +503,16 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
 
         // If there is a JMSConsumer created for the same clientId, register
         // the MessageClient with JMSAdapter and start the consumer.
-        if (consumer != null)
-        {
+        if (consumer != null) {
             messageClients.put(clientId, messageClient);
-            try
-            {
+            try {
                 consumer.start();
                 // Add JMS adapter as a client destroyed listener, so client
                 // invalidation (eg. due to session timeout) can be handled properly.
                 messageClient.addMessageClientDestroyedListener(this);
-            }
-            catch (MessageException messageEx)
-            {
+            } catch (MessageException messageEx) {
                 removeConsumer(consumer, true, true, messageEx.createErrorMessage());
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 removeConsumer(consumer, true, true, constructMessageException(ex).createErrorMessage());
             }
         }
@@ -594,8 +526,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      *
      * @param messageClient The MessageClient that was destroyed.
      */
-    public void messageClientDestroyed(MessageClient messageClient)
-    {
+    public void messageClientDestroyed(MessageClient messageClient) {
         Object clientId = messageClient.getClientId();
         removeConsumer(clientId);
         messageClients.remove(clientId);
@@ -608,16 +539,14 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      *
      * @param evt The <code>JMSMessageEvent</code>.
      */
-    public void messageReceived(JMSMessageEvent evt)
-    {
-        JMSConsumer consumer = (JMSConsumer)evt.getSource();
+    public void messageReceived(JMSMessageEvent evt) {
+        JMSConsumer consumer = (JMSConsumer) evt.getSource();
         javax.jms.Message jmsMessage = evt.getJMSMessage();
 
         flex.messaging.messages.AsyncMessage flexMessage = convertToFlexMessage(jmsMessage, consumer);
-        if (flexMessage != null)
-        {
+        if (flexMessage != null) {
             MessagePerformanceUtils.markServerPostAdapterExternalTime(flexMessage);
-            ((MessageService)getDestination().getService()).serviceMessageFromAdapter(flexMessage, false);
+            ((MessageService) getDestination().getService()).serviceMessageFromAdapter(flexMessage, false);
         }
     }
 
@@ -628,8 +557,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      *
      * @param clientId The identifier for the consumer to remove.
      */
-    public void removeConsumer(Object clientId)
-    {
+    public void removeConsumer(Object clientId) {
         // Client is unsubscribed because its corresponding JMS consumer has been removed from the JMS adapter.
         MessageException messageEx = new MessageException();
         messageEx.setMessage(JMSConfigConstants.CLIENT_UNSUBSCRIBE_DUE_TO_CONSUMER_REMOVAL);
@@ -645,15 +573,14 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
     /**
      * Removes (unsubscribes) the JMSConsumer associated with the clientId.
      *
-     * @param clientId The clientId associated with the JMSConsumer to remove.
-     * @param unsubscribe Whether to unsubscribe the durable subscription or not.
-     * @param invalidate Whether to invalidate the MessageClient or not.
+     * @param clientId          The clientId associated with the JMSConsumer to remove.
+     * @param unsubscribe       Whether to unsubscribe the durable subscription or not.
+     * @param invalidate        Whether to invalidate the MessageClient or not.
      * @param invalidateMessage A message to push to the client before consumer
-     * is removed and its MessageClient is invalidated. If the message is null,
-     * MessageClient is invalidated silently.
+     *                          is removed and its MessageClient is invalidated. If the message is null,
+     *                          MessageClient is invalidated silently.
      */
-    protected void removeConsumer(Object clientId, boolean unsubscribe, boolean invalidate, ErrorMessage invalidateMessage)
-    {
+    protected void removeConsumer(Object clientId, boolean unsubscribe, boolean invalidate, ErrorMessage invalidateMessage) {
         JMSConsumer consumer = null;
         if (topicConsumers.containsKey(clientId))
             consumer = topicConsumers.get(clientId);
@@ -666,15 +593,14 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
     /**
      * Removes (unsubscribes) the specified consumer.
      *
-     * @param consumer The JMSConsumer instance to remove.
-     * @param unsubscribe Whether to unsubscribe the durable subscription or not.
-     * @param invalidate Whether to invalidate the MessageClient or not.
+     * @param consumer          The JMSConsumer instance to remove.
+     * @param unsubscribe       Whether to unsubscribe the durable subscription or not.
+     * @param invalidate        Whether to invalidate the MessageClient or not.
      * @param invalidateMessage A message to push to the client before consumer
-     * is removed and its MessageClient is invalidated. If the message is null,
-     * MessageClient is invalidated silently.
+     *                          is removed and its MessageClient is invalidated. If the message is null,
+     *                          MessageClient is invalidated silently.
      */
-    protected void removeConsumer(JMSConsumer consumer, boolean unsubscribe, boolean invalidate, ErrorMessage invalidateMessage)
-    {
+    protected void removeConsumer(JMSConsumer consumer, boolean unsubscribe, boolean invalidate, ErrorMessage invalidateMessage) {
         if (consumer == null)
             return;
 
@@ -682,10 +608,9 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
         if (clientId == null)
             return;
 
-        if (Log.isInfo())
-        {
+        if (Log.isInfo()) {
             String logMessage = "JMS consumer for JMS destination '" + consumer.getDestinationJndiName()
-            + "' is being removed from the JMS adapter";
+                    + "' is being removed from the JMS adapter";
 
             if (invalidateMessage != null)
                 logMessage += " due to the following error: " + invalidateMessage.faultString;
@@ -713,8 +638,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      * @param destination The <code>Destination</code> that manages this <code>JMSAdapter</code>.
      */
     @Override
-    protected void setupAdapterControl(Destination destination)
-    {
+    protected void setupAdapterControl(Destination destination) {
         controller = new JMSAdapterControl(this, destination.getControl());
         controller.register();
         setControl(controller);
@@ -726,8 +650,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      * @param consumer The <code>JMSConsumer</code>.
      * @return MessageReceiver configured for JMSConsumer per DeliverySettings.
      */
-    private MessageReceiver buildMessageReceiver(JMSConsumer consumer)
-    {
+    private MessageReceiver buildMessageReceiver(JMSConsumer consumer) {
         DeliverySettings deliverySettings = settings.getDeliverySettings();
         if (deliverySettings.getMode().equals(JMSConfigConstants.ASYNC))
             return new AsyncMessageReceiver(consumer);
@@ -741,20 +664,19 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      * Prefixes a clientId with DURABLE_SUBSCRIBER_NAME_PREFIX to build a
      * subscription name to be used in JMSConsumers with durable connections.
      */
-    private String buildSubscriptionName(Object clientId)
-    {
+    private String buildSubscriptionName(Object clientId) {
         return DURABLE_SUBSCRIBER_NAME_PREFIX + clientId.toString();
     }
-    
+
     /**
      * Construct a MessageException for the JMS invocation
+     *
      * @param e the Exception caught in the JMS invocation
      * @return MessageException encapsulates the JMS Exception message
      */
-    private MessageException constructMessageException(Exception e)
-    {
+    private MessageException constructMessageException(Exception e) {
         MessageException messageEx = new MessageException();
-        messageEx.setMessage(JMSINVOCATION_EXCEPTION, new Object[] { e.getMessage() });
+        messageEx.setMessage(JMSINVOCATION_EXCEPTION, new Object[]{e.getMessage()});
         return messageEx;
     }
 
@@ -763,14 +685,12 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      * Supported types are <code>javax.jms.TextMessage</code>, <code>javax.jms.ObjectMessage</code>,
      * and <code>javax.jms.MapMessage</code>.
      */
-    private flex.messaging.messages.AsyncMessage convertToFlexMessage(javax.jms.Message jmsMessage, JMSConsumer consumer)
-    {
+    private flex.messaging.messages.AsyncMessage convertToFlexMessage(javax.jms.Message jmsMessage, JMSConsumer consumer) {
         flex.messaging.messages.AsyncMessage flexMessage = null;
         flexMessage = new flex.messaging.messages.AsyncMessage();
 
         Object clientId = consumerToClientId.get(consumer);
-        if (clientId == null)
-        {
+        if (clientId == null) {
             if (Log.isWarn())
                 Log.getLogger(LOG_CATEGORY).warn("JMSAdapter encountered a null clientId during JMS to Flex message conversion");
 
@@ -782,34 +702,26 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
         flexMessage.setDestination(getDestination().getId());
 
         // Set JMSMessageID header as Flex messageId property.
-        try
-        {
+        try {
             flexMessage.setMessageId(jmsMessage.getJMSMessageID());
-        }
-        catch (JMSException jmsEx)
-        {
+        } catch (JMSException jmsEx) {
             if (Log.isWarn())
                 Log.getLogger(LOG_CATEGORY).warn("JMSAdapter encountered an error while retrieving JMS message id during JMS to Flex message conversion: " + jmsEx.getMessage());
         }
 
         // Set JMSTimestamp header as Flex timestamp property.
-        try
-        {
+        try {
             flexMessage.setTimestamp(jmsMessage.getJMSTimestamp());
-        }
-        catch (JMSException jmsEx)
-        {
+        } catch (JMSException jmsEx) {
             if (Log.isWarn())
                 Log.getLogger(LOG_CATEGORY).warn("JMSAdapter encountered an error while retrieving JMS timestamp during JMS to Flex message conversion: " + jmsEx.getMessage());
         }
 
         // Set JMS headers and Flex headers.
-        if (settings.isPreserveJMSHeaders())
-        {
+        if (settings.isPreserveJMSHeaders()) {
             // Set standard JMS headers except JMSMessageId and JMSTimestamp,
             // as they are already set on the Flex message directly.
-            try
-            {
+            try {
                 flexMessage.setHeader(JMS_CORRELATION_ID, jmsMessage.getJMSCorrelationID());
                 flexMessage.setHeader(JMS_DELIVERY_MODE, Integer.toString(jmsMessage.getJMSDeliveryMode()));
                 flexMessage.setHeader(JMS_DESTINATION, jmsMessage.getJMSDestination().toString());
@@ -818,12 +730,10 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
                 flexMessage.setHeader(JMS_REDELIVERED, Boolean.toString(jmsMessage.getJMSRedelivered()));
                 flexMessage.setHeader(JMS_REPLY_TO, jmsMessage.getJMSReplyTo());
                 flexMessage.setHeader(JMS_TYPE, jmsMessage.getJMSType());
-            }
-            catch (JMSException jmsEx)
-            {
+            } catch (JMSException jmsEx) {
                 // These should not cause errors to be pushed to Flash clients
                 if (Log.isWarn())
-                    Log.getLogger(LOG_CATEGORY).warn("JMSAdapter encountered an error while retrieving JMS headers during JMS to Flex conversion: " +  jmsEx.getMessage());
+                    Log.getLogger(LOG_CATEGORY).warn("JMSAdapter encountered an error while retrieving JMS headers during JMS to Flex conversion: " + jmsEx.getMessage());
 
             }
         }
@@ -835,82 +745,60 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
         // properties starting with with MPI_HEADER_IN (if any).
         MessagePerformanceInfo mpi = null;
 
-        try
-        {
-            for (Enumeration propEnum = jmsMessage.getPropertyNames(); propEnum.hasMoreElements();)
-            {
-                String propName = (String)propEnum.nextElement();
-                try
-                {
+        try {
+            for (Enumeration propEnum = jmsMessage.getPropertyNames(); propEnum.hasMoreElements(); ) {
+                String propName = (String) propEnum.nextElement();
+                try {
                     Object propValue = jmsMessage.getObjectProperty(propName);
-                    if (propName.startsWith(MessagePerformanceUtils.MPI_HEADER_IN))
-                    {
+                    if (propName.startsWith(MessagePerformanceUtils.MPI_HEADER_IN)) {
                         if (mpi == null)
                             mpi = new MessagePerformanceInfo();
                         propName = propName.substring(MessagePerformanceUtils.MPI_HEADER_IN.length());
                         java.lang.reflect.Field field;
-                        try
-                        {
+                        try {
                             field = mpi.getClass().getField(propName);
                             field.set(mpi, propValue);
-                        }
-                        catch (Exception ignore)
-                        {
+                        } catch (Exception ignore) {
                             // Simply don't set the property if the value cannot be retrieved.
                         }
-                    }
-                    else
-                    {
+                    } else {
                         flexMessage.setHeader(propName, propValue);
                     }
-                }
-                catch (JMSException jmsEx)
-                {
+                } catch (JMSException jmsEx) {
                     if (Log.isWarn())
-                        Log.getLogger(LOG_CATEGORY).warn("JMSAdapter encountered an error while retrieving JMS properties during JMS to Flex conversion: " +  jmsEx.getMessage());
+                        Log.getLogger(LOG_CATEGORY).warn("JMSAdapter encountered an error while retrieving JMS properties during JMS to Flex conversion: " + jmsEx.getMessage());
                 }
             }
 
             if (mpi != null)
                 flexMessage.setHeader(MessagePerformanceUtils.MPI_HEADER_IN, mpi);
-        }
-        catch (JMSException jmsEx)
-        {
+        } catch (JMSException jmsEx) {
             if (Log.isWarn())
-                Log.getLogger(LOG_CATEGORY).warn("JMSAdapter encountered an error while retrieving JMS properties during JMS to Flex conversion: " +  jmsEx.getMessage());
+                Log.getLogger(LOG_CATEGORY).warn("JMSAdapter encountered an error while retrieving JMS properties during JMS to Flex conversion: " + jmsEx.getMessage());
         }
 
         // Finally, set the JMS message body of the Flex message body.
-        try
-        {
-            if (jmsMessage instanceof javax.jms.TextMessage)
-            {
-                javax.jms.TextMessage textMessage = (javax.jms.TextMessage)jmsMessage;
+        try {
+            if (jmsMessage instanceof javax.jms.TextMessage) {
+                javax.jms.TextMessage textMessage = (javax.jms.TextMessage) jmsMessage;
                 flexMessage.setBody(textMessage.getText());
-            }
-            else if (jmsMessage instanceof javax.jms.ObjectMessage)
-            {
-                javax.jms.ObjectMessage objMessage = (javax.jms.ObjectMessage)jmsMessage;
+            } else if (jmsMessage instanceof javax.jms.ObjectMessage) {
+                javax.jms.ObjectMessage objMessage = (javax.jms.ObjectMessage) jmsMessage;
                 flexMessage.setBody(objMessage.getObject());
-            }
-            else if (jmsMessage instanceof javax.jms.MapMessage)
-            {
-                javax.jms.MapMessage mapMessage = (javax.jms.MapMessage)jmsMessage;
+            } else if (jmsMessage instanceof javax.jms.MapMessage) {
+                javax.jms.MapMessage mapMessage = (javax.jms.MapMessage) jmsMessage;
                 @SuppressWarnings("unchecked")
                 Enumeration names = mapMessage.getMapNames();
                 Map<String, Object> body = new HashMap<String, Object>();
-                while (names.hasMoreElements())
-                {
-                    String name = (String)names.nextElement();
+                while (names.hasMoreElements()) {
+                    String name = (String) names.nextElement();
                     body.put(name, mapMessage.getObject(name));
                 }
                 flexMessage.setBody(body);
             }
-        }
-        catch (JMSException jmsEx)
-        {
+        } catch (JMSException jmsEx) {
             if (Log.isWarn())
-                Log.getLogger(LOG_CATEGORY).warn("JMSAdapter encountered an error while retrieving JMS message body during JMS to Flex conversion: " +  jmsEx.getMessage());
+                Log.getLogger(LOG_CATEGORY).warn("JMSAdapter encountered an error while retrieving JMS message body during JMS to Flex conversion: " + jmsEx.getMessage());
         }
 
         return flexMessage;
@@ -921,15 +809,13 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      * supplied error message.
      *
      * @param consumer The JMSConsumer whose MessageClient will be invalidated.
-     * @param message The error message to push out before invalidating the
-     * MessageClient. If the message is null, MessageClient is invalidated
-     * silently.
+     * @param message  The error message to push out before invalidating the
+     *                 MessageClient. If the message is null, MessageClient is invalidated
+     *                 silently.
      */
-    private void invalidateMessageClient(JMSConsumer consumer, flex.messaging.messages.Message message)
-    {
+    private void invalidateMessageClient(JMSConsumer consumer, flex.messaging.messages.Message message) {
         Object clientId = consumerToClientId.get(consumer);
-        if (clientId != null && messageClients.containsKey(clientId))
-        {
+        if (clientId != null && messageClients.containsKey(clientId)) {
             MessageClient messageClient = messageClients.get(clientId);
 
             if (Log.isInfo())
@@ -941,13 +827,11 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
     }
 
     /**
-     *  Handle JMS specific configuration.
+     * Handle JMS specific configuration.
      */
-    private void jms(ConfigMap properties)
-    {
+    private void jms(ConfigMap properties) {
         ConfigMap jms = properties.getPropertyAsMap(JMS, null);
-        if (jms != null)
-        {
+        if (jms != null) {
             String destType = jms.getPropertyAsString(DESTINATION_TYPE, defaultDestinationType);
             settings.setDestinationType(destType);
 
@@ -958,8 +842,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
             settings.setConnectionFactory(factory);
 
             ConfigMap connectionCredentials = jms.getPropertyAsMap(CONNECTION_CREDENTIALS, null);
-            if (connectionCredentials != null)
-            {
+            if (connectionCredentials != null) {
                 String username = connectionCredentials.getPropertyAsString(USERNAME, null);
                 settings.setConnectionUsername(username);
                 String password = connectionCredentials.getPropertyAsString(PASSWORD, null);
@@ -967,8 +850,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
             }
 
             ConfigMap deliverySettings = jms.getPropertyAsMap(DELIVERY_SETTINGS, null);
-            if (deliverySettings != null)
-            {
+            if (deliverySettings != null) {
                 // Get the default delivery settings.
                 DeliverySettings ds = settings.getDeliverySettings();
 
@@ -990,7 +872,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
                 Log.getLogger(LOG_CATEGORY).warn("The <destination-name> configuration option is deprecated and non-functional. Please remove this from your configuration file.");
 
             boolean durable = getDestination() instanceof MessageDestination ?
-                ((MessageDestination) getDestination()).getServerSettings().isDurable() : false;
+                    ((MessageDestination) getDestination()).getServerSettings().isDurable() : false;
             settings.setDurableConsumers(durable);
 
             String deliveryMode = jms.getPropertyAsString(DELIVERY_MODE, null);
@@ -1000,8 +882,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
             settings.setPreserveJMSHeaders(preserveJMSHeaders);
 
             String defPriority = jms.getPropertyAsString(MESSAGE_PRIORITY, null);
-            if (defPriority != null && !defPriority.equalsIgnoreCase(DEFAULT_PRIORITY))
-            {
+            if (defPriority != null && !defPriority.equalsIgnoreCase(DEFAULT_PRIORITY)) {
                 int priority = jms.getPropertyAsInt(MESSAGE_PRIORITY, settings.getMessagePriority());
                 settings.setMessagePriority(priority);
             }
@@ -1018,94 +899,74 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
 
             // Retrieve any JNDI initial context environment properties.
             ConfigMap env = jms.getPropertyAsMap(INITIAL_CONTEXT_ENVIRONMENT, null);
-            if (env != null)
-            {
+            if (env != null) {
                 List props = env.getPropertyAsList(PROPERTY, null);
-                if (props != null)
-                {
+                if (props != null) {
                     Class contextClass = Context.class;
                     Hashtable envProps = new Hashtable();
-                    for (Iterator iter = props.iterator(); iter.hasNext();)
-                    {
+                    for (Iterator iter = props.iterator(); iter.hasNext(); ) {
                         Object prop = iter.next();
-                        if (prop instanceof ConfigMap)
-                        {
-                            ConfigMap pair = (ConfigMap)prop;
+                        if (prop instanceof ConfigMap) {
+                            ConfigMap pair = (ConfigMap) prop;
                             String name = pair.getProperty(NAME);
                             String value = pair.getProperty(VALUE);
-                            if (name == null || value == null)
-                            {
+                            if (name == null || value == null) {
                                 // A <property> element for the <initial-context-environment> settings for the ''{0}'' destination does not specify both <name> and <value> subelements.
                                 MessageException messageEx = new MessageException();
-                                messageEx.setMessage(MISSING_NAME_OR_VALUE, new Object[] {getDestination().getId()});
+                                messageEx.setMessage(MISSING_NAME_OR_VALUE, new Object[]{getDestination().getId()});
                                 throw messageEx;
                             }
                             // If the name is a Context field, use the
                             // constant value rather than this literal name.
-                            if (name.startsWith("Context."))
-                            {
+                            if (name.startsWith("Context.")) {
                                 String fieldName = name.substring(name.indexOf('.') + 1);
                                 java.lang.reflect.Field field = null;
-                                try
-                                {
+                                try {
                                     field = contextClass.getDeclaredField(fieldName);
-                                }
-                                catch (NoSuchFieldException nsfe)
-                                {
+                                } catch (NoSuchFieldException nsfe) {
                                     // A <property> element for the <initial-context-environment> settings for the ''{0}'' destination specifies an invalid javax.naming.Context field for its <name>: {1}
                                     MessageException messageEx = new MessageException();
-                                    messageEx.setMessage(INVALID_CONTEXT_NAME, new Object[] {getDestination().getId(), fieldName});
+                                    messageEx.setMessage(INVALID_CONTEXT_NAME, new Object[]{getDestination().getId(), fieldName});
                                     throw messageEx;
                                 }
                                 String fieldValue = null;
-                                try
-                                {
-                                    fieldValue = (String)field.get(null);
-                                }
-                                catch (IllegalAccessException iae)
-                                {
+                                try {
+                                    fieldValue = (String) field.get(null);
+                                } catch (IllegalAccessException iae) {
                                     // A <property> element for the <initial-context-environment> settings for the ''{0}'' destination specifies an inaccessible javax.naming.Context field for its <name>: {1}
                                     MessageException messageEx = new MessageException();
-                                    messageEx.setMessage(INACCESIBLE_CONTEXT_NAME, new Object[] {getDestination().getId(), fieldName});
+                                    messageEx.setMessage(INACCESIBLE_CONTEXT_NAME, new Object[]{getDestination().getId(), fieldName});
                                     throw messageEx;
                                 }
                                 envProps.put(fieldValue, value);
-                            }
-                            else
-                            {
+                            } else {
                                 envProps.put(name, value);
                             }
-                        }
-                        else
-                        {
+                        } else {
                             // A <property> element for the <initial-context-environment> settings for the ''{0}'' destination does not specify both <name> and <value> subelements.
                             MessageException messageEx = new MessageException();
-                            messageEx.setMessage(MISSING_NAME_OR_VALUE, new Object[] {getDestination().getId()});
+                            messageEx.setMessage(MISSING_NAME_OR_VALUE, new Object[]{getDestination().getId()});
                             throw messageEx;
                         }
                     }
                     settings.setInitialContextEnvironment(envProps);
-                }
-                else
-                {
+                } else {
                     // The <initial-context-environment> settings for the ''{0}'' destination does not include any <property> subelements.
                     MessageException messageEx = new MessageException();
-                    messageEx.setMessage(MISSING_PROPERTY_SUBELEMENT, new Object[] {getDestination().getId()});
+                    messageEx.setMessage(MISSING_PROPERTY_SUBELEMENT, new Object[]{getDestination().getId()});
                     throw messageEx;
                 }
             }
         }
     }
 
-    private void stopConsumers(Collection<JMSConsumer> consumers)
-    {
+    private void stopConsumers(Collection<JMSConsumer> consumers) {
         Iterator<JMSConsumer> itr = consumers.iterator();
-        while (itr.hasNext())
-        {
+        while (itr.hasNext()) {
             JMSConsumer consumer = itr.next();
             // Client is unsubscribed because its corresponding JMS consumer for JMS destination ''{0}'' has been stopped.
             MessageException me = new MessageException();
-            me.setMessage(JMSConfigConstants.CLIENT_UNSUBSCRIBE_DUE_TO_CONSUMER_STOP, new Object[] {consumer.getDestinationJndiName()});
+            me.setMessage(JMSConfigConstants.CLIENT_UNSUBSCRIBE_DUE_TO_CONSUMER_STOP, new Object[]{consumer.getDestinationJndiName()});
             consumer.stop(true);
             invalidateMessageClient(consumer, me.createErrorMessage());
         }

@@ -83,8 +83,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * The broker also has a means of pushing messages back through
  * endpoints to clients.
  */
-public class MessageBroker extends ManageableComponent
-{
+public class MessageBroker extends ManageableComponent {
     //--------------------------------------------------------------------------
     //
     // Public Static Constants
@@ -126,10 +125,14 @@ public class MessageBroker extends ManageableComponent
     // Package Protected Static Constants
     //
     //--------------------------------------------------------------------------
-    /** The default message broker id when one is not specified in web.xml. */
+    /**
+     * The default message broker id when one is not specified in web.xml.
+     */
     public static final String DEFAULT_BROKER_ID = "__default__";
 
-    /** A map of currently available message brokers indexed by message broker id. */
+    /**
+     * A map of currently available message brokers indexed by message broker id.
+     */
     static final Map<String, MessageBroker> messageBrokers = new HashMap<String, MessageBroker>();
 
     //--------------------------------------------------------------------------
@@ -151,31 +154,26 @@ public class MessageBroker extends ManageableComponent
     //--------------------------------------------------------------------------
 
     /**
-     *
      * Create a MessageBroker. This constructor will
      * establish collections for routers, endpoints,
      * and services.
      */
-    public MessageBroker()
-    {
+    public MessageBroker() {
         this(true, null);
     }
 
 
-    public MessageBroker(boolean enableManagement)
-    {
+    public MessageBroker(boolean enableManagement) {
         this(enableManagement, null);
     }
 
 
-    public MessageBroker(boolean enableManagement, String mbid)
-    {
+    public MessageBroker(boolean enableManagement, String mbid) {
         this(enableManagement, mbid, MessageBroker.class.getClassLoader());
     }
 
 
-    public MessageBroker(boolean enableManagement, String mbid, ClassLoader loader)
-    {
+    public MessageBroker(boolean enableManagement, String mbid, ClassLoader loader) {
         super(enableManagement);
         classLoader = loader;
         attributes = new ConcurrentHashMap<String, Object>();
@@ -199,17 +197,16 @@ public class MessageBroker extends ManageableComponent
         clusterManager = new ClusterManager(this);
         systemSettings = new SystemSettings();
 
-        if (isManaged())
-        {
+        if (isManaged()) {
             controller = new MessageBrokerControl(this);
             controller.register();
             setControl(controller);
 
-           logManager = new LogManager();
-           logManager.setLog(log);
-           logManager.setParent(this);
-           logManager.setupLogControl();
-           logManager.initialize(LOG_MANAGER_ID, null);
+            logManager = new LogManager();
+            logManager.setLog(log);
+            logManager.setParent(this);
+            logManager.setupLogControl();
+            logManager.initialize(LOG_MANAGER_ID, null);
         }
     }
 
@@ -263,11 +260,9 @@ public class MessageBroker extends ManageableComponent
     /**
      * Sets the id of the <code>MessageBroker</code>. If id is null, uses the
      * default broker id.
-     *
-     *
      */
-    @Override public void setId(String id)
-    {
+    @Override
+    public void setId(String id) {
         if (id == null)
             id = DEFAULT_BROKER_ID;
 
@@ -278,21 +273,18 @@ public class MessageBroker extends ManageableComponent
      * Retrieves a message broker with the supplied id.  This is defined via
      * the servlet init parameter messageBrokerId.  If no messageBrokerId is supplied, pass
      * in a null value for the id parameter.
-     *
+     * <p>
      * In case null is passed, the method tries to lookup the broker from current FlexContext.
      * If not available, it uses default ID to lookup the message broker.
      *
      * @param id The id of the message broker to retrieve.
      * @return The <code>MessageBroker</code> for the supplied id.
      */
-    public static MessageBroker getMessageBroker(String id)
-    {
-        if (id == null)
-        {
+    public static MessageBroker getMessageBroker(String id) {
+        if (id == null) {
             // If available, return the broker from FlexContext
             MessageBroker broker = FlexContext.getMessageBroker();
-            if (broker != null)
-            {
+            if (broker != null) {
                 return broker;
             }
 
@@ -304,10 +296,9 @@ public class MessageBroker extends ManageableComponent
 
     /**
      * Start the message broker's endpoints and services.
-     *
      */
-    @Override public void start()
-    {
+    @Override
+    public void start() {
         if (isStarted())
             return;
 
@@ -315,13 +306,11 @@ public class MessageBroker extends ManageableComponent
          * J2EE can be a real pain in terms of getting the right class loader so dump out
          * some detailed info about what is going on.
          */
-        if (Log.isDebug())
-        {
+        if (Log.isDebug()) {
             StringBuffer sb = new StringBuffer(100);
             if (classLoader == MessageBroker.class.getClassLoader())
                 sb.append(" the MessageBroker's class loader");
-            if (classLoader == Thread.currentThread().getContextClassLoader())
-            {
+            if (classLoader == Thread.currentThread().getContextClassLoader()) {
                 if (sb.length() > 0) sb.append(" and");
                 sb.append(" the context class loader");
             }
@@ -329,26 +318,23 @@ public class MessageBroker extends ManageableComponent
                 sb.append(" not the context or the message broker's class loader");
             Log.getLogger(LogCategories.CONFIGURATION).debug(
                     "MessageBroker id: " + getId() + " classLoader is:" +
-                    sb.toString() + " (" + "classLoader " + ClassUtil.classLoaderToString(classLoader));
+                            sb.toString() + " (" + "classLoader " + ClassUtil.classLoaderToString(classLoader));
         }
 
         // Catch any startup errors and log using our log machinery, then rethrow to trigger shutdown.
-        try
-        {
+        try {
             // MessageBroker doesn't call super.start() because it doesn't need the
             // usual validation that other components need
             setStarted(true);
 
             registerMessageBroker();
-            if (flexClientManager == null)
-            {
+            if (flexClientManager == null) {
                 flexClientManager = new FlexClientManager(isManaged(), this);
             }
             flexClientManager.start();
             flexSessionManager = new FlexSessionManager(isManaged(), this);
             flexSessionManager.start();
-            if (systemSettings == null)
-            {
+            if (systemSettings == null) {
                 systemSettings = new SystemSettings();
             }
             startServices();
@@ -356,9 +342,7 @@ public class MessageBroker extends ManageableComponent
             startEndpoints();
             startServers();
             redeployManager.start();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             if (Log.isError())
                 Log.getLogger(LogCategories.CONFIGURATION).error("MessageBroker failed to start: " + ExceptionUtil.exceptionFollowedByRootCausesToString(e));
 
@@ -369,10 +353,9 @@ public class MessageBroker extends ManageableComponent
 
     /**
      * Stop the broker's endpoints, clusters, and services.
-     *
      */
-    @Override public void stop()
-    {
+    @Override
+    public void stop() {
         if (!isStarted())
             return;
 
@@ -393,13 +376,10 @@ public class MessageBroker extends ManageableComponent
 
         if (loginManager != null)
             loginManager.stop();
-        try
-        {
+        try {
             if (redeployManager != null)
                 redeployManager.stop();
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             t.printStackTrace();
         }
         clusterManager.destroyClusters();
@@ -426,8 +406,7 @@ public class MessageBroker extends ManageableComponent
      *
      * @return An iterator containing the current names of the attributes.
      */
-    public Iterator<String> getAttributeNames()
-    {
+    public Iterator<String> getAttributeNames() {
         return attributes.keySet().iterator();
     }
 
@@ -437,19 +416,17 @@ public class MessageBroker extends ManageableComponent
      * @param name The attribute name.
      * @return Object the attribute object
      */
-    public Object getAttribute(String name)
-    {
+    public Object getAttribute(String name) {
         return attributes.get(name);
     }
 
     /**
      * Binds an attribute value to the <tt>MessageBroker</tt> under the provided name.
      *
-     * @param name The attribute name.
+     * @param name  The attribute name.
      * @param value The attribute value.
      */
-    public void setAttribute(String name, Object value)
-    {
+    public void setAttribute(String name, Object value) {
         if (value == null)
             removeAttribute(name);
         else
@@ -461,8 +438,7 @@ public class MessageBroker extends ManageableComponent
      *
      * @param name The attribute name.
      */
-    public void removeAttribute(String name)
-    {
+    public void removeAttribute(String name) {
         attributes.remove(name);
     }
 
@@ -473,8 +449,7 @@ public class MessageBroker extends ManageableComponent
      * @return The deserialization validator of the <tt>MessageBroker</tt> or null
      * if none exists.
      */
-    public DeserializationValidator getDeserializationValidator()
-    {
+    public DeserializationValidator getDeserializationValidator() {
         return deserializationValidator;
     }
 
@@ -483,65 +458,53 @@ public class MessageBroker extends ManageableComponent
      *
      * @param deserializationValidator The deserialization validator.
      */
-    public void setDeserializationValidator(DeserializationValidator deserializationValidator)
-    {
+    public void setDeserializationValidator(DeserializationValidator deserializationValidator) {
         this.deserializationValidator = deserializationValidator;
     }
 
-    public void setExternalPathResolver(PathResolver externalPathResolver)
-    {
+    public void setExternalPathResolver(PathResolver externalPathResolver) {
         this.externalPathResolver = externalPathResolver;
     }
 
 
-    public void setInternalPathResolver(InternalPathResolver internalPathResolver)
-    {
+    public void setInternalPathResolver(InternalPathResolver internalPathResolver) {
         this.internalPathResolver = internalPathResolver;
     }
 
 
-    public InputStream resolveExternalPath(String filename) throws IOException
-    {
+    public InputStream resolveExternalPath(String filename) throws IOException {
         return externalPathResolver.resolve(filename);
     }
 
 
-    public InputStream resolveInternalPath(String filename) throws IOException
-    {
+    public InputStream resolveInternalPath(String filename) throws IOException {
         return internalPathResolver.resolve(filename);
     }
 
 
-    public interface PathResolver
-    {
+    public interface PathResolver {
         InputStream resolve(String filename) throws IOException;
     }
 
     /**
      * This interface is being kept for backwards compatibility.
-     *
      */
-    public interface InternalPathResolver extends PathResolver
-    {
+    public interface InternalPathResolver extends PathResolver {
         // No-op.
     }
 
 
-    public ClusterManager getClusterManager()
-    {
+    public ClusterManager getClusterManager() {
         return clusterManager;
     }
 
     /**
-     *
      * Add a <code>Server</code> to the broker's collection.
      *
      * @param server <code>Server</code> to be added.
      */
-    public void addServer(Server server)
-    {
-        if (server == null)
-        {
+    public void addServer(Server server) {
+        if (server == null) {
             // Cannot add null ''{0}'' to the ''{1}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.NULL_COMPONENT, new Object[]{"Server", MESSAGEBROKER});
@@ -550,8 +513,7 @@ public class MessageBroker extends ManageableComponent
 
         String id = server.getId();
 
-        if (id == null)
-        {
+        if (id == null) {
             // Cannot add ''{0}'' with null id to the ''{1}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.NULL_COMPONENT_ID, new Object[]{"Server", MESSAGEBROKER});
@@ -564,8 +526,7 @@ public class MessageBroker extends ManageableComponent
             return;
 
         // Do not allow servers with the same id
-        if (currentServer != null)
-        {
+        if (currentServer != null) {
             // Cannot add a ''{0}'' with the id ''{1}'' that is already registered with the ''{2}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.DUPLICATE_COMPONENT_ID, new Object[]{"Server", id, MESSAGEBROKER});
@@ -576,30 +537,25 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     *
      * Returns the <code>Server</code> with the specified id.
      *
      * @param id The id of the <code>Server</code>/
      * @return The <code>Server</code> with the specified id or null if no
      * <code>Server</code> with the id exists.
      */
-    public Server getServer(String id)
-    {
+    public Server getServer(String id) {
         return servers.get(id);
     }
 
     /**
-     *
      * Stops and removes the <code>Server</code> from the set of shared servers managed by the <code>MessageBroker</code>.
      *
      * @param id The id of the <code>Server</code> to remove.
      * @return <code>Server</code> that has been removed or <code>null</code> if it doesn't exist.
      */
-    public Server removeServer(String id)
-    {
+    public Server removeServer(String id) {
         Server server = servers.get(id);
-        if (server != null)
-        {
+        if (server != null) {
             server.stop();
             servers.remove(id);
         }
@@ -607,23 +563,20 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     *
      * Creates an <code>Endpoint</code> instance, sets its id and url.
      * It further sets the endpoint manageable if the <code>MessageBroker</code>
      * is manageable, and assigns its <code>MessageBroker</code> to the
      * <code>MessageBroker</code> that created it.
      *
-     * @param id The id of the endpoint.
-     * @param url The url of the endpoint.
+     * @param id        The id of the endpoint.
+     * @param url       The url of the endpoint.
      * @param className The class name of the endpoint.
-     *
      * @return The created <code>Endpoint</code> instance.
      */
-    public Endpoint createEndpoint(String id, String url, String className)
-    {
+    public Endpoint createEndpoint(String id, String url, String className) {
         Class endpointClass = ClassUtil.createClass(className, getClassLoader());
 
-        Endpoint endpoint = (Endpoint)ClassUtil.createDefaultInstance(endpointClass, Endpoint.class);
+        Endpoint endpoint = (Endpoint) ClassUtil.createDefaultInstance(endpointClass, Endpoint.class);
         endpoint.setId(id);
         endpoint.setUrl(url);
         endpoint.setManaged(isManaged());
@@ -633,17 +586,14 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     *
      * Add an endpoint to the broker's collection. Broker will accept the endpoint
      * to be added only if the endpoint is not null, it does not have null id or
      * url, and it does not have the same id or url as another endpoint.
      *
      * @param endpoint Endpoint to be added.
      */
-    public void addEndpoint(Endpoint endpoint)
-    {
-        if (endpoint == null)
-        {
+    public void addEndpoint(Endpoint endpoint) {
+        if (endpoint == null) {
             // Cannot add null ''{0}'' to the ''{1}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.NULL_COMPONENT, new Object[]{ENDPOINT, MESSAGEBROKER});
@@ -652,8 +602,7 @@ public class MessageBroker extends ManageableComponent
 
         String id = endpoint.getId();
 
-        if (id == null)
-        {
+        if (id == null) {
             // Cannot add ''{0}'' with null id to the ''{1}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.NULL_COMPONENT_ID, new Object[]{ENDPOINT, MESSAGEBROKER});
@@ -665,8 +614,7 @@ public class MessageBroker extends ManageableComponent
             return;
 
         // Do not allow endpoints with the same id
-        if (getEndpoint(id) != null)
-        {
+        if (getEndpoint(id) != null) {
             // Cannot add a ''{0}'' with the id ''{1}'' that is already registered with the ''{2}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.DUPLICATE_COMPONENT_ID, new Object[]{ENDPOINT, id, MESSAGEBROKER});
@@ -682,65 +630,54 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     *
      * Returns the <code>Endpoint</code> with the specified id.
      *
      * @param id The id of the <code>Endpoint</code>/
      * @return The <code>Endpoint</code> with the specified id or null if no <code>Endpoint</code> with the id exists.
      */
-    public Endpoint getEndpoint(String id)
-    {
+    public Endpoint getEndpoint(String id) {
         return endpoints.get(id);
     }
 
     /**
-     *
      * Retrieve the map of all endpoints in this broker.
      *
      * @return the map of all endpoints in this broker
      */
-    public Map<String, Endpoint> getEndpoints()
-    {
+    public Map<String, Endpoint> getEndpoints() {
         return endpoints;
     }
 
     /**
-     *
      * Retrieve an endpoint based on a requested URL path. Two endpoints should not be
      * registered to the same path.
      *
-     * @param path the URL path
+     * @param path        the URL path
      * @param contextPath the context path
      * @return endpoint based on a requested URL path
      */
-    public Endpoint getEndpoint(String path, String contextPath)
-    {
-        for (String id : endpoints.keySet())
-        {
+    public Endpoint getEndpoint(String path, String contextPath) {
+        for (String id : endpoints.keySet()) {
             Endpoint e = endpoints.get(id);
 
-            if (matchEndpoint(path, contextPath, e))
-            {
+            if (matchEndpoint(path, contextPath, e)) {
                 return e;
             }
         }
         MessageException lme = new MessageException();
-        lme.setMessage(10003, new Object[] {path});
+        lme.setMessage(10003, new Object[]{path});
         throw lme;
     }
 
     /**
-     *
      * Removes an endpoint from the <code>MessageBroker</code>.
      *
      * @param id The id of the endpoint.
      * @return The removed endpoint.
      */
-    public Endpoint removeEndpoint(String id)
-    {
+    public Endpoint removeEndpoint(String id) {
         Endpoint endpoint = getEndpoint(id);
-        if (endpoint != null)
-        {
+        if (endpoint != null) {
             endpoint.stop();
             endpoints.remove(id);
         }
@@ -754,8 +691,7 @@ public class MessageBroker extends ManageableComponent
      * @return True if the endpoint validation is enforced on the server, regardless
      * of whether client requested endpoint validation or not.
      */
-    public boolean isEnforceEndpointValidation()
-    {
+    public boolean isEnforceEndpointValidation() {
         return enforceEndpointValidation;
     }
 
@@ -765,8 +701,7 @@ public class MessageBroker extends ManageableComponent
      *
      * @param enforceEndpointValidation The endpoint validation flag.
      */
-    public void setEnforceEndpointValidation(boolean enforceEndpointValidation)
-    {
+    public void setEnforceEndpointValidation(boolean enforceEndpointValidation) {
         this.enforceEndpointValidation = enforceEndpointValidation;
     }
 
@@ -777,8 +712,7 @@ public class MessageBroker extends ManageableComponent
      * @return The <code>FlexFactory</code> with the specified id or null if no
      * factory with the id exists.
      */
-    public FlexFactory getFactory(String id)
-    {
+    public FlexFactory getFactory(String id) {
         return factories.get(id);
     }
 
@@ -787,34 +721,29 @@ public class MessageBroker extends ManageableComponent
      *
      * @return The map of <code>FlexFactory</code> instances.
      */
-    public Map<String, FlexFactory> getFactories()
-    {
-       return factories;
+    public Map<String, FlexFactory> getFactories() {
+        return factories;
     }
 
     /**
      * Registers a factory with the <code>MessageBroker</code>.
      *
-     * @param id The id of the factory.
+     * @param id      The id of the factory.
      * @param factory <code>FlexFactory</code> instance.
      */
-    public void addFactory(String id, FlexFactory factory)
-    {
-        if (id == null)
-        {
+    public void addFactory(String id, FlexFactory factory) {
+        if (id == null) {
             // Cannot add ''{0}'' with null id to the ''{1}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.NULL_COMPONENT_ID, new Object[]{"FlexFactory", MESSAGEBROKER});
             throw ex;
         }
         // No need to add if factory is already added
-        if (getFactory(id) == factory)
-        {
+        if (getFactory(id) == factory) {
             return;
         }
         // Do not allow multiple factories with the same id
-        if (getFactory(id) != null)
-        {
+        if (getFactory(id) != null) {
             // Cannot add a ''{0}'' with the id ''{1}'' that is already registered with the ''{2}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.DUPLICATE_COMPONENT_ID, new Object[]{"FlexFactory", id, MESSAGEBROKER});
@@ -830,11 +759,9 @@ public class MessageBroker extends ManageableComponent
      * @param id The id of the <code>FlexFactory</code>.
      * @return <code>FlexFactory</code> that has been removed.
      */
-    public FlexFactory removeFactory(String id)
-    {
+    public FlexFactory removeFactory(String id) {
         FlexFactory factory = getFactory(id);
-        if (factory != null)
-        {
+        if (factory != null) {
             factories.remove(id);
         }
         return factory;
@@ -847,8 +774,7 @@ public class MessageBroker extends ManageableComponent
      * @return The <code>Service</code> with the specified id or null if no
      * <code>Service</code> with the id exists.
      */
-    public Service getService(String id)
-    {
+    public Service getService(String id) {
         return services.get(id);
     }
 
@@ -864,12 +790,9 @@ public class MessageBroker extends ManageableComponent
      * @param type the fully qualified class name of the service implementation.
      * @return a service or null if not found.
      */
-    public Service getServiceByType(String type)
-    {
-        for (Service svc : services.values())
-        {
-            if (svc.getClass().getName().equals(type))
-            {
+    public Service getServiceByType(String type) {
+        for (Service svc : services.values()) {
+            if (svc.getClass().getName().equals(type)) {
                 return svc;
             }
         }
@@ -881,8 +804,7 @@ public class MessageBroker extends ManageableComponent
      *
      * @return The Map of <code>Service</code> instances.
      */
-    public Map<String, Service> getServices()
-    {
+    public Map<String, Service> getServices() {
         return services;
     }
 
@@ -891,33 +813,29 @@ public class MessageBroker extends ManageableComponent
      * needs.
      *
      * @param endpoint Endpoint used to filter the destinations of the service;
-     * no filtering is done if the endpoint is null.
+     *                 no filtering is done if the endpoint is null.
      * @return ConfigMap of server properties.
      */
-    public ConfigMap describeServices(Endpoint endpoint)
-    {
-       return describeServices(endpoint, true);
+    public ConfigMap describeServices(Endpoint endpoint) {
+        return describeServices(endpoint, true);
     }
 
     /**
-     *
      * Returns a <tt>ConfigMap</tt> of service and channel properties that the client
      * needs.
      * The <tt>allDestinations</tt> flag controls whether configuration for all
      * destinations or only reliable client destinations is returned.
      *
-     * @param endpoint Endpoint used to filter the destinations of the service.
-     * No filtering is done if the endpoint is null.
+     * @param endpoint     Endpoint used to filter the destinations of the service.
+     *                     No filtering is done if the endpoint is null.
      * @param onlyReliable When false, configuration for all destinations is
-     * returned instead of only reliable destinations.
+     *                     returned instead of only reliable destinations.
      * @return ConfigMap of service properties.
      */
-    public ConfigMap describeServices(Endpoint endpoint, boolean onlyReliable)
-    {
+    public ConfigMap describeServices(Endpoint endpoint, boolean onlyReliable) {
         // Let the service validation listeners know about the configuration change.
-        if (!serviceValidationListeners.isEmpty())
-        {
-            for (Enumeration<ServiceValidationListener> iter = serviceValidationListeners.elements(); iter.hasMoreElements();)
+        if (!serviceValidationListeners.isEmpty()) {
+            for (Enumeration<ServiceValidationListener> iter = serviceValidationListeners.elements(); iter.hasMoreElements(); )
                 iter.nextElement().validateServices();
         }
 
@@ -926,21 +844,16 @@ public class MessageBroker extends ManageableComponent
         // Keep track of channel ids as we encounter them so we can generate
         // the channel properties that might be needed by the client.
         ArrayList<String> channelIds = new ArrayList<String>();
-        if (endpoint == null)
-        {
-            for (Endpoint endpointToAdd: getEndpoints().values())
+        if (endpoint == null) {
+            for (Endpoint endpointToAdd : getEndpoints().values())
                 channelIds.add(endpointToAdd.getId());
-        }
-        else
-        {
+        } else {
             channelIds.add(endpoint.getId());
         }
 
-        if (defaultChannels != null)
-        {
+        if (defaultChannels != null) {
             ConfigMap defaultChannelsMap = new ConfigMap();
-            for (Object defaultChannel : defaultChannels)
-            {
+            for (Object defaultChannel : defaultChannels) {
                 String id = (String) defaultChannel;
                 ConfigMap channelConfig = new ConfigMap();
                 channelConfig.addProperty(ConfigurationConstants.REF_ATTR, id);
@@ -952,10 +865,9 @@ public class MessageBroker extends ManageableComponent
                 servicesConfig.addProperty(ConfigurationConstants.DEFAULT_CHANNELS_ELEMENT, defaultChannelsMap);
         }
 
-        for (Service service : services.values())
-        {
-            ConfigMap serviceConfig = service instanceof AbstractService?
-                    ((AbstractService)service).describeService(endpoint, onlyReliable) : service.describeService(endpoint);
+        for (Service service : services.values()) {
+            ConfigMap serviceConfig = service instanceof AbstractService ?
+                    ((AbstractService) service).describeService(endpoint, onlyReliable) : service.describeService(endpoint);
             if (serviceConfig != null && serviceConfig.size() > 0)
                 servicesConfig.addProperty(ConfigurationConstants.SERVICE_ELEMENT, serviceConfig);
         }
@@ -964,11 +876,9 @@ public class MessageBroker extends ManageableComponent
         // compile in services-config.xml and hence doesn't have channels section
         // of the configuration - but only if channel/endpoint is not tagged as "remote"!
         ConfigMap channels = new ConfigMap();
-        for (String id : channelIds)
-        {
+        for (String id : channelIds) {
             Endpoint currentEndpoint = getEndpoint(id);
-            if (currentEndpoint instanceof AbstractEndpoint && ((AbstractEndpoint)currentEndpoint).isRemote())
-            {
+            if (currentEndpoint instanceof AbstractEndpoint && ((AbstractEndpoint) currentEndpoint).isRemote()) {
                 continue; // Client already has configuration for "remote" endpoint by other means.
             }
 
@@ -982,7 +892,7 @@ public class MessageBroker extends ManageableComponent
         if (Log.isDebug())
             Log.getLogger(ConfigurationManager.LOG_CATEGORY).debug(
                     "Returning service description for endpoint: " +
-                    (endpoint == null? "all" : endpoint.getId()) + " config: " + servicesConfig);
+                            (endpoint == null ? "all" : endpoint.getId()) + " config: " + servicesConfig);
 
         return servicesConfig;
     }
@@ -991,13 +901,11 @@ public class MessageBroker extends ManageableComponent
      * Add a listener for the describeServices callback.  The describeServices listener
      * is called before any execution of the describeServices method.
      *
-     * @param id Identifier of the listener to add
+     * @param id       Identifier of the listener to add
      * @param listener The listener callback
      */
-    public void addServiceValidationListener(String id, ServiceValidationListener listener)
-    {
-        if (listener != null)
-        {
+    public void addServiceValidationListener(String id, ServiceValidationListener listener) {
+        if (listener != null) {
             serviceValidationListeners.putIfAbsent(id, listener);
         }
     }
@@ -1008,8 +916,7 @@ public class MessageBroker extends ManageableComponent
      *
      * @return An <tt>Iterator</tt> for all registered <tt>ServiceValidationListeners</tt>.
      */
-    public Iterator<ServiceValidationListener> getServiceValidationListenerIterator()
-    {
+    public Iterator<ServiceValidationListener> getServiceValidationListenerIterator() {
         return serviceValidationListeners.values().iterator();
     }
 
@@ -1018,10 +925,8 @@ public class MessageBroker extends ManageableComponent
      *
      * @param id Identifier of the listener to remove
      */
-    public void removeServiceValidationListener(String id)
-    {
-        if (serviceValidationListeners.containsKey(id))
-        {
+    public void removeServiceValidationListener(String id) {
+        if (serviceValidationListeners.containsKey(id)) {
             serviceValidationListeners.remove(id);
         }
     }
@@ -1032,16 +937,14 @@ public class MessageBroker extends ManageableComponent
      * and sets its <code>MessageBroker</code> to the <code>MessageBroker</code> that
      * created it.
      *
-     * @param id The id of the <code>Service</code>.
+     * @param id        The id of the <code>Service</code>.
      * @param className The class name of the <code>Service</code>.
-     *
      * @return The <code>Service</code> instanced created.
      */
-    public Service createService(String id, String className)
-    {
+    public Service createService(String id, String className) {
         Class svcClass = ClassUtil.createClass(className, getClassLoader());
 
-        Service service = (Service)ClassUtil.createDefaultInstance(svcClass, Service.class);
+        Service service = (Service) ClassUtil.createDefaultInstance(svcClass, Service.class);
         service.setId(id);
         service.setManaged(isManaged());
         service.setMessageBroker(this);
@@ -1053,7 +956,7 @@ public class MessageBroker extends ManageableComponent
      * Add a message type -to- service mapping to the broker's collection.
      * When the broker attempts to route a message to a service, it finds the first
      * service capable of handling the message type.
-     *
+     * <p>
      * Note that <code>Service</code> cannot be null, it cannot have a null
      * id, and it cannot have the same id or type of a <code>Service</code>
      * already registered with the <code>MessageBroker</code>.
@@ -1062,12 +965,9 @@ public class MessageBroker extends ManageableComponent
      * is already running.
      *
      * @param service The service instance used to handle the messages
-     *
      */
-    public void addService(Service service)
-    {
-        if (service == null)
-        {
+    public void addService(Service service) {
+        if (service == null) {
             // Cannot add null ''{0}'' to the ''{1}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.NULL_COMPONENT, new Object[]{SERVICE, MESSAGEBROKER});
@@ -1076,21 +976,18 @@ public class MessageBroker extends ManageableComponent
 
         String id = service.getId();
 
-        if (id == null)
-        {
+        if (id == null) {
             // Cannot add ''{0}'' with null id to the ''{1}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.NULL_COMPONENT_ID, new Object[]{SERVICE, MESSAGEBROKER});
             throw ex;
         }
         // No need to add if service is already added
-        if (getService(id) == service)
-        {
+        if (getService(id) == service) {
             return;
         }
         // Do not allow multiple services with the same id
-        if (getService(id) != null)
-        {
+        if (getService(id) != null) {
             // Cannot add a ''{0}'' with the id ''{1}'' that is already registered with the ''{2}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.DUPLICATE_COMPONENT_ID, new Object[]{SERVICE, id, MESSAGEBROKER});
@@ -1106,8 +1003,7 @@ public class MessageBroker extends ManageableComponent
 
         services.put(id, service);
 
-        if (service.getMessageBroker() == null || service.getMessageBroker() != this)
-        {
+        if (service.getMessageBroker() == null || service.getMessageBroker() != this) {
             service.setMessageBroker(this);
         }
     }
@@ -1119,11 +1015,9 @@ public class MessageBroker extends ManageableComponent
      * @param id The id of the <code>Service</code>.
      * @return Previous <code>Service</code> associated with the id.
      */
-    public Service removeService(String id)
-    {
+    public Service removeService(String id) {
         Service service = getService(id);
-        if (service != null)
-        {
+        if (service != null) {
             service.stop();
             services.remove(id);
         }
@@ -1135,26 +1029,22 @@ public class MessageBroker extends ManageableComponent
      *
      * @return Logger of the <code>MessageBroker</code>.
      */
-    public Log getLog()
-    {
+    public Log getLog() {
         return log;
     }
 
 
-    public LogManager getLogManager()
-    {
+    public LogManager getLogManager() {
         return logManager;
     }
 
 
-    public LoginManager getLoginManager()
-    {
+    public LoginManager getLoginManager() {
         return loginManager;
     }
 
 
-    public void setLoginManager(LoginManager loginManager)
-    {
+    public void setLoginManager(LoginManager loginManager) {
         if (this.loginManager != null && this.loginManager.isStarted())
             this.loginManager.stop();
 
@@ -1165,38 +1055,32 @@ public class MessageBroker extends ManageableComponent
     }
 
 
-    public FlexClientManager getFlexClientManager()
-    {
+    public FlexClientManager getFlexClientManager() {
         return flexClientManager;
     }
 
 
-    public void setFlexClientManager(FlexClientManager value)
-    {
+    public void setFlexClientManager(FlexClientManager value) {
         flexClientManager = value;
     }
 
 
-    public FlexSessionManager getFlexSessionManager()
-    {
+    public FlexSessionManager getFlexSessionManager() {
         return flexSessionManager;
     }
 
 
-    public void setFlexSessionManager(FlexSessionManager value)
-    {
+    public void setFlexSessionManager(FlexSessionManager value) {
         flexSessionManager = value;
     }
 
 
-    public RedeployManager getRedeployManager()
-    {
+    public RedeployManager getRedeployManager() {
         return redeployManager;
     }
 
 
-    public void setRedeployManager(RedeployManager redeployManager)
-    {
+    public void setRedeployManager(RedeployManager redeployManager) {
         if (this.redeployManager != null && this.redeployManager.isStarted())
             this.redeployManager.stop();
 
@@ -1207,14 +1091,12 @@ public class MessageBroker extends ManageableComponent
     }
 
 
-    public Class<? extends ThrottleManager> getThrottleManagerClass()
-    {
+    public Class<? extends ThrottleManager> getThrottleManagerClass() {
         return throttleManagerClass;
     }
 
 
-    public void setThrottleManagerClass(Class<? extends ThrottleManager> throttleManagerClass)
-    {
+    public void setThrottleManagerClass(Class<? extends ThrottleManager> throttleManagerClass) {
         this.throttleManagerClass = throttleManagerClass;
     }
 
@@ -1224,20 +1106,18 @@ public class MessageBroker extends ManageableComponent
      *
      * @return String the UUID.
      */
-    public String createUUID()
-    {
-        return uuidGenerator != null? uuidGenerator.createUUID() : UUIDUtils.createUUID();
+    public String createUUID() {
+        return uuidGenerator != null ? uuidGenerator.createUUID() : UUIDUtils.createUUID();
     }
 
     /**
      * Returns the custom <tt>UUIDGenerator</tt> used by the <tt>MessageBroker</tt>
      * for NIO-HTTP session cookie value and <tt>FlexClient</tt> id generation or null if
-     *  the default UUID generator, <tt>UUIDUtils</tt>, is being used.
+     * the default UUID generator, <tt>UUIDUtils</tt>, is being used.
      *
      * @return The custom <tt>UUIDGenerator</tt> used by <tt>MessageBroker</tt> or null.
      */
-    public UUIDGenerator getUUIDGenerator()
-    {
+    public UUIDGenerator getUUIDGenerator() {
         return uuidGenerator;
     }
 
@@ -1248,8 +1128,7 @@ public class MessageBroker extends ManageableComponent
      *
      * @param value The custom <tt>UUIDGenerator</tt>.
      */
-    public void setUUIDGenerator(UUIDGenerator value)
-    {
+    public void setUUIDGenerator(UUIDGenerator value) {
         uuidGenerator = value;
     }
 
@@ -1258,26 +1137,22 @@ public class MessageBroker extends ManageableComponent
      *
      * @return The list of channel ids.
      */
-    public List<String> getChannelIds()
-    {
-        return (endpoints != null && endpoints.size() != 0)? new ArrayList<String>(endpoints.keySet()) : null;
+    public List<String> getChannelIds() {
+        return (endpoints != null && endpoints.size() != 0) ? new ArrayList<String>(endpoints.keySet()) : null;
     }
 
 
-    public ChannelSettings getChannelSettings(String ref)
-    {
+    public ChannelSettings getChannelSettings(String ref) {
         return channelSettings.get(ref);
     }
 
 
-    public Map<String, ChannelSettings> getAllChannelSettings()
-    {
+    public Map<String, ChannelSettings> getAllChannelSettings() {
         return channelSettings;
     }
 
 
-    public void setChannelSettings(Map<String, ChannelSettings> channelSettings)
-    {
+    public void setChannelSettings(Map<String, ChannelSettings> channelSettings) {
         this.channelSettings = channelSettings;
     }
 
@@ -1287,8 +1162,7 @@ public class MessageBroker extends ManageableComponent
      *
      * @return Default channel ids of the MessageBroker.
      */
-    public List<String> getDefaultChannels()
-    {
+    public List<String> getDefaultChannels() {
         return defaultChannels;
     }
 
@@ -1297,21 +1171,18 @@ public class MessageBroker extends ManageableComponent
      *
      * @param id The id of the channel to add to the list of default channel ids.
      */
-    public void addDefaultChannel(String id)
-    {
+    public void addDefaultChannel(String id) {
         if (defaultChannels == null)
             defaultChannels = new ArrayList<String>();
         else if (defaultChannels.contains(id))
             return;
 
         List<String> channelIds = getChannelIds();
-        if (channelIds == null || !channelIds.contains(id))
-        {
+        if (channelIds == null || !channelIds.contains(id)) {
             // No channel with id ''{0}'' is known by the MessageBroker.
-            if (Log.isWarn())
-            {
+            if (Log.isWarn()) {
                 Log.getLogger(LOG_CATEGORY).warn("No channel with id '{0}' is known by the MessageBroker." +
-                        " Not adding the channel.",
+                                " Not adding the channel.",
                         new Object[]{id});
             }
             return;
@@ -1324,21 +1195,16 @@ public class MessageBroker extends ManageableComponent
      *
      * @param ids Default channel ids of the MessageBroker.
      */
-    public void setDefaultChannels(List<String> ids)
-    {
-        if (ids != null)
-        {
+    public void setDefaultChannels(List<String> ids) {
+        if (ids != null) {
             List<String> channelIds = getChannelIds();
-            for (Iterator<String> iter = ids.iterator(); iter.hasNext();)
-            {
+            for (Iterator<String> iter = ids.iterator(); iter.hasNext(); ) {
                 String id = iter.next();
-                if (channelIds == null || !channelIds.contains(id))
-                {
+                if (channelIds == null || !channelIds.contains(id)) {
                     iter.remove();
-                    if (Log.isWarn())
-                    {
+                    if (Log.isWarn()) {
                         Log.getLogger(LOG_CATEGORY).warn("No channel with id '{0}' is known by the MessageBroker." +
-                                " Not adding the channel.",
+                                        " Not adding the channel.",
                                 new Object[]{id});
                     }
                 }
@@ -1353,8 +1219,7 @@ public class MessageBroker extends ManageableComponent
      * @param id The id of the channel to remove from the list of default channel ids.
      * @return <code>true</code> if the list contained the channel id.
      */
-    public boolean removeDefaultChannel(String id)
-    {
+    public boolean removeDefaultChannel(String id) {
         return defaultChannels != null && defaultChannels.remove(id);
     }
 
@@ -1365,56 +1230,47 @@ public class MessageBroker extends ManageableComponent
      * @param ref The reference of the <code>SecurityConstraint</code>
      * @return The <code>SecurityConstraint</code> with the indicated reference id.
      */
-    public SecurityConstraint getSecurityConstraint(String ref)
-    {
+    public SecurityConstraint getSecurityConstraint(String ref) {
         return getSecuritySettings().getConstraint(ref);
     }
 
 
-    public ServletContext getServletContext()
-    {
+    public ServletContext getServletContext() {
         return servletContext;
     }
 
 
-    public SecuritySettings getSecuritySettings()
-    {
+    public SecuritySettings getSecuritySettings() {
         return securitySettings;
     }
 
 
-    public void setSecuritySettings(SecuritySettings securitySettings)
-    {
+    public void setSecuritySettings(SecuritySettings securitySettings) {
         this.securitySettings = securitySettings;
     }
 
 
-    public SystemSettings getSystemSettings()
-    {
+    public SystemSettings getSystemSettings() {
         return systemSettings;
     }
 
 
-    public void setSystemSettings(SystemSettings l)
-    {
+    public void setSystemSettings(SystemSettings l) {
         systemSettings = l;
     }
 
 
-    public FlexClientSettings getFlexClientSettings()
-    {
+    public FlexClientSettings getFlexClientSettings() {
         return flexClientSettings;
     }
 
 
-    public void setFlexClientSettings(FlexClientSettings value)
-    {
+    public void setFlexClientSettings(FlexClientSettings value) {
         flexClientSettings = value;
     }
 
 
-    public void initThreadLocals()
-    {
+    public void initThreadLocals() {
         // No thread-locals anymore, so no-op.
     }
 
@@ -1428,11 +1284,10 @@ public class MessageBroker extends ManageableComponent
      *
      * @param message  The message to be routed to a service
      * @param endpoint This can identify the endpoint that is sending the message
-     * but it is currently not used so you may pass in null.
+     *                 but it is currently not used so you may pass in null.
      * @return <code>AcknowledgeMessage</code> with result.
      */
-    public AcknowledgeMessage routeMessageToService(Message message, Endpoint endpoint)
-    {
+    public AcknowledgeMessage routeMessageToService(Message message, Endpoint endpoint) {
         // Make sure message has a messageId
         checkMessageId(message);
 
@@ -1440,21 +1295,17 @@ public class MessageBroker extends ManageableComponent
         boolean serviced = false;
         Service service = null;
         String destId = message.getDestination();
-        try
-        {
+        try {
             String serviceId = destId != null ? destinationToService.get(destId) : null;
 
-            if ((serviceId == null) && (destId != null) && (!serviceValidationListeners.isEmpty()))
-            {
-                for (Enumeration<ServiceValidationListener> iter = serviceValidationListeners.elements(); iter.hasMoreElements();)
-                {
+            if ((serviceId == null) && (destId != null) && (!serviceValidationListeners.isEmpty())) {
+                for (Enumeration<ServiceValidationListener> iter = serviceValidationListeners.elements(); iter.hasMoreElements(); ) {
                     iter.nextElement().validateDestination(destId);
                 }
                 serviceId = destinationToService.get(destId);
             }
 
-            if (serviceId != null)
-            {
+            if (serviceId != null) {
                 service = services.get(serviceId);
                 serviced = true;
                 Destination destination = service.getDestination(destId);
@@ -1466,37 +1317,32 @@ public class MessageBroker extends ManageableComponent
                 if (Log.isDebug())
                     Log.getLogger(getLogCategory(message)).debug(
                             "Before invoke service: " + service.getId() + StringUtils.NEWLINE +
-                            "  incomingMessage: " + message + StringUtils.NEWLINE);
+                                    "  incomingMessage: " + message + StringUtils.NEWLINE);
 
                 extractRemoteCredentials(service, message);
                 serviceResult = service.serviceMessage(message);
             }
 
-            if (!serviced)
-            {
+            if (!serviced) {
                 MessageException lme = new MessageException();
                 // The supplied destination id is not registered with any service.
                 lme.setMessage(ERR_MSG_NO_SERVICE_FOR_DEST);
                 throw lme;
             }
 
-            if (Log.isDebug())
-            {
+            if (Log.isDebug()) {
                 String debugServiceResult = Log.getPrettyPrinter().prettify(serviceResult);
                 Log.getLogger(getLogCategory(message)).debug(
-                     "After invoke service: " + service.getId() + StringUtils.NEWLINE +
-                     "  reply: " + debugServiceResult + StringUtils.NEWLINE);
+                        "After invoke service: " + service.getId() + StringUtils.NEWLINE +
+                                "  reply: " + debugServiceResult + StringUtils.NEWLINE);
             }
 
             AcknowledgeMessage ack;
-            if (serviceResult instanceof AcknowledgeMessage)
-            {
+            if (serviceResult instanceof AcknowledgeMessage) {
                 // service will return an ack if they need to transform it in some
                 // service-specific way (paging is an example)
-                ack = (AcknowledgeMessage)serviceResult;
-            }
-            else
-            {
+                ack = (AcknowledgeMessage) serviceResult;
+            } else {
                 // most services will return a result of some sort, possibly null,
                 // and expect the broker to compose a message to deliver it
                 ack = new AcknowledgeMessage();
@@ -1505,34 +1351,28 @@ public class MessageBroker extends ManageableComponent
             ack.setCorrelationId(message.getMessageId());
             ack.setClientId(message.getClientId());
             return ack;
-        }
-        catch (MessageException exc)
-        {
+        } catch (MessageException exc) {
             exc.logAtHingePoint(message,
-                                null, /* No outbound error message at this point. */
-                                "Exception when invoking service '" + (service == null ? "(none)" : service.getId()) + "': ");
+                    null, /* No outbound error message at this point. */
+                    "Exception when invoking service '" + (service == null ? "(none)" : service.getId()) + "': ");
 
             throw exc;
-        }
-        catch (RuntimeException exc)
-        {
+        } catch (RuntimeException exc) {
             Log.getLogger(LogCategories.MESSAGE_GENERAL).error(
-                 "Exception when invoking service: " +
-                 (service == null ? "(none)" : service.getId()) +
-                 StringUtils.NEWLINE +
-                 "  with message: " + message + StringUtils.NEWLINE +
-                 ExceptionUtil.exceptionFollowedByRootCausesToString(exc) + StringUtils.NEWLINE);
+                    "Exception when invoking service: " +
+                            (service == null ? "(none)" : service.getId()) +
+                            StringUtils.NEWLINE +
+                            "  with message: " + message + StringUtils.NEWLINE +
+                            ExceptionUtil.exceptionFollowedByRootCausesToString(exc) + StringUtils.NEWLINE);
 
             throw exc;
-        }
-        catch (Error exc)
-        {
+        } catch (Error exc) {
             Log.getLogger(LogCategories.MESSAGE_GENERAL).error(
-                 "Error when invoking service: " +
-                 (service == null ? "(none)" : service.getId()) +
-                 StringUtils.NEWLINE +
-                 "  with message: " + message + StringUtils.NEWLINE +
-                 ExceptionUtil.exceptionFollowedByRootCausesToString(exc) + StringUtils.NEWLINE);
+                    "Error when invoking service: " +
+                            (service == null ? "(none)" : service.getId()) +
+                            StringUtils.NEWLINE +
+                            "  with message: " + message + StringUtils.NEWLINE +
+                            ExceptionUtil.exceptionFollowedByRootCausesToString(exc) + StringUtils.NEWLINE);
 
             throw exc;
         }
@@ -1540,8 +1380,7 @@ public class MessageBroker extends ManageableComponent
     }
 
 
-    public AsyncMessage routeCommandToService(CommandMessage command, Endpoint endpoint)
-    {
+    public AsyncMessage routeCommandToService(CommandMessage command, Endpoint endpoint) {
         // Make sure command has a messageId
         checkMessageId(command);
 
@@ -1556,55 +1395,43 @@ public class MessageBroker extends ManageableComponent
 
         // Forward login and logout commands to AuthenticationService
         int operation = command.getOperation();
-        if (operation == CommandMessage.LOGIN_OPERATION || operation == CommandMessage.LOGOUT_OPERATION)
-        {
+        if (operation == CommandMessage.LOGIN_OPERATION || operation == CommandMessage.LOGOUT_OPERATION) {
             serviceId = AUTHENTICATION_SERVICE_ID;
             recreateHttpFlexSessionAfterLogin = securitySettings.isRecreateHttpSessionAfterLogin()
-                &&  operation == CommandMessage.LOGIN_OPERATION && FlexContext.getFlexSession() instanceof HttpFlexSession;
-        }
-        else
-        {
-            serviceId = destId != null? destinationToService.get(destId) : null;
+                    && operation == CommandMessage.LOGIN_OPERATION && FlexContext.getFlexSession() instanceof HttpFlexSession;
+        } else {
+            serviceId = destId != null ? destinationToService.get(destId) : null;
         }
 
-        service = serviceId != null? services.get(serviceId) : null;
-        if (service != null)
-        {
+        service = serviceId != null ? services.get(serviceId) : null;
+        if (service != null) {
             // Before passing the message to the service, need to check
             // the security constraints.
             Destination destination = service.getDestination(destId);
             if (destination != null)
                 inspectOperation(command, destination);
 
-            try
-            {
+            try {
                 extractRemoteCredentials(service, command);
                 commandResult = service.serviceCommand(command);
                 serviced = true;
-            }
-            catch (UnsupportedOperationException e)
-            {
+            } catch (UnsupportedOperationException e) {
                 ServiceException se = new ServiceException();
-                se.setMessage(ERR_MSG_SERVICE_CMD_NOT_SUPPORTED, new Object[] {service.getClass().getName()});
+                se.setMessage(ERR_MSG_SERVICE_CMD_NOT_SUPPORTED, new Object[]{service.getClass().getName()});
                 throw se;
-            }
-            catch (SecurityException se)
-            {
+            } catch (SecurityException se) {
                 // when a LOGIN message causes a security exception, we want to continue processing here
                 // to allow metadata to be sent to clients communicating with runtime destinations.
                 // The result will be an error message with a login fault message as well as the metadata
-                if (AUTHENTICATION_SERVICE_ID.equals(serviceId))
-                {
+                if (AUTHENTICATION_SERVICE_ID.equals(serviceId)) {
                     commandResult = se.createErrorMessage();
                     if (Log.isDebug())
                         Log.getLogger(LOG_CATEGORY).debug("Security error for message: " +
                                 se.toString() + StringUtils.NEWLINE +
-                             "  incomingMessage: " + command + StringUtils.NEWLINE +
-                             "  errorReply: " + commandResult);
+                                "  incomingMessage: " + command + StringUtils.NEWLINE +
+                                "  errorReply: " + commandResult);
                     serviced = true;
-                }
-                else
-                {
+                } else {
                     throw se;
                 }
             }
@@ -1613,16 +1440,11 @@ public class MessageBroker extends ManageableComponent
         if (recreateHttpFlexSessionAfterLogin)
             recreateHttpFlexSessionAfterLogin();
 
-        if (commandResult == null)
-        {
+        if (commandResult == null) {
             replyMessage = new AcknowledgeMessage();
-        }
-        else if (commandResult instanceof AsyncMessage)
-        {
-            replyMessage = (AsyncMessage)commandResult;
-        }
-        else
-        {
+        } else if (commandResult instanceof AsyncMessage) {
+            replyMessage = (AsyncMessage) commandResult;
+        } else {
             replyMessage = new AcknowledgeMessage();
             replyMessage.setBody(commandResult);
         }
@@ -1630,15 +1452,13 @@ public class MessageBroker extends ManageableComponent
         // Update the replyMessage body with server configuration if the
         // operation is ping or login and make sure to return the FlexClient Id value.
         if (command.getOperation() == CommandMessage.CLIENT_PING_OPERATION
-                || command.getOperation() == CommandMessage.LOGIN_OPERATION)
-        {
+                || command.getOperation() == CommandMessage.LOGIN_OPERATION) {
             boolean needsConfig = false;
             if (command.getHeader(CommandMessage.NEEDS_CONFIG_HEADER) != null)
-                needsConfig = ((Boolean)(command.getHeader(CommandMessage.NEEDS_CONFIG_HEADER)));
+                needsConfig = ((Boolean) (command.getHeader(CommandMessage.NEEDS_CONFIG_HEADER)));
 
             // Send configuration information only if the client requested.
-            if (needsConfig)
-            {
+            if (needsConfig) {
                 ConfigMap serverConfig = describeServices(endpoint);
                 if (serverConfig.size() > 0)
                     replyMessage.setBody(serverConfig);
@@ -1653,9 +1473,7 @@ public class MessageBroker extends ManageableComponent
             FlexClient flexClient = FlexContext.getFlexClient();
             if (flexClient != null)
                 replyMessage.setHeader(Message.FLEX_CLIENT_ID_HEADER, flexClient.getId());
-        }
-        else if (!serviced)
-        {
+        } else if (!serviced) {
             MessageException lme = new MessageException();
             // The supplied destination id is not registered with any service..
             lme.setMessage(ERR_MSG_NO_SERVICE_FOR_DEST);
@@ -1664,18 +1482,17 @@ public class MessageBroker extends ManageableComponent
 
         replyMessage.setCorrelationId(command.getMessageId());
         replyMessage.setClientId(command.getClientId());
-        if (replyMessage.getBody() instanceof java.util.List)
-        {
+        if (replyMessage.getBody() instanceof java.util.List) {
             replyMessage.setBody(((List) replyMessage.getBody()).toArray());
         }
 
         if (Log.isDebug())
             Log.getLogger(getLogCategory(command)).debug(
-                 "Executed command: " +
-                 (service == null ? "(default service)" : "service=" +
-                                                          service.getId()) + StringUtils.NEWLINE +
-                                                                           "  commandMessage: " + command + StringUtils.NEWLINE +
-                                                                           "  replyMessage: " + replyMessage + StringUtils.NEWLINE);
+                    "Executed command: " +
+                            (service == null ? "(default service)" : "service=" +
+                                    service.getId()) + StringUtils.NEWLINE +
+                            "  commandMessage: " + command + StringUtils.NEWLINE +
+                            "  replyMessage: " + replyMessage + StringUtils.NEWLINE);
 
         return replyMessage;
     }
@@ -1684,11 +1501,10 @@ public class MessageBroker extends ManageableComponent
      * Services call this method in order to send a message
      * to a FlexClient.
      *
-     * @param message the message
+     * @param message       the message
      * @param messageClient the message client the message should be sent to
      */
-    public void routeMessageToMessageClient(Message message, MessageClient messageClient)
-    {
+    public void routeMessageToMessageClient(Message message, MessageClient messageClient) {
         // Make sure message has a messageId
         checkMessageId(message);
 
@@ -1702,11 +1518,9 @@ public class MessageBroker extends ManageableComponent
         FlexClient pushFlexClient = messageClient.getFlexClient();
         FlexContext.setThreadLocalFlexClient(pushFlexClient);
         FlexContext.setThreadLocalSession(null); // Null because we don't have a currently active endpoint for the push client.
-        try
-        {
+        try {
             pushFlexClient.push(message, messageClient);
-        }
-        finally // Reset thread locals.
+        } finally // Reset thread locals.
         {
             FlexContext.setThreadLocalFlexClient(requestFlexClient);
             FlexContext.setThreadLocalSession(requestFlexSession);
@@ -1714,30 +1528,26 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     *
      * Check that the destination permits access over the endpoint, the security
      * constraint of the destination permits the operation, and the service and
      * the destination the message is targeting are running,
      *
-     * @param message The incoming message.
+     * @param message     The incoming message.
      * @param destination The destination to check against.
      */
-    public void inspectOperation(Message message, Destination destination)
-    {
+    public void inspectOperation(Message message, Destination destination) {
         inspectChannel(message, destination);
         loginManager.checkConstraint(destination.getSecurityConstraint());
 
         Service service = destination.getService();
-        if (!service.isStarted())
-        {
+        if (!service.isStarted()) {
             // {0} ''{1}'' cannot service message ''{2}'' in stopped state.
             MessageException me = new MessageException();
             me.setMessage(ERR_MSG_CANNOT_SERVICE_STOPPED, new Object[]{SERVICE, service.getId(), message.getMessageId()});
             throw me;
         }
 
-        if (!destination.isStarted())
-        {
+        if (!destination.isStarted()) {
             // {0} ''{1}'' cannot service message ''{2}'' in stopped state.
             MessageException me = new MessageException();
             me.setMessage(ERR_MSG_CANNOT_SERVICE_STOPPED, new Object[]{"Destination", destination.getId(), message.getMessageId()});
@@ -1746,37 +1556,32 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     *
      * Verify that this destination permits access over this endpoint.
      *
-     * @param message The incoming message.
+     * @param message     The incoming message.
      * @param destination The destination to check against.
      */
-    public void inspectChannel(Message message, Destination destination)
-    {
+    public void inspectChannel(Message message, Destination destination) {
         if (!enforceEndpointValidation && message.getHeader(Message.VALIDATE_ENDPOINT_HEADER) == null)
             return;
 
-        String messageChannel = (String)message.getHeader(Message.ENDPOINT_HEADER);
-        for (String channelId : destination.getChannels())
-        {
+        String messageChannel = (String) message.getHeader(Message.ENDPOINT_HEADER);
+        for (String channelId : destination.getChannels()) {
             if (channelId.equals(messageChannel))
                 return;
         }
         MessageException lme = new MessageException();
-        lme.setMessage(ERR_MSG_DESTINATION_UNACCESSIBLE, new Object[] {destination.getId(), messageChannel});
+        lme.setMessage(ERR_MSG_DESTINATION_UNACCESSIBLE, new Object[]{destination.getId(), messageChannel});
         throw lme;
     }
 
     /**
-     *
      * Returns the logging category to use for a given message.
      *
      * @param message the message
      * @return the logging category to use for a given message
      */
-    public String getLogCategory(Message message)
-    {
+    public String getLogCategory(Message message) {
         if (message instanceof AbstractMessage)
             return ((AbstractMessage) message).logCategory();
         return LogCategories.MESSAGE_GENERAL;
@@ -1787,39 +1592,32 @@ public class MessageBroker extends ManageableComponent
      *
      * @return <code>ClassLoader</code> the system should use to load user defined classes.
      */
-    public ClassLoader getClassLoader()
-    {
+    public ClassLoader getClassLoader() {
         return classLoader;
     }
 
     /**
-     *
      * Sets the class loader used by the system to load user defined classes.
      *
      * @param classLoader The class loader used by the system to loader user defiend classes.
      */
-    public void setClassLoader(ClassLoader classLoader)
-    {
+    public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
     /**
-     *
      * Used internally by AbstractService to check existence of destination and service id
      * mapping in the destinationToService map.
      *
-     * @param destId the destination id
-     * @param svcId the service id
+     * @param destId         the destination id
+     * @param svcId          the service id
      * @param throwException true if an exception should be thrown if something goes wrong
      * @return True if the destination is already registered.
      */
-    public boolean isDestinationRegistered(String destId, String svcId, boolean throwException)
-    {
+    public boolean isDestinationRegistered(String destId, String svcId, boolean throwException) {
         // Do not allow multiple destinations with the same id across services
-        if (destinationToService.containsKey(destId))
-        {
-            if (throwException)
-            {
+        if (destinationToService.containsKey(destId)) {
+            if (throwException) {
                 // Cannot add destination with id ''{0}'' to service with id ''{1}'' because another service with id ''{2}'' already has a destination with the same id.
                 ConfigurationException ex = new ConfigurationException();
                 ex.setMessage(ConfigurationConstants.DUPLICATE_DEST_ID, new Object[]{destId, svcId, destinationToService.get(destId)});
@@ -1831,18 +1629,15 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     *
      * Used internally by AbstractService to add destination and service id
      * mapping to destinationToService map.
      *
      * @param destId Destination id.
-     * @param svcId Service id.
+     * @param svcId  Service id.
      */
-    public void registerDestination(String destId, String svcId)
-    {
+    public void registerDestination(String destId, String svcId) {
         // Do not allow multiple destinations with the same id across services
-        if (destinationToService.containsKey(destId))
-        {
+        if (destinationToService.containsKey(destId)) {
             // Cannot add destination with id ''{0}'' to service with id ''{1}'' because another service with id ''{2}'' already has a destination with the same id.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.DUPLICATE_DEST_ID, new Object[]{destId, svcId, destinationToService.get(destId)});
@@ -1852,29 +1647,25 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     *
      * Used internally by AbstractService to remove destination and service id
      * mapping from destinationToService map.
      *
      * @param destId Destination id.
      */
-    public void unregisterDestination(String destId)
-    {
+    public void unregisterDestination(String destId) {
         destinationToService.remove(destId);
     }
 
     /**
-     *
      * Looks up and returns a destination by id; removing the need to know which service
      * a destination is registered for.
      *
      * @param destId Destination id.
      * @return the Destination oblect for the given destination id
      */
-    public Destination getRegisteredDestination(String destId)
-    {
-        String serviceId = destId != null? destinationToService.get(destId) : null;
-        return serviceId != null? getService(serviceId).getDestination(destId) : null;
+    public Destination getRegisteredDestination(String destId) {
+        String serviceId = destId != null ? destinationToService.get(destId) : null;
+        return serviceId != null ? getService(serviceId).getDestination(destId) : null;
     }
 
     /**
@@ -1883,10 +1674,8 @@ public class MessageBroker extends ManageableComponent
      *
      * @param attributeId Attribute id for the session or application-scoped object.
      */
-    public void incrementAttributeIdRefCount(String attributeId)
-    {
-        synchronized (attributeIdRefCounts)
-        {
+    public void incrementAttributeIdRefCount(String attributeId) {
+        synchronized (attributeIdRefCounts) {
             Integer currentCount = attributeIdRefCounts.get(attributeId);
             if (currentCount == null)
                 attributeIdRefCounts.put(attributeId, INTEGER_ONE);
@@ -1902,15 +1691,13 @@ public class MessageBroker extends ManageableComponent
      * @param attributeId Attribute id for the session or application-scoped object.
      * @return in the attribute ID ref count after decrement
      */
-    public int decrementAttributeIdRefCount(String attributeId)
-    {
-        synchronized (attributeIdRefCounts)
-        {
+    public int decrementAttributeIdRefCount(String attributeId) {
+        synchronized (attributeIdRefCounts) {
             Integer currentCount = attributeIdRefCounts.get(attributeId);
             if (currentCount == null)
                 return 0;
 
-            int newValue = currentCount -1 ;
+            int newValue = currentCount - 1;
             attributeIdRefCounts.put(attributeId, newValue);
             return newValue;
         }
@@ -1924,15 +1711,12 @@ public class MessageBroker extends ManageableComponent
     //--------------------------------------------------------------------------
 
     /**
-     *
      * Utility method to make sure that message has an assigned messageId.
      *
      * @param message the message that should be checked
      */
-    protected void checkMessageId(Message message)
-    {
-        if (message.getMessageId() == null)
-        {
+    protected void checkMessageId(Message message) {
+        if (message.getMessageId() == null) {
             MessageException lme = new MessageException();
             lme.setMessage(ERR_MSG_NULL_MESSAGE_ID);
             throw lme;
@@ -1940,23 +1724,20 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     *
      * Check the headers for the message for the RemoteCredentials.
      *
      * @param service the service
      * @param message the message
      */
-    protected void extractRemoteCredentials(Service service, Message message)
-    {
+    protected void extractRemoteCredentials(Service service, Message message) {
         if (!message.headerExists(Message.REMOTE_CREDENTIALS_HEADER))
             return;
 
         boolean setting = false;
         String username = null;
         String credentials = null;
-        if (message.getHeader(Message.REMOTE_CREDENTIALS_HEADER) instanceof String)
-        {
-            String encoded = (String)message.getHeader(Message.REMOTE_CREDENTIALS_HEADER);
+        if (message.getHeader(Message.REMOTE_CREDENTIALS_HEADER) instanceof String) {
+            String encoded = (String) message.getHeader(Message.REMOTE_CREDENTIALS_HEADER);
             if (encoded.length() > 0) //empty string is clearing the credentials
             {
                 setting = true;
@@ -1965,79 +1746,62 @@ public class MessageBroker extends ManageableComponent
                 byte[] decodedBytes = decoder.drain();
                 String decoded;
 
-                String charset = (String)message.getHeader(Message.REMOTE_CREDENTIALS_CHARSET_HEADER);
-                if (charset != null)
-                {
-                    try
-                    {
+                String charset = (String) message.getHeader(Message.REMOTE_CREDENTIALS_CHARSET_HEADER);
+                if (charset != null) {
+                    try {
                         decoded = new String(decodedBytes, charset);
-                    }
-                    catch (UnsupportedEncodingException ex)
-                    {
+                    } catch (UnsupportedEncodingException ex) {
                         MessageException lme = new MessageException();
                         lme.setMessage(ERR_MSG_UNKNOWN_REMOTE_CREDENTIALS_FORMAT);
                         throw lme;
                     }
-                }
-                else
-                {
+                } else {
                     decoded = new String(decodedBytes);
                 }
 
                 int colon = decoded.indexOf(':');
-                if (colon > 0 && colon < decoded.length() - 1)
-                {
+                if (colon > 0 && colon < decoded.length() - 1) {
                     username = decoded.substring(0, colon);
                     credentials = decoded.substring(colon + 1);
                 }
             }
-        }
-        else
-        {
+        } else {
             MessageException lme = new MessageException();
             lme.setMessage(ERR_MSG_UNKNOWN_REMOTE_CREDENTIALS_FORMAT);
             throw lme;
         }
 
-        if (setting)
-        {
+        if (setting) {
             FlexContext.getFlexSession().putRemoteCredentials(
                     new FlexRemoteCredentials(service.getId(),
                             message.getDestination(), username, credentials));
-        }
-        else
-        {
+        } else {
             FlexContext.getFlexSession().clearRemoteCredentials(service.getId(),
                     message.getDestination());
         }
     }
 
     @Override
-    protected String getLogCategory()
-    {
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
 
-    public void setServletContext(ServletContext servletContext)
-    {
+    public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
 
     /**
-     *
      * This method was added so that Spring-BlazeDS Integration 1.0.2 works with latest BlazeDS binaries
      * Internally, this method simply invokes the setServletContext(...) method
      *
      * @param servletContext ServletContext that should be set.
      */
-    protected void setInitServletContext(ServletContext servletContext)
-    {
+    protected void setInitServletContext(ServletContext servletContext) {
         setServletContext(servletContext);
     }
 
-    protected void recreateHttpFlexSessionAfterLogin()
-    {
+    protected void recreateHttpFlexSessionAfterLogin() {
         FlexSession currentHttpFlexSession = FlexContext.getFlexSession();
         Principal principal = currentHttpFlexSession.getUserPrincipal();
         currentHttpFlexSession.invalidate(); // This will recreate a new session.
@@ -2048,14 +1812,10 @@ public class MessageBroker extends ManageableComponent
 
     /**
      * Start all of the broker's endpoints.
-     *
-     *
      */
-    protected void startEndpoints()
-    {
-        for (Endpoint endpoint : endpoints.values())
-        {
-            if (endpoint instanceof AbstractEndpoint && ((AbstractEndpoint)endpoint).isRemote())
+    protected void startEndpoints() {
+        for (Endpoint endpoint : endpoints.values()) {
+            if (endpoint instanceof AbstractEndpoint && ((AbstractEndpoint) endpoint).isRemote())
                 continue; // Local representation of remote endpoints are not started.
             endpoint.start();
         }
@@ -2064,11 +1824,9 @@ public class MessageBroker extends ManageableComponent
     /**
      * Stop all of the broker's endpoints.
      */
-    protected void stopEndpoints()
-    {
-        for (Endpoint endpoint : endpoints.values())
-        {
-            if (endpoint instanceof AbstractEndpoint && ((AbstractEndpoint)endpoint).isRemote())
+    protected void stopEndpoints() {
+        for (Endpoint endpoint : endpoints.values()) {
+            if (endpoint instanceof AbstractEndpoint && ((AbstractEndpoint) endpoint).isRemote())
                 continue; // Local representation of remote endpoints are not stopped.
             endpoint.stop();
         }
@@ -2083,11 +1841,9 @@ public class MessageBroker extends ManageableComponent
     /**
      *
      */
-    private void checkEndpointUrl(String id, String endpointUrl)
-    {
+    private void checkEndpointUrl(String id, String endpointUrl) {
         // Do not allow endpoints with null url property.
-        if (endpointUrl == null)
-        {
+        if (endpointUrl == null) {
             // Cannot add ''{0}'' with null url to the ''{1}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ERR_MSG_NULL_ENDPOINT_URL, new Object[]{ENDPOINT, MESSAGEBROKER});
@@ -2097,12 +1853,11 @@ public class MessageBroker extends ManageableComponent
         String parsedEndpointURI = ChannelSettings.removeTokens(endpointUrl);
 
         // first check the original URI
-        if (registeredEndpoints.containsKey(parsedEndpointURI))
-        {
-          ConfigurationException ce = new ConfigurationException();
-          ce.setMessage(ERR_MSG_URI_ALREADY_REGISTERED, new Object[] {id, parsedEndpointURI,
-                        registeredEndpoints.get(parsedEndpointURI)});
-          throw ce;
+        if (registeredEndpoints.containsKey(parsedEndpointURI)) {
+            ConfigurationException ce = new ConfigurationException();
+            ce.setMessage(ERR_MSG_URI_ALREADY_REGISTERED, new Object[]{id, parsedEndpointURI,
+                    registeredEndpoints.get(parsedEndpointURI)});
+            throw ce;
         }
 
         // add the original URI to the registered endpoints map
@@ -2110,15 +1865,13 @@ public class MessageBroker extends ManageableComponent
 
         // also need to check the URI without the context root
         int nextSlash = parsedEndpointURI.indexOf('/', 1);
-        if (nextSlash > 0)
-        {
+        if (nextSlash > 0) {
             String parsedEndpointURI2 = parsedEndpointURI.substring(nextSlash);
-            if (registeredEndpoints.containsKey(parsedEndpointURI2))
-            {
+            if (registeredEndpoints.containsKey(parsedEndpointURI2)) {
                 ConfigurationException ce = new ConfigurationException();
-                ce.setMessage(ERR_MSG_URI_ALREADY_REGISTERED, new Object[] {
+                ce.setMessage(ERR_MSG_URI_ALREADY_REGISTERED, new Object[]{
                         parsedEndpointURI2, id,
-                        registeredEndpoints.get(parsedEndpointURI2) });
+                        registeredEndpoints.get(parsedEndpointURI2)});
                 throw ce;
             }
             registeredEndpoints.put(parsedEndpointURI2, id);
@@ -2126,7 +1879,6 @@ public class MessageBroker extends ManageableComponent
     }
 
     /**
-     *
      * Matches the current &quot;servlet + pathinfo&quot; to a list of channels registered
      * in the services configuration file, independent of context root.
      *
@@ -2134,48 +1886,39 @@ public class MessageBroker extends ManageableComponent
      * @param contextPath The web application context root (or empty string for default root)
      * @param endpoint    The endpoint to be matched
      * @return whether the current request matches a registered endpoint URI
-     *
      */
-    private boolean matchEndpoint(String path, String contextPath, Endpoint endpoint)
-    {
+    private boolean matchEndpoint(String path, String contextPath, Endpoint endpoint) {
         boolean match = false;
         String channelEndpoint = endpoint.getParsedUrl(contextPath);
 
-        if (path.endsWith("/"))
-        {
+        if (path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
         }
 
-        if (path.equalsIgnoreCase(channelEndpoint))
-        {
+        if (path.equalsIgnoreCase(channelEndpoint)) {
             match = true;
         }
 
         return match;
     }
 
-    private void registerMessageBroker()
-    {
+    private void registerMessageBroker() {
         String mbid = getId();
 
-        synchronized (messageBrokers)
-        {
-            if (messageBrokers.get(mbid) != null)
-            {
+        synchronized (messageBrokers) {
+            if (messageBrokers.get(mbid) != null) {
                 ConfigurationException ce = new ConfigurationException();
-                ce.setMessage(10137, new Object[] {getId() == null ? "(no value supplied)" : mbid});
+                ce.setMessage(10137, new Object[]{getId() == null ? "(no value supplied)" : mbid});
                 throw ce;
             }
             messageBrokers.put(mbid, this);
         }
     }
 
-    private void unRegisterMessageBroker()
-    {
+    private void unRegisterMessageBroker() {
         String mbid = getId();
 
-        synchronized (messageBrokers)
-        {
+        synchronized (messageBrokers) {
             messageBrokers.remove(mbid);
         }
     }
@@ -2183,16 +1926,12 @@ public class MessageBroker extends ManageableComponent
     /**
      * Start all of the broker's shared servers.
      */
-    private void startServers()
-    {
-        for (Server server : servers.values())
-        {
+    private void startServers() {
+        for (Server server : servers.values()) {
             // Validate that the server is actually referenced by an endpoint; if not, warn.
             boolean serverIsReferenced = false;
-            for (Endpoint endpoint : endpoints.values())
-            {
-                if (endpoint instanceof Endpoint2 && server.equals(((Endpoint2)endpoint).getServer()))
-                {
+            for (Endpoint endpoint : endpoints.values()) {
+                if (endpoint instanceof Endpoint2 && server.equals(((Endpoint2) endpoint).getServer())) {
                     serverIsReferenced = true;
                     break;
                 }
@@ -2208,24 +1947,18 @@ public class MessageBroker extends ManageableComponent
     /**
      * Stop all the broker's shared servers.
      */
-    private void stopServers()
-    {
+    private void stopServers() {
         for (Server server : servers.values())
             server.stop();
     }
 
     /**
      * Start all of the broker's services.
-     *
-     *
      */
-    private void startServices()
-    {
-        for (Service svc : services.values() )
-        {
+    private void startServices() {
+        for (Service svc : services.values()) {
             long timeBeforeStartup = 0;
-            if (Log.isDebug())
-            {
+            if (Log.isDebug()) {
                 timeBeforeStartup = System.currentTimeMillis();
                 Log.getLogger(LOG_CATEGORY_STARTUP_SERVICE).debug("Service with id '{0}' is starting.",
                         new Object[]{svc.getId()});
@@ -2233,8 +1966,7 @@ public class MessageBroker extends ManageableComponent
 
             svc.start();
 
-            if (Log.isDebug())
-            {
+            if (Log.isDebug()) {
                 long timeAfterStartup = System.currentTimeMillis();
                 Long diffMillis = timeAfterStartup - timeBeforeStartup;
                 Log.getLogger(LOG_CATEGORY_STARTUP_SERVICE).debug("Service with id '{0}' is ready (startup time: '{1}' ms)",
@@ -2245,11 +1977,8 @@ public class MessageBroker extends ManageableComponent
 
     /**
      * Stop all of the broker's services.
-     *
-     *
      */
-    private void stopServices()
-    {
+    private void stopServices() {
         for (Service svc : services.values())
             svc.stop();
     }

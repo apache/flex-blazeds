@@ -24,20 +24,17 @@ import javax.jms.Message;
  * by the source.
  *
  * @see flex.messaging.services.messaging.adapters.JMSMessageListener
- *
  */
-public class JMSMessageEvent extends EventObject
-{
+public class JMSMessageEvent extends EventObject {
     private Message message;
 
     /**
      * Create a new JMSMessageEvent with the source and message.
      *
-     * @param source The source of the message.
+     * @param source       The source of the message.
      * @param jmsException The actual JMS message.
      */
-    JMSMessageEvent(JMSConsumer source, javax.jms.Message message)
-    {
+    JMSMessageEvent(JMSConsumer source, javax.jms.Message message) {
         super(source);
         this.message = message;
     }
@@ -47,8 +44,7 @@ public class JMSMessageEvent extends EventObject
      *
      * @return The JMS message of the event.
      */
-    public Message getJMSMessage()
-    {
+    public Message getJMSMessage() {
         return message;
     }
 }

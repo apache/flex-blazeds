@@ -29,17 +29,26 @@ import flex.messaging.config.ConfigMap;
  * create a new component instance.  In some cases, this means you avoid writing
  * glue code for each service you want to expose to flex clients.
  */
-public interface FlexFactory extends FlexConfigurable
-{
-    /** Request scope string. */
+public interface FlexFactory extends FlexConfigurable {
+    /**
+     * Request scope string.
+     */
     String SCOPE_REQUEST = "request";
-    /** Session scope string. */
+    /**
+     * Session scope string.
+     */
     String SCOPE_SESSION = "session";
-    /** Application scope string .*/
+    /**
+     * Application scope string .
+     */
     String SCOPE_APPLICATION = "application";
-    /** Scope string. */
+    /**
+     * Scope string.
+     */
     String SCOPE = "scope";
-    /** Source string. */
+    /**
+     * Source string.
+     */
     String SOURCE = "source";
 
     /**
@@ -52,18 +61,18 @@ public interface FlexFactory extends FlexConfigurable
      * an instance of this object.  If the instance is application
      * scoped, the FactoryInstance may contain a reference to the
      * instance directly.
-     *
+     * <p>
      * Any valid properties used for this configuration
      * must be accessed to avoid warnings about unused configuration
      * elements.  If your factory is only used for application
      * scoped components, you do not need to implement
      * this method as the lookup method itself can be used
      * to validate its configuration.
-     *
+     * <p>
      * The id property is used as a name to help you identify
      * this factory instance for any errors it might generate.
      *
-     * @param id id of the factory
+     * @param id         id of the factory
      * @param properties properties
      * @return a new FactoryInstance instance
      */
@@ -74,7 +83,7 @@ public interface FlexFactory extends FlexConfigurable
      * When Data Services wants an instance of a given factory destination, it calls the
      * FactoryInstance.lookup to retrieve that instance.  That method in turn
      * calls this method by default.
-     *
+     * <p>
      * For simple FlexFactory implementations which do not need to
      * add additional configuration properties or logic to the FactoryInstance class,
      * by implementing this method you can avoid having to add an additional subclass of

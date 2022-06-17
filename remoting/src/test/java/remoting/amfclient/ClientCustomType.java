@@ -20,26 +20,21 @@ package remoting.amfclient;
  * The client side object used by the AMFConnectionIT. There is a corresponding
  * server side object.
  */
-public class ClientCustomType
-{
+public class ClientCustomType {
     private int id;
 
-    public ClientCustomType()
-    {
+    public ClientCustomType() {
     }
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
-    public void setId(int id)
-    {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return "ClientCustomType: " + id;
     }
 }

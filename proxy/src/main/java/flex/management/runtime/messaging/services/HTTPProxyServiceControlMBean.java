@@ -19,7 +19,6 @@ package flex.management.runtime.messaging.services;
 /**
  * Defines the runtime monitoring and management interface for managed HTTP proxy services.
  */
-public interface HTTPProxyServiceControlMBean extends ServiceControlMBean
-{
+public interface HTTPProxyServiceControlMBean extends ServiceControlMBean {
     // Empty
 }

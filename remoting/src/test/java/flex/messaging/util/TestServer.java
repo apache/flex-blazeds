@@ -30,7 +30,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 public class TestServer {
 
     public static void main(String args[]) throws Exception {
-        if(args.length != 1) {
+        if (args.length != 1) {
             throw new Exception("Need exactly two argument containing th path to the configuration " +
                     "followed by the port number the server should use");
         }
@@ -48,7 +48,7 @@ public class TestServer {
         server.setDumpAfterStart(true);
         try {
             server.start();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

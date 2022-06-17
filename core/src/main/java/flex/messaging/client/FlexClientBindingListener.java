@@ -19,19 +19,18 @@ package flex.messaging.client;
 /**
  * Interface to be notified when the implementing object is bound or unbound from the FlexClient.
  */
-public interface FlexClientBindingListener 
-{
+public interface FlexClientBindingListener {
     /**
      * Callback invoked when the object is bound to a FlexClient.
-     * 
+     *
      * @param event The event containing the FlexClient and attribute
      *              information.
      */
     void valueBound(FlexClientBindingEvent event);
-    
+
     /**
      * Callback invoked when the object is unbound from a FlexClient.
-     * 
+     *
      * @param event The event containing the FlexClient and attribute
      *              information.
      */

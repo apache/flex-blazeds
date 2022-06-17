@@ -20,9 +20,9 @@
 <amfx ver="3" xmlns="http://www.macromedia.com/2005/amfx">
     <body>
         <array length="3">
-            <null />
-            <null />
-            <null />
+            <null/>
+            <null/>
+            <null/>
         </array>
     </body>
 </amfx>

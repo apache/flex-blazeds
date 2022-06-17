@@ -23,22 +23,18 @@ import java.util.Collection;
 /**
  *
  */
-public class ArrayList extends ArrayCollection 
-{
+public class ArrayList extends ArrayCollection {
     private static final long serialVersionUID = -2976024728140087328L;
-    
-    public ArrayList()
-    {
+
+    public ArrayList() {
         super();
     }
 
-    public ArrayList(Collection c)
-    {
+    public ArrayList(Collection c) {
         super(c);
     }
 
-    public ArrayList(int initialCapacity)
-    {
+    public ArrayList(int initialCapacity) {
         super(initialCapacity);
     }
 }

@@ -25,21 +25,17 @@ import java.io.IOException;
  * which contains the message/invocation as well as conextual information
  * about it, following the standard pipe-and-filter design pattern.
  */
-public abstract class AMFFilter
-{
+public abstract class AMFFilter {
     protected AMFFilter next;
 
-    public AMFFilter()
-    {
+    public AMFFilter() {
     }
 
-    public void setNext(AMFFilter next)
-    {
+    public void setNext(AMFFilter next) {
         this.next = next;
     }
 
-    public AMFFilter getNext()
-    {
+    public AMFFilter getNext() {
         return next;
     }
 

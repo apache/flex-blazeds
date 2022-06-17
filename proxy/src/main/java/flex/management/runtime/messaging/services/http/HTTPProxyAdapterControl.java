@@ -21,35 +21,30 @@ import flex.management.runtime.messaging.services.ServiceAdapterControl;
 import flex.messaging.services.http.HTTPProxyAdapter;
 
 /**
- *
  * The <code>HTTPProxyAdapterControl</code> class is the MBean implemenation
  * for monitoring and managing <code>HTTPProxyAdapter</code>s at runtime.
  */
 public class HTTPProxyAdapterControl extends ServiceAdapterControl implements
-        HTTPProxyAdapterControlMBean
-{
+        HTTPProxyAdapterControlMBean {
     private static final String TYPE = "HTTPProxyAdapter";
-    
+
     /**
      * Constructs a <code>HTTPProxyAdapterControl</code>, assigning its id, managed
      * <code>HTTPProxyAdapter</code> and parent MBean.
-     * 
+     *
      * @param serviceAdapter The <code>HTTPProxyAdapter</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent         The parent MBean in the management hierarchy.
      */
-    public HTTPProxyAdapterControl(HTTPProxyAdapter serviceAdapter, BaseControl parent)
-    {
+    public HTTPProxyAdapterControl(HTTPProxyAdapter serviceAdapter, BaseControl parent) {
         super(serviceAdapter, parent);
     }
 
     /**
+     * (non-Javadoc)
      *
-     *
-     *  (non-Javadoc)
      * @see flex.management.BaseControlMBean#getType()
      */
-    public String getType()
-    {
+    public String getType() {
         return TYPE;
     }
 }

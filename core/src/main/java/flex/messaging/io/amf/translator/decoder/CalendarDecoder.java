@@ -24,40 +24,29 @@ import java.util.Date;
  * java.lang.Number to instances of java.util.Calendar. If the incoming
  * object was not a Calendar, we create a new Calendar instance using the
  * default timezone and locale.
- *
+ * <p>
  * If the incoming type was an AMF 3 Date we remember the translation
  * to Calendar in our list of known objects as Dates are considered
  * complex objects and can be sent by reference. We want to retain
  * pointers to Date instances in our representation of an ActionScript
  * object graph.
- *
- *
  */
-public class CalendarDecoder extends ActionScriptDecoder
-{
-    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass)
-    {
+public class CalendarDecoder extends ActionScriptDecoder {
+    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass) {
         Object result = null;
 
-        if (encodedObject instanceof Date)
-        {
+        if (encodedObject instanceof Date) {
             Calendar calendar = Calendar.getInstance();
-            calendar.setTime((Date)encodedObject);
+            calendar.setTime((Date) encodedObject);
             result = calendar;
-        }
-        else if (encodedObject instanceof Calendar)
-        {
+        } else if (encodedObject instanceof Calendar) {
             result = encodedObject;
-        }
-        else if (encodedObject instanceof Number)
-        {
+        } else if (encodedObject instanceof Number) {
             Calendar calendar = Calendar.getInstance();
-            Number number = (Number)encodedObject;
+            Number number = (Number) encodedObject;
             calendar.setTimeInMillis(number.longValue());
             result = calendar;
-        }
-        else
-        {
+        } else {
             DecoderFactory.invalidType(encodedObject, desiredClass);
         }
 

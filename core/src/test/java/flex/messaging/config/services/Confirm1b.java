@@ -24,12 +24,10 @@ import flex.messaging.config.AdapterSettings;
 import flex.messaging.config.ChannelSettings;
 import flex.messaging.LocalizedException;
 
-public class Confirm1b extends ConfigurationConfirmation
-{
+public class Confirm1b extends ConfigurationConfirmation {
     private MessagingConfiguration EXPECTED_VALUE;
 
-    public Confirm1b()
-    {
+    public Confirm1b() {
         MessagingConfiguration config = new MessagingConfiguration();
 
         // Channels
@@ -74,13 +72,11 @@ public class Confirm1b extends ConfigurationConfirmation
         EXPECTED_VALUE = config;
     }
 
-    public MessagingConfiguration getExpectedConfiguration()
-    {
+    public MessagingConfiguration getExpectedConfiguration() {
         return EXPECTED_VALUE;
     }
 
-    public LocalizedException getExpectedException()
-    {
+    public LocalizedException getExpectedException() {
         return null;
     }
 }

@@ -20,15 +20,13 @@ package flex.messaging;
  * Implementors of <code>FlexFactory</code> should also implement this interface
  * if their factory has custom destruction behavior.
  */
-public interface DestructibleFlexFactory 
-{    
+public interface DestructibleFlexFactory {
     /**
      * This method is called when a component that uses this factory is removed.
      * This method gives the factory a chance to clean up resources that may have
      * been allocated for the component and may now be ready for destruction.
-     * 
-     * @param instanceInfo The FactoryInstance to be destroyed
      *
+     * @param instanceInfo The FactoryInstance to be destroyed
      */
     void destroyFactoryInstance(FactoryInstance instanceInfo);
 }

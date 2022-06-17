@@ -36,7 +36,6 @@ import flex.messaging.util.TimeoutAbstractObject;
 import flex.messaging.util.UUIDUtils;
 
 /**
- *
  * Instances of this class are used by endpoints that support streaming
  * outbound data to connected clients when the client is not polling and
  * the FlexSession representing the connection does not support push directly.
@@ -57,8 +56,7 @@ import flex.messaging.util.UUIDUtils;
  * non-blocking implementation.
  * </p>
  */
-public class EndpointPushNotifier extends TimeoutAbstractObject implements EndpointPushHandler, FlexSessionListener, MessageClientListener
-{
+public class EndpointPushNotifier extends TimeoutAbstractObject implements EndpointPushHandler, FlexSessionListener, MessageClientListener {
     //--------------------------------------------------------------------------
     //
     // Constructor
@@ -68,11 +66,10 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
     /**
      * Constructs a PushNotifier instance.
      *
-     * @param endpoint The endpoint that will use this notifier.
+     * @param endpoint   The endpoint that will use this notifier.
      * @param flexClient The FlexClient that will use this notifier.
      */
-    public EndpointPushNotifier(Endpoint endpoint, FlexClient flexClient)
-    {
+    public EndpointPushNotifier(Endpoint endpoint, FlexClient flexClient) {
         notifierId = UUIDUtils.createUUID(false /* doesn't need to be secure */);
         this.endpoint = endpoint;
         this.flexClient = flexClient;
@@ -80,8 +77,8 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
         flexSession = FlexContext.getFlexSession();
         if (flexSession != null)
             flexSession.addSessionDestroyedListener(this);
-        invalidateMessageClientOnStreamingClose = (endpoint instanceof BaseStreamingHTTPEndpoint)?
-                ((BaseStreamingHTTPEndpoint)endpoint).isInvalidateMessageClientOnStreamingClose() : false;
+        invalidateMessageClientOnStreamingClose = (endpoint instanceof BaseStreamingHTTPEndpoint) ?
+                ((BaseStreamingHTTPEndpoint) endpoint).isInvalidateMessageClientOnStreamingClose() : false;
         updateLastUse(); // Initialize last use timestamp to construct time.
     }
 
@@ -184,8 +181,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      * Does not attempt to notify the client Channel of the disconnect thereby allowing
      * automatic reconnect processing to run.
      */
-    public void close()
-    {
+    public void close() {
         close(false);
     }
 
@@ -198,10 +194,8 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      * @param disconnectChannel True to attempt to notify the client Channel of the disconnect
      *                          and suppress automatic reconnect processing.
      */
-    public void close(boolean disconnectChannel)
-    {
-        synchronized (lock)
-        {
+    public void close(boolean disconnectChannel) {
+        synchronized (lock) {
             if (closed || closing)
                 return;
 
@@ -217,8 +211,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
         flexClient.unregisterEndpointPushHandler(this, endpoint.getId());
 
         // Push a disconnect command down to the client to suppress automatic reconnect.
-        if (disconnectChannel)
-        {
+        if (disconnectChannel) {
             ArrayList<AsyncMessage> list = new ArrayList<AsyncMessage>(1);
             CommandMessage disconnect = new CommandMessage(CommandMessage.DISCONNECT_OPERATION);
             list.add(disconnect);
@@ -228,22 +221,19 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
         // Invalidate associated subscriptions; this doesn't attempt to notify the client.
         // Any client subscriptions made over this endpoint will be automatically invalidated
         // on the client when it receives its channel disconnect event.
-        if (invalidateMessageClientOnStreamingClose)
-        {
-            for (Iterator<MessageClient> iter = messageClients.iterator() ; iter.hasNext();)
+        if (invalidateMessageClientOnStreamingClose) {
+            for (Iterator<MessageClient> iter = messageClients.iterator(); iter.hasNext(); )
                 iter.next().invalidate();
         }
 
         // Move to final closed state; after this we need to notify one last time to stream
         // any final messages to the client and allow the endpoint to shut down its streaming
         // connection.
-        synchronized (lock)
-        {
+        synchronized (lock) {
             closed = true;
             closing = false;
         }
-        synchronized (pushNeeded)
-        {
+        synchronized (pushNeeded) {
             pushNeeded.notifyAll();
         }
     }
@@ -257,10 +247,8 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @return The messages to push to the client.
      */
-    public List<AsyncMessage> drainMessages()
-    {
-        synchronized (pushNeeded)
-        {
+    public List<AsyncMessage> drainMessages() {
+        synchronized (pushNeeded) {
             List<AsyncMessage> messagesToPush = messages;
             messages = null;
             return messagesToPush;
@@ -272,8 +260,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @return True if the notifier has closed; otherwise false.
      */
-    public boolean isClosed()
-    {
+    public boolean isClosed() {
         return closed;
     }
 
@@ -282,8 +269,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @return The endpoint using this notifier.
      */
-    public Endpoint getEndpoint()
-    {
+    public Endpoint getEndpoint() {
         return endpoint;
     }
 
@@ -292,8 +278,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @return The idle timeout minutes used by the notifier.
      */
-    public int getIdleTimeoutMinutes()
-    {
+    public int getIdleTimeoutMinutes() {
         return idleTimeoutMinutes;
     }
 
@@ -302,8 +287,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @param idleTimeoutMinutes The idle timeout minutes used by the notifier.
      */
-    public void setIdleTimeoutMinutes(int idleTimeoutMinutes)
-    {
+    public void setIdleTimeoutMinutes(int idleTimeoutMinutes) {
         this.idleTimeoutMinutes = idleTimeoutMinutes;
     }
 
@@ -312,8 +296,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @return The log category used by this notifier.
      */
-    public String getLogCategory()
-    {
+    public String getLogCategory() {
         return logCategory;
     }
 
@@ -323,8 +306,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @param logCategory The log category for the notifier to use.
      */
-    public void setLogCategory(String logCategory)
-    {
+    public void setLogCategory(String logCategory) {
         this.logCategory = logCategory;
     }
 
@@ -333,35 +315,30 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @return The unique id for this notifier.
      */
-    public String getNotifierId()
-    {
+    public String getNotifierId() {
         return notifierId;
     }
 
     /**
-     *
      * Implements TimeoutCapable.
      * Determine the time, in milliseconds, that this object is allowed to idle
      * before having its timeout method invoked.
      */
-    public long getTimeoutPeriod()
-    {
+    public long getTimeoutPeriod() {
         return (idleTimeoutMinutes * 60 * 1000);
     }
 
     /**
      *
      */
-    public void messageClientCreated(MessageClient messageClient)
-    {
+    public void messageClientCreated(MessageClient messageClient) {
         // No-op.
     }
 
     /**
      *
      */
-    public void messageClientDestroyed(MessageClient messageClient)
-    {
+    public void messageClientDestroyed(MessageClient messageClient) {
         unregisterMessageClient(messageClient);
     }
 
@@ -372,12 +349,9 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @param messages The messages to push to the client.
      */
-    public void pushMessages(List messagesToPush)
-    {
-        if (!messagesToPush.isEmpty())
-        {
-            synchronized (pushNeeded)
-            {
+    public void pushMessages(List messagesToPush) {
+        if (!messagesToPush.isEmpty()) {
+            synchronized (pushNeeded) {
                 // Push these straight on through; notify immediately.
                 if (messages == null)
                     messages = messagesToPush;
@@ -397,10 +371,8 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @param messageClient A MessageClient that depends on this notifier.
      */
-    public void registerMessageClient(MessageClient messageClient)
-    {
-        if (messageClient != null)
-        {
+    public void registerMessageClient(MessageClient messageClient) {
+        if (messageClient != null) {
             if (messageClients.addIfAbsent(messageClient))
                 messageClient.addMessageClientDestroyedListener(this);
         }
@@ -412,8 +384,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @param flexSession The newly created FlexSession.
      */
-    public void sessionCreated(FlexSession flexSession)
-    {
+    public void sessionCreated(FlexSession flexSession) {
         // No-op.
     }
 
@@ -423,8 +394,7 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @param flexSession The FlexSession being invalidated.
      */
-    public void sessionDestroyed(FlexSession flexSession)
-    {
+    public void sessionDestroyed(FlexSession flexSession) {
         if (Log.isInfo())
             Log.getLogger(logCategory).info("Endpoint with id '" + endpoint.getId() + "' is closing"
                     + " a streaming connection for the FlexClient with id '" + flexClient.getId() + "'"
@@ -433,12 +403,10 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
     }
 
     /**
-     *
      * Implements TimeoutCapable.
      * Inform the object that it has timed out.
      */
-    public void timeout()
-    {
+    public void timeout() {
         if (Log.isInfo())
             Log.getLogger(logCategory).info("Endpoint with id '" + endpoint.getId() + "' is timing out"
                     + " a streaming connection for the FlexClient with id '" + flexClient.getId() + "'");
@@ -450,10 +418,8 @@ public class EndpointPushNotifier extends TimeoutAbstractObject implements Endpo
      *
      * @param messageClient A MessageClient that depended on this notifier.
      */
-    public void unregisterMessageClient(MessageClient messageClient)
-    {
-        if (messageClient != null)
-        {
+    public void unregisterMessageClient(MessageClient messageClient) {
+        if (messageClient != null) {
             messageClient.removeMessageClientDestroyedListener(this);
             messageClients.remove(messageClient);
         }

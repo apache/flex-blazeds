@@ -24,14 +24,12 @@ import java.util.Iterator;
 /**
  *
  */
-public class ReferenceAwareMapDecoder extends MapDecoder
-{
-    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass)
-    {
+public class ReferenceAwareMapDecoder extends MapDecoder {
+    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass) {
         if (shell == null) return null;
 
-        Map shellMap = (Map)shell;
-        Map encodedMap = (Map)encodedObject;
+        Map shellMap = (Map) shell;
+        Map encodedMap = (Map) encodedObject;
 
         TypeMarshallingContext context = TypeMarshallingContext.getTypeMarshallingContext();
         context.getKnownObjects().put(encodedObject, shell);
@@ -40,13 +38,11 @@ public class ReferenceAwareMapDecoder extends MapDecoder
         Object key = null;
         Object value = null;
         Object decodedValue = null;
-        for (Iterator keys = encodedMap.keySet().iterator(); keys.hasNext();)
-        {
+        for (Iterator keys = encodedMap.keySet().iterator(); keys.hasNext(); ) {
             key = keys.next();
             value = encodedMap.get(key);
 
-            if (value == null)
-            {
+            if (value == null) {
                 shellMap.put(key, null);
                 continue;
             }
@@ -58,18 +54,14 @@ public class ReferenceAwareMapDecoder extends MapDecoder
             if (canUseByReference(value))
                 ref = context.getKnownObjects().get(value);
 
-            if (ref == null)
-            {
+            if (ref == null) {
                 decoder = DecoderFactory.getReferenceAwareDecoder(value, value.getClass());
                 decodedValue = decoder.decodeObject(value, value.getClass());
 
-                if (canUseByReference(decodedValue))
-                {
+                if (canUseByReference(decodedValue)) {
                     context.getKnownObjects().put(value, decodedValue);
                 }
-            }
-            else
-            {
+            } else {
                 decodedValue = ref;
             }
 

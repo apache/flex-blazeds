@@ -24,8 +24,7 @@ import flex.messaging.endpoints.StreamingAMFEndpoint;
  * for monitoring and managing an <code>StreamingAMFEndpoint</code> at runtime.
  */
 public class StreamingAMFEndpointControl extends StreamingEndpointControl implements
-        StreamingAMFEndpointControlMBean
-{
+        StreamingAMFEndpointControlMBean {
     private static final String TYPE = "StreamingAMFEndpoint";
 
     /**
@@ -33,16 +32,16 @@ public class StreamingAMFEndpointControl extends StreamingEndpointControl implem
      * endpoint and parent MBean.
      *
      * @param endpoint The <code>StreamingAMFEndpoint</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent   The parent MBean in the management hierarchy.
      */
-    public StreamingAMFEndpointControl(StreamingAMFEndpoint endpoint, BaseControl parent)
-    {
+    public StreamingAMFEndpointControl(StreamingAMFEndpoint endpoint, BaseControl parent) {
         super(endpoint, parent);
     }
 
-    /** {@inheritDoc} */
-    public String getType()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public String getType() {
         return TYPE;
     }
 }

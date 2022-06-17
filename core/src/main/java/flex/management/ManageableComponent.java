@@ -33,8 +33,7 @@ import flex.messaging.log.Log;
  * in the absence of external synchronization.
  * </p>
  */
-public abstract class ManageableComponent implements Manageable, FlexComponent
-{
+public abstract class ManageableComponent implements Manageable, FlexComponent {
     //--------------------------------------------------------------------------
     //
     // Protected Static Constants
@@ -64,10 +63,9 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      * management interface for this component.
      *
      * @param enableManagement <code>true</code> to enable management, <code>false</code> to disable
-     * management.
+     *                         management.
      */
-    public ManageableComponent(boolean enableManagement)
-    {
+    public ManageableComponent(boolean enableManagement) {
         setManaged(enableManagement);
     }
 
@@ -88,19 +86,19 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
 
     /**
      * (non-JavaDoc)
+     *
      * @see Manageable#getControl()
      */
-    public BaseControl getControl()
-    {
+    public BaseControl getControl() {
         return control;
     }
 
     /**
      * (non-JavaDoc)
+     *
      * @see Manageable#setControl(BaseControl)
      */
-    public void setControl(BaseControl control)
-    {
+    public void setControl(BaseControl control) {
         this.control = control;
     }
 
@@ -118,8 +116,7 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      *
      * @return The id of the <code>ManageableComponent</code>.
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
@@ -129,14 +126,11 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      *
      * @param id The id of the <code>ManageableComponent</code>.
      */
-    public void setId(String id)
-    {
-        if (isStarted())
-        {
+    public void setId(String id) {
+        if (isStarted()) {
             blockAssignmentWhileStarted("id");
         }
-        if (id == null)
-        {
+        if (id == null) {
             // Id of a component cannot be null.
             blockNullAssignment("id");
         }
@@ -154,10 +148,10 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
 
     /**
      * (non-JavaDoc)
+     *
      * @see Manageable#isManaged()
      */
-    public boolean isManaged()
-    {
+    public boolean isManaged() {
         return managed;
     }
 
@@ -168,18 +162,14 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      *
      * @param enableManagement <code>true</code> to enable management, <code>false</code> to disable management.
      */
-    public void setManaged(boolean enableManagement)
-    {
-        if (isStarted() && control != null)
-        {
+    public void setManaged(boolean enableManagement) {
+        if (isStarted() && control != null) {
             blockAssignmentWhileStarted("managed");
         }
-        if (enableManagement && parent != null && !parent.isManaged())
-        {
-            if (Log.isWarn())
-            {
+        if (enableManagement && parent != null && !parent.isManaged()) {
+            if (Log.isWarn()) {
                 Log.getLogger(getLogCategory()).warn("Component: '" + id + "' cannot be managed" +
-                " since its parent is unmanaged.");
+                        " since its parent is unmanaged.");
             }
             return;
         }
@@ -200,8 +190,7 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      *
      * @return The parent of the component.
      */
-    public Manageable getParent()
-    {
+    public Manageable getParent() {
         return parent;
     }
 
@@ -211,21 +200,16 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      *
      * @param parent The parent of the component.
      */
-    public void setParent(Manageable parent)
-    {
-        if (isStarted())
-        {
+    public void setParent(Manageable parent) {
+        if (isStarted()) {
             blockAssignmentWhileStarted("parent");
         }
-        if (parent == null)
-        {
+        if (parent == null) {
             // Parent of a component cannot be null.
             blockNullAssignment("parent");
         }
-        if (!parent.isManaged() && isManaged())
-        {
-            if (Log.isWarn())
-            {
+        if (!parent.isManaged() && isManaged()) {
+            if (Log.isWarn()) {
                 Log.getLogger(getLogCategory()).warn("Component: '" + id + "' cannot be managed" +
                         " since its parent is unmanaged.");
             }
@@ -248,8 +232,7 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      *
      * @return <code>true</code> if the component is started.
      */
-    public boolean isStarted()
-    {
+    public boolean isStarted() {
         return started;
     }
 
@@ -258,13 +241,10 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      *
      * @param started true if the component is started.
      */
-    protected void setStarted(boolean started)
-    {
-        if (this.started != started)
-        {
+    protected void setStarted(boolean started) {
+        if (this.started != started) {
             this.started = started;
-            if (started && control != null)
-            {
+            if (started && control != null) {
                 control.setStartTimestamp(new Date());
             }
         }
@@ -284,8 +264,7 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      *
      * @return <code>true</code> if the component is valid.
      */
-    public boolean isValid()
-    {
+    public boolean isValid() {
         return valid;
     }
 
@@ -294,8 +273,7 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      *
      * @param valid true if the comoponent is valid.
      */
-    protected void setValid(boolean valid)
-    {
+    protected void setValid(boolean valid) {
         this.valid = valid;
     }
 
@@ -323,32 +301,29 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      * id and ignores the properties map argument.
      * Subclasses should call <code>super.initialize()</code>.
      *
-     * @param id Id of the <code>ManageableComponent</code>.
+     * @param id         Id of the <code>ManageableComponent</code>.
      * @param properties Properties for the <code>ManageableComponent</code>.
      */
-    public void initialize(String id, ConfigMap properties)
-    {
+    public void initialize(String id, ConfigMap properties) {
         setId(id);
     }
 
     /**
      * Validates and starts the component.
-     *
+     * <p>
      * Subclasses should call <code>super.start()</code>.
      */
-    public void start()
-    {
+    public void start() {
         validate();
         setStarted(true);
     }
 
     /**
      * Invalidates and stops the component.
-     *
+     * <p>
      * Subclasses should call <code>super.stop()</code>.
      */
-    public void stop()
-    {
+    public void stop() {
         invalidate();
         setStarted(false);
     }
@@ -365,8 +340,7 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      *
      * @param propertyName The name of the property being incorrectly assigned; included in the Exception message.
      */
-    protected void blockAssignmentWhileStarted(String propertyName)
-    {
+    protected void blockAssignmentWhileStarted(String propertyName) {
         ConfigurationException ce = new ConfigurationException();
         ce.setMessage(PROPERTY_CHANGE_AFTER_STARTUP, new Object[]{propertyName});
         throw ce;
@@ -378,8 +352,7 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      *
      * @param propertyName The name of the property being incorrectly assigned.
      */
-    protected void blockNullAssignment(String propertyName)
-    {
+    protected void blockNullAssignment(String propertyName) {
         ConfigurationException ce = new ConfigurationException();
         ce.setMessage(NULL_COMPONENT_PROPERTY, new Object[]{propertyName});
         throw ce;
@@ -390,8 +363,7 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      * This base implementation sets the valid property to false.
      * Subclasses should call <code>super.invalidate()</code>.
      */
-    protected void invalidate()
-    {
+    protected void invalidate() {
         setValid(false);
     }
 
@@ -403,15 +375,12 @@ public abstract class ManageableComponent implements Manageable, FlexComponent
      * If the component is not in a valid, startable state an Exception is thrown.
      * Subclasses should call <code>super.validate()</code>.
      */
-    protected void validate()
-    {
-        if (getId() == null)
-        {
+    protected void validate() {
+        if (getId() == null) {
             // Id of a component cannot be null.
             blockNullAssignment("id");
         }
-        if (getParent() == null)
-        {
+        if (getParent() == null) {
             // Parent of a component cannot be null.
             blockNullAssignment("parent");
         }

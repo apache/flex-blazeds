@@ -22,25 +22,20 @@ import flex.messaging.io.amf.MessageBody;
 import flex.messaging.io.amf.ASObject;
 import flex.messaging.MessageException;
 
-public class Confirm10a extends DeserializationConfirmation
-{
+public class Confirm10a extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm10a()
-    {
+    public Confirm10a() {
     }
 
-    public ActionMessage getExpectedMessage()
-    {
-        if (EXPECTED_VALUE == null)
-        {
+    public ActionMessage getExpectedMessage() {
+        if (EXPECTED_VALUE == null) {
             ActionMessage m = new ActionMessage();
             MessageBody body = new MessageBody();
             m.addBody(body);
 
             Object list = createList(6);
-            for (int i = 0; i < 6; i++)
-            {
+            for (int i = 0; i < 6; i++) {
                 addToList(list, i, new ASObject());
             }
 
@@ -50,8 +45,7 @@ public class Confirm10a extends DeserializationConfirmation
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

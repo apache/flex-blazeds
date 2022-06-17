@@ -30,36 +30,29 @@ import java.util.HashMap;
  * server, since the user would expect this type to be deserialized as a
  * java.util.HashMap as it is...
  */
-public class ObjectProxy extends HashMap implements Externalizable
-{
+public class ObjectProxy extends HashMap implements Externalizable {
     static final long serialVersionUID = 6978936573135117900L;
 
-    public ObjectProxy()
-    {
-       super();
+    public ObjectProxy() {
+        super();
     }
 
-    public ObjectProxy(int initialCapacity)
-    {
+    public ObjectProxy(int initialCapacity) {
         super(initialCapacity);
     }
 
-    public ObjectProxy(int initialCapacity, float loadFactor)
-    {
+    public ObjectProxy(int initialCapacity, float loadFactor) {
         super(initialCapacity, loadFactor);
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
-    {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         Object value = in.readObject();
-        if (value instanceof Map)
-        {
-            putAll((Map)value);
+        if (value instanceof Map) {
+            putAll((Map) value);
         }
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException
-    {
+    public void writeExternal(ObjectOutput out) throws IOException {
         // We can't output "this" to the serializer as it would
         // cause a loop back to writeExternal as this is an Externalizable
         // implementation itself!

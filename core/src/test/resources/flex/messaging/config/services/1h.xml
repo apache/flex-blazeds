@@ -22,15 +22,15 @@
     <services>
 
         <service id="foo-service"
-            class="flex.messaging.services.FooService"
-            messageTypes="flex.messaging.messages.FooMessage">
+                 class="flex.messaging.services.FooService"
+                 messageTypes="flex.messaging.messages.FooMessage">
 
             <adapters>
-                <adapter-definition class="flex.messaging.services.foo.FooAdapter" id="foo" default="true" />
+                <adapter-definition class="flex.messaging.services.foo.FooAdapter" id="foo" default="true"/>
             </adapters>
 
             <default-channels>
-                <channel ref="foo-channel" />
+                <channel ref="foo-channel"/>
             </default-channels>
 
             <destination id="foo-dest" security="error">

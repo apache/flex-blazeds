@@ -21,12 +21,10 @@ import flex.messaging.io.amf.ActionMessage;
 import flex.messaging.io.amf.MessageBody;
 import flex.messaging.MessageException;
 
-public class Confirm3b extends DeserializationConfirmation
-{
+public class Confirm3b extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm3b()
-    {
+    public Confirm3b() {
         ActionMessage m = new ActionMessage();
         MessageBody body = new MessageBody();
         body.setData("Sample Value");
@@ -34,13 +32,11 @@ public class Confirm3b extends DeserializationConfirmation
         EXPECTED_VALUE = m;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

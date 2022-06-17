@@ -23,12 +23,10 @@ import flex.messaging.MessageException;
 
 import java.util.Date;
 
-public class Confirm4a extends DeserializationConfirmation
-{
+public class Confirm4a extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm4a()
-    {
+    public Confirm4a() {
         ActionMessage m = new ActionMessage();
         MessageBody body = new MessageBody();
         m.addBody(body);
@@ -36,13 +34,11 @@ public class Confirm4a extends DeserializationConfirmation
         EXPECTED_VALUE = m;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

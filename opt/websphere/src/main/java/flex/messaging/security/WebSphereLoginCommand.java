@@ -88,27 +88,24 @@ security.provider.2=sun.security.provider.Sun
  * user in the HttpServletRequest for http attempts due to the container
  * not providing a mechanism for access.
  */
-public class WebSphereLoginCommand extends AppServerLoginCommand implements PrincipalConverter
-{
+public class WebSphereLoginCommand extends AppServerLoginCommand implements PrincipalConverter {
 
-    /** {@inheritDoc} */
-    public Principal doAuthentication(String username, Object credentials)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Principal doAuthentication(String username, Object credentials) {
         Principal principal = null;
-        try
-        {
+        try {
             String password = extractPassword(credentials);
 
-            if (password != null)
-            {
+            if (password != null) {
                 ContextManager contextManager = ContextManagerFactory.getInstance();
 
                 Subject subject =
-                    contextManager.login(contextManager.getDefaultRealm(),
-                            username, password);
+                        contextManager.login(contextManager.getDefaultRealm(),
+                                username, password);
 
-                if (subject != null)
-                {
+                if (subject != null) {
                     //setting the caller subject really doesn't apply for long
                     //it appears to be removed later as each call to
                     //ContextManagerFactory.getInstance()
@@ -122,76 +119,65 @@ public class WebSphereLoginCommand extends AppServerLoginCommand implements Prin
                     principal = new WSLCPrincipal(username, contextManager, subject);
                 }
             }
-        }
-        catch (WSLoginFailedException wsLoginFailedException)
-        {
-            if (Log.isDebug())
-            {
-                Log.getLogger(LogCategories.SECURITY).debug("WebSphereLoginCommand#doAuthentication() failed: " + wsLoginFailedException.toString(), wsLoginFailedException); 
+        } catch (WSLoginFailedException wsLoginFailedException) {
+            if (Log.isDebug()) {
+                Log.getLogger(LogCategories.SECURITY).debug("WebSphereLoginCommand#doAuthentication() failed: " + wsLoginFailedException.toString(), wsLoginFailedException);
             }
-        }
-        catch (WSSecurityException wsSecurityException)
-        {
-            if (Log.isDebug())
-            {
-                Log.getLogger(LogCategories.SECURITY).debug("WebSphereLoginCommand#doAuthentication() failed: " + wsSecurityException.toString(), wsSecurityException); 
+        } catch (WSSecurityException wsSecurityException) {
+            if (Log.isDebug()) {
+                Log.getLogger(LogCategories.SECURITY).debug("WebSphereLoginCommand#doAuthentication() failed: " + wsSecurityException.toString(), wsSecurityException);
             }
         }
 
-        if (Log.isDebug()  && principal != null)
-        {
+        if (Log.isDebug() && principal != null) {
             Log.getLogger(LogCategories.SECURITY).debug("WebSphereLoginCommand#doAuthentication(). Principal: " + principal + ", Principal class: " + principal.getClass().getName()
                     + ", Principal identity: " + System.identityHashCode(principal));
         }
-        
+
         return principal;
     }
 
-    /** {@inheritDoc} */
-    public boolean doAuthorization(Principal principal, List roles)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean doAuthorization(Principal principal, List roles) {
         //unfortunately we cannot seem to get the user stored
         //in the context so the request will never have the information
         //that we've assigned, therefore we have to do this
         //every time
-        
+
         if (principal == null)
             return false;
-        
+
         if (Log.isDebug())
             Log.getLogger(LogCategories.SECURITY).debug("WebSphereLoginCommand#doAuthorization(). Principal: " + principal + ", Principal class: " + principal.getClass().getName()
                     + ", Principal identity: " + System.identityHashCode(principal));
-        
+
         if (principal instanceof WSLCPrincipal) // This code path is hit if this login command handled authentication.
         {
-            ContextManager contextManager = ((WSLCPrincipal)principal).getContextManager();
+            ContextManager contextManager = ((WSLCPrincipal) principal).getContextManager();
             UserRegistry registry = contextManager.getRegistry(contextManager.getDefaultRealm());
-            
-            try
-            {
+
+            try {
                 List groups = new ArrayList(registry.getGroupsForUser(principal.getName()));
 
                 groups.retainAll(roles);
-               
+
                 // if authorization succeeds, set the user's Subject on this invocation context
                 // so that the rest of the Thread is executed in the context of the appropriate Subject
                 if (groups.size() > 0)
-                    ContextManagerFactory.getInstance().setCallerSubject(((WSLCPrincipal)principal).getSubject());
+                    ContextManagerFactory.getInstance().setCallerSubject(((WSLCPrincipal) principal).getSubject());
 
                 return groups.size() > 0;
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {
-            }            
-        }
-        else // This code path is hit if this login command didn't handle authentication.
+        } else // This code path is hit if this login command didn't handle authentication.
         {
             // The Principal was not null, meaning we have a WAS Principal in the current HttpServletRequest.
             // Use that for the authorization check.
             HttpServletRequest request = FlexContext.getHttpRequest();
-            for (Iterator iter = roles.iterator(); iter.hasNext(); )
-            {
-                if (request.isUserInRole((String)iter.next()))
+            for (Iterator iter = roles.iterator(); iter.hasNext(); ) {
+                if (request.isUserInRole((String) iter.next()))
                     return true;
             }
         }
@@ -199,75 +185,64 @@ public class WebSphereLoginCommand extends AppServerLoginCommand implements Prin
         return false;
     }
 
-    /** {@inheritDoc} */
-    public boolean logout(Principal principal)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean logout(Principal principal) {
         //as long as credentials are nulled since we can't store
         //the authenticated user there's nothing to do
         return true;
     }
 
-    private class WSLCPrincipal implements Principal
-    {
+    private class WSLCPrincipal implements Principal {
         private String username;
         private ContextManager contextManager;
         private Subject subject;
 
-        public WSLCPrincipal(String username, ContextManager contextManager, Subject subject)
-        {
+        public WSLCPrincipal(String username, ContextManager contextManager, Subject subject) {
             this.username = username;
             this.contextManager = contextManager;
             this.subject = subject;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return username;
         }
 
-        public ContextManager getContextManager()
-        {
+        public ContextManager getContextManager() {
             return contextManager;
         }
-        
-        public Subject getSubject()
-        {
+
+        public Subject getSubject() {
             return subject;
         }
     }
-    
-    /** {@inheritDoc} */
-    public Principal convertPrincipal(Principal principal)
-    {
-        if (principal instanceof WSLCPrincipal)
-        {
+
+    /**
+     * {@inheritDoc}
+     */
+    public Principal convertPrincipal(Principal principal) {
+        if (principal instanceof WSLCPrincipal) {
             // We are good
             return principal;
-        }
-        else
-        {
+        } else {
             // we need the converting
 
             ContextManager contextManager = ContextManagerFactory.getInstance();
 
             Subject subject = null;
-            try
-            {
+            try {
                 subject = contextManager.getCallerSubject();
+            } catch (WSSecurityException e) {
+
             }
-            catch (WSSecurityException e)
-            {
-                
-            }
-            
-            if (subject != null)
-            {
+
+            if (subject != null) {
                 return new WSLCPrincipal(principal.getName(), contextManager, subject);
-            }
-            else
+            } else
                 // Just return the old one
                 return principal;
-            
+
         }
     }
 }

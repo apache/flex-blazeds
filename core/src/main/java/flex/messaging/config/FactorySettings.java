@@ -22,58 +22,44 @@ import flex.messaging.util.ClassUtil;
 /**
  * The factory configuration defines a single factory in the flex
  * configuration file.
- *
- *
  */
-public class FactorySettings extends PropertiesSettings
-{
+public class FactorySettings extends PropertiesSettings {
     protected String id;
     protected String className;
 
-    public FactorySettings(String id, String className)
-    {
+    public FactorySettings(String id, String className) {
         this.id = id;
         this.className = className;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
-    public FlexFactory createFactory()
-    {
+    public FlexFactory createFactory() {
         return createFactory(null);
     }
 
-    public FlexFactory createFactory(ClassLoader cl)
-    {
-        try
-        {
+    public FlexFactory createFactory(ClassLoader cl) {
+        try {
             Class c = ClassUtil.createClass(className, cl);
             Object f = ClassUtil.createDefaultInstance(c, FlexFactory.class);
-            if (f instanceof FlexFactory)
-            {
+            if (f instanceof FlexFactory) {
                 FlexFactory ff = (FlexFactory) f;
                 ff.initialize(getId(), getProperties());
                 return ff;
-            }
-            else
-            {
+            } else {
                 ConfigurationException cx = new ConfigurationException();
-                cx.setMessage(11101, new Object[] { className });
+                cx.setMessage(11101, new Object[]{className});
                 throw cx;
             }
-        }
-        catch (Throwable th)
-        {
+        } catch (Throwable th) {
             ConfigurationException cx = new ConfigurationException();
-            cx.setMessage(11102, new Object[] { className, th.toString() });
+            cx.setMessage(11102, new Object[]{className, th.toString()});
             cx.setRootCause(th);
             throw cx;
         }

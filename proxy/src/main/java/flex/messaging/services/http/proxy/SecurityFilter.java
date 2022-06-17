@@ -29,16 +29,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 
 /**
- *
  * Handles whitelist/access and authentication/authorization system for requests.  Checks URL to make sure we
  * accept it.  Sets credentials if needed on the request.  After the request is made, changes response for
  * security info if needed
  */
-public class SecurityFilter extends ProxyFilter
-{
+public class SecurityFilter extends ProxyFilter {
     // NOTE: any changes to this class should also be made to the corresponding version in the .NET.
     // The corresponding class is in src/dotNet/libs/FlexASPlib/Aspx/Proxy
-    
+
     private static final int EMPTY_ERROR = 10708;
     private static final int ONLY_HTTP_HTTPS = 10712;
     private static final int NO_HTTPS_VIA_HTTP = 10713;
@@ -48,32 +46,27 @@ public class SecurityFilter extends ProxyFilter
     private static final int LOGIN_REQUIRED = 10717;
     private static final int UNAUTHORIZED_ERROR = 10718;
 
-    public void invoke(ProxyContext context)
-    {
+    public void invoke(ProxyContext context) {
         checkURL(context);
         setCredentials(context);
 
-        if (next != null)
-        {
+        if (next != null) {
             next.invoke(context);
         }
 
         sendSecurityInfo(context);
     }
 
-    private void checkURL(ProxyContext context)
-    {
+    private void checkURL(ProxyContext context) {
         Target target = context.getTarget();
 
         // We only allow http type urls
-        if (!context.getTarget().getUrl().getProtocol().equalsIgnoreCase("http") && !target.isHTTPS())
-        {
+        if (!context.getTarget().getUrl().getProtocol().equalsIgnoreCase("http") && !target.isHTTPS()) {
             Log.getLogger(HTTPProxyService.LOG_CATEGORY).warn(ProxyConstants.PROXY_SECURITY + ProxyConstants.ONLY_HTTP_HTTPS);
             throw new ProxyException(ONLY_HTTP_HTTPS);
         }
 
-        if (target.isHTTPS() && !context.isClientHttps())
-        {
+        if (target.isHTTPS() && !context.isClientHttps()) {
             // Respond with error
             Log.getLogger(HTTPProxyService.LOG_CATEGORY).warn(ProxyConstants.PROXY_SECURITY + ProxyConstants.NO_HTTPS_VIA_HTTP);
 
@@ -81,8 +74,7 @@ public class SecurityFilter extends ProxyFilter
         }
     }
 
-    private void setCredentials(ProxyContext context)
-    {
+    private void setCredentials(ProxyContext context) {
         String user = null, password = null;
 
         // Check for credentials in runAs
@@ -91,55 +83,43 @@ public class SecurityFilter extends ProxyFilter
 
         String fromRequest = null;
         HttpServletRequest clientRequest = FlexContext.getHttpRequest();
-        if (clientRequest != null)
-        {
+        if (clientRequest != null) {
             // Check for credentials in parameter/header
             fromRequest = clientRequest.getHeader(ProxyConstants.HEADER_CREDENTIALS);
         }
 
         // We sometimes send the credentials as a URL parameter to work around a player/Opera issue
-        if (fromRequest == null)
-        {
+        if (fromRequest == null) {
             fromRequest = context.getCredentialsHeader();
         }
 
         // Add authentication header for credentials
-        if (fromRequest != null)
-        {
+        if (fromRequest != null) {
             Base64.Decoder decoder = new Base64.Decoder();
             decoder.decode(fromRequest);
             String decoded = new String(decoder.drain());
             int colonIdx = decoded.indexOf(":");
-            if (colonIdx != -1)
-            {
+            if (colonIdx != -1) {
                 user = decoded.substring(0, colonIdx);
             }
             password = decoded.substring(colonIdx + 1);
         }
 
         // Check for existing authentication header
-        if (clientRequest != null)
-        {
+        if (clientRequest != null) {
             Enumeration headers = clientRequest.getHeaders("Authorization");
-            if (headers != null)
-            {
-                while (headers.hasMoreElements())
-                {
-                    String value = (String)headers.nextElement();
+            if (headers != null) {
+                while (headers.hasMoreElements()) {
+                    String value = (String) headers.nextElement();
 
-                    if (value.startsWith("Basic"))
-                    {
-                        if (!context.isLocalDomainAndPort())
-                        {
-                            if (Log.isInfo())
-                            {
+                    if (value.startsWith("Basic")) {
+                        if (!context.isLocalDomainAndPort()) {
+                            if (Log.isInfo()) {
                                 Log.getLogger(HTTPProxyService.LOG_CATEGORY).debug("Not sending on Authentication header. Proxy domain:port of " +
                                         clientRequest.getServerName() + ":" + clientRequest.getServerPort() + " does not match target domain:port of " +
                                         context.getTarget().getUrl().getHost() + ":" + context.getTarget().getUrl().getPort());
                             }
-                        }
-                        else
-                        {
+                        } else {
                             // Super gross hack to work around what appears to be an commons-httpclient bug
                             // where headers are not resent after a 302.
                             Base64.Decoder decoder = new Base64.Decoder();
@@ -156,22 +136,19 @@ public class SecurityFilter extends ProxyFilter
         }
 
         // Set up request for authentication
-        if (user != null)
-        {
+        if (user != null) {
             UsernamePasswordCredentials cred = new UsernamePasswordCredentials(user, password);
 
             context.getHttpClient().getState().setCredentials(ProxyUtil.getDefaultAuthScope(), cred);
             context.setAuthorization(true);
 
-            if (Log.isInfo())
-            {
+            if (Log.isInfo()) {
                 Log.getLogger(HTTPProxyService.LOG_CATEGORY).info("-- Authentication header being sent for " + user);
             }
         }
     }
 
-    private void sendSecurityInfo(ProxyContext context)
-    {
+    private void sendSecurityInfo(ProxyContext context) {
         Target target = context.getTarget();
         String targetHost = target.getUrl().getHost();
 
@@ -180,68 +157,51 @@ public class SecurityFilter extends ProxyFilter
         boolean customAuth = target.useCustomAuthentication();
 
         StatusLine statusLine = context.getHttpMethod().getStatusLine();
-        if (statusLine != null)
-        {
+        if (statusLine != null) {
             statusCode = statusLine.getStatusCode();
         }
 
         context.setStatusCode(statusCode);
 
-        if (statusCode == 401 || statusCode == 403)
-        {
-            if (!customAuth)
-            {
-                if (!context.isHttpRequest())
-                {
+        if (statusCode == 401 || statusCode == 403) {
+            if (!customAuth) {
+                if (!context.isHttpRequest()) {
                     throw new ProxyException(NO_BASIC_NOT_HTTP);
-                }
-                else if (context.isSoapRequest())
-                {
+                } else if (context.isSoapRequest()) {
                     // Note: if we remove this error, must do the proxyDomain/targetHost check as done above
                     throw new ProxyException(NO_BASIC_FOR_SOAP);
-                }
-                else
-                {
+                } else {
                     // Don't allow a 401 (and 403, although this should never happen) to be sent to the client
                     // if the service is not using custom authentication and the domains do not match
 
-                    if (!context.isLocalDomainAndPort())
-                    {
+                    if (!context.isLocalDomainAndPort()) {
                         HttpServletRequest clientRequest = FlexContext.getHttpRequest();
 
                         String errorMessage = ProxyConstants.DOMAIN_ERROR + " . The proxy domain:port is " +
-                                clientRequest.getServerName() + ":" + clientRequest.getServerPort() + 
+                                clientRequest.getServerName() + ":" + clientRequest.getServerPort() +
                                 " and the target domain:port is " + targetHost + ":" + target.getUrl().getPort();
 
                         Log.getLogger(HTTPProxyService.LOG_CATEGORY).error(errorMessage);
 
                         throw new ProxyException(DOMAIN_ERROR);
-                    }
-                    else
-                    {
+                    } else {
                         //For BASIC Auth, send back the status code
                         HttpServletResponse clientResponse = FlexContext.getHttpResponse();
                         clientResponse.setStatus(statusCode);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 String message = null;
                 if (statusLine != null)
                     message = statusLine.toString();
 
-                if (statusCode == 401)
-                {
+                if (statusCode == 401) {
                     ProxyException se = new ProxyException();
                     se.setCode("Client.Authentication");
-                    if (message == null)
-                    {
+                    if (message == null) {
                         se.setMessage(LOGIN_REQUIRED);
-                    }
-                    else
-                    {
-                        se.setMessage(EMPTY_ERROR, new Object[] { message });
+                    } else {
+                        se.setMessage(EMPTY_ERROR, new Object[]{message});
                     }
 
 
@@ -249,18 +209,13 @@ public class SecurityFilter extends ProxyFilter
                     if (header != null)
                         se.setDetails(header.getValue());
                     throw se;
-                }
-                else
-                {
+                } else {
                     ProxyException se = new ProxyException();
                     se.setCode("Client.Authentication");
-                    if (message == null)
-                    {
+                    if (message == null) {
                         se.setMessage(UNAUTHORIZED_ERROR);
-                    }
-                    else
-                    {
-                        se.setMessage(EMPTY_ERROR, new Object[] { message });
+                    } else {
+                        se.setMessage(EMPTY_ERROR, new Object[]{message});
                     }
                     throw se;
                 }

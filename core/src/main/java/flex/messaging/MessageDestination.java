@@ -39,11 +39,12 @@ import flex.messaging.util.ClassUtil;
 /**
  * A logical reference to a MessageDestination.
  */
-public class MessageDestination extends FactoryDestination
-{
+public class MessageDestination extends FactoryDestination {
     static final long serialVersionUID = -2016911808141319012L;
 
-    /** Log category for <code>MessageDestination</code>.*/
+    /**
+     * Log category for <code>MessageDestination</code>.
+     */
     public static final String LOG_CATEGORY = LogCategories.SERVICE_MESSAGE;
 
     // Errors
@@ -68,8 +69,7 @@ public class MessageDestination extends FactoryDestination
     /**
      * Constructs an unmanaged <code>MessageDestination</code> instance.
      */
-    public MessageDestination()
-    {
+    public MessageDestination() {
         this(false);
     }
 
@@ -77,10 +77,9 @@ public class MessageDestination extends FactoryDestination
      * Constructs a <code>MessageDestination</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>MessageDestination</code>
-     * is manageable; otherwise <code>false</code>.
+     *                         is manageable; otherwise <code>false</code>.
      */
-    public MessageDestination(boolean enableManagement)
-    {
+    public MessageDestination(boolean enableManagement) {
         super(enableManagement);
 
         serverSettings = new ServerSettings();
@@ -100,12 +99,11 @@ public class MessageDestination extends FactoryDestination
      * Initializes the <code>MessageDestination</code> with the properties.
      * If subclasses override, they must call <code>super.initialize()</code>.
      *
-     * @param id The id of the destination.
+     * @param id         The id of the destination.
      * @param properties Properties for the <code>MessageDestination</code>.
      */
     @Override
-    public void initialize(String id, ConfigMap properties)
-    {
+    public void initialize(String id, ConfigMap properties) {
         super.initialize(id, properties);
 
         if (properties == null || properties.size() == 0)
@@ -122,14 +120,11 @@ public class MessageDestination extends FactoryDestination
      * Sets up the throttle manager before it starts.
      */
     @Override
-    public void start()
-    {
+    public void start() {
         // Create the throttle manager, only if needed.
-        if (networkSettings.getThrottleSettings() != null)
-        {
+        if (networkSettings.getThrottleSettings() != null) {
             ThrottleSettings settings = networkSettings.getThrottleSettings();
-            if (settings.isClientThrottleEnabled() || settings.isDestinationThrottleEnabled())
-            {
+            if (settings.isClientThrottleEnabled() || settings.isDestinationThrottleEnabled()) {
                 settings.setDestinationName(getId());
                 throttleManager = createThrottleManager();
                 throttleManager.setThrottleSettings(settings);
@@ -144,10 +139,8 @@ public class MessageDestination extends FactoryDestination
      * then calls super class's stop.
      */
     @Override
-    public void stop()
-    {
-        if (isStarted())
-        {
+    public void stop() {
+        if (isStarted()) {
             subscriptionManager.stop();
             remoteSubscriptionManager.stop();
             if (throttleManager != null)
@@ -168,13 +161,11 @@ public class MessageDestination extends FactoryDestination
      * @param networkSettings The <code>NetworkSettings</code> of the <code>MessageDestination</code>
      */
     @Override
-    public void setNetworkSettings(NetworkSettings networkSettings)
-    {
+    public void setNetworkSettings(NetworkSettings networkSettings) {
         super.setNetworkSettings(networkSettings);
 
         // Set the subscription manager settings if needed.
-        if (networkSettings.getSubscriptionTimeoutMinutes() > 0)
-        {
+        if (networkSettings.getSubscriptionTimeoutMinutes() > 0) {
             long subscriptionTimeoutMillis = networkSettings.getSubscriptionTimeoutMinutes() * 60L * 1000L; // Convert to millis.
             subscriptionManager.setSubscriptionTimeoutMillis(subscriptionTimeoutMillis);
         }
@@ -185,8 +176,7 @@ public class MessageDestination extends FactoryDestination
      *
      * @return The <code>ServerSettings</code> of the <code>MessageDestination</code>.
      */
-    public ServerSettings getServerSettings()
-    {
+    public ServerSettings getServerSettings() {
         return serverSettings;
     }
 
@@ -195,8 +185,7 @@ public class MessageDestination extends FactoryDestination
      *
      * @param serverSettings The <code>ServerSettings</code> of the <code>MessageDestination</code>
      */
-    public void setServerSettings(ServerSettings serverSettings)
-    {
+    public void setServerSettings(ServerSettings serverSettings) {
         this.serverSettings = serverSettings;
     }
 
@@ -207,9 +196,8 @@ public class MessageDestination extends FactoryDestination
      * @param service The <code>Service</code> managing this <code>Destination</code>.
      */
     @Override
-    public void setService(Service service)
-    {
-        MessageService messageService = (MessageService)service;
+    public void setService(Service service) {
+        MessageService messageService = (MessageService) service;
         super.setService(messageService);
     }
 
@@ -220,7 +208,6 @@ public class MessageDestination extends FactoryDestination
     //--------------------------------------------------------------------------
 
     /**
-     *
      * Returns a <tt>ConfigMap</tt> of destination properties that the client
      * needs. This includes properties from <code>super{@link #describeDestination(boolean)}</code>
      * and it also includes outbound throttling policy that the edge server might need.
@@ -229,8 +216,7 @@ public class MessageDestination extends FactoryDestination
      * @return A <tt>ConfigMap</tt> of destination properties that the client needs.
      */
     @Override
-    public ConfigMap describeDestination(boolean onlyReliable)
-    {
+    public ConfigMap describeDestination(boolean onlyReliable) {
         ConfigMap destinationConfig = super.describeDestination(onlyReliable);
         if (destinationConfig == null)
             return null;
@@ -244,15 +230,13 @@ public class MessageDestination extends FactoryDestination
 
         // Add the outbound throttle policy to network properties section as appropriate.
         ConfigMap properties = destinationConfig.getPropertyAsMap(ConfigurationConstants.PROPERTIES_ELEMENT, null);
-        if (properties == null)
-        {
+        if (properties == null) {
             properties = new ConfigMap();
             destinationConfig.addProperty(ConfigurationConstants.PROPERTIES_ELEMENT, properties);
         }
 
         ConfigMap network = properties.getPropertyAsMap(NetworkSettings.NETWORK_ELEMENT, null);
-        if (network == null)
-        {
+        if (network == null) {
             network = new ConfigMap();
             properties.addProperty(NetworkSettings.NETWORK_ELEMENT, network);
         }
@@ -265,34 +249,28 @@ public class MessageDestination extends FactoryDestination
     }
 
 
-    public SubscriptionManager getSubscriptionManager()
-    {
+    public SubscriptionManager getSubscriptionManager() {
         return subscriptionManager;
     }
 
 
-    public RemoteSubscriptionManager getRemoteSubscriptionManager()
-    {
+    public RemoteSubscriptionManager getRemoteSubscriptionManager() {
         return remoteSubscriptionManager;
     }
 
 
-    public ThrottleManager getThrottleManager()
-    {
+    public ThrottleManager getThrottleManager() {
         return throttleManager;
     }
 
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (o instanceof Destination)
-        {
-            Destination d = (Destination)o;
+    public boolean equals(Object o) {
+        if (o instanceof Destination) {
+            Destination d = (Destination) o;
             String serviceType1 = d.getServiceType();
             String serviceType2 = getServiceType();
-            if ((serviceType1 == null && serviceType2 == null) || (serviceType1 != null && serviceType1.equals(serviceType2)))
-            {
+            if ((serviceType1 == null && serviceType2 == null) || (serviceType1 != null && serviceType1.equals(serviceType2))) {
                 String id1 = d.getId();
                 String id2 = getId();
                 if ((id1 == null && id2 == null) || (id1 != null && id1.equals(id2)))
@@ -304,16 +282,14 @@ public class MessageDestination extends FactoryDestination
 
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return (getServiceType() == null ? 0 : getServiceType().hashCode()) * 100003 +
-            (getId() == null ? 0 : getId().hashCode());
+                (getId() == null ? 0 : getId().hashCode());
     }
 
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getServiceType() + "#" + getId();
     }
 
@@ -323,29 +299,24 @@ public class MessageDestination extends FactoryDestination
     //
     //--------------------------------------------------------------------------
 
-    protected ThrottleManager createThrottleManager()
-    {
+    protected ThrottleManager createThrottleManager() {
         Service service = getService();
         if (service == null || service.getMessageBroker() == null)
             return new ThrottleManager(); // Return the default.
 
-        try
-        {
+        try {
             Class<? extends ThrottleManager> throttleManagerClass = service.getMessageBroker().getThrottleManagerClass();
             Object instance = ClassUtil.createDefaultInstance(throttleManagerClass, null);
             if (instance instanceof ThrottleManager)
-                return (ThrottleManager)instance;
-        }
-        catch (Throwable t)
-        {
+                return (ThrottleManager) instance;
+        } catch (Throwable t) {
             // NOWARN
         }
 
         return new ThrottleManager(); // Return the default.
     }
 
-    protected void network(ConfigMap properties)
-    {
+    protected void network(ConfigMap properties) {
         ConfigMap network = properties.getPropertyAsMap(NetworkSettings.NETWORK_ELEMENT, null);
         if (network == null)
             return;
@@ -368,11 +339,9 @@ public class MessageDestination extends FactoryDestination
         setNetworkSettings(ns);
     }
 
-    protected void throttle(ThrottleSettings ts, ConfigMap network)
-    {
+    protected void throttle(ThrottleSettings ts, ConfigMap network) {
         ConfigMap inbound = network.getPropertyAsMap(ThrottleSettings.ELEMENT_INBOUND, null);
-        if (inbound != null)
-        {
+        if (inbound != null) {
             ThrottleSettings.Policy policy = getPolicyFromThrottleSettings(inbound);
             ts.setInboundPolicy(policy);
             int destFreq = inbound.getPropertyAsInt(ThrottleSettings.ELEMENT_DEST_FREQ, 0);
@@ -382,8 +351,7 @@ public class MessageDestination extends FactoryDestination
         }
 
         ConfigMap outbound = network.getPropertyAsMap(ThrottleSettings.ELEMENT_OUTBOUND, null);
-        if (outbound != null)
-        {
+        if (outbound != null) {
             ThrottleSettings.Policy policy = getPolicyFromThrottleSettings(outbound);
             ts.setOutboundPolicy(policy);
             int destFreq = outbound.getPropertyAsInt(ThrottleSettings.ELEMENT_DEST_FREQ, 0);
@@ -393,27 +361,22 @@ public class MessageDestination extends FactoryDestination
         }
     }
 
-    private ThrottleSettings.Policy getPolicyFromThrottleSettings(ConfigMap settings)
-    {
+    private ThrottleSettings.Policy getPolicyFromThrottleSettings(ConfigMap settings) {
         String policyString = settings.getPropertyAsString(ThrottleSettings.ELEMENT_POLICY, null);
         ThrottleSettings.Policy policy = ThrottleSettings.Policy.NONE;
         if (policyString == null)
             return policy;
-        try
-        {
+        try {
             policy = ThrottleSettings.parsePolicy(policyString);
-        }
-        catch (ConfigurationException exception)
-        {
+        } catch (ConfigurationException exception) {
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(UNSUPPORTED_POLICY, new Object[] {getId(), policyString});
+            ce.setMessage(UNSUPPORTED_POLICY, new Object[]{getId(), policyString});
             throw ce;
         }
         return policy;
     }
 
-    protected void server(ConfigMap properties)
-    {
+    protected void server(ConfigMap properties) {
         ConfigMap server = properties.getPropertyAsMap(DestinationSettings.SERVER_ELEMENT, null);
         if (server == null)
             return;
@@ -447,8 +410,7 @@ public class MessageDestination extends FactoryDestination
      * @return The log category of the component.
      */
     @Override
-    protected String getLogCategory()
-    {
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
@@ -459,8 +421,7 @@ public class MessageDestination extends FactoryDestination
      * @param service The <code>Service</code> that manages this <code>MessageDestination</code>.
      */
     @Override
-    protected void setupDestinationControl(Service service)
-    {
+    protected void setupDestinationControl(Service service) {
         controller = new MessageDestinationControl(this, service.getControl());
         controller.register();
         setControl(controller);
@@ -468,10 +429,8 @@ public class MessageDestination extends FactoryDestination
         setupSubscriptionManagerControl(controller);
     }
 
-    protected void setupThrottleManagerControl(MessageDestinationControl destinationControl)
-    {
-        if (throttleManager != null)
-        {
+    protected void setupThrottleManagerControl(MessageDestinationControl destinationControl) {
+        if (throttleManager != null) {
             ThrottleManagerControl throttleManagerControl = new ThrottleManagerControl(throttleManager, destinationControl);
             throttleManagerControl.register();
             throttleManager.setControl(throttleManagerControl);
@@ -480,8 +439,7 @@ public class MessageDestination extends FactoryDestination
         }
     }
 
-    private void setupSubscriptionManagerControl(MessageDestinationControl destinationControl)
-    {
+    private void setupSubscriptionManagerControl(MessageDestinationControl destinationControl) {
         SubscriptionManagerControl subscriptionManagerControl = new SubscriptionManagerControl(getSubscriptionManager(), destinationControl);
         subscriptionManagerControl.register();
         getSubscriptionManager().setControl(subscriptionManagerControl);

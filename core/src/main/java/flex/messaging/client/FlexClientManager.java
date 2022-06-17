@@ -36,11 +36,9 @@ import flex.messaging.util.TimeoutAbstractObject;
 import flex.messaging.util.TimeoutManager;
 
 /**
- *
  * Manages FlexClient instances for a MessageBroker.
  */
-public class FlexClientManager extends ManageableComponent
-{
+public class FlexClientManager extends ManageableComponent {
     public static final String TYPE = "FlexClientManager";
 
     //--------------------------------------------------------------------------
@@ -52,25 +50,23 @@ public class FlexClientManager extends ManageableComponent
     /**
      *
      */
-    public FlexClientManager()
-    {
+    public FlexClientManager() {
         this(MessageBroker.getMessageBroker(null));
     }
+
     /**
      * Constructs a FlexClientManager for the passed MessageBroker.
      *
      * @param broker The MessageBroker that the Flex client manager is associated with.
      */
-    public FlexClientManager(MessageBroker broker)
-    {
+    public FlexClientManager(MessageBroker broker) {
         this(broker.isManaged(), broker);
     }
 
     /**
      *
      */
-    public FlexClientManager(boolean enableManagement, MessageBroker mbroker)
-    {
+    public FlexClientManager(boolean enableManagement, MessageBroker mbroker) {
         super(enableManagement);
 
         super.setId(TYPE);
@@ -79,10 +75,9 @@ public class FlexClientManager extends ManageableComponent
         broker = (mbroker != null) ? mbroker : MessageBroker.getMessageBroker(null);
 
         FlexClientSettings flexClientSettings = broker.getFlexClientSettings();
-        if (flexClientSettings != null && flexClientSettings.getTimeoutMinutes() != -1)
-        {
+        if (flexClientSettings != null && flexClientSettings.getTimeoutMinutes() != -1) {
             // Convert from minutes to millis.
-            setFlexClientTimeoutMillis(flexClientSettings.getTimeoutMinutes()*60*1000);
+            setFlexClientTimeoutMillis(flexClientSettings.getTimeoutMinutes() * 60 * 1000);
         }
 
         this.setParent(broker);
@@ -107,7 +102,7 @@ public class FlexClientManager extends ManageableComponent
     /**
      * Table to store FlexClients by id.
      */
-    private final Map<String,FlexClient> flexClients = new ConcurrentHashMap<String,FlexClient>();
+    private final Map<String, FlexClient> flexClients = new ConcurrentHashMap<String, FlexClient>();
 
 
     /**
@@ -132,8 +127,7 @@ public class FlexClientManager extends ManageableComponent
      *
      * @return A string array of the client IDs.
      */
-    public String[] getClientIds()
-    {
+    public String[] getClientIds() {
         String[] ids = new String[flexClients.size()];
         ArrayList<String> idList = new ArrayList<String>(flexClients.keySet());
 
@@ -152,8 +146,7 @@ public class FlexClientManager extends ManageableComponent
      *
      * @return The number of FlexClients in use.
      */
-    public int getFlexClientCount()
-    {
+    public int getFlexClientCount() {
         return flexClients.size();
     }
 
@@ -168,8 +161,7 @@ public class FlexClientManager extends ManageableComponent
      *
      * @return The idle timeout in milliseconds to apply to new FlexClient instances.
      */
-    public long getFlexClientTimeoutMillis()
-    {
+    public long getFlexClientTimeoutMillis() {
         return flexClientTimeoutMillis;
     }
 
@@ -178,13 +170,11 @@ public class FlexClientManager extends ManageableComponent
      *
      * @param value The idle timeout in milliseconds to apply to new FlexClient instances.
      */
-    public void setFlexClientTimeoutMillis(long value)
-    {
+    public void setFlexClientTimeoutMillis(long value) {
         if (value < 1)
             value = 0;
 
-        synchronized (this)
-        {
+        synchronized (this) {
             flexClientTimeoutMillis = value;
         }
     }
@@ -198,8 +188,7 @@ public class FlexClientManager extends ManageableComponent
      *
      * @return The parent MessageBroker instance.
      */
-    public MessageBroker getMessageBroker()
-    {
+    public MessageBroker getMessageBroker() {
         return broker;
     }
 
@@ -211,34 +200,30 @@ public class FlexClientManager extends ManageableComponent
 
     /**
      * Get FlexClient with the specified id or a new one will be created.
-     * This method will return a valid existing FlexClient for the specific Id, 
-     * or a new FlexClient will created  
+     * This method will return a valid existing FlexClient for the specific Id,
+     * or a new FlexClient will created
+     *
      * @param id The id of the Flex client.
      * @return FlexClient the FlexClient with the specified id
      */
-    public FlexClient getFlexClient(String id)
-    {
+    public FlexClient getFlexClient(String id) {
         return getFlexClient(id, true);
     }
-    
+
     /**
      * Get the FlexClient with the specified id.
      *
-     * @param id The id of the Flex client.
+     * @param id                  The id of the Flex client.
      * @param createNewIfNotExist if true, a new FlexClient will be created if not exist
      * @return FlexClient the FlexClient with the specified id
      */
-    public FlexClient getFlexClient(String id, boolean createNewIfNotExist)
-    {
+    public FlexClient getFlexClient(String id, boolean createNewIfNotExist) {
         FlexClient flexClient = null;
         // Try to lookup an existing instance if we receive an id.
-        if (id != null)
-        {
+        if (id != null) {
             flexClient = flexClients.get(id);
-            if (flexClient != null)
-            {
-                if (flexClient.isValid() && !flexClient.invalidating)
-                {
+            if (flexClient != null) {
+                if (flexClient.isValid() && !flexClient.invalidating) {
                     flexClient.updateLastUse();
                     return flexClient;
                 }
@@ -247,25 +232,19 @@ public class FlexClientManager extends ManageableComponent
             }
         }
         // Use a manager-level lock (this) when creating/recreating a new FlexClient.
-        synchronized (this)
-        {
-            if (id != null)
-            {
+        synchronized (this) {
+            if (id != null) {
                 flexClient = flexClients.get(id);
-                if (flexClient != null)
-                {
+                if (flexClient != null) {
                     flexClient.updateLastUse();
                     return flexClient;
-                }
-                else
-                {
-                    if (!createNewIfNotExist)
-                    {
+                } else {
+                    if (!createNewIfNotExist) {
                         return null;
                     }
                 }
             }
-            
+
             flexClient = createFlexClient(id);
             checkForNullAndDuplicateId(flexClient.getId());
             flexClients.put(flexClient.getId(), flexClient);
@@ -284,8 +263,7 @@ public class FlexClientManager extends ManageableComponent
      * @param endpointId The Id of the endpoint the queue processor is used for.
      * @return The FlexClient with a configured queue processor.
      */
-    public FlexClientOutboundQueueProcessor createOutboundQueueProcessor(FlexClient flexClient, String endpointId)
-    {
+    public FlexClientOutboundQueueProcessor createOutboundQueueProcessor(FlexClient flexClient, String endpointId) {
         // First, try to create a custom outbound queue processor, if one exists.
         FlexClientOutboundQueueProcessor processor = createCustomOutboundQueueProcessor(flexClient, endpointId);
 
@@ -294,8 +272,7 @@ public class FlexClientManager extends ManageableComponent
             processor = createDefaultOutboundQueueProcessor(flexClient, endpointId);
 
         // If MessageBroker's default queue processor fails, use the default processor.
-        if (processor == null)
-        {
+        if (processor == null) {
             processor = new FlexClientOutboundQueueProcessor();
             processor.setFlexClient(flexClient);
             processor.setEndpointId(endpointId);
@@ -305,24 +282,20 @@ public class FlexClientManager extends ManageableComponent
     }
 
     /**
-     *
      * Monitors an async poll for a FlexClient for timeout.
      *
      * @param asyncPollTimeout The async poll task to monitor for timeout.
      */
-    public void monitorAsyncPollTimeout(TimeoutAbstractObject asyncPollTimeout)
-    {
+    public void monitorAsyncPollTimeout(TimeoutAbstractObject asyncPollTimeout) {
         flexClientTimeoutManager.scheduleTimeout(asyncPollTimeout);
     }
 
     /**
-     *
      * Monitors a scheduled flush for a FlexClient for timeout.
      *
      * @param scheduledFlushTimeout The schedule flush task to monitor for timeout.
      */
-    public void monitorScheduledFlush(TimeoutAbstractObject scheduledFlushTimeout)
-    {
+    public void monitorScheduledFlush(TimeoutAbstractObject scheduledFlushTimeout) {
         flexClientTimeoutManager.scheduleTimeout(scheduledFlushTimeout);
     }
 
@@ -332,35 +305,30 @@ public class FlexClientManager extends ManageableComponent
      * @see flex.management.ManageableComponent#start()
      */
     @Override
-    public void start()
-    {
-        if (isManaged())
-        {
+    public void start() {
+        if (isManaged()) {
             controller = new FlexClientManagerControl(getParent().getControl(), this);
             setControl(controller);
             controller.register();
         }
 
         final String baseId = getId();
-        flexClientTimeoutManager = new TimeoutManager(new ThreadFactory()
-                                                        {
-                                                            int counter = 1;
-                                                            public synchronized Thread newThread(Runnable runnable)
-                                                            {
-                                                                Thread t = new Thread(runnable);
-                                                                t.setName(baseId + "-FlexClientTimeoutThread-" + counter++);
-                                                                return t;
-                                                            }
-                                                        });
+        flexClientTimeoutManager = new TimeoutManager(new ThreadFactory() {
+            int counter = 1;
+
+            public synchronized Thread newThread(Runnable runnable) {
+                Thread t = new Thread(runnable);
+                t.setName(baseId + "-FlexClientTimeoutThread-" + counter++);
+                return t;
+            }
+        });
     }
 
     /**
      * @see flex.management.ManageableComponent#stop()
      */
-    public void stop()
-    {
-        if (controller != null)
-        {
+    public void stop() {
+        if (controller != null) {
             controller.unregister();
         }
 
@@ -376,38 +344,32 @@ public class FlexClientManager extends ManageableComponent
 
     /**
      * Hook method invoked when a new <tt>FlexClient</tt> instance is created.
-     * 
-     * @param id The id the client provided, which was previously assigned by this server, 
+     *
+     * @param id The id the client provided, which was previously assigned by this server,
      *           or another server in a cluster. New clients will pass a <code>null</code>
      *           value in which case this server must generate a unique id.
      */
-    protected FlexClient createFlexClient(String id)
-    {
+    protected FlexClient createFlexClient(String id) {
         return (id == null) ? new FlexClient(this) : new FlexClient(this, id);
     }
-    
+
     /* (non-Javadoc)
      * @see flex.management.ManageableComponent#getLogCategory()
      */
-    protected String getLogCategory()
-    {
+    protected String getLogCategory() {
         return LogCategories.CLIENT_FLEXCLIENT;
     }
 
     /**
-     *
      * Removes a FlexClient from being managed by this manager.
      * This method is invoked by FlexClients when they are invalidated.
      *
      * @param flexClient The id of the FlexClient being invalidated.
      */
-    protected void removeFlexClient(FlexClient flexClient)
-    {
-        if (flexClient != null)
-        {
+    protected void removeFlexClient(FlexClient flexClient) {
+        if (flexClient != null) {
             String id = flexClient.getId();
-            synchronized (id)
-            {
+            synchronized (id) {
                 FlexClient storedClient = flexClients.get(id);
                 // If the stored instance is the same as the invalidating instance based upon identity,
                 // remove it.
@@ -423,10 +385,8 @@ public class FlexClientManager extends ManageableComponent
     //
     //--------------------------------------------------------------------------
 
-    private void checkForNullAndDuplicateId(String id)
-    {
-        if (id == null)
-        {
+    private void checkForNullAndDuplicateId(String id) {
+        if (id == null) {
             // Cannot create ''{0}'' with null id.
             MessageException me = new MessageException();
             me.setMessage(10039, new Object[]{"FlexClient"});
@@ -434,8 +394,7 @@ public class FlexClientManager extends ManageableComponent
             throw me;
         }
 
-        if (flexClients.containsKey(id))
-        {
+        if (flexClients.containsKey(id)) {
             // Cannot create ''{0}'' with id ''{1}''; another ''{0}'' is already registered with the same id.
             MessageException me = new MessageException();
             me.setMessage(10040, new Object[]{"FlexClient", id});
@@ -445,8 +404,7 @@ public class FlexClientManager extends ManageableComponent
     }
 
     private FlexClientOutboundQueueProcessor createDefaultOutboundQueueProcessor(
-            FlexClient flexClient, String endpointId)
-    {
+            FlexClient flexClient, String endpointId) {
         FlexClientSettings flexClientSettings = broker.getFlexClientSettings();
         if (flexClientSettings == null)
             return null;
@@ -456,17 +414,14 @@ public class FlexClientManager extends ManageableComponent
             return null;
 
         FlexClientOutboundQueueProcessor processor = null;
-        try
-        {
+        try {
             Class queueProcessorClass = createClass(queueProcessorClassName);
             Object instance = ClassUtil.createDefaultInstance(queueProcessorClass, null);
-            processor = (FlexClientOutboundQueueProcessor)instance;
+            processor = (FlexClientOutboundQueueProcessor) instance;
             processor.setFlexClient(flexClient);
             processor.setEndpointId(endpointId);
             processor.initialize(flexClientSettings.getFlexClientOutboundQueueProcessorProperties());
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             String message = "Failed to create MessageBroker's outbound queue processor for FlexClient with id '" + flexClient.getId() + "'.";
             if (Log.isWarn())
                 Log.getLogger(FlexClient.FLEX_CLIENT_LOG_CATEGORY).warn(message, t);
@@ -479,28 +434,21 @@ public class FlexClientManager extends ManageableComponent
     }
 
     private FlexClientOutboundQueueProcessor createCustomOutboundQueueProcessor(
-            FlexClient flexClient, String endpointId)
-    {
+            FlexClient flexClient, String endpointId) {
         FlexClientOutboundQueueProcessor processor = null;
         Endpoint endpoint = broker.getEndpoint(endpointId);
-        if (endpoint instanceof AbstractEndpoint)
-        {
-            Class processorClass = ((AbstractEndpoint)endpoint).getFlexClientOutboundQueueProcessorClass();
-            if (processorClass != null)
-            {
-                try
-                {
+        if (endpoint instanceof AbstractEndpoint) {
+            Class processorClass = ((AbstractEndpoint) endpoint).getFlexClientOutboundQueueProcessorClass();
+            if (processorClass != null) {
+                try {
                     Object instance = ClassUtil.createDefaultInstance(processorClass, null);
-                    if (instance instanceof FlexClientOutboundQueueProcessor)
-                    {
-                        processor = (FlexClientOutboundQueueProcessor)instance;
+                    if (instance instanceof FlexClientOutboundQueueProcessor) {
+                        processor = (FlexClientOutboundQueueProcessor) instance;
                         processor.setFlexClient(flexClient);
                         processor.setEndpointId(endpointId);
-                        processor.initialize(((AbstractEndpoint)endpoint).getFlexClientOutboundQueueProcessorConfig());
+                        processor.initialize(((AbstractEndpoint) endpoint).getFlexClientOutboundQueueProcessorConfig());
                     }
-                }
-                catch (Throwable t)
-                {
+                } catch (Throwable t) {
                     if (Log.isWarn())
                         Log.getLogger(FlexClient.FLEX_CLIENT_LOG_CATEGORY).warn("Failed to create custom outbound queue processor for FlexClient with id '" + flexClient.getId() + "'. Using MessageBroker's default queue processor.", t);
                 }
@@ -509,10 +457,9 @@ public class FlexClientManager extends ManageableComponent
         return processor;
     }
 
-    private Class createClass(String className)
-    {
+    private Class createClass(String className) {
         Class c = ClassUtil.createClass(className, FlexContext.getMessageBroker() == null ? null :
-                    FlexContext.getMessageBroker().getClassLoader());
+                FlexContext.getMessageBroker().getClassLoader());
 
         return c;
     }

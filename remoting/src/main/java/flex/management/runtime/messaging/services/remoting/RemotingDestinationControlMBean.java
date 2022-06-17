@@ -25,8 +25,7 @@ import flex.management.runtime.messaging.DestinationControlMBean;
  * <code>RemotingDestination</code>s.
  */
 public interface RemotingDestinationControlMBean extends
-        DestinationControlMBean
-{
+        DestinationControlMBean {
     /**
      * Returns the count of successful invocations for the destination.
      *

@@ -30,8 +30,7 @@ import java.util.List;
  * to be enforced.
  * </p>
  */
-public class DestinationSettings extends PropertiesSettings
-{
+public class DestinationSettings extends PropertiesSettings {
     /**
      *
      */
@@ -50,8 +49,7 @@ public class DestinationSettings extends PropertiesSettings
      *
      * @param id A string representing the unique identity of this destination.
      */
-    public DestinationSettings(String id)
-    {
+    public DestinationSettings(String id) {
         this.id = id;
         channelSettings = new ArrayList();
     }
@@ -61,26 +59,21 @@ public class DestinationSettings extends PropertiesSettings
      *
      * @return String the destination's id.
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
     /**
      * Internal use only.
-     *
      */
-    String getSourceFile()
-    {
+    String getSourceFile() {
         return sourceFile;
     }
 
     /**
      * Internal use only.
-     *
      */
-    void setSourceFile(String sourceFile)
-    {
+    void setSourceFile(String sourceFile) {
         this.sourceFile = sourceFile;
     }
 
@@ -95,12 +88,10 @@ public class DestinationSettings extends PropertiesSettings
      * the next in the list on failure).
      *
      * @param c the <code>ChannelSettings</code> to add to the set of
-     * channel definitions for this destination.
+     *          channel definitions for this destination.
      */
-    public void addChannelSettings(ChannelSettings c)
-    {
-        if (c != null)
-        {
+    public void addChannelSettings(ChannelSettings c) {
+        if (c != null) {
             channelSettings.add(c);
         }
     }
@@ -111,8 +102,7 @@ public class DestinationSettings extends PropertiesSettings
      *
      * @param settings A List of <code>ChannelSettings</code>.
      */
-    public void setChannelSettings(List settings)
-    {
+    public void setChannelSettings(List settings) {
         channelSettings = settings;
     }
 
@@ -122,8 +112,7 @@ public class DestinationSettings extends PropertiesSettings
      * @return a <code>java.util.List</code> of <code>ChannelSetting</code>s
      * describing the channels that can be used to contact this destination.
      */
-    public List getChannelSettings()
-    {
+    public List getChannelSettings() {
         return channelSettings;
     }
 
@@ -138,8 +127,7 @@ public class DestinationSettings extends PropertiesSettings
      *
      * @return the <code>SecurityConstraint</code> for this destination.
      */
-    public SecurityConstraint getConstraint()
-    {
+    public SecurityConstraint getConstraint() {
         return constraint;
     }
 
@@ -149,10 +137,9 @@ public class DestinationSettings extends PropertiesSettings
      * <code>null</code> to remove an existing constraint.
      *
      * @param sc the <code>SecurityConstraint</code> to apply to this
-     * destination.
+     *           destination.
      */
-    public void setConstraint(SecurityConstraint sc)
-    {
+    public void setConstraint(SecurityConstraint sc) {
         constraint = sc;
     }
 
@@ -165,10 +152,9 @@ public class DestinationSettings extends PropertiesSettings
      * processing messages bound for this destination.
      *
      * @param a The <code>AdapterSettings</code> that describe the adapter
-     * to use for this destination.
+     *          to use for this destination.
      */
-    public void setAdapterSettings(AdapterSettings a)
-    {
+    public void setAdapterSettings(AdapterSettings a) {
         adapterSettings = a;
     }
 
@@ -179,8 +165,7 @@ public class DestinationSettings extends PropertiesSettings
      * A <code>null</code> value implies the the default service adapter should
      * be used.
      */
-    public AdapterSettings getAdapterSettings()
-    {
+    public AdapterSettings getAdapterSettings() {
         return adapterSettings;
     }
 

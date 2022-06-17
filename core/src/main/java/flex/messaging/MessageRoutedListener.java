@@ -19,16 +19,14 @@ package flex.messaging;
 import java.util.EventListener;
 
 /**
- *
  * Provides notification for multicast message routing events to support optimized
  * asynchronous IO to the target remote hosts.
  */
-public interface MessageRoutedListener extends EventListener
-{    
+public interface MessageRoutedListener extends EventListener {
     /**
      * Invoked when a message has been routed to the outbound queues for all target
      * clients.
-     * 
+     *
      * @param event The event containing the source message.
      */
     void messageRouted(MessageRoutedEvent event);

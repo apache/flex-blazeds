@@ -24,12 +24,10 @@ import flex.messaging.MessageException;
 
 import java.util.Date;
 
-public class Confirm4b extends DeserializationConfirmation
-{
+public class Confirm4b extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm4b()
-    {
+    public Confirm4b() {
         ActionMessage m = new ActionMessage();
         MessageBody body = new MessageBody();
         m.addBody(body);
@@ -37,18 +35,16 @@ public class Confirm4b extends DeserializationConfirmation
         ASObject aso = new ASObject();
         aso.put("prop0", new Date(1119647239994L));
         aso.put("prop1", new Date(1119647639994L));
-        
+
         body.setData(aso);
         EXPECTED_VALUE = m;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

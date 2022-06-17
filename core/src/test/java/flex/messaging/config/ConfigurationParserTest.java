@@ -62,7 +62,7 @@ public class ConfigurationParserTest {
     private void processDirectory(File dir, String resourcePath) throws IOException {
         File[] files = dir.listFiles(new XMLFilenameFilter());
 
-        if(files != null) {
+        if (files != null) {
             for (File f : files) {
                 if (f.isDirectory()) {
                     resourcePath = getResourcePath(f.getAbsolutePath());

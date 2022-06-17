@@ -30,8 +30,7 @@ import flex.management.runtime.messaging.services.messaging.adapters.ActionScrip
  * that supports simple publish/subscribe messaging between
  * ActionScript based clients.
  */
-public class ActionScriptAdapter extends MessagingAdapter
-{
+public class ActionScriptAdapter extends MessagingAdapter {
     private ActionScriptAdapterControl controller;
 
     //--------------------------------------------------------------------------
@@ -39,15 +38,14 @@ public class ActionScriptAdapter extends MessagingAdapter
     // Constructor
     //
     //--------------------------------------------------------------------------
-    
+
     /**
      * Constructs a default <code>ActionScriptAdapter</code>.
      */
-    public ActionScriptAdapter()
-    {
+    public ActionScriptAdapter() {
         super();
     }
-    
+
     //--------------------------------------------------------------------------
     //
     // Public Getters and Setters for ServiceAdapter properties
@@ -57,33 +55,30 @@ public class ActionScriptAdapter extends MessagingAdapter
     /**
      * Casts the <code>Destination</code> into <code>MessageDestination</code>
      * and calls super.setDestination.
-     * 
+     *
      * @param destination
      */
-    public void setDestination(Destination destination)
-    {
-        Destination dest = (MessageDestination)destination;
+    public void setDestination(Destination destination) {
+        Destination dest = (MessageDestination) destination;
         super.setDestination(dest);
     }
-    
+
     //--------------------------------------------------------------------------
     //
     // Other Public APIs
     //                 
     //--------------------------------------------------------------------------
-    
+
     /**
      * Handle a data message intended for this adapter.
      */
-    public Object invoke(Message message)
-    {
-        MessageDestination destination = (MessageDestination)getDestination();
-        MessageService msgService = (MessageService)destination.getService();
+    public Object invoke(Message message) {
+        MessageDestination destination = (MessageDestination) getDestination();
+        MessageService msgService = (MessageService) destination.getService();
 
         SubscriptionManager subscriptionManager = destination.getSubscriptionManager();
         Set subscriberIds = subscriptionManager.getSubscriberIds(message, true /*evalSelector*/);
-        if (subscriberIds != null && !subscriberIds.isEmpty())
-        {
+        if (subscriberIds != null && !subscriberIds.isEmpty()) {
             /* We have already filtered based on the selector and so pass false below */
             msgService.pushMessageToClients(destination, subscriberIds, message, false);
         }
@@ -95,11 +90,10 @@ public class ActionScriptAdapter extends MessagingAdapter
     /**
      * Invoked automatically to allow the <code>ActionScriptAdapter</code> to setup its corresponding
      * MBean control.
-     * 
+     *
      * @param broker The <code>Destination</code> that manages this <code>ActionScriptAdapter</code>.
      */
-    protected void setupAdapterControl(Destination destination)
-    {
+    protected void setupAdapterControl(Destination destination) {
         controller = new ActionScriptAdapterControl(this, destination.getControl());
         controller.register();
         setControl(controller);

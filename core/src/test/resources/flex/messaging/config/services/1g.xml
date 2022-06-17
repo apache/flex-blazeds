@@ -20,7 +20,7 @@
 <services-config xmlns="http://www.adobe.com/2006/flex-enterprise-services">
     <services>
         <service id="foo-service,"
-            class="flex.messaging.services.FooService"
-            messageTypes="flex.messaging.messages.FooMessage"/>
+                 class="flex.messaging.services.FooService"
+                 messageTypes="flex.messaging.messages.FooMessage"/>
     </services>
 </services-config>

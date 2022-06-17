@@ -26,8 +26,7 @@ import java.util.Map;
 /**
  *
  */
-public class SecuritySettings
-{
+public class SecuritySettings {
     // Exception/error message numbers.
     private static final int NO_SEC_CONSTRAINT = 10062;
 
@@ -36,38 +35,32 @@ public class SecuritySettings
     private Map constraints;
     private boolean recreateHttpSessionAfterLogin;
 
-    public SecuritySettings()
-    {
+    public SecuritySettings() {
         constraints = new HashMap();
         loginCommandSettings = new HashMap();
     }
 
-    public void addConstraint(SecurityConstraint sc)
-    {
+    public void addConstraint(SecurityConstraint sc) {
         constraints.put(sc.getId(), sc);
     }
 
-    public SecurityConstraint getConstraint(String ref)
-    {
+    public SecurityConstraint getConstraint(String ref) {
         // If an attempt is made to use a constraint that we do not know about,
         // do not let the authorization succeed
-        if (constraints.get(ref) == null)
-        {
+        if (constraints.get(ref) == null) {
             // Security constraint {0} is not defined.
             SecurityException se = new SecurityException();
-            se.setMessage(NO_SEC_CONSTRAINT, new Object[] {ref});
+            se.setMessage(NO_SEC_CONSTRAINT, new Object[]{ref});
             throw se;
         }
-        return (SecurityConstraint)constraints.get(ref);
+        return (SecurityConstraint) constraints.get(ref);
     }
 
-    public void addLoginCommandSettings(LoginCommandSettings lcs)
-    {
+    public void addLoginCommandSettings(LoginCommandSettings lcs) {
         loginCommandSettings.put(lcs.getServer(), lcs);
     }
 
-    public Map getLoginCommands()
-    {
+    public Map getLoginCommands() {
         return loginCommandSettings;
     }
 
@@ -76,28 +69,23 @@ public class SecuritySettings
      *
      * @return the set of security constraints
      */
-    public Collection<SecurityConstraint> getConstraints()
-    {
+    public Collection<SecurityConstraint> getConstraints() {
         return Collections.unmodifiableCollection(constraints.values());
     }
 
-    public void setServerInfo(String s)
-    {
+    public void setServerInfo(String s) {
         serverInfo = s;
     }
 
-    public String getServerInfo()
-    {
+    public String getServerInfo() {
         return serverInfo;
     }
 
-    public boolean isRecreateHttpSessionAfterLogin()
-    {
+    public boolean isRecreateHttpSessionAfterLogin() {
         return recreateHttpSessionAfterLogin;
     }
 
-    public void setRecreateHttpSessionAfterLogin(boolean value)
-    {
+    public void setRecreateHttpSessionAfterLogin(boolean value) {
         recreateHttpSessionAfterLogin = value;
     }
 }

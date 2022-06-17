@@ -23,8 +23,7 @@ import flex.messaging.config.ConfigurationException;
 /**
  * Settings for <code>JMSAdapter</code>.
  */
-public class JMSSettings
-{
+public class JMSSettings {
     private String acknowledgeMode;
     private String connectionFactory;
     private String connectionUsername;
@@ -46,8 +45,7 @@ public class JMSSettings
      * DEFAULT_DELIVERY_MODE, destination type of Topic, and default
      * delivery setting.
      */
-    public JMSSettings()
-    {
+    public JMSSettings() {
         acknowledgeMode = JMSConfigConstants.AUTO_ACKNOWLEDGE;
         deliveryMode = JMSConfigConstants.DEFAULT_DELIVERY_MODE;
         destinationType = JMSConfigConstants.TOPIC;
@@ -62,8 +60,7 @@ public class JMSSettings
      *
      * @return a String containing the <code>acknowledge-mode</code>
      */
-    public String getAcknowledgeMode()
-    {
+    public String getAcknowledgeMode() {
         return acknowledgeMode;
     }
 
@@ -74,15 +71,12 @@ public class JMSSettings
      * and defautls to AUTO_ACKNOWLEDGE.
      *
      * @param mode Message acknowledgement mode. Supported modes are:
-     * AUTO_ACKNOWLEDGE - the JMS provider client runtime automatically acknowledges the messages.
-     * DUPS_OK_ACKNOWLEDGE - auto-acknowledgement of the messages is not required.
-     * CLIENT_ACKNOWLEDGE - the JMS adapter should acknowledge that the message was received.
-     *
+     *             AUTO_ACKNOWLEDGE - the JMS provider client runtime automatically acknowledges the messages.
+     *             DUPS_OK_ACKNOWLEDGE - auto-acknowledgement of the messages is not required.
+     *             CLIENT_ACKNOWLEDGE - the JMS adapter should acknowledge that the message was received.
      */
-    public void setAcknowledgeMode(String mode)
-    {
-        if (mode == null)
-        {
+    public void setAcknowledgeMode(String mode) {
+        if (mode == null) {
             acknowledgeMode = JMSConfigConstants.defaultAcknowledgeMode;
             return;
         }
@@ -91,11 +85,10 @@ public class JMSSettings
 
         if (!(mode.equals(JMSConfigConstants.AUTO_ACKNOWLEDGE)
                 || mode.equals(JMSConfigConstants.DUPS_OK_ACKNOWLEDGE)
-                || mode.equals(JMSConfigConstants.CLIENT_ACKNOWLEDGE)) )
-        {
+                || mode.equals(JMSConfigConstants.CLIENT_ACKNOWLEDGE))) {
             // Invalid Acknowledge Mode ''{0}''. Valid values are AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE, and CLIENT_ACKNOWLEDGE.
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(JMSConfigConstants.INVALID_ACKNOWLEDGE_MODE, new Object[] {mode});
+            ce.setMessage(JMSConfigConstants.INVALID_ACKNOWLEDGE_MODE, new Object[]{mode});
             throw ce;
         }
         acknowledgeMode = mode;
@@ -106,8 +99,7 @@ public class JMSSettings
      *
      * @return a String containing the <code>connection-factory</code>.
      */
-    public String getConnectionFactory()
-    {
+    public String getConnectionFactory() {
         return connectionFactory;
     }
 
@@ -118,10 +110,8 @@ public class JMSSettings
      *
      * @param factory The non-null name of the JMS connection factory.
      */
-    public void setConnectionFactory(String factory)
-    {
-        if (factory == null)
-        {
+    public void setConnectionFactory(String factory) {
+        if (factory == null) {
             // JMS connection factory of message destinations with JMS Adapters must be specified.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(JMSConfigConstants.MISSING_CONNECTION_FACTORY);
@@ -135,8 +125,7 @@ public class JMSSettings
      *
      * @return The connection username used while creating JMS connections.
      */
-    public String getConnectionUsername()
-    {
+    public String getConnectionUsername() {
         return connectionUsername;
     }
 
@@ -147,8 +136,7 @@ public class JMSSettings
      *
      * @param connectionUsername The connection username used while creating JMS connections.
      */
-    public void setConnectionUsername(String connectionUsername)
-    {
+    public void setConnectionUsername(String connectionUsername) {
         this.connectionUsername = connectionUsername;
     }
 
@@ -157,8 +145,7 @@ public class JMSSettings
      *
      * @return The connection password used while creating JMS connections.
      */
-    public String getConnectionPassword()
-    {
+    public String getConnectionPassword() {
         return connectionPassword;
     }
 
@@ -169,8 +156,7 @@ public class JMSSettings
      *
      * @param connectionPassword The connection password used while creating JMS connections.
      */
-    public void setConnectionPassword(String connectionPassword)
-    {
+    public void setConnectionPassword(String connectionPassword) {
         this.connectionPassword = connectionPassword;
     }
 
@@ -179,8 +165,7 @@ public class JMSSettings
      *
      * @return a String containing the <code>delivery-mode</code>.
      */
-    public String getDeliveryMode()
-    {
+    public String getDeliveryMode() {
         return deliveryMode;
     }
 
@@ -189,12 +174,10 @@ public class JMSSettings
      * for producers. This property optional and defaults to DEFAULT_DELIVERY_MODE.
      *
      * @param mode The delivery mode. Valid values are DEFAULT_DELIVERY_MODE,
-     * PERSISTENT, and NON_PERSISTENT.
+     *             PERSISTENT, and NON_PERSISTENT.
      */
-    public void setDeliveryMode(String mode)
-    {
-        if (mode == null)
-        {
+    public void setDeliveryMode(String mode) {
+        if (mode == null) {
             deliveryMode = JMSConfigConstants.DEFAULT_DELIVERY_MODE;
             return;
         }
@@ -203,11 +186,10 @@ public class JMSSettings
 
         if (!(mode.equals(JMSConfigConstants.DEFAULT_DELIVERY_MODE)
                 || mode.equals(JMSConfigConstants.PERSISTENT)
-                || mode.equals(JMSConfigConstants.NON_PERSISTENT)))
-        {
+                || mode.equals(JMSConfigConstants.NON_PERSISTENT))) {
             // Invalid Delivery Mode ''{0}''. Valid values are DEFAULT_DELIVERY_MODE, PERSISTENT, and NON_PERSISTENT.
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(JMSConfigConstants.INVALID_DELIVERY_MODE, new Object[] {mode});
+            ce.setMessage(JMSConfigConstants.INVALID_DELIVERY_MODE, new Object[]{mode});
             throw ce;
         }
         deliveryMode = mode;
@@ -218,8 +200,7 @@ public class JMSSettings
      *
      * @return The <code>delivery-settings</code> property.
      */
-    public DeliverySettings getDeliverySettings()
-    {
+    public DeliverySettings getDeliverySettings() {
         return deliverySettings;
     }
 
@@ -230,8 +211,7 @@ public class JMSSettings
      *
      * @param deliverySettings The <code>delivery-settings</code> property.
      */
-    public void setDeliverySettings(DeliverySettings deliverySettings)
-    {
+    public void setDeliverySettings(DeliverySettings deliverySettings) {
         this.deliverySettings = deliverySettings;
     }
 
@@ -240,8 +220,7 @@ public class JMSSettings
      *
      * @return a String containing the <code>destination-jndi-name</code>
      */
-    public String getDestinationJNDIName()
-    {
+    public String getDestinationJNDIName() {
         return destinationJNDIName;
     }
 
@@ -251,10 +230,8 @@ public class JMSSettings
      *
      * @param name The non-null name of the destination in JNDI.
      */
-    public void setDestinationJNDIName(String name)
-    {
-        if (name == null)
-        {
+    public void setDestinationJNDIName(String name) {
+        if (name == null) {
             // JNDI names for message destinations with JMS Adapters must be specified.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(JMSConfigConstants.MISSING_DESTINATION_JNDI_NAME);
@@ -266,22 +243,20 @@ public class JMSSettings
     /**
      * Destination-name property is not used anymore.
      *
-     * @deprecated
      * @return null.
+     * @deprecated
      */
-    public String getDestinationName()
-    {
+    public String getDestinationName() {
         return null;
     }
 
     /**
      * Destination-name property is not used anymore.
      *
-     * @deprecated
      * @param name The name of the destination.
+     * @deprecated
      */
-    public void setDestinationName(String name)
-    {
+    public void setDestinationName(String name) {
         // No-op
     }
 
@@ -290,8 +265,7 @@ public class JMSSettings
      *
      * @return a String containing the <code>destination-type</code>.
      */
-    public String getDestinationType()
-    {
+    public String getDestinationType() {
         return destinationType;
     }
 
@@ -302,18 +276,15 @@ public class JMSSettings
      *
      * @param type The destination type. Valid values are Topic and Queue.
      */
-    public void setDestinationType(String type)
-    {
-        if (type == null)
-        {
+    public void setDestinationType(String type) {
+        if (type == null) {
             destinationType = JMSConfigConstants.defaultDestinationType;
             return;
         }
 
         type = type.toLowerCase();
 
-        if (!(type.equals(JMSConfigConstants.TOPIC) || type.equals(JMSConfigConstants.QUEUE)))
-        {
+        if (!(type.equals(JMSConfigConstants.TOPIC) || type.equals(JMSConfigConstants.QUEUE))) {
             // JMS Adapter destination type must be Topic or Queue.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(JMSConfigConstants.INVALID_DESTINATION_TYPE);
@@ -328,8 +299,7 @@ public class JMSSettings
      * @return <code>true</code> is consumers are durable, <code>false</code>
      * otherwise.
      */
-    public boolean useDurableConsumers()
-    {
+    public boolean useDurableConsumers() {
         return durableConsumers;
     }
 
@@ -339,8 +309,7 @@ public class JMSSettings
      *
      * @param durable A boolean indicating whether consumers should be durable.
      */
-    public void setDurableConsumers(boolean durable)
-    {
+    public void setDurableConsumers(boolean durable) {
         durableConsumers = durable;
     }
 
@@ -349,8 +318,7 @@ public class JMSSettings
      *
      * @return a Hashtable of the <code>initial-context-environment</code>.
      */
-    public Hashtable getInitialContextEnvironment()
-    {
+    public Hashtable getInitialContextEnvironment() {
         return initialContextEnvironment;
     }
 
@@ -360,8 +328,7 @@ public class JMSSettings
      *
      * @param env A Hashtable of the <code>initial-context-environment</code>.
      */
-    public void setInitialContextEnvironment(Hashtable env)
-    {
+    public void setInitialContextEnvironment(Hashtable env) {
         initialContextEnvironment = env;
     }
 
@@ -370,8 +337,7 @@ public class JMSSettings
      *
      * @return an int representing the <code>max-producers</code>.
      */
-    public int getMaxProducers()
-    {
+    public int getMaxProducers() {
         return maxProducers;
     }
 
@@ -384,8 +350,7 @@ public class JMSSettings
      *
      * @param value an int representing the <code>max-producers</code>.
      */
-    public void setMaxProducers(int value)
-    {
+    public void setMaxProducers(int value) {
         if (value < 1)
             value = JMSConfigConstants.defaultMaxProducers;
         maxProducers = value;
@@ -396,8 +361,7 @@ public class JMSSettings
      *
      * @return an int specifying the <code>message-priority</code>
      */
-    public int getMessagePriority()
-    {
+    public int getMessagePriority() {
         return messagePriority;
     }
 
@@ -408,8 +372,7 @@ public class JMSSettings
      *
      * @param priority an int specifying the <code>message-priority</code>.
      */
-    public void setMessagePriority(int priority)
-    {
+    public void setMessagePriority(int priority) {
         messagePriority = priority;
     }
 
@@ -418,8 +381,7 @@ public class JMSSettings
      *
      * @return a String containing the <code>message-type</code>.
      */
-    public String getMessageType()
-    {
+    public String getMessageType() {
         return messageType;
     }
 
@@ -429,18 +391,16 @@ public class JMSSettings
      * destination.
      *
      * @param type The <code>message-type</code> property. Supported types are
-     * <code>javax.jms.TextMessage</code>, <code>javax.jms.ObjectMessage</code>,
-     * and <code>javax.jms.MapMessage</code>.
+     *             <code>javax.jms.TextMessage</code>, <code>javax.jms.ObjectMessage</code>,
+     *             and <code>javax.jms.MapMessage</code>.
      */
-    public void setMessageType(String type)
-    {
+    public void setMessageType(String type) {
         if (type == null || !(type.equals(JMSConfigConstants.TEXT_MESSAGE)
                 || type.equals(JMSConfigConstants.OBJECT_MESSAGE)
-                || type.equals(JMSConfigConstants.MAP_MESSAGE)) )
-        {
+                || type.equals(JMSConfigConstants.MAP_MESSAGE))) {
             // Unsupported JMS Message Type ''{0}''. Valid values are javax.jms.TextMessage and javax.jms.ObjectMessage.
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(JMSConfigConstants.INVALID_JMS_MESSAGE_TYPE, new Object[] {type});
+            ce.setMessage(JMSConfigConstants.INVALID_JMS_MESSAGE_TYPE, new Object[]{type});
             throw ce;
         }
         messageType = type;
@@ -451,8 +411,7 @@ public class JMSSettings
      *
      * @return The <code>preserve-jms-headers</code> property.
      */
-    public boolean isPreserveJMSHeaders()
-    {
+    public boolean isPreserveJMSHeaders() {
         return preserveJMSHeaders;
     }
 
@@ -462,30 +421,27 @@ public class JMSSettings
      *
      * @param preserveJMSHeaders The <code>preserve-jms-headers</code> property.
      */
-    public void setPreserveJMSHeaders(boolean preserveJMSHeaders)
-    {
+    public void setPreserveJMSHeaders(boolean preserveJMSHeaders) {
         this.preserveJMSHeaders = preserveJMSHeaders;
     }
 
     /**
      * Transacted-session property is not used anymore.
      *
-     * @deprecated
      * @return false.
+     * @deprecated
      */
-    public boolean isTransactedSessions()
-    {
+    public boolean isTransactedSessions() {
         return false;
     }
 
     /**
      * Transacted-session property is not used anymore.
      *
-     * @deprecated
      * @param mode The transacted-session property.
+     * @deprecated
      */
-    public void setTransactedSessions(boolean mode)
-    {
+    public void setTransactedSessions(boolean mode) {
         // No-op
     }
 
@@ -498,8 +454,7 @@ public class JMSSettings
     /**
      * A static inner class for delivery settings.
      */
-    public static class DeliverySettings
-    {
+    public static class DeliverySettings {
         private String mode;
         private long syncReceiveIntervalMillis;
         private long syncReceiveWaitMillis;
@@ -508,8 +463,7 @@ public class JMSSettings
          * Creates a default <code>DeliverySettings</code> instance with default
          * settings.
          */
-        public DeliverySettings()
-        {
+        public DeliverySettings() {
             mode = JMSConfigConstants.SYNC;
             syncReceiveIntervalMillis = JMSConfigConstants.defaultSyncReceiveIntervalMillis;
             syncReceiveWaitMillis = JMSConfigConstants.defaultSyncReceiveWaitMillis;
@@ -520,31 +474,28 @@ public class JMSSettings
          *
          * @return The message delivery mode.
          */
-        public String getMode()
-        {
+        public String getMode() {
             return mode;
         }
+
         /**
          * Sets the message delivery mode. This property is optional and defaults
          * to sync.
          *
          * @param mode The message delivery mode. Valid values are async and sync.
          */
-        public void setMode(String mode)
-        {
-            if (mode == null)
-            {
+        public void setMode(String mode) {
+            if (mode == null) {
                 mode = JMSConfigConstants.defaultMode;
                 return;
             }
 
             mode = mode.toLowerCase();
 
-            if (!(mode.equals(JMSConfigConstants.ASYNC) || mode.equals(JMSConfigConstants.SYNC)))
-            {
+            if (!(mode.equals(JMSConfigConstants.ASYNC) || mode.equals(JMSConfigConstants.SYNC))) {
                 // Invalid delivery-settings mode ''{0}''. Valid values are async and sync.
                 ConfigurationException ce = new ConfigurationException();
-                ce.setMessage(JMSConfigConstants.INVALID_DELIVERY_MODE_VALUE, new Object[] {mode});
+                ce.setMessage(JMSConfigConstants.INVALID_DELIVERY_MODE_VALUE, new Object[]{mode});
                 throw ce;
             }
             this.mode = mode;
@@ -555,8 +506,7 @@ public class JMSSettings
          *
          * @return The interval of the sync receive message call.
          */
-        public long getSyncReceiveIntervalMillis()
-        {
+        public long getSyncReceiveIntervalMillis() {
             return syncReceiveIntervalMillis;
         }
 
@@ -565,10 +515,9 @@ public class JMSSettings
          * is optional and defaults to 100.
          *
          * @param syncReceiveIntervalMillis A positive long that indicates
-         * the interval of the receive message call.
+         *                                  the interval of the receive message call.
          */
-        public void setSyncReceiveIntervalMillis(long syncReceiveIntervalMillis)
-        {
+        public void setSyncReceiveIntervalMillis(long syncReceiveIntervalMillis) {
             if (syncReceiveIntervalMillis < 1)
                 syncReceiveIntervalMillis = JMSConfigConstants.defaultSyncReceiveIntervalMillis;
             this.syncReceiveIntervalMillis = syncReceiveIntervalMillis;
@@ -579,8 +528,7 @@ public class JMSSettings
          *
          * @return How long a JMS proxy waits for a message before returning.
          */
-        public long getSyncReceiveWaitMillis()
-        {
+        public long getSyncReceiveWaitMillis() {
             return syncReceiveWaitMillis;
         }
 
@@ -589,11 +537,10 @@ public class JMSSettings
          * This property is optional and defaults to zero (no wait).
          *
          * @param syncReceiveWaitMillis A non-negative value that indicates how
-         * long a JMS proxy waits for a message before returning. Zero means no
-         * wait, negative one means wait until a message arrives.
+         *                              long a JMS proxy waits for a message before returning. Zero means no
+         *                              wait, negative one means wait until a message arrives.
          */
-        public void setSyncReceiveWaitMillis(long syncReceiveWaitMillis)
-        {
+        public void setSyncReceiveWaitMillis(long syncReceiveWaitMillis) {
             if (syncReceiveWaitMillis < -1)
                 syncReceiveWaitMillis = JMSConfigConstants.defaultSyncReceiveWaitMillis;
             this.syncReceiveWaitMillis = syncReceiveWaitMillis;

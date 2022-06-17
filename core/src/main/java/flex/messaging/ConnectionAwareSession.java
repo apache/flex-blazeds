@@ -20,43 +20,42 @@ package flex.messaging;
  * Sessions that directly track their connection state support notifying interested
  * listeners of connectivity changes.
  */
-public interface ConnectionAwareSession
-{
+public interface ConnectionAwareSession {
     //----------------------------------
     //  connected
     //----------------------------------
 
     /**
      * Returns true if the session is connected; otherwise false.
-     * 
+     *
      * @return true if the session is connected; otherwise false.
      */
     boolean isConnected();
-    
+
     /**
      * Sets the connected state for the session.
-     * 
+     *
      * @param value true if the session is connected; false if disconnected.
      */
     void setConnected(boolean value);
-    
+
     //----------------------------------
     //  connectivityListeners
     //----------------------------------
-    
+
     /**
      * Registers a session connectivity listener with the session.
      * This listener will be notified when the session acquires or looses connectivity
      * to the remote host.
-     * 
+     *
      * @param listener The <tt>FlexSessionConnectivityListener</tt> to register with the session.
      */
     void addConnectivityListener(FlexSessionConnectivityListener listener);
-    
+
     /**
      * Unregisters a session connectivity listener from the session.
      * The unregistered listener will no longer be notified of session connectivity changes.
-     * 
+     *
      * @param listener The <tt>FlexSessionConnectivityListener</tt> to unregister from the session.
      */
     void removeConnectivityListener(FlexSessionConnectivityListener listener);

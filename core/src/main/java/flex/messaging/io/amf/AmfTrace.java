@@ -23,17 +23,15 @@ import flex.messaging.log.Log;
  * The AMFTrace class is an AMF extension to the ObjectTrace utility to format
  * AMF input/output in a similar manner to the client-side
  * NetConnection Debugger.
- *
+ * <p>
  * Note that in this version new lines are added after the
  * individual values in complex type properties automatically.
  */
-public class AmfTrace extends ObjectTrace
-{
+public class AmfTrace extends ObjectTrace {
     /**
      * Default constructor.
      */
-    public AmfTrace()
-    {
+    public AmfTrace() {
         buffer = new StringBuffer(4096);
     }
 
@@ -42,8 +40,7 @@ public class AmfTrace extends ObjectTrace
      *
      * @param message start message string
      */
-    public void startRequest(String message)
-    {
+    public void startRequest(String message) {
         m_indent = 0;
         buffer.append(message);
         m_indent++;
@@ -54,8 +51,7 @@ public class AmfTrace extends ObjectTrace
      *
      * @param message start response string
      */
-    public void startResponse(String message)
-    {
+    public void startResponse(String message) {
         m_indent = 0;
         buffer.append(message);
         m_indent++;
@@ -66,8 +62,7 @@ public class AmfTrace extends ObjectTrace
      *
      * @param version the current version
      */
-    public void version(int version)
-    {
+    public void version(int version) {
         newLine();
         buffer.append("Version: ").append(version);
     }
@@ -75,12 +70,11 @@ public class AmfTrace extends ObjectTrace
     /**
      * Starts a header.
      *
-     * @param name header name
+     * @param name           header name
      * @param mustUnderstand mustUnderstand value
-     * @param index header number
+     * @param index          header number
      */
-    public void startHeader(String name, boolean mustUnderstand, int index)
-    {
+    public void startHeader(String name, boolean mustUnderstand, int index) {
         newLine();
         buffer.append(indentString());
         buffer.append("(Header #").append(index).append(" name=").append(name);
@@ -92,20 +86,18 @@ public class AmfTrace extends ObjectTrace
     /**
      * Ends the header.
      */
-    public void endHeader()
-    {
+    public void endHeader() {
         m_indent--;
     }
 
     /**
      * Starts a command.
      *
-     * @param cmd command object
-     * @param iCmd command index
+     * @param cmd   command object
+     * @param iCmd  command index
      * @param trxId transaction id
      */
-    public void startCommand(Object cmd, int iCmd, Object trxId)
-    {
+    public void startCommand(Object cmd, int iCmd, Object trxId) {
         newLine();
         buffer.append(indentString());
         buffer.append("(Command method=").append(cmd).append(" (").append(iCmd).append(")");
@@ -117,20 +109,18 @@ public class AmfTrace extends ObjectTrace
     /**
      * Ends the command.
      */
-    public void endCommand()
-    {
+    public void endCommand() {
         m_indent--;
     }
 
     /**
      * Starts a message.
      *
-     * @param targetURI the target URI
+     * @param targetURI   the target URI
      * @param responseURI the response URI
-     * @param index the message number
+     * @param index       the message number
      */
-    public void startMessage(String targetURI, String responseURI, int index)
-    {
+    public void startMessage(String targetURI, String responseURI, int index) {
         newLine();
         buffer.append(indentString());
         buffer.append("(Message #").append(index).append(" targetURI=").append(targetURI);
@@ -142,19 +132,17 @@ public class AmfTrace extends ObjectTrace
     /**
      * Ends the message.
      */
-    public void endMessage()
-    {
+    public void endMessage() {
         m_indent--;
     }
 
     /**
      * Checks to make sure that this property is allowed to be written.
+     *
      * @return true if caller should not print value
      */
-    private boolean isExcluded()
-    {
-        if (nextElementExclude)
-        {
+    private boolean isExcluded() {
+        if (nextElementExclude) {
             nextElementExclude = false;
             buffer.append(Log.VALUE_SUPRESSED);
             newLine();
@@ -166,8 +154,8 @@ public class AmfTrace extends ObjectTrace
     /**
      * Writes an Object type.
      */
-    @Override public void write(Object o)
-    {
+    @Override
+    public void write(Object o) {
         if (isExcluded())
             return;
 
@@ -180,10 +168,10 @@ public class AmfTrace extends ObjectTrace
 
     /**
      * Writes a boolean type.
+     *
      * @param b value to write
      */
-    public void write(boolean b)
-    {
+    public void write(boolean b) {
         if (isExcluded())
             return;
 
@@ -196,10 +184,10 @@ public class AmfTrace extends ObjectTrace
 
     /**
      * Writes a double type.
+     *
      * @param d value to write
      */
-    public void write(double d)
-    {
+    public void write(double d) {
         if (isExcluded())
             return;
 
@@ -212,10 +200,10 @@ public class AmfTrace extends ObjectTrace
 
     /**
      * Writes a float type.
+     *
      * @param f value to write
      */
-    public void write(float f)
-    {
+    public void write(float f) {
         if (isExcluded())
             return;
 
@@ -228,10 +216,10 @@ public class AmfTrace extends ObjectTrace
 
     /**
      * Writes an integer type.
+     *
      * @param i value to write
      */
-    public void write(int i)
-    {
+    public void write(int i) {
         if (isExcluded())
             return;
 
@@ -244,10 +232,10 @@ public class AmfTrace extends ObjectTrace
 
     /**
      * Writes a long type.
+     *
      * @param l value to write
      */
-    public void write(long l)
-    {
+    public void write(long l) {
         if (isExcluded())
             return;
 
@@ -260,10 +248,10 @@ public class AmfTrace extends ObjectTrace
 
     /**
      * Writes a short type.
+     *
      * @param s value to write
      */
-    public void write(short s)
-    {
+    public void write(short s) {
         if (isExcluded())
             return;
 
@@ -276,10 +264,10 @@ public class AmfTrace extends ObjectTrace
 
     /**
      * Writes a byte type.
+     *
      * @param b value to write.
      */
-    public void write(byte b)
-    {
+    public void write(byte b) {
         if (isExcluded())
             return;
 
@@ -293,8 +281,8 @@ public class AmfTrace extends ObjectTrace
     /**
      * Writes a null type.
      */
-    @Override public void writeNull()
-    {
+    @Override
+    public void writeNull() {
         if (isExcluded())
             return;
 
@@ -308,8 +296,8 @@ public class AmfTrace extends ObjectTrace
     /**
      * Writes a ref type.
      */
-    @Override public void writeRef(int ref)
-    {
+    @Override
+    public void writeRef(int ref) {
         if (isExcluded())
             return;
 
@@ -323,8 +311,8 @@ public class AmfTrace extends ObjectTrace
     /**
      * Writes a String type.
      */
-    @Override public void writeString(String s)
-    {
+    @Override
+    public void writeString(String s) {
         if (isExcluded())
             return;
 
@@ -338,10 +326,10 @@ public class AmfTrace extends ObjectTrace
 
     /**
      * Writes a String ref type.
+     *
      * @param ref string reference number
      */
-    public void writeStringRef(int ref)
-    {
+    public void writeStringRef(int ref) {
         if (isExcluded())
             return;
 
@@ -350,10 +338,10 @@ public class AmfTrace extends ObjectTrace
 
     /**
      * Writes a traits info type.
+     *
      * @param ref trait reference number
      */
-    public void writeTraitsInfoRef(int ref)
-    {
+    public void writeTraitsInfoRef(int ref) {
         if (isExcluded())
             return;
 
@@ -363,8 +351,7 @@ public class AmfTrace extends ObjectTrace
     /**
      * Writes an undefined type.
      */
-    public void writeUndefined()
-    {
+    public void writeUndefined() {
         if (isExcluded())
             return;
 
@@ -380,8 +367,7 @@ public class AmfTrace extends ObjectTrace
      *
      * @param ref the array reference number
      */
-    public void startAMFArray(int ref)
-    {
+    public void startAMFArray(int ref) {
         if (isExcluded())
             return;
 
@@ -398,8 +384,7 @@ public class AmfTrace extends ObjectTrace
      *
      * @param ref the array reference number
      */
-    public void startECMAArray(int ref)
-    {
+    public void startECMAArray(int ref) {
         if (isExcluded())
             return;
 
@@ -414,11 +399,10 @@ public class AmfTrace extends ObjectTrace
     /**
      * Starts a ByteArrray.
      *
-     * @param ref array reference number
+     * @param ref    array reference number
      * @param length length of the array
      */
-    public void startByteArray(int ref, int length)
-    {
+    public void startByteArray(int ref, int length) {
         if (isExcluded())
             return;
 
@@ -431,8 +415,7 @@ public class AmfTrace extends ObjectTrace
     /**
      * Ends a ByteArray.
      */
-    public void endAMFArray()
-    {
+    public void endAMFArray() {
         m_indent--;
         m_nested--;
     }
@@ -441,10 +424,9 @@ public class AmfTrace extends ObjectTrace
      * Starts an ExternalizableObject.
      *
      * @param type the type of the object
-     * @param ref the object number
+     * @param ref  the object number
      */
-    public void startExternalizableObject(String type, int ref)
-    {
+    public void startExternalizableObject(String type, int ref) {
         if (isExcluded())
             return;
 
@@ -463,10 +445,9 @@ public class AmfTrace extends ObjectTrace
      * Starts an AMFObject.
      *
      * @param type the type of the object
-     * @param ref the reference number
+     * @param ref  the reference number
      */
-    public void startAMFObject(String type, int ref)
-    {
+    public void startAMFObject(String type, int ref) {
         if (isExcluded())
             return;
 
@@ -485,8 +466,7 @@ public class AmfTrace extends ObjectTrace
     /**
      * Ends an AMFObject.
      */
-    public void endAMFObject()
-    {
+    public void endAMFObject() {
         m_indent--;
         m_nested--;
     }
@@ -496,8 +476,7 @@ public class AmfTrace extends ObjectTrace
      *
      * @param ref the reference number
      */
-    public void startAMFDictionary(int ref)
-    {
+    public void startAMFDictionary(int ref) {
         if (isExcluded())
             return;
 
@@ -513,24 +492,21 @@ public class AmfTrace extends ObjectTrace
     /**
      * Starts an AMF Dictionary element.
      */
-    public void startDictionaryElement()
-    {
+    public void startDictionaryElement() {
         buffer.append(indentString());
     }
 
     /**
      * Adds an equals sign after a dictionary key.
      */
-    public void addDictionaryEquals()
-    {
+    public void addDictionaryEquals() {
         buffer.append(indentString()).append("  ").append(" = ");
     }
 
     /**
      * Ends an AMF Dictionary.
      */
-    public void endAMFDictionary()
-    {
+    public void endAMFDictionary() {
         m_indent--;
         m_nested--;
     }
@@ -538,23 +514,23 @@ public class AmfTrace extends ObjectTrace
     /**
      * Enum for different Vector types.
      */
-    public enum VectorType
-    {
+    public enum VectorType {
         INT, UINT, DOUBLE, OBJECT;
 
-        @Override public String toString()
-        {
+        @Override
+        public String toString() {
             return super.toString().toLowerCase();
         }
-    };
+    }
+
+    ;
 
     /**
      * Starts an AMF Vector.
      *
      * @param ref The reference number.
      */
-    public void startAMFVector(int ref, VectorType vectorType)
-    {
+    public void startAMFVector(int ref, VectorType vectorType) {
         if (isExcluded())
             return;
 
@@ -569,8 +545,7 @@ public class AmfTrace extends ObjectTrace
     /**
      * Ends an AMF Dictionary.
      */
-    public void endAMFVector()
-    {
+    public void endAMFVector() {
         m_indent--;
         m_nested--;
     }

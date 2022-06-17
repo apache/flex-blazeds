@@ -52,8 +52,7 @@ import flex.messaging.util.StringUtils;
 /**
  * Filter for serializing and deserializing action messages.
  */
-public class SerializationFilter extends AMFFilter
-{
+public class SerializationFilter extends AMFFilter {
     //--------------------------------------------------------------------------
     //
     // Private Static Constants
@@ -78,8 +77,7 @@ public class SerializationFilter extends AMFFilter
      *
      * @param logCategory Log category to use in logging. If <code>null</code>, the default values is <code>Endpoint.General</code>.
      */
-    public SerializationFilter(String logCategory)
-    {
+    public SerializationFilter(String logCategory) {
         if (logCategory == null)
             logCategory = LogCategories.ENDPOINT_GENERAL;
         logger = Log.getLogger(logCategory);
@@ -103,20 +101,18 @@ public class SerializationFilter extends AMFFilter
     //--------------------------------------------------------------------------
 
     @Override
-    public void invoke(final ActionContext context) throws IOException
-    {
+    public void invoke(final ActionContext context) throws IOException {
         boolean success = false;
 
         // Additional AMF packet tracing is enabled only at the debug logging level
         // and only if there's a target listening for it.
-        AmfTrace debugTrace = Log.isDebug() && logger.hasTarget()? new AmfTrace() : null;
+        AmfTrace debugTrace = Log.isDebug() && logger.hasTarget() ? new AmfTrace() : null;
 
         // Create an empty ActionMessage object to hold our response
         context.setResponseMessage(new ActionMessage());
         SerializationContext sc = SerializationContext.getSerializationContext();
 
-        try
-        {
+        try {
             // Deserialize the input stream into an "ActionMessage" object.
             MessageDeserializer deserializer = sc.newMessageDeserializer();
 
@@ -128,13 +124,11 @@ public class SerializationFilter extends AMFFilter
             // If so, convert stream from UTF-8 to raw hex before AMF deserialization.
             String contentType = req.getContentType();
             boolean jsClient = (contentType != null && contentType.startsWith(MessageIOConstants.CONTENT_TYPE_PLAIN));
-            if (jsClient)
-            {
+            if (jsClient) {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in, UTF8_CHARSET));
                 int currentByte = -1;
-                while ((currentByte = reader.read()) != -1)
-                {
+                while ((currentByte = reader.read()) != -1) {
                     if (currentByte == 256)
                         currentByte = 0;
                     outputStream.write(currentByte);
@@ -151,15 +145,14 @@ public class SerializationFilter extends AMFFilter
             context.setDeserializedBytes(reqLen);
 
             // set up the incoming MPI info if it is enabled
-            if(context.isMPIenabled())
-            {
+            if (context.isMPIenabled()) {
                 MessagePerformanceInfo mpi = new MessagePerformanceInfo();
                 mpi.recordMessageSizes = context.isRecordMessageSizes();
                 mpi.recordMessageTimes = context.isRecordMessageTimes();
-                if(context.isRecordMessageTimes())
+                if (context.isRecordMessageTimes())
                     mpi.receiveTime = System.currentTimeMillis();
-                if(context.isRecordMessageSizes())
-                    mpi.messageSize =reqLen;
+                if (context.isRecordMessageSizes())
+                    mpi.messageSize = reqLen;
 
                 context.setMPII(mpi);
             }
@@ -168,13 +161,9 @@ public class SerializationFilter extends AMFFilter
             context.setRequestMessage(m);
             deserializer.readMessage(m, context);
             success = true;
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             handleDeserializationException(context, t, logger);
-        }
-        finally
-        {
+        } finally {
             // Use the same ActionMessage version for the response
             ActionMessage respMsg = context.getResponseMessage();
             respMsg.setVersion(context.getVersion());
@@ -183,38 +172,29 @@ public class SerializationFilter extends AMFFilter
                 logger.debug(debugTrace.toString());
         }
 
-        try
-        {
-            if (success)
-            {
+        try {
+            if (success) {
                 next.invoke(context);
             }
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             unhandledError(context, t);
-        }
-        finally
-        {
+        } finally {
             // serialize output
-            if (context.getStatus() != MessageIOConstants.STATUS_NOTAMF)
-            {
+            if (context.getStatus() != MessageIOConstants.STATUS_NOTAMF) {
                 ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
                 ActionMessage respMesg = context.getResponseMessage();
 
                 // Additional AMF packet tracing is enabled only at the debug logging level
                 // and only if there's a target listening for it.
-                debugTrace = Log.isDebug() && logger.hasTarget()? new AmfTrace() : null;
+                debugTrace = Log.isDebug() && logger.hasTarget() ? new AmfTrace() : null;
 
-                try
-                {
+                try {
                     // overhead calculation is only necessary when MPI is enabled
-                    long serializationOverhead=0;
-                    if(context.isRecordMessageTimes())
-                    {
+                    long serializationOverhead = 0;
+                    if (context.isRecordMessageTimes()) {
                         // set server send time
                         context.getMPIO().sendTime = System.currentTimeMillis();
-                        if(context.isRecordMessageSizes())
+                        if (context.isRecordMessageSizes())
                             serializationOverhead = System.currentTimeMillis();
                     }
                     MessageSerializer serializer = sc.newMessageSerializer();
@@ -225,15 +205,12 @@ public class SerializationFilter extends AMFFilter
                     context.setSerializedBytes(outBuffer.size());
 
                     // serialized message again after adding info if mpio with sizing is enabled
-                    if(context.isRecordMessageSizes())
-                    {
-                        try
-                        {
+                    if (context.isRecordMessageSizes()) {
+                        try {
                             context.getMPIO().messageSize = outBuffer.size();
 
                             // reset server send time
-                            if(context.isRecordMessageTimes())
-                            {
+                            if (context.isRecordMessageTimes()) {
                                 serializationOverhead = System.currentTimeMillis() - serializationOverhead;
                                 context.getMPIO().addToOverhead(serializationOverhead);
                                 context.getMPIO().sendTime = System.currentTimeMillis();
@@ -244,21 +221,15 @@ public class SerializationFilter extends AMFFilter
                             respMesg = context.getResponseMessage();
                             serializer.initialize(sc, outBuffer, debugTrace);
                             serializer.writeMessage(respMesg);
-                        }
-                        catch(Exception e)
-                        {
+                        } catch (Exception e) {
                             if (Log.isDebug())
                                 logger.debug("MPI set up error: " + e.toString());
                         }
                     }
                     context.setResponseOutput(outBuffer);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     handleSerializationException(sc, context, e, logger);
-                }
-                finally
-                {
+                } finally {
                     if (debugTrace != null)
                         logger.debug(debugTrace.toString());
                 }
@@ -272,25 +243,19 @@ public class SerializationFilter extends AMFFilter
      * deserialization failure.
      *
      * @param actionContext The action context.
-     * @param t The throwable that needs to be handled.
-     * @param logger The logger to which to log messages.
+     * @param t             The throwable that needs to be handled.
+     * @param logger        The logger to which to log messages.
      * @throws IOException
      */
-    public static void handleDeserializationException(ActionContext actionContext, Throwable t, Logger logger) throws IOException
-    {
-        if (t instanceof EOFException)
-        {
+    public static void handleDeserializationException(ActionContext actionContext, Throwable t, Logger logger) throws IOException {
+        if (t instanceof EOFException) {
             actionContext.setStatus(MessageIOConstants.STATUS_NOTAMF);
-        }
-        else if (t instanceof IOException)
-        {
+        } else if (t instanceof IOException) {
             if (Log.isDebug())
                 logger.debug("IOException reading message - client closed socket before sending the message?");
 
-            throw (IOException)t;
-        }
-        else
-        {
+            throw (IOException) t;
+        } else {
             actionContext.setStatus(MessageIOConstants.STATUS_ERR);
 
             // Create a single message body to hold the error
@@ -307,13 +272,10 @@ public class SerializationFilter extends AMFFilter
 
             String message;
             MessageException methodResult;
-            if (t instanceof MessageException)
-            {
-                methodResult = (MessageException)t;
+            if (t instanceof MessageException) {
+                methodResult = (MessageException) t;
                 message = methodResult.getMessage();
-            }
-            else
-            {
+            } else {
                 //Error deserializing client message.
                 methodResult = new SerializationException();
                 methodResult.setMessage(REQUEST_ERROR);
@@ -336,36 +298,30 @@ public class SerializationFilter extends AMFFilter
      * no way to tell which response failed serialization, so it adds a new response
      * with the serialization failure for each of the corresponding requests.
      *
-     * @param serializer The serializer that generated the error.
+     * @param serializer           The serializer that generated the error.
      * @param serializationContext The serialization context.
-     * @param actionContext The action context.
-     * @param t The throwable that needs to be handled.
-     * @param logger The logger to which to log error messages.
+     * @param actionContext        The action context.
+     * @param t                    The throwable that needs to be handled.
+     * @param logger               The logger to which to log error messages.
      */
     public static void handleSerializationException(SerializationContext serializationContext,
-            ActionContext actionContext, Throwable t, Logger logger)
-    {
+                                                    ActionContext actionContext, Throwable t, Logger logger) {
         ActionMessage responseMessage = new ActionMessage();
         actionContext.setResponseMessage(responseMessage);
 
         int bodyCount = actionContext.getRequestMessage().getBodyCount();
-        for (actionContext.setMessageNumber(0); actionContext.getMessageNumber() < bodyCount; actionContext.incrementMessageNumber())
-        {
+        for (actionContext.setMessageNumber(0); actionContext.getMessageNumber() < bodyCount; actionContext.incrementMessageNumber()) {
             MessageBody responseBody = new MessageBody();
             responseBody.setTargetURI(actionContext.getRequestMessageBody().getResponseURI());
             actionContext.getResponseMessage().addBody(responseBody);
 
             Object methodResult;
 
-            if (t instanceof MessageException)
-            {
-                methodResult = ((MessageException)t).createErrorMessage();
-            }
-            else
-            {
+            if (t instanceof MessageException) {
+                methodResult = ((MessageException) t).createErrorMessage();
+            } else {
                 String message = "An error occurred while serializing server response(s).";
-                if (t.getMessage() != null)
-                {
+                if (t.getMessage() != null) {
                     message = t.getMessage();
                     if (message == null)
                         message = t.toString();
@@ -374,38 +330,30 @@ public class SerializationFilter extends AMFFilter
                 methodResult = new MessageException(message, t).createErrorMessage();
             }
 
-            if (actionContext.isLegacy())
-            {
-                if (methodResult instanceof ErrorMessage)
-                {
-                    ErrorMessage error = (ErrorMessage)methodResult;
+            if (actionContext.isLegacy()) {
+                if (methodResult instanceof ErrorMessage) {
+                    ErrorMessage error = (ErrorMessage) methodResult;
                     ASObject aso = new ASObject();
                     aso.put("message", error.faultString);
                     aso.put("code", error.faultCode);
                     aso.put("details", error.faultDetail);
                     aso.put("rootCause", error.rootCause);
                     methodResult = aso;
+                } else if (methodResult instanceof Message) {
+                    methodResult = ((Message) methodResult).getBody();
                 }
-                else if (methodResult instanceof Message)
-                {
-                    methodResult = ((Message)methodResult).getBody();
-                }
-            }
-            else
-            {
-                try
-                {
+            } else {
+                try {
                     Message inMessage = actionContext.getRequestMessageBody().getDataAsMessage();
                     if (inMessage.getClientId() != null)
-                        ((ErrorMessage)methodResult).setClientId(inMessage.getClientId().toString());
+                        ((ErrorMessage) methodResult).setClientId(inMessage.getClientId().toString());
 
-                    if (inMessage.getMessageId() != null)
-                    {
-                        ((ErrorMessage)methodResult).setCorrelationId(inMessage.getMessageId());
-                        ((ErrorMessage)methodResult).setDestination(inMessage.getDestination());
+                    if (inMessage.getMessageId() != null) {
+                        ((ErrorMessage) methodResult).setCorrelationId(inMessage.getMessageId());
+                        ((ErrorMessage) methodResult).setDestination(inMessage.getDestination());
                     }
+                } catch (MessageException ignore) {
                 }
-                catch (MessageException ignore){}
             }
 
             responseBody.setData(methodResult);
@@ -417,17 +365,14 @@ public class SerializationFilter extends AMFFilter
 
         // Serialize the error messages
         ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
-        AmfTrace debugTrace = Log.isDebug() && logger.hasTarget()? new AmfTrace() : null;
+        AmfTrace debugTrace = Log.isDebug() && logger.hasTarget() ? new AmfTrace() : null;
         MessageSerializer serializer = serializationContext.newMessageSerializer();
         serializer.initialize(serializationContext, outBuffer, debugTrace);
 
-        try
-        {
+        try {
             serializer.writeMessage(actionContext.getResponseMessage());
             actionContext.setResponseOutput(outBuffer);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             //Error serializing response
             MessageException ex = new MessageException();
             ex.setMessage(RESPONSE_ERROR);
@@ -448,8 +393,7 @@ public class SerializationFilter extends AMFFilter
      * body to the client. It will not make it back to a custom responder, but the NetConnection
      * Debugger will show the event.
      */
-    private void unhandledError(ActionContext context, Throwable t)
-    {
+    private void unhandledError(ActionContext context, Throwable t) {
         ActionMessage responseMessage = new ActionMessage();
         context.setResponseMessage(responseMessage);
 
@@ -460,12 +404,9 @@ public class SerializationFilter extends AMFFilter
 
         MessageException methodResult;
 
-        if (t instanceof MessageException)
-        {
-            methodResult = (MessageException)t;
-        }
-        else
-        {
+        if (t instanceof MessageException) {
+            methodResult = (MessageException) t;
+        } else {
             // An unhandled error occurred while processing client request(s).
             methodResult = new SerializationException();
             methodResult.setMessage(UNHANDLED_ERROR);

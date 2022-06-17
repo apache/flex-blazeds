@@ -23,5 +23,5 @@ FDS Config Unit Test - 1e - adapter include
 An include for the 1e Unit Test.
  -->
 <adapters>
-    <adapter-definition class="flex.messaging.services.foo.FooAdapter" id="foo" default="true" />
+    <adapter-definition class="flex.messaging.services.foo.FooAdapter" id="foo" default="true"/>
 </adapters>

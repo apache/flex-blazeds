@@ -50,11 +50,10 @@ import flex.messaging.io.amf.client.exceptions.ServerStatusException;
  * sending AMF formatted requests over HTTP or HTTPS.
  * AMFConnection in Actionscript. AMF connection automatically handles cookies
  * by looking for cookie headers and setting the cookies in subsequent request.
- *
+ * <p>
  * AMF connection class is not thread safe.
  */
-public class AMFConnection
-{
+public class AMFConnection {
     //--------------------------------------------------------------------------
     //
     // Public Static Variables
@@ -86,11 +85,10 @@ public class AMFConnection
     /**
      * Registers a custom alias for a class name bidirectionally.
      *
-     * @param alias The alias for the class name.
+     * @param alias     The alias for the class name.
      * @param className The concrete class name.
      */
-    public static void registerAlias(String alias, String className)
-    {
+    public static void registerAlias(String alias, String className) {
         ClassAliasRegistry registry = ClassAliasRegistry.getRegistry();
         registry.registerAlias(alias, className);
         registry.registerAlias(className, alias);
@@ -105,8 +103,7 @@ public class AMFConnection
     /**
      * Creates a default AMF connection instance.
      */
-    public AMFConnection()
-    {
+    public AMFConnection() {
     }
 
     //--------------------------------------------------------------------------
@@ -155,7 +152,7 @@ public class AMFConnection
     /**
      * Map of Http request header names and values.
      */
-    protected Map<String,String> httpRequestHeaders;
+    protected Map<String, String> httpRequestHeaders;
 
     /**
      * Sequentially incremented counter used to generate a unique responseURI
@@ -193,8 +190,7 @@ public class AMFConnection
      *
      * @return The AMF header processor associated with the AMF connection.
      */
-    public AMFHeaderProcessor getAMFHeaderProcessor()
-    {
+    public AMFHeaderProcessor getAMFHeaderProcessor() {
         return amfHeaderProcessor;
     }
 
@@ -203,8 +199,7 @@ public class AMFConnection
      *
      * @param amfHeaderProcessor The AMF header processor to set.
      */
-    public void setAMFHeaderProcessor(AMFHeaderProcessor amfHeaderProcessor)
-    {
+    public void setAMFHeaderProcessor(AMFHeaderProcessor amfHeaderProcessor) {
         this.amfHeaderProcessor = amfHeaderProcessor;
     }
 
@@ -217,8 +212,7 @@ public class AMFConnection
      *
      * @return The <tt>AmfTrace</tt> associated with the AMF connection.
      */
-    public AmfTrace getAmfTrace()
-    {
+    public AmfTrace getAmfTrace() {
         return amfTrace;
     }
 
@@ -227,8 +221,7 @@ public class AMFConnection
      *
      * @param amfTrace The <tt>AmfTrace</tt> associated with the AMF connection.
      */
-    public void setAmfTrace(AmfTrace amfTrace)
-    {
+    public void setAmfTrace(AmfTrace amfTrace) {
         this.amfTrace = amfTrace;
     }
 
@@ -243,8 +236,7 @@ public class AMFConnection
      *
      * @return The default object encoding of the AMF connection.
      */
-    public static int getDefaultObjectEncoding()
-    {
+    public static int getDefaultObjectEncoding() {
         return DEFAULT_OBJECT_ENCODING;
     }
 
@@ -253,8 +245,7 @@ public class AMFConnection
      *
      * @param value The value to set the default object encoding to.
      */
-    public static void setDefaultObjectEncoding(int value)
-    {
+    public static void setDefaultObjectEncoding(int value) {
         DEFAULT_OBJECT_ENCODING = value;
     }
 
@@ -272,8 +263,7 @@ public class AMFConnection
      *
      * @return The instantitateTypes property.
      */
-    public boolean isInstantiateTypes()
-    {
+    public boolean isInstantiateTypes() {
         return instantiateTypes;
     }
 
@@ -282,8 +272,7 @@ public class AMFConnection
      *
      * @param instantiateTypes The value to set the instantiateTypes property to.
      */
-    public void setInstantiateTypes(boolean instantiateTypes)
-    {
+    public void setInstantiateTypes(boolean instantiateTypes) {
         this.instantiateTypes = instantiateTypes;
     }
 
@@ -298,8 +287,7 @@ public class AMFConnection
      *
      * @return The object encoding for the AMF connection.
      */
-    public int getObjectEncoding()
-    {
+    public int getObjectEncoding() {
         if (!objectEncodingSet)
             return getDefaultObjectEncoding();
         return objectEncoding;
@@ -310,8 +298,7 @@ public class AMFConnection
      *
      * @param objectEncoding The value to set the object encoding to.
      */
-    public void setObjectEncoding(int objectEncoding)
-    {
+    public void setObjectEncoding(int objectEncoding) {
         this.objectEncoding = objectEncoding;
         objectEncodingSet = true;
     }
@@ -326,8 +313,7 @@ public class AMFConnection
      *
      * @return The <tt>Proxy</tt> this AMF connection is using.
      */
-    public Proxy getProxy()
-    {
+    public Proxy getProxy() {
         return proxy;
     }
 
@@ -338,8 +324,7 @@ public class AMFConnection
      *
      * @param proxy The <tt>Proxy</tt> this AMF connection will use.
      */
-    public void setProxy(Proxy proxy)
-    {
+    public void setProxy(Proxy proxy) {
         this.proxy = proxy;
     }
 
@@ -352,8 +337,7 @@ public class AMFConnection
      *
      * @return The HTTP or HTTPs url for the AMF connection.
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
@@ -367,12 +351,11 @@ public class AMFConnection
      * Adds an AMF packet-level header which is sent with every request for
      * the life of this AMF connection.
      *
-     * @param name The name of the header.
+     * @param name           The name of the header.
      * @param mustUnderstand Whether the header must be processed or not.
-     * @param data The value of the header.
+     * @param data           The value of the header.
      */
-    public void addAmfHeader(String name, boolean mustUnderstand, Object data)
-    {
+    public void addAmfHeader(String name, boolean mustUnderstand, Object data) {
         if (amfHeaders == null)
             amfHeaders = new ArrayList<MessageHeader>();
 
@@ -387,8 +370,7 @@ public class AMFConnection
      * @param name The name of the header.
      * @param data The value of the header.
      */
-    public void addAmfHeader(String name, Object data)
-    {
+    public void addAmfHeader(String name, Object data) {
         addAmfHeader(name, false, data);
     }
 
@@ -396,19 +378,14 @@ public class AMFConnection
      * Removes any AMF headers found with the name given.
      *
      * @param name The name of the header(s) to remove.
-     *
      * @return true if a header existed with the given name.
      */
-    public boolean removeAmfHeader(String name)
-    {
+    public boolean removeAmfHeader(String name) {
         boolean exists = false;
-        if (amfHeaders != null)
-        {
-            for (Iterator<MessageHeader> iterator = amfHeaders.iterator(); iterator.hasNext();)
-            {
+        if (amfHeaders != null) {
+            for (Iterator<MessageHeader> iterator = amfHeaders.iterator(); iterator.hasNext(); ) {
                 MessageHeader header = iterator.next();
-                if (name.equals(header.getName()))
-                {
+                if (name.equals(header.getName())) {
                     iterator.remove();
                     exists = true;
                 }
@@ -420,8 +397,7 @@ public class AMFConnection
     /**
      * Removes all AMF headers.
      */
-    public void removeAllAmfHeaders()
-    {
+    public void removeAllAmfHeaders() {
         if (amfHeaders != null)
             amfHeaders = null;
     }
@@ -429,13 +405,12 @@ public class AMFConnection
     /**
      * Adds a Http request header to the underlying connection.
      *
-     * @param name The name of the Http header.
+     * @param name  The name of the Http header.
      * @param value The value of the Http header.
      */
-    public void addHttpRequestHeader(String name, String value)
-    {
+    public void addHttpRequestHeader(String name, String value) {
         if (httpRequestHeaders == null)
-            httpRequestHeaders = new HashMap<String,String>();
+            httpRequestHeaders = new HashMap<String, String>();
 
         httpRequestHeaders.put(name, value);
     }
@@ -444,14 +419,11 @@ public class AMFConnection
      * Removes the Http header found with the name given.
      *
      * @param name The name of the Http header.
-     *
      * @return true if a header existed with the given name.
      */
-    public boolean removeHttpRequestHeader(String name)
-    {
+    public boolean removeHttpRequestHeader(String name) {
         boolean exists = false;
-        if (httpRequestHeaders != null)
-        {
+        if (httpRequestHeaders != null) {
             Object previousValue = httpRequestHeaders.remove(name);
             exists = (previousValue != null);
         }
@@ -461,8 +433,7 @@ public class AMFConnection
     /**
      * Removes all Http request headers.
      */
-    public void removeAllHttpRequestHeaders()
-    {
+    public void removeAllHttpRequestHeaders() {
         if (httpRequestHeaders != null)
             httpRequestHeaders = null;
     }
@@ -471,18 +442,14 @@ public class AMFConnection
      * Makes an AMF request to the server. A connection must have been made
      * prior to making a call.
      *
-     * @param command The method to call on the server.
+     * @param command   The method to call on the server.
      * @param arguments Arguments for the method.
-     *
      * @return The result of the call.
-     *
      * @throws ClientStatusException If there is a client side exception.
      * @throws ServerStatusException If there is a server side exception.
      */
-    public Object call(String command, Object ... arguments) throws ClientStatusException , ServerStatusException
-    {
-        if (!connected)
-        {
+    public Object call(String command, Object... arguments) throws ClientStatusException, ServerStatusException {
+        if (!connected) {
             String message = "AMF connection is not connected";
             ClientStatusException cse = new ClientStatusException(message, ClientStatusException.AMF_CALL_FAILED_CODE);
             throw cse;
@@ -493,8 +460,7 @@ public class AMFConnection
         // TODO: Support customizable batching of messages.
         ActionMessage requestMessage = new ActionMessage(getObjectEncoding());
 
-        if (amfHeaders != null)
-        {
+        if (amfHeaders != null) {
             for (MessageHeader header : amfHeaders)
                 requestMessage.addHeader(header);
         }
@@ -508,28 +474,22 @@ public class AMFConnection
         AmfMessageSerializer amfMessageSerializer = new AmfMessageSerializer();
         amfMessageSerializer.initialize(serializationContext, outBuffer, amfTrace);
 
-        try
-        {
+        try {
             amfMessageSerializer.writeMessage(requestMessage);
             Object result = send(outBuffer);
             return result;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             if (e instanceof ClientStatusException)
-                throw (ClientStatusException)e;
+                throw (ClientStatusException) e;
             if (e instanceof ServerStatusException)
-                throw (ServerStatusException)e;
+                throw (ServerStatusException) e;
             // Otherwise, wrap into a ClientStatusException.
             throw new ClientStatusException(e, ClientStatusException.AMF_CALL_FAILED_CODE, generateHttpResponseInfo());
-        }
-        finally
-        {
-            try
-            {
+        } finally {
+            try {
                 outBuffer.close();
+            } catch (IOException ignore) {
             }
-            catch (IOException ignore){}
         }
     }
 
@@ -537,15 +497,13 @@ public class AMFConnection
      * Closes the underlying URL connection, sets the url to null, and clears
      * the cookies.
      */
-    public void close()
-    {
+    public void close() {
         // Clear the cookies.
         if (cookies != null)
             cookies.clear();
 
         // Clear the URL connection and URL.
-        if (urlConnection != null)
-        {
+        if (urlConnection != null) {
             urlConnection.disconnect();
             urlConnection = null;
         }
@@ -560,11 +518,9 @@ public class AMFConnection
      * Connects to the URL provided. Any previous connections are closed.
      *
      * @param connectUrl The url to connect to.
-     *
      * @throws ClientStatusException If there is a client side exception.
      */
-    public void connect(String connectUrl) throws ClientStatusException
-    {
+    public void connect(String connectUrl) throws ClientStatusException {
         SerializationContext serializationContext = new SerializationContext();
         serializationContext.createASObjectForMissingType = true;
         // Make sure collections are written out as Arrays (vs. ArrayCollection),
@@ -579,13 +535,11 @@ public class AMFConnection
     /**
      * Connects to the URL provided. Any previous connections are closed.
      *
-     * @param connectUrl The url to connect to.
+     * @param connectUrl           The url to connect to.
      * @param serializationContext The serialization context used to configure the serialization.
-     *
      * @throws ClientStatusException If there is a client side exception.
      */
-    public void connect(String connectUrl, SerializationContext serializationContext) throws ClientStatusException
-    {
+    public void connect(String connectUrl, SerializationContext serializationContext) throws ClientStatusException {
         if (connected)
             close();
 
@@ -593,25 +547,19 @@ public class AMFConnection
 
         // Try to encode the url in case it has spaces etc.
         String encodedUrl = null;
-        try
-        {
+        try {
             URL raw = new URL(url);
             URI uri = new URI(raw.getProtocol(), raw.getUserInfo(), raw.getHost(), raw.getPort(), raw.getPath(), raw.getQuery(), null);
             encodedUrl = uri.toString();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // NOWARN
         }
 
-        try
-        {
-            urlObject = new URL(encodedUrl != null? encodedUrl : url);
+        try {
+            urlObject = new URL(encodedUrl != null ? encodedUrl : url);
             this.serializationContext = serializationContext;
             internalConnect();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             ClientStatusException exception = new ClientStatusException(e, ClientStatusException.AMF_CONNECT_FAILED_CODE);
             throw exception;
         }
@@ -628,20 +576,15 @@ public class AMFConnection
      *
      * @return The HTTP response info for the server status exception.
      */
-    protected HttpResponseInfo generateHttpResponseInfo()
-    {
+    protected HttpResponseInfo generateHttpResponseInfo() {
         HttpResponseInfo httpResponseInfo = null;
-        try
-        {
-            if (urlConnection != null)
-            {
+        try {
+            if (urlConnection != null) {
                 int responseCode = urlConnection.getResponseCode();
                 String responseMessage = urlConnection.getResponseMessage();
                 httpResponseInfo = new HttpResponseInfo(responseCode, responseMessage, urlConnectionInputStream);
             }
-        }
-        catch (IOException ignore)
-        {
+        } catch (IOException ignore) {
         }
         return httpResponseInfo;
     }
@@ -651,8 +594,7 @@ public class AMFConnection
      *
      * @return The response URI.
      */
-    protected String getResponseURI()
-    {
+    protected String getResponseURI() {
         String responseURI = "/" + responseCounter;
         responseCounter++;
         return responseURI;
@@ -663,12 +605,11 @@ public class AMFConnection
      *
      * @throws IOException If an exception is encountered during URL connection setup.
      */
-    protected void internalConnect() throws IOException
-    {
+    protected void internalConnect() throws IOException {
         if (proxy == null)
-            urlConnection = (HttpURLConnection)urlObject.openConnection();
+            urlConnection = (HttpURLConnection) urlObject.openConnection();
         else
-            urlConnection = (HttpURLConnection)urlObject.openConnection(proxy);
+            urlConnection = (HttpURLConnection) urlObject.openConnection(proxy);
 
         urlConnection.setDoOutput(true);
         setHttpRequestHeaders();
@@ -680,8 +621,7 @@ public class AMFConnection
     /**
      * Processes the HTTP response headers and body.
      */
-    protected Object processHttpResponse(InputStream inputStream) throws ClassNotFoundException, IOException, ClientStatusException, ServerStatusException
-    {
+    protected Object processHttpResponse(InputStream inputStream) throws ClassNotFoundException, IOException, ClientStatusException, ServerStatusException {
         processHttpResponseHeaders();
         return processHttpResponseBody(inputStream);
     }
@@ -691,8 +631,7 @@ public class AMFConnection
      */
     protected Object processHttpResponseBody(InputStream inputStream)
             throws ClassNotFoundException, IOException, ClientStatusException,
-            ServerStatusException
-    {
+            ServerStatusException {
         if (urlConnectionInputStream != null)
             urlConnectionInputStream.close();
         urlConnectionInputStream = new BufferedInputStream(inputStream);
@@ -703,15 +642,11 @@ public class AMFConnection
         actionContext.setRequestMessage(message);
         MessageDeserializer deserializer = new AmfMessageDeserializer();
         deserializer.initialize(serializationContext, urlConnectionInputStream, amfTrace);
-        try
-        {
+        try {
             deserializer.readMessage(message, actionContext);
-        }
-        catch (MessageException me)
-        {
+        } catch (MessageException me) {
             // Means the stream contained non-AMF data, reset the stream and throw.
-            if (AmfMessageDeserializer.CODE_VERSION_MISMATCH.equals(me.getCode()))
-            {
+            if (AmfMessageDeserializer.CODE_VERSION_MISMATCH.equals(me.getCode())) {
                 urlConnectionInputStream.reset();
                 String errorMessage = "Unsupported AMF version";
                 throw new ClientStatusException(errorMessage, ClientStatusException.AMF_CALL_FAILED_CODE, generateHttpResponseInfo());
@@ -724,15 +659,12 @@ public class AMFConnection
     /**
      * Processes the HTTP response headers.
      */
-    protected void processHttpResponseHeaders()
-    {
+    protected void processHttpResponseHeaders() {
         Map<String, List<String>> headers = urlConnection.getHeaderFields();
-        for (Map.Entry<String, List<String>> element : headers.entrySet())
-        {
+        for (Map.Entry<String, List<String>> element : headers.entrySet()) {
             String headerName = element.getKey();
             List<String> headerValues = element.getValue();
-            for (String headerValue : headerValues)
-            {
+            for (String headerValue : headerValues) {
                 if (SET_COOKIE.equals(headerName) || COOKIE.equals(headerName)
                         || SET_COOKIE2.equals(headerName) || COOKIE2.equals(headerName))
                     processSetCookieHeader(headerValue);
@@ -743,8 +675,7 @@ public class AMFConnection
     /**
      * Processes the AMF packet.
      */
-    protected Object processAmfPacket(ActionMessage packet) throws ServerStatusException
-    {
+    protected Object processAmfPacket(ActionMessage packet) throws ServerStatusException {
         processAmfHeaders(packet.getHeaders());
         return processAmfBody(packet.getBodies());
     }
@@ -753,8 +684,7 @@ public class AMFConnection
      * Processes the AMF headers by dispatching them to an AMF header processor,
      * if one exists.
      */
-    protected void processAmfHeaders(ArrayList<MessageHeader> headers)
-    {
+    protected void processAmfHeaders(ArrayList<MessageHeader> headers) {
         // No need to process headers if there's no AMF header processor.
         if (amfHeaderProcessor == null)
             return;
@@ -768,18 +698,13 @@ public class AMFConnection
      * AMF messages is supported at some point but for now we are guaranteed to
      * have a single message.
      */
-    protected Object processAmfBody(ArrayList<MessageBody> messages) throws ServerStatusException
-    {
-        for (MessageBody message : messages)
-        {
+    protected Object processAmfBody(ArrayList<MessageBody> messages) throws ServerStatusException {
+        for (MessageBody message : messages) {
             String targetURI = message.getTargetURI();
 
-            if (targetURI.endsWith(MessageIOConstants.RESULT_METHOD))
-            {
+            if (targetURI.endsWith(MessageIOConstants.RESULT_METHOD)) {
                 return message.getData();
-            }
-            else if (targetURI.endsWith(MessageIOConstants.STATUS_METHOD))
-            {
+            } else if (targetURI.endsWith(MessageIOConstants.STATUS_METHOD)) {
                 String exMessage = "Server error";
                 HttpResponseInfo responseInfo = generateHttpResponseInfo();
                 ServerStatusException exception = new ServerStatusException(exMessage, message.getData(), responseInfo);
@@ -792,8 +717,7 @@ public class AMFConnection
     /**
      * Writes the output buffer and processes the HTTP response.
      */
-    protected Object send(ByteArrayOutputStream outBuffer) throws ClassNotFoundException, IOException, ClientStatusException, ServerStatusException
-    {
+    protected Object send(ByteArrayOutputStream outBuffer) throws ClassNotFoundException, IOException, ClientStatusException, ServerStatusException {
         // Every Http request needs a new HttpURLConnection, hence the internalConnect.
         internalConnect();
 
@@ -810,8 +734,7 @@ public class AMFConnection
      *
      * @param headerValue The value of the set-cookie header.
      */
-    protected void processSetCookieHeader(String headerValue)
-    {
+    protected void processSetCookieHeader(String headerValue) {
         String cookie = headerValue;
         if (cookie.indexOf(COOKIE_SEPERATOR) > 0)
             cookie = headerValue.substring(0, cookie.indexOf(COOKIE_SEPERATOR));
@@ -825,13 +748,10 @@ public class AMFConnection
     /**
      * Sets the Http request headers, including the cookie headers.
      */
-    protected void setHttpRequestHeaders()
-    {
+    protected void setHttpRequestHeaders() {
         setHttpRequestCookieHeader();
-        if (httpRequestHeaders != null)
-        {
-            for (Map.Entry<String, String> element : httpRequestHeaders.entrySet())
-            {
+        if (httpRequestHeaders != null) {
+            for (Map.Entry<String, String> element : httpRequestHeaders.entrySet()) {
                 String key = element.getKey();
                 String value = element.getValue();
                 urlConnection.setRequestProperty(key, value);
@@ -844,15 +764,13 @@ public class AMFConnection
     /**
      * Sets the Http request cookie headers.
      */
-    protected void setHttpRequestCookieHeader()
-    {
+    protected void setHttpRequestCookieHeader() {
         if (cookies == null)
             return;
 
         // Set the cookies, if any.
         StringBuffer cookieHeaderValue = null;
-        for (Map.Entry<String, String> element : cookies.entrySet())
-        {
+        for (Map.Entry<String, String> element : cookies.entrySet()) {
             String name = element.getKey();
             String value = element.getValue();
             if (cookieHeaderValue == null) // First cookie
@@ -873,8 +791,7 @@ public class AMFConnection
     /**
      * An inner class to represent the HTTP response associated with the exception.
      */
-    public static class HttpResponseInfo
-    {
+    public static class HttpResponseInfo {
         private int responseCode;
         private String responseMessage;
         private InputStream responseInputStream;
@@ -883,12 +800,11 @@ public class AMFConnection
          * Creates an HTTP response info with the HTTP code, message, and the
          * input stream.
          *
-         * @param responseCode The HTTP response code.
-         * @param responseMessage the HTTP message.
+         * @param responseCode        The HTTP response code.
+         * @param responseMessage     the HTTP message.
          * @param responseInputStream The underlying input stream.
          */
-        public HttpResponseInfo(int responseCode, String responseMessage, InputStream responseInputStream)
-        {
+        public HttpResponseInfo(int responseCode, String responseMessage, InputStream responseInputStream) {
             this.responseCode = responseCode;
             this.responseMessage = responseMessage;
             this.responseInputStream = responseInputStream;
@@ -899,8 +815,7 @@ public class AMFConnection
          *
          * @return The HTTP response code.
          */
-        public int getResponseCode()
-        {
+        public int getResponseCode() {
             return responseCode;
         }
 
@@ -909,8 +824,7 @@ public class AMFConnection
          *
          * @return The HTTP response message.
          */
-        public String getResponseMessage()
-        {
+        public String getResponseMessage() {
             return responseMessage;
         }
 
@@ -919,8 +833,7 @@ public class AMFConnection
          *
          * @return The underlying response input stream.
          */
-        public InputStream getResponseInputStream()
-        {
+        public InputStream getResponseInputStream() {
             return responseInputStream;
         }
 
@@ -930,10 +843,9 @@ public class AMFConnection
          * @return A String representation of the HTTP response info.
          */
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "HttpResponseInfo " + "\n\tcode: " + responseCode
-                + "\n\tmessage: " + responseMessage;
+                    + "\n\tmessage: " + responseMessage;
         }
     }
 }

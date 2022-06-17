@@ -24,18 +24,14 @@ import flex.messaging.MessageException;
 
 import java.util.Date;
 
-public class Confirm10c extends DeserializationConfirmation
-{
+public class Confirm10c extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm10c()
-    {
+    public Confirm10c() {
     }
 
-    public ActionMessage getExpectedMessage()
-    {
-        if (EXPECTED_VALUE == null)
-        {
+    public ActionMessage getExpectedMessage() {
+        if (EXPECTED_VALUE == null) {
             ActionMessage m = new ActionMessage();
             MessageBody body = new MessageBody();
             m.addBody(body);
@@ -62,32 +58,29 @@ public class Confirm10c extends DeserializationConfirmation
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 
-    protected boolean bodyValuesMatch(Object o1, Object o2)
-    {
+    protected boolean bodyValuesMatch(Object o1, Object o2) {
         boolean match = super.bodyValuesMatch(o1, o2);
 
         // Also check that by-reference serialization of objects
-        if (match)
-        {
-            ASObject aso1 = (ASObject)o1;
-            ASObject aso2 = (ASObject)o2;
+        if (match) {
+            ASObject aso1 = (ASObject) o1;
+            ASObject aso2 = (ASObject) o2;
 
             Object prop01 = aso1.get("prop0");
             Object prop02 = aso2.get("prop0");
 
-            ASObject prop011 = (ASObject)getFromList(prop01, 1);
-            ASObject prop012 = (ASObject)getFromList(prop02, 1);
+            ASObject prop011 = (ASObject) getFromList(prop01, 1);
+            ASObject prop012 = (ASObject) getFromList(prop02, 1);
 
-            ASObject subprop01 = (ASObject)prop011.get("subprop0");
-            ASObject subprop02 = (ASObject)prop012.get("subprop0");
+            ASObject subprop01 = (ASObject) prop011.get("subprop0");
+            ASObject subprop02 = (ASObject) prop012.get("subprop0");
 
-            ASObject prop11 = (ASObject)aso1.get("prop1");
-            ASObject prop12 = (ASObject)aso2.get("prop1");
+            ASObject prop11 = (ASObject) aso1.get("prop1");
+            ASObject prop12 = (ASObject) aso2.get("prop1");
 
             if (prop11 != subprop01)
                 return false;

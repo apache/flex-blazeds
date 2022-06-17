@@ -42,8 +42,7 @@ import java.util.List;
 /**
  * Abstract base class for all the HTTP-based endpoints.
  */
-public abstract class BaseHTTPEndpoint extends AbstractEndpoint
-{
+public abstract class BaseHTTPEndpoint extends AbstractEndpoint {
     //--------------------------------------------------------------------------
     //
     // Public Static Constants
@@ -84,8 +83,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
     /**
      * Constructs an unmanaged <code>BaseHTTPEndpoint</code>.
      */
-    public BaseHTTPEndpoint()
-    {
+    public BaseHTTPEndpoint() {
         this(false);
     }
 
@@ -93,10 +91,9 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      * Constructs a <code>BaseHTTPEndpoint</code> with the specified management setting.
      *
      * @param enableManagement <code>true</code> if the <code>BaseHTTPEndpoint</code>
-     * is manageable; otherwise <code>false</code>.
+     *                         is manageable; otherwise <code>false</code>.
      */
-    public BaseHTTPEndpoint(boolean enableManagement)
-    {
+    public BaseHTTPEndpoint(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -110,11 +107,11 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      * Initializes the <code>Endpoint</code> with the properties.
      * If subclasses override this method, they must call <code>super.initialize()</code>.
      *
-     * @param id The ID of the <code>Endpoint</code>.
+     * @param id         The ID of the <code>Endpoint</code>.
      * @param properties Properties for the <code>Endpoint</code>.
      */
-    @Override public void initialize(String id, ConfigMap properties)
-    {
+    @Override
+    public void initialize(String id, ConfigMap properties) {
         super.initialize(id, properties);
 
         if (properties == null || properties.size() == 0)
@@ -134,8 +131,8 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      * Starts the <code>Endpoint</code> by creating a filter chain and setting
      * up serializers and deserializers.
      */
-    @Override public void start()
-    {
+    @Override
+    public void start() {
         if (isStarted())
             return;
 
@@ -183,8 +180,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      * @return <code>true</code> if <code>add-no-cache-headers</code> is enabled;
      * <code>false</code> otherwise.
      */
-    public boolean isAddNoCacheHeaders()
-    {
+    public boolean isAddNoCacheHeaders() {
         return addNoCacheHeaders;
     }
 
@@ -193,8 +189,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      *
      * @param addNoCacheHeaders The <code>add-no-cache-headers</code> property.
      */
-    public void setAddNoCacheHeaders(boolean addNoCacheHeaders)
-    {
+    public void setAddNoCacheHeaders(boolean addNoCacheHeaders) {
         this.addNoCacheHeaders = addNoCacheHeaders;
     }
 
@@ -203,7 +198,6 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
     //----------------------------------
 
     /**
-     *
      * This is a property used on the client.
      */
     protected boolean loginAfterDisconnect;
@@ -220,10 +214,9 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      * The default is <code>false</code>.
      *
      * @return <code>true</code> if the server session will be invalidated
-     *         when a client channel disconnects, <code>false</code> otherwise.
+     * when a client channel disconnects, <code>false</code> otherwise.
      */
-    public boolean isInvalidateSessionOnDisconnect()
-    {
+    public boolean isInvalidateSessionOnDisconnect() {
         return invalidateSessionOnDisconnect;
     }
 
@@ -235,8 +228,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      * @param value <code>true</code> to invalidate the server session for a client
      *              that disconnects its channel, <code>false</code> otherwise.
      */
-    public void setInvalidateSessionOnDisconnect(boolean value)
-    {
+    public void setInvalidateSessionOnDisconnect(boolean value) {
         invalidateSessionOnDisconnect = value;
     }
 
@@ -251,8 +243,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      *
      * @return The <code>redirect-url</code> property.
      */
-    public String getRedirectURL()
-    {
+    public String getRedirectURL() {
         return redirectURL;
     }
 
@@ -261,8 +252,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      *
      * @param redirectURL The <code>redirect-url</code> property.
      */
-    public void setRedirectURL(String redirectURL)
-    {
+    public void setRedirectURL(String redirectURL) {
         this.redirectURL = redirectURL;
     }
 
@@ -279,8 +269,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      *
      * @return <code>true</code> if the session rewriting is enabled.
      */
-    public boolean isSessionRewritingEnabled()
-    {
+    public boolean isSessionRewritingEnabled() {
         return sessionRewritingEnabled;
     }
 
@@ -289,8 +278,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      *
      * @param value The session writing enabled value.
      */
-    public void setSessionRewritingEnabled(boolean value)
-    {
+    public void setSessionRewritingEnabled(boolean value) {
         sessionRewritingEnabled = value;
     }
 
@@ -307,12 +295,10 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      * @param res The active servlet response.
      */
     @Override
-    public void service(HttpServletRequest req, HttpServletResponse res)
-    {
+    public void service(HttpServletRequest req, HttpServletResponse res) {
         super.service(req, res);
 
-        try
-        {
+        try {
             // Setup serialization and type marshalling contexts
             setThreadLocals();
 
@@ -329,14 +315,12 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
 
             // After serialization completes, increment endpoint byte counters,
             // if the endpoint is managed
-            if (isManaged())
-            {
+            if (isManaged()) {
                 controller.addToBytesDeserialized(context.getDeserializedBytes());
                 controller.addToBytesSerialized(context.getSerializedBytes());
             }
 
-            if (context.getStatus() != MessageIOConstants.STATUS_NOTAMF)
-            {
+            if (context.getStatus() != MessageIOConstants.STATUS_NOTAMF) {
                 if (addNoCacheHeaders)
                     addNoCacheHeaders(req, res);
 
@@ -349,66 +333,50 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
                 res.setContentLength(outBuffer.size());
                 outBuffer.writeTo(res.getOutputStream());
                 res.flushBuffer();
-            }
-            else
-            {
+            } else {
                 // Not an AMF request, probably viewed in a browser
-                if (redirectURL != null)
-                {
-                    try
-                    {
+                if (redirectURL != null) {
+                    try {
                         //Check for redirect URL context-root token
                         redirectURL = SettingsReplaceUtil.replaceContextPath(redirectURL, req.getContextPath());
                         res.sendRedirect(redirectURL);
-                    }
-                    catch (IllegalStateException alreadyFlushed)
-                    {
+                    } catch (IllegalStateException alreadyFlushed) {
                         // ignore
                     }
                 }
             }
-        }
-        catch (IOException ioe)
-        {
+        } catch (IOException ioe) {
             // This happens when client closes the connection, log it at info level
             log.info(ioe.getMessage());
             // Store exception information for latter logging
             req.setAttribute(HTTPRequestLog.HTTP_ERROR_INFO, ioe.toString());
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             log.error(t.getMessage(), t);
             // Store exception information for latter logging
             req.setAttribute(HTTPRequestLog.HTTP_ERROR_INFO, t.toString());
-        }
-        finally
-        {
+        } finally {
             clearThreadLocals();
         }
     }
 
 
     /**
-     *
      * Returns a <code>ConfigMap</code> of endpoint properties that the client
      * needs. This includes properties from <code>super.describeEndpoint</code>
      * and additional <code>BaseHTTPEndpoint</code> specific properties under
      * "properties" key.
      */
     @Override
-    public ConfigMap describeEndpoint()
-    {
+    public ConfigMap describeEndpoint() {
         ConfigMap endpointConfig = super.describeEndpoint();
 
-        if (loginAfterDisconnect)
-        {
+        if (loginAfterDisconnect) {
             ConfigMap loginAfterDisconnect = new ConfigMap();
             // Adding as a value rather than attribute to the parent
             loginAfterDisconnect.addProperty(EMPTY_STRING, TRUE_STRING);
 
             ConfigMap properties = endpointConfig.getPropertyAsMap(PROPERTIES_ELEMENT, null);
-            if (properties == null)
-            {
+            if (properties == null) {
                 properties = new ConfigMap();
                 endpointConfig.addProperty(PROPERTIES_ELEMENT, properties);
             }
@@ -425,8 +393,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      * @see AbstractEndpoint#setupFlexClient(String)
      */
     @Override
-    public FlexClient setupFlexClient(String id)
-    {
+    public FlexClient setupFlexClient(String id) {
         FlexClient flexClient = super.setupFlexClient(id);
 
         // Scan for duplicate HTTP-sessions and if found, invalidate them and throw a MessageException.
@@ -434,20 +401,16 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
         boolean duplicateSessionDetected = (FlexContext.getHttpRequest().getAttribute(REQUEST_ATTR_DUPLICATE_SESSION_FLAG) != null);
 
         List<FlexSession> sessions = null;
-        if (!duplicateSessionDetected)
-        {
+        if (!duplicateSessionDetected) {
             sessions = flexClient.getFlexSessions();
             int n = sessions.size();
-            if (n > 1)
-            {
+            if (n > 1) {
                 List<HttpFlexSession> httpFlexSessions = new ArrayList<HttpFlexSession>();
-                for (int i = 0; i < n; i++)
-                {
+                for (int i = 0; i < n; i++) {
                     FlexSession currentSession = sessions.get(i);
                     if (currentSession instanceof HttpFlexSession)
-                        httpFlexSessions.add((HttpFlexSession)currentSession);
-                    if (httpFlexSessions.size() > 1)
-                    {
+                        httpFlexSessions.add((HttpFlexSession) currentSession);
+                    if (httpFlexSessions.size() > 1) {
                         FlexContext.getHttpRequest().setAttribute(REQUEST_ATTR_DUPLICATE_SESSION_FLAG, httpFlexSessions);
                         duplicateSessionDetected = true;
                         break;
@@ -458,25 +421,20 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
 
         // If more than one was found, remote host isn't using session cookies. Kill all duplicate sessions and return an error.
         // Simplest to just re-scan the list given that it will be very short, but use an iterator for concurrent modification.
-        if (duplicateSessionDetected)
-        {
+        if (duplicateSessionDetected) {
             Object attributeValue = FlexContext.getHttpRequest().getAttribute(REQUEST_ATTR_DUPLICATE_SESSION_FLAG);
             String newSessionId = null;
             String oldSessionId = null;
-            if (attributeValue != null)
-            {
+            if (attributeValue != null) {
                 @SuppressWarnings("unchecked")
-                List<HttpFlexSession> httpFlexSessions = (List<HttpFlexSession>)attributeValue;
+                List<HttpFlexSession> httpFlexSessions = (List<HttpFlexSession>) attributeValue;
                 oldSessionId = httpFlexSessions.get(0).getId();
                 newSessionId = httpFlexSessions.get(1).getId();
             }
 
-            if (sessions != null)
-            {
-                for (FlexSession session : sessions)
-                {
-                    if (session instanceof HttpFlexSession)
-                    {
+            if (sessions != null) {
+                for (FlexSession session : sessions) {
+                    if (session instanceof HttpFlexSession) {
                         session.invalidate();
                     }
                 }
@@ -504,19 +462,17 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      * exception is that access control headers (Access-Control-*) are sent only
      * if there is an Origin header in the request.
      *
-     * @param request The HTTP request.
+     * @param request  The HTTP request.
      * @param response The HTTP response.
      */
-    protected void addHeadersToResponse(HttpServletRequest request, HttpServletResponse response)
-    {
+    protected void addHeadersToResponse(HttpServletRequest request, HttpServletResponse response) {
         if (httpResponseHeaders == null || httpResponseHeaders.isEmpty())
             return;
 
         String origin = request.getHeader(HEADER_NAME_ORIGIN);
         boolean originHeaderExists = origin != null && origin.length() != 0;
 
-        for (HttpHeader header : httpResponseHeaders)
-        {
+        for (HttpHeader header : httpResponseHeaders) {
             if (header.name.startsWith(ACCESS_CONTROL) && !originHeaderExists)
                 continue;
 
@@ -542,8 +498,8 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      *
      * @return https.
      */
-    @Override protected String getSecureProtocolScheme()
-    {
+    @Override
+    protected String getSecureProtocolScheme() {
         return HTTPS_PROTOCOL_SCHEME;
     }
 
@@ -552,29 +508,26 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
      *
      * @return http.
      */
-    @Override protected String getInsecureProtocolScheme()
-    {
+    @Override
+    protected String getInsecureProtocolScheme() {
         return HTTP_PROTOCOL_SCHEME;
     }
 
     /**
      * @see flex.messaging.endpoints.AbstractEndpoint#handleChannelDisconnect(CommandMessage)
      */
-    @Override protected Message handleChannelDisconnect(CommandMessage disconnectCommand)
-    {
-        HttpFlexSession session = (HttpFlexSession)FlexContext.getFlexSession();
+    @Override
+    protected Message handleChannelDisconnect(CommandMessage disconnectCommand) {
+        HttpFlexSession session = (HttpFlexSession) FlexContext.getFlexSession();
         FlexClient flexClient = FlexContext.getFlexClient();
 
         // Shut down any subscriptions established over this channel/endpoint
         // for this specific FlexClient.
-        if (flexClient.isValid())
-        {
+        if (flexClient.isValid()) {
             String endpointId = getId();
             List<MessageClient> messageClients = flexClient.getMessageClients();
-            for (MessageClient messageClient : messageClients)
-            {
-                if (messageClient.getEndpointId().equals(endpointId))
-                {
+            for (MessageClient messageClient : messageClients) {
+                if (messageClient.getEndpointId().equals(endpointId)) {
                     messageClient.setClientChannelDisconnected(true);
                     messageClient.invalidate();
                 }
@@ -588,8 +541,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
         return super.handleChannelDisconnect(disconnectCommand);
     }
 
-    protected void initializeHttpResponseHeaders(ConfigMap properties)
-    {
+    protected void initializeHttpResponseHeaders(ConfigMap properties) {
         if (!properties.containsKey(HTTP_RESPONSE_HEADERS))
             return;
 
@@ -605,8 +557,7 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
         if (this.httpResponseHeaders == null)
             this.httpResponseHeaders = new ArrayList<HttpHeader>();
 
-        for (String header : headers)
-        {
+        for (String header : headers) {
             int colonIndex = header.indexOf(":");
             String name = header.substring(0, colonIndex).trim();
             String value = header.substring(colonIndex + 1).trim();
@@ -623,13 +574,12 @@ public abstract class BaseHTTPEndpoint extends AbstractEndpoint
     /**
      * Helper class used for headers in the HTTP request/response.
      */
-    static class HttpHeader
-    {
-        public HttpHeader(String name, String value)
-        {
+    static class HttpHeader {
+        public HttpHeader(String name, String value) {
             this.name = name;
             this.value = value;
         }
+
         public final String name;
         public final String value;
     }

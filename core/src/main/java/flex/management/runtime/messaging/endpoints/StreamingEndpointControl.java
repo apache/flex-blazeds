@@ -27,42 +27,38 @@ import flex.messaging.endpoints.BaseStreamingHTTPEndpoint;
  * for monitoring and managing a <code>BaseStreamingHTTPEndpoint</code> at runtime.
  */
 public abstract class StreamingEndpointControl extends EndpointControl implements
-        StreamingEndpointControlMBean
-{   
+        StreamingEndpointControlMBean {
     private int pushCount;
     private Date lastPushTimeStamp;
     private long pushStart;
-    
+
     /**
-     * Constructs a <code>StreamingEndpointControl</code>, assigning managed message 
+     * Constructs a <code>StreamingEndpointControl</code>, assigning managed message
      * endpoint and parent MBean.
-     * 
+     *
      * @param endpoint The <code>BaseStreamingHTTPEndpoint</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent   The parent MBean in the management hierarchy.
      */
-    public StreamingEndpointControl(BaseStreamingHTTPEndpoint endpoint, BaseControl parent)
-    {
+    public StreamingEndpointControl(BaseStreamingHTTPEndpoint endpoint, BaseControl parent) {
         super(endpoint, parent);
     }
-        
-    protected void onRegistrationComplete()
-    {
+
+    protected void onRegistrationComplete() {
         super.onRegistrationComplete();
-        
+
         String name = this.getObjectName().getCanonicalName();
-        String[] generalPollables = { "LastPushTimestamp", "PushCount", "PushFrequency", "StreamingClientsCount"};
-        
+        String[] generalPollables = {"LastPushTimestamp", "PushCount", "PushFrequency", "StreamingClientsCount"};
+
         getRegistrar().registerObjects(AdminConsoleTypes.ENDPOINT_POLLABLE, name, generalPollables);
         getRegistrar().registerObject(AdminConsoleTypes.ENDPOINT_SCALAR, name, "MaxStreamingClients");
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.messaging.endpoints.StreamingEndpointControlMBean#getMaxStreamingClients()
      */
-    public Integer getMaxStreamingClients() 
-    {
-        int maxStreamingClientsCount = ((BaseStreamingHTTPEndpoint)endpoint).getMaxStreamingClients();
+    public Integer getMaxStreamingClients() {
+        int maxStreamingClientsCount = ((BaseStreamingHTTPEndpoint) endpoint).getMaxStreamingClients();
         return new Integer(maxStreamingClientsCount);
     }
 
@@ -70,64 +66,55 @@ public abstract class StreamingEndpointControl extends EndpointControl implement
      *  (non-Javadoc)
      * @see flex.management.runtime.messaging.endpoints.StreamingEndpointControlMBean#getPushCount()
      */
-    public Integer getPushCount()
-    {
+    public Integer getPushCount() {
         return new Integer(pushCount);
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.messaging.endpoints.StreamingEndpointControlMBean#resetPushCount()
      */
-    public void resetPushCount()
-    {
+    public void resetPushCount() {
         pushStart = System.currentTimeMillis();
         pushCount = 0;
         lastPushTimeStamp = null;
     }
-    
+
     /**
      * Increments the count of messages pushed by the endpoint.
      */
-    public void incrementPushCount()
-    {
+    public void incrementPushCount() {
         ++pushCount;
         lastPushTimeStamp = new Date();
-    }    
-    
+    }
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.messaging.endpoints.StreamingEndpointControlMBean#getLastPushTimestamp()
      */
-    public Date getLastPushTimestamp()
-    {
+    public Date getLastPushTimestamp() {
         return lastPushTimeStamp;
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.messaging.endpoints.StreamingEndpointControlMBean#getPushFrequency()
      */
-    public Double getPushFrequency()
-    {
-        if (pushCount > 0)
-        {
+    public Double getPushFrequency() {
+        if (pushCount > 0) {
             double runtime = differenceInMinutes(pushStart, System.currentTimeMillis());
-            return new Double(pushCount/runtime);
-        }
-        else
-        {
+            return new Double(pushCount / runtime);
+        } else {
             return new Double(0);
         }
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.messaging.endpoints.StreamingEndpointControlMBean#isRunning()
      */
-    public Integer getStreamingClientsCount()
-    {
-        int streamingClientsCount = ((BaseStreamingHTTPEndpoint)endpoint).getStreamingClientsCount();
+    public Integer getStreamingClientsCount() {
+        int streamingClientsCount = ((BaseStreamingHTTPEndpoint) endpoint).getStreamingClientsCount();
         return new Integer(streamingClientsCount);
     }
 }

@@ -27,42 +27,33 @@ import flex.messaging.log.LogCategories;
  * it will accept, a list of filters for logging
  * categories it is interested in, and a collection of
  * properties required to initialize the target.
- *
- *
  */
-public class TargetSettings extends PropertiesSettings
-{
+public class TargetSettings extends PropertiesSettings {
     private String className;
     private String level;
     private List filters;
 
-    public TargetSettings(String className)
-    {
+    public TargetSettings(String className) {
         this.className = className;
     }
 
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
-    public String getLevel()
-    {
+    public String getLevel() {
         return level;
     }
 
-    public void setLevel(String level)
-    {
+    public void setLevel(String level) {
         this.level = level;
     }
 
-    public List getFilters()
-    {
+    public List getFilters() {
         return filters;
     }
 
-    public void addFilter(String filter)
-    {
+    public void addFilter(String filter) {
         if (filters == null)
             filters = new ArrayList();
 

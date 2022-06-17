@@ -19,8 +19,7 @@ package flex.messaging.config;
 /**
  *
  */
-public class ClusterSettings extends PropertiesSettings
-{
+public class ClusterSettings extends PropertiesSettings {
     public static final String CLUSTER_ELEMENT = "cluster";
     public static final String REF_ATTR = "ref";
     public static final String SHARED_BACKEND_ATTR = "shared-backend";
@@ -39,8 +38,7 @@ public class ClusterSettings extends PropertiesSettings
     /**
      * Creates a new <code>ClusterSettings</code> with default settings.
      */
-    public ClusterSettings()
-    {
+    public ClusterSettings() {
         def = false;
         urlLoadBalancing = true;
         implementationClass = JGROUPS_CLUSTER;
@@ -51,8 +49,7 @@ public class ClusterSettings extends PropertiesSettings
      *
      * @return The name of the cluster.
      */
-    public String getClusterName()
-    {
+    public String getClusterName() {
         return clusterName;
     }
 
@@ -61,8 +58,7 @@ public class ClusterSettings extends PropertiesSettings
      *
      * @param clusterName The name of the cluster.
      */
-    public void setClusterName(String clusterName)
-    {
+    public void setClusterName(String clusterName) {
         this.clusterName = clusterName;
     }
 
@@ -71,8 +67,7 @@ public class ClusterSettings extends PropertiesSettings
      *
      * @return <code>true</code> is the cluster is default; otherwise <code>false</code>.
      */
-    public boolean isDefault()
-    {
+    public boolean isDefault() {
         return def;
     }
 
@@ -81,8 +76,7 @@ public class ClusterSettings extends PropertiesSettings
      *
      * @param def <code>true</code> is the cluster is default; otherwise <code>false</code>.
      */
-    public void setDefault(boolean def)
-    {
+    public void setDefault(boolean def) {
         this.def = def;
     }
 
@@ -91,8 +85,7 @@ public class ClusterSettings extends PropertiesSettings
      *
      * @return The properties file of the cluster.
      */
-    public String getPropsFileName()
-    {
+    public String getPropsFileName() {
         return propsFileName;
     }
 
@@ -101,8 +94,7 @@ public class ClusterSettings extends PropertiesSettings
      *
      * @param propsFileName The properties file of the cluster.
      */
-    public void setPropsFileName(String propsFileName)
-    {
+    public void setPropsFileName(String propsFileName) {
         this.propsFileName = propsFileName;
     }
 
@@ -111,8 +103,7 @@ public class ClusterSettings extends PropertiesSettings
      *
      * @return <code>true</code> if the url load balancing is enabled; otherwise <code>false</code>.
      */
-    public boolean getURLLoadBalancing()
-    {
+    public boolean getURLLoadBalancing() {
         return urlLoadBalancing;
     }
 
@@ -121,8 +112,7 @@ public class ClusterSettings extends PropertiesSettings
      *
      * @param ulb <code>true</code> if the url load balancing is enabled; otherwise <code>false</code>.
      */
-    public void setURLLoadBalancing(boolean ulb)
-    {
+    public void setURLLoadBalancing(boolean ulb) {
         urlLoadBalancing = ulb;
     }
 
@@ -131,10 +121,8 @@ public class ClusterSettings extends PropertiesSettings
      * The default is 'flex.messaging.cluster.JGroupsCluster'.
      *
      * @param className name of the cluster implementation class
-     *
      */
-    public void setImplementationClass(String className)
-    {
+    public void setImplementationClass(String className) {
         this.implementationClass = className;
     }
 
@@ -143,10 +131,8 @@ public class ClusterSettings extends PropertiesSettings
      * The class must support the flex.messaging.cluster.Cluster interface.
      *
      * @return The implementation class name.
-     *
      */
-    public String getImplementationClass()
-    {
+    public String getImplementationClass() {
         return implementationClass;
     }
 }

@@ -19,43 +19,36 @@ package flex.messaging.util;
 /**
  * Simple assert class which provides functionality similar to the assert API
  * of JDK 1.4.
- *
+ * <p>
  * Enable as follows:
  * java -Dassert
- * 
- *
  */
-public class Assert 
-{
+public class Assert {
     public static final boolean enableAssert = (System.getProperty("assert") != null);
 
-    
+
     /**
      * If assertions are enabled and the passed in expression is false, throw an
      * AssertionFailedError.
-     * 
+     *
      * @param expr expression whose truth value is tested
      */
-    public static void testAssertion(boolean expr) 
-    {
-        if (enableAssert && !expr) 
-        {
+    public static void testAssertion(boolean expr) {
+        if (enableAssert && !expr) {
             throw new AssertionFailedError();
         }
     }
-    
+
     /**
      * If assertions are enabled and the passed in expression is false, throw an
      * AssertionFailedError with the passed in message.
-     * 
-     * @param expr expression whose truth value is tested
+     *
+     * @param expr    expression whose truth value is tested
      * @param message message contained in the AssertionFailedError when the expression
-     * is false and assertions are enabled. 
+     *                is false and assertions are enabled.
      */
-    public static void testAssertion(boolean expr, String message)
-    {
-        if (enableAssert && !expr) 
-        {
+    public static void testAssertion(boolean expr, String message) {
+        if (enableAssert && !expr) {
             throw new AssertionFailedError(message);
         }
     }

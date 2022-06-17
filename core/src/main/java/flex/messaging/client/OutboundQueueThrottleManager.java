@@ -35,8 +35,7 @@ import flex.messaging.util.StringUtils;
  * subscriptions (for each subtopic/selector) across the same destination for
  * the same MessageClient.
  */
-public class OutboundQueueThrottleManager
-{
+public class OutboundQueueThrottleManager {
     //--------------------------------------------------------------------------
     //
     // Constructor
@@ -48,8 +47,7 @@ public class OutboundQueueThrottleManager
      *
      * @param processor The outbound queue processor that is using this throttle manager.
      */
-    public OutboundQueueThrottleManager(FlexClientOutboundQueueProcessor processor)
-    {
+    public OutboundQueueThrottleManager(FlexClientOutboundQueueProcessor processor) {
         destinationFrequencies = new ConcurrentHashMap<String, DestinationFrequency>();
         this.processor = processor;
     }
@@ -79,16 +77,14 @@ public class OutboundQueueThrottleManager
     /**
      * Registers the destination with the outbound throttle manager.
      *
-     * @param destinationId The id of the destination.
+     * @param destinationId              The id of the destination.
      * @param outboundMaxClientFrequency The outbound max-client-frequency specified
-     * at the destination.
-     * @param outboundPolicy The outbound throttle policy specified at the destination.
+     *                                   at the destination.
+     * @param outboundPolicy             The outbound throttle policy specified at the destination.
      */
-    public void registerDestination(String destinationId, int outboundMaxClientFrequency, Policy outboundPolicy)
-    {
+    public void registerDestination(String destinationId, int outboundMaxClientFrequency, Policy outboundPolicy) {
         DestinationFrequency frequency = destinationFrequencies.get(destinationId);
-        if (frequency == null)
-        {
+        if (frequency == null) {
             frequency = new DestinationFrequency(outboundMaxClientFrequency, outboundPolicy);
             destinationFrequencies.putIfAbsent(destinationId, frequency);
         }
@@ -99,10 +95,9 @@ public class OutboundQueueThrottleManager
      * specified subscription info.
      *
      * @param destinationId The destination id.
-     * @param si The subscription information.
+     * @param si            The subscription information.
      */
-    public void registerSubscription(String destinationId, SubscriptionInfo si)
-    {
+    public void registerSubscription(String destinationId, SubscriptionInfo si) {
         DestinationFrequency frequency = destinationFrequencies.get(destinationId);
         frequency.logMaxFrequencyDuringRegistration(frequency.outboundMaxClientFrequency, si);
     }
@@ -111,10 +106,9 @@ public class OutboundQueueThrottleManager
      * Unregisters the subscription.
      *
      * @param destinationId The destination id.
-     * @param si The subscription information.
+     * @param si            The subscription information.
      */
-    public void unregisterSubscription(String destinationId, SubscriptionInfo si)
-    {
+    public void unregisterSubscription(String destinationId, SubscriptionInfo si) {
         unregisterDestination(destinationId);
     }
 
@@ -123,8 +117,7 @@ public class OutboundQueueThrottleManager
      *
      * @param destinationId The destination id.
      */
-    public void unregisterAllSubscriptions(String destinationId)
-    {
+    public void unregisterAllSubscriptions(String destinationId) {
         unregisterDestination(destinationId);
     }
 
@@ -134,16 +127,13 @@ public class OutboundQueueThrottleManager
      * @param message The message to consider to throttle.
      * @return True if the message was throttled; otherwise false.
      */
-    public ThrottleResult throttleOutgoingClientLevel(Message message)
-    {
+    public ThrottleResult throttleOutgoingClientLevel(Message message) {
         String destinationId = message.getDestination();
-        if (isDestinationRegistered(destinationId))
-        {
+        if (isDestinationRegistered(destinationId)) {
             DestinationFrequency frequency = destinationFrequencies.get(message.getDestination());
             int maxFrequency = frequency.getMaxFrequency(message); // Limit to check against.
             MessageFrequency messageFrequency = frequency.getMessageFrequency(message); // Message rate of the client.
-            if (messageFrequency != null)
-            {
+            if (messageFrequency != null) {
                 ThrottleResult result = messageFrequency.checkLimit(maxFrequency, frequency.outboundPolicy);
                 return result;
             }
@@ -156,11 +146,9 @@ public class OutboundQueueThrottleManager
      *
      * @param message The message.
      */
-    public void updateMessageFrequencyOutgoingClientLevel(Message message)
-    {
+    public void updateMessageFrequencyOutgoingClientLevel(Message message) {
         String destinationId = message.getDestination();
-        if (isDestinationRegistered(destinationId))
-        {
+        if (isDestinationRegistered(destinationId)) {
             DestinationFrequency frequency = destinationFrequencies.get(message.getDestination());
             MessageFrequency messageFrequency = frequency.getMessageFrequency(message);
             if (messageFrequency != null)
@@ -180,8 +168,7 @@ public class OutboundQueueThrottleManager
      * @param destinationId The destination id.
      * @return True if the destination with the specified id has been registered.
      */
-    protected boolean isDestinationRegistered(String destinationId)
-    {
+    protected boolean isDestinationRegistered(String destinationId) {
         return destinationFrequencies.containsKey(destinationId);
     }
 
@@ -190,8 +177,7 @@ public class OutboundQueueThrottleManager
      *
      * @param destinationId The id of the destination.
      */
-    protected void unregisterDestination(String destinationId)
-    {
+    protected void unregisterDestination(String destinationId) {
         if (isDestinationRegistered(destinationId))
             destinationFrequencies.remove(destinationId);
     }
@@ -207,8 +193,7 @@ public class OutboundQueueThrottleManager
      * specified at the destination. It also keeps track of outbound message
      * rates of all MessageClient subscriptions across the destination.
      */
-    class DestinationFrequency
-    {
+    class DestinationFrequency {
         protected final int outboundMaxClientFrequency; // destination specified client limit.
         protected final MessageFrequency outboundClientFrequency;
         protected final Policy outboundPolicy; // destination specified policy.
@@ -217,10 +202,9 @@ public class OutboundQueueThrottleManager
          * Default constructor.
          *
          * @param outboundMaxClientFrequency The outbound throttling max-client-frequency of the destination.
-         * @param outboundPolicy The outbound throttling policy of the destination.
+         * @param outboundPolicy             The outbound throttling policy of the destination.
          */
-        DestinationFrequency(int outboundMaxClientFrequency, Policy outboundPolicy)
-        {
+        DestinationFrequency(int outboundMaxClientFrequency, Policy outboundPolicy) {
             this.outboundMaxClientFrequency = outboundMaxClientFrequency;
             this.outboundPolicy = outboundPolicy;
             outboundClientFrequency = new MessageFrequency(outboundMaxClientFrequency);
@@ -228,15 +212,13 @@ public class OutboundQueueThrottleManager
 
         /**
          * Returns the max-client-frequency for the subscription the message is
-         * intended for (which is simply the max-client-frequency specified at 
+         * intended for (which is simply the max-client-frequency specified at
          * the destination).
          *
          * @param message The message.
-         *
          * @return The max-frequency for the subscription.
          */
-        int getMaxFrequency(Message message)
-        {
+        int getMaxFrequency(Message message) {
             return outboundMaxClientFrequency;
         }
 
@@ -247,8 +229,7 @@ public class OutboundQueueThrottleManager
          * @param message The message.
          * @return The message frequency for the subscription, if it exists; otherwise null.
          */
-        MessageFrequency getMessageFrequency(Message message)
-        {
+        MessageFrequency getMessageFrequency(Message message) {
             return outboundClientFrequency;
         }
 
@@ -257,13 +238,12 @@ public class OutboundQueueThrottleManager
          *
          * @param maxFrequency The maxFrequency to log.
          */
-        void logMaxFrequencyDuringRegistration(int maxFrequency, SubscriptionInfo si)
-        {
+        void logMaxFrequencyDuringRegistration(int maxFrequency, SubscriptionInfo si) {
             if (Log.isDebug())
                 Log.getLogger(ThrottleManager.LOG_CATEGORY).debug("Outbound queue throttle manager for FlexClient '"
                         + processor.getFlexClient().getId() + "' is using '" + maxFrequency
                         + "' as the throttling limit for its subscription: "
-                        +  StringUtils.NEWLINE + si);
+                        + StringUtils.NEWLINE + si);
         }
     }
 }

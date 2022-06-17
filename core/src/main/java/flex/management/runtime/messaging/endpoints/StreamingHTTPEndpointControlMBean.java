@@ -17,10 +17,9 @@
 package flex.management.runtime.messaging.endpoints;
 
 /**
- * Defines the runtime monitoring and management interface for managed streaming 
+ * Defines the runtime monitoring and management interface for managed streaming
  * HTTP endpoints.
  */
-public interface StreamingHTTPEndpointControlMBean extends StreamingEndpointControlMBean
-{
+public interface StreamingHTTPEndpointControlMBean extends StreamingEndpointControlMBean {
     // Empty for now
 }

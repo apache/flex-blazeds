@@ -24,8 +24,7 @@ import java.util.Iterator;
 /**
  *
  */
-public class RemoteMessageClient extends MessageClient
-{
+public class RemoteMessageClient extends MessageClient {
     /**
      *
      */
@@ -33,33 +32,28 @@ public class RemoteMessageClient extends MessageClient
 
     /**
      * Constructor.
-     * 
-     * @param clientId The client id.
+     *
+     * @param clientId    The client id.
      * @param destination The message destination.
-     * @param endpointId The endpoint id.
+     * @param endpointId  The endpoint id.
      */
-    public RemoteMessageClient(Object clientId, MessageDestination destination, String endpointId)
-    {
+    public RemoteMessageClient(Object clientId, MessageDestination destination, String endpointId) {
         super(clientId, destination, endpointId, false /* do not use session */);
     }
 
     /**
      * Invalidates the RemoteMessageClient.
      */
-    public void invalidate()
-    {
-        synchronized (lock)
-        {
+    public void invalidate() {
+        synchronized (lock) {
             if (!valid)
                 return;
         }
 
-        if (destination instanceof MessageDestination)
-        {
-            MessageDestination msgDestination = (MessageDestination)destination;
-            for (Iterator it = subscriptions.iterator(); it.hasNext(); )
-            {
-                SubscriptionInfo si = (SubscriptionInfo)it.next();
+        if (destination instanceof MessageDestination) {
+            MessageDestination msgDestination = (MessageDestination) destination;
+            for (Iterator it = subscriptions.iterator(); it.hasNext(); ) {
+                SubscriptionInfo si = (SubscriptionInfo) it.next();
                 msgDestination.getRemoteSubscriptionManager().removeSubscriber(clientId,
                         si.selector, si.subtopic, null);
             }

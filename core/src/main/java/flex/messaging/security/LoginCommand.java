@@ -26,12 +26,11 @@ import java.util.List;
  * gateway configuration's security section and is instantiated using reflection
  * on servlet initialization.
  */
-public interface LoginCommand
-{
+public interface LoginCommand {
     /**
      * Called to initialize a login command prior to authentication/authorization requests.
-     * 
-     * @param config The servlet configuration for MessageBrokerServlet.  
+     *
+     * @param config The servlet configuration for MessageBrokerServlet.
      */
     void start(ServletConfig config);
 
@@ -49,7 +48,7 @@ public interface LoginCommand
      *
      * @param username    The principal being authenticated
      * @param credentials A map, typically with string keys and values - holds, for example, a password
-     * @return principal for the authenticated user when authentication is successful; null otherwise 
+     * @return principal for the authenticated user when authentication is successful; null otherwise
      */
     Principal doAuthentication(String username, Object credentials);
 
@@ -62,15 +61,16 @@ public interface LoginCommand
      * </p>
      *
      * @param principal The principal being checked for authorization
-     * @param roles    A List of role names to check, all members should be strings
+     * @param roles     A List of role names to check, all members should be strings
      * @return true if the principal is authorized given the list of roles
      */
     boolean doAuthorization(Principal principal, List roles);
 
     /**
      * Attempts to log a user out from their session.
-     *
+     * <p>
      * NOTE: May not be possible on all application servers.
+     *
      * @param principal The principal to logout.
      * @return true when logout is successful
      */

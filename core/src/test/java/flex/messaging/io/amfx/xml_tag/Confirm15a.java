@@ -22,18 +22,15 @@ import flex.messaging.io.amf.MessageBody;
 import flex.messaging.util.XMLUtil;
 import flex.messaging.MessageException;
 
-public class Confirm15a extends DeserializationConfirmation
-{
+public class Confirm15a extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm15a()
-    {
+    public Confirm15a() {
         ActionMessage m = new ActionMessage();
         MessageBody body = new MessageBody();
         m.addBody(body);
 
-        try
-        {
+        try {
             StringBuffer xml = new StringBuffer(512);
             xml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>\r\n");
             xml.append("<stock>");
@@ -44,22 +41,18 @@ public class Confirm15a extends DeserializationConfirmation
 
             Object data = XMLUtil.stringToDocument(xml.toString());
             body.setData(data);
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             throw new MessageException("Error creating expected message for test 15a: " + t.getMessage());
         }
 
         EXPECTED_VALUE = m;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

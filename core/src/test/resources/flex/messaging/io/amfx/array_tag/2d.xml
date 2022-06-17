@@ -28,16 +28,18 @@
                 <string>prop4</string>
                 <string>prop5</string>
             </traits>
-            <array length="0" benign="true"     />
+            <array length="0" benign="true"/>
             <array length="0">
 
             </array>
-            <array length="0" 	></array>
-            <array length="0">	</array>
-            <array length="1">	<string>One</string>	</array>
+            <array length="0"></array>
+            <array length="0"></array>
             <array length="1">
-                  <string>One</string>
-    </array>
+                <string>One</string>
+            </array>
+            <array length="1">
+                <string>One</string>
+            </array>
         </object>
     </body>
 </amfx>

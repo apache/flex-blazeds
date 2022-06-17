@@ -21,32 +21,31 @@ package flex.management;
  * specific level of manageability is defined by the relationship between
  * a manageable component and its corresponding control.
  */
-public interface Manageable
-{
+public interface Manageable {
     /**
      * Returns <code>true</code> if the component is enabled for management.
-     * 
+     *
      * @return <code>true</code> if the component is enabled for management.
      */
     boolean isManaged();
-    
+
     /**
      * Enables or disables management for the component.
-     * 
+     *
      * @param enableManagement <code>true</code> to enable management, <code>false</code> to disable management.
      */
     void setManaged(boolean enableManagement);
-    
+
     /**
      * Returns the control MBean used to manage the component.
-     * 
+     *
      * @return The control MBean used to manage the component.
      */
     BaseControl getControl();
-    
+
     /**
      * Set the control MBean used to manage the component.
-     * 
+     *
      * @param control The <code>BaseControl</code> MBean used to manage the component.
      */
     void setControl(BaseControl control);

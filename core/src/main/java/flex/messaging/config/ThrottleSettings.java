@@ -22,19 +22,19 @@ package flex.messaging.config;
  * It exists to capture properties related to message throttling in a way
  * that simplifies the ThrottleManager's usage of the configuration.
  */
-public class ThrottleSettings
-{
+public class ThrottleSettings {
     /**
      * The Policy enum.
      */
-    public enum Policy
-    {
+    public enum Policy {
         NONE,
         ERROR,
         IGNORE,
         BUFFER,
         CONFLATE
-    };
+    }
+
+    ;
 
 
     public static final String ELEMENT_INBOUND = "throttle-inbound";
@@ -66,8 +66,7 @@ public class ThrottleSettings
     /**
      * Creates a <code>ThrottleSettings</code> instance with default settings.
      */
-    public ThrottleSettings()
-    {
+    public ThrottleSettings() {
         inPolicy = Policy.NONE;
         outPolicy = Policy.NONE;
     }
@@ -78,8 +77,7 @@ public class ThrottleSettings
      * @param policy The string policy to parse.
      * @return The Policy.
      */
-    public static Policy parsePolicy(String policy)
-    {
+    public static Policy parsePolicy(String policy) {
         if (Policy.NONE.toString().equalsIgnoreCase(policy))
             return Policy.NONE;
         else if (Policy.IGNORE.toString().equalsIgnoreCase(policy))
@@ -102,8 +100,7 @@ public class ThrottleSettings
      * @return True if the incoming client frequency or outgoing
      * client frequency is enabled; otherwise false.
      */
-    public boolean isClientThrottleEnabled()
-    {
+    public boolean isClientThrottleEnabled() {
         return isInboundClientThrottleEnabled() || isOutboundClientThrottleEnabled();
     }
 
@@ -112,8 +109,7 @@ public class ThrottleSettings
      *
      * @return True if the inbound client throttling is enabled.
      */
-    public boolean isInboundClientThrottleEnabled()
-    {
+    public boolean isInboundClientThrottleEnabled() {
         return inPolicy != Policy.NONE && getIncomingClientFrequency() > 0;
     }
 
@@ -122,8 +118,7 @@ public class ThrottleSettings
      *
      * @return True if the outbound client throttling is enabled.
      */
-    public boolean isOutboundClientThrottleEnabled()
-    {
+    public boolean isOutboundClientThrottleEnabled() {
         return outPolicy != Policy.NONE && getOutgoingClientFrequency() > 0;
     }
 
@@ -133,8 +128,7 @@ public class ThrottleSettings
      * @return true if incoming or outbound destination throttling is enabled;
      * otherwise false.
      */
-    public boolean isDestinationThrottleEnabled()
-    {
+    public boolean isDestinationThrottleEnabled() {
         return isInboundDestinationThrottleEnabled() || isOutboundDestinationThrottleEnabled();
     }
 
@@ -143,8 +137,7 @@ public class ThrottleSettings
      *
      * @return true if inbound destination throttling is enabled.
      */
-    public boolean isInboundDestinationThrottleEnabled()
-    {
+    public boolean isInboundDestinationThrottleEnabled() {
         return inPolicy != Policy.NONE && getIncomingDestinationFrequency() > 0;
     }
 
@@ -153,8 +146,7 @@ public class ThrottleSettings
      *
      * @return true if outbound destination throttling is enabled.
      */
-    public boolean isOutboundDestinationThrottleEnabled()
-    {
+    public boolean isOutboundDestinationThrottleEnabled() {
         return outPolicy != Policy.NONE && getOutgoingDestinationFrequency() > 0;
     }
 
@@ -163,8 +155,7 @@ public class ThrottleSettings
      *
      * @return the inbound throttle policy.
      */
-    public Policy getInboundPolicy()
-    {
+    public Policy getInboundPolicy() {
         return inPolicy;
     }
 
@@ -173,10 +164,8 @@ public class ThrottleSettings
      *
      * @param inPolicy The inbound policy.
      */
-    public void setInboundPolicy(Policy inPolicy)
-    {
-        if (inPolicy != Policy.NONE && inPolicy != Policy.ERROR && inPolicy != Policy.IGNORE)
-        {
+    public void setInboundPolicy(Policy inPolicy) {
+        if (inPolicy != Policy.NONE && inPolicy != Policy.ERROR && inPolicy != Policy.IGNORE) {
             ConfigurationException ex = new ConfigurationException();
             // Invalid inbound throttle policy ''{0}'' for destination ''{1}''. Valid values are 'NONE', 'ERROR', and 'IGNORE'.
             ex.setMessage(ERR_MSG_INVALID_INBOUND_POLICY, new Object[]{inPolicy, destinationName});
@@ -190,8 +179,7 @@ public class ThrottleSettings
      *
      * @return the outbound throttle policy.
      */
-    public Policy getOutboundPolicy()
-    {
+    public Policy getOutboundPolicy() {
         return outPolicy;
     }
 
@@ -201,8 +189,7 @@ public class ThrottleSettings
      *
      * @param outPolicy The outbound policy.
      */
-    public void setOutboundPolicy(Policy outPolicy)
-    {
+    public void setOutboundPolicy(Policy outPolicy) {
         // Policy is checked at throttle manager.
         this.outPolicy = outPolicy;
     }
@@ -212,8 +199,7 @@ public class ThrottleSettings
      *
      * @return the destination name for <code>ThrottleSettings</code>.
      */
-    public String getDestinationName()
-    {
+    public String getDestinationName() {
         return destinationName;
     }
 
@@ -223,8 +209,7 @@ public class ThrottleSettings
      *
      * @param destinationName The destination name.
      */
-    public void setDestinationName(String destinationName)
-    {
+    public void setDestinationName(String destinationName) {
         this.destinationName = destinationName;
     }
 
@@ -233,8 +218,7 @@ public class ThrottleSettings
      *
      * @return The incoming client frequency (max-client-frequency).
      */
-    public int getIncomingClientFrequency()
-    {
+    public int getIncomingClientFrequency() {
         return inClientMessagesPerSec;
     }
 
@@ -245,13 +229,11 @@ public class ThrottleSettings
      *
      * @param n The incoming client frequency.
      */
-    public void setIncomingClientFrequency(int n)
-    {
+    public void setIncomingClientFrequency(int n) {
         String name = "incoming client frequency";
         blockNegative(n, name);
 
-        if (inDestinationMessagesPerSec > 0 && n > inDestinationMessagesPerSec)
-        {
+        if (inDestinationMessagesPerSec > 0 && n > inDestinationMessagesPerSec) {
             ConfigurationException ex = new ConfigurationException();
             // Invalid {0} for destination ''{1}''. {0} ''{2}'' cannot be more than the incoming destination frequency ''{3}''.
             ex.setMessage(ERR_MSG_INVALID_INCOMING_CLENT_FREQ, new Object[]{name, destinationName,
@@ -266,8 +248,7 @@ public class ThrottleSettings
      *
      * @return The incoming destination frequency (max-frequency).
      */
-    public int getIncomingDestinationFrequency()
-    {
+    public int getIncomingDestinationFrequency() {
         return inDestinationMessagesPerSec;
     }
 
@@ -278,13 +259,11 @@ public class ThrottleSettings
      *
      * @param n The incoming destination frequency.
      */
-    public void setIncomingDestinationFrequency(int n)
-    {
+    public void setIncomingDestinationFrequency(int n) {
         String name = "The incoming destination frequency";
         blockNegative(n, name);
 
-        if (inClientMessagesPerSec > 0 && n < inClientMessagesPerSec)
-        {
+        if (inClientMessagesPerSec > 0 && n < inClientMessagesPerSec) {
             ConfigurationException ex = new ConfigurationException();
             // Invalid {0} for destination ''{1}''. {0} ''{2}'' cannot be less than the incoming client frequency ''{3}''.
             ex.setMessage(ERR_MSG_INVALID_INCOMING_DEST_FREQ, new Object[]{name, destinationName,
@@ -299,8 +278,7 @@ public class ThrottleSettings
      *
      * @return The outgoing client frequency (max-client-frequency).
      */
-    public int getOutgoingClientFrequency()
-    {
+    public int getOutgoingClientFrequency() {
         return outClientMessagesPerSec;
     }
 
@@ -311,13 +289,11 @@ public class ThrottleSettings
      *
      * @param n The outgoing client frequency.
      */
-    public void setOutgoingClientFrequency(int n)
-    {
+    public void setOutgoingClientFrequency(int n) {
         String name = "The outgoing client frequency";
         blockNegative(n, name);
 
-        if (outDestinationMessagesPerSec > 0 && n > outDestinationMessagesPerSec)
-        {
+        if (outDestinationMessagesPerSec > 0 && n > outDestinationMessagesPerSec) {
             ConfigurationException ex = new ConfigurationException();
             // Invalid {0} for destination ''{1}''. {0} ''{2}'' cannot be more than the outgoing destination frequency ''{3}''.
             ex.setMessage(ERR_MSG_INVALID_OUTGOING_CLIENT_FREQ, new Object[]{name, destinationName,
@@ -332,8 +308,7 @@ public class ThrottleSettings
      *
      * @return The outgoing destination frequency (max-frequency).
      */
-    public int getOutgoingDestinationFrequency()
-    {
+    public int getOutgoingDestinationFrequency() {
         return outDestinationMessagesPerSec;
     }
 
@@ -344,13 +319,11 @@ public class ThrottleSettings
      *
      * @param n The outgoing destination frequency.
      */
-    public void setOutgoingDestinationFrequency(int n)
-    {
+    public void setOutgoingDestinationFrequency(int n) {
         String name = "The outgoing destination frequency";
         blockNegative(n, name);
 
-        if (outClientMessagesPerSec > 0 && n < outClientMessagesPerSec)
-        {
+        if (outClientMessagesPerSec > 0 && n < outClientMessagesPerSec) {
             ConfigurationException ex = new ConfigurationException();
             // Invalid {0} for destination ''{1}''. {0} ''{2}'' cannot be less than the outgoing client frequency ''{3}''.
             ex.setMessage(ERR_MSG_INVALID_OUTGOING_DEST_FREQ, new Object[]{name, destinationName, Integer.valueOf(n),
@@ -360,10 +333,8 @@ public class ThrottleSettings
         this.outDestinationMessagesPerSec = n;
     }
 
-    protected void blockNegative(int n, String name)
-    {
-        if (n < 0)
-        {
+    protected void blockNegative(int n, String name) {
+        if (n < 0) {
             ConfigurationException ex = new ConfigurationException();
             // Invalid {0} for destination ''{1}''. {0} cannot be negative.
             ex.setMessage(ERR_MSG_INVALID_NEGATIVE_VALUE, new Object[]{name, destinationName});

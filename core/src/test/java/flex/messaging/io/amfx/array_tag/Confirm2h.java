@@ -24,12 +24,10 @@ import flex.messaging.MessageException;
 import java.util.Map;
 import java.util.HashMap;
 
-public class Confirm2h extends DeserializationConfirmation
-{
+public class Confirm2h extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm2h()
-    {
+    public Confirm2h() {
         ActionMessage m = new ActionMessage();
         MessageBody body = new MessageBody();
         m.addBody(body);
@@ -42,13 +40,11 @@ public class Confirm2h extends DeserializationConfirmation
         EXPECTED_VALUE = m;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

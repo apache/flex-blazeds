@@ -16,14 +16,14 @@
  */
 
 package flex.messaging.io.amf.client.exceptions;
+
 import flex.messaging.io.amf.client.AMFConnection.HttpResponseInfo;
 
 /**
  * Server status exceptions are thrown by the AMF connection when a server side
  * error is encountered.
  */
-public class ServerStatusException extends Exception
-{
+public class ServerStatusException extends Exception {
     private static final long serialVersionUID = -5441048669770997132L;
 
     private Object data;
@@ -33,11 +33,10 @@ public class ServerStatusException extends Exception
      * Creates a server status exception with the supplied message and data.
      *
      * @param message The message of the exception.
-     * @param data The data of the exception which is usually an AMF result or
-     * status message.
+     * @param data    The data of the exception which is usually an AMF result or
+     *                status message.
      */
-    public ServerStatusException(String message, Object data)
-    {
+    public ServerStatusException(String message, Object data) {
         this(message, data, null);
     }
 
@@ -45,14 +44,13 @@ public class ServerStatusException extends Exception
      * Creates a server status exception with the supplied message, data, and
      * HTTP response info object.
      *
-     * @param message The message of the exception.
-     * @param data The data of the exception which is usually an AMF result or
-     * status message.
+     * @param message          The message of the exception.
+     * @param data             The data of the exception which is usually an AMF result or
+     *                         status message.
      * @param httpResponseInfo The HTTP response info object that represents
-     * the HTTP response returned with the exception.
+     *                         the HTTP response returned with the exception.
      */
-    public ServerStatusException(String message, Object data, HttpResponseInfo httpResponseInfo)
-    {
+    public ServerStatusException(String message, Object data, HttpResponseInfo httpResponseInfo) {
         super(message);
         this.data = data;
         this.httpResponseInfo = httpResponseInfo;
@@ -63,8 +61,7 @@ public class ServerStatusException extends Exception
      *
      * @return The data of the exception.
      */
-    public Object getData()
-    {
+    public Object getData() {
         return data;
     }
 
@@ -73,8 +70,7 @@ public class ServerStatusException extends Exception
      *
      * @return The HTTP response info of the exception.
      */
-    public HttpResponseInfo getHttpResponseInfo()
-    {
+    public HttpResponseInfo getHttpResponseInfo() {
         return httpResponseInfo;
     }
 
@@ -84,8 +80,7 @@ public class ServerStatusException extends Exception
      * @return A String that represents the exception.
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         String temp = "ServerStatusException " + "\n\tdata: " + data;
         if (httpResponseInfo != null)
             temp += "\n\tHttpResponseInfo: " + httpResponseInfo;

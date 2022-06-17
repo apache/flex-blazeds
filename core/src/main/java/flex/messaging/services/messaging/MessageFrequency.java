@@ -25,19 +25,17 @@ import flex.messaging.services.messaging.ThrottleManager.ThrottleResult.Result;
  * to keep track of inbound and outbound message rates per destination and
  * per client-subscription.
  */
-public class MessageFrequency
-{
+public class MessageFrequency {
     public final int messageHistorySize;
     private int messageCount;
-    private long [] previousMessageTimes;
+    private long[] previousMessageTimes;
 
     /**
      * Creates a new MessageFrequency with the specified id.
      *
      * @param messageHistorySize The number of messages to use in calculating message rates.
      */
-    public MessageFrequency(int messageHistorySize)
-    {
+    public MessageFrequency(int messageHistorySize) {
         this.messageHistorySize = messageHistorySize;
         messageCount = 0;
         previousMessageTimes = new long[messageHistorySize];
@@ -47,43 +45,38 @@ public class MessageFrequency
      * Given the current time and a maximum frequency, checks that the message
      * is not exceeding the max frequency limit. If message exceeds the limit,
      * returns a throttle result object that is appropriate for the passed in policy.
-     *
+     * <p>
      * Callers of checkLimit method should call updateMessageFrequency method
      * once a message is successfully sent to the client.
      *
      * @param maxFrequency The maximum frequency to enforce. If maxFrequency is
-     * zero, the message frequencies are being kept track but no check happens.
-     * @param policy The throttling policy.
+     *                     zero, the message frequencies are being kept track but no check happens.
+     * @param policy       The throttling policy.
      * @return The ThrottleResult.
      */
-    public ThrottleResult checkLimit(int maxFrequency, Policy policy)
-    {
+    public ThrottleResult checkLimit(int maxFrequency, Policy policy) {
         long messageTimestamp = System.currentTimeMillis();
         // If we have enough messages to start testing.
-        if (maxFrequency > -1 && messageCount >= messageHistorySize)
-        {
+        if (maxFrequency > -1 && messageCount >= messageHistorySize) {
             // Find the interval between this message and the last n messages.
             int index = messageCount % messageHistorySize;
             long intervalMillis = messageTimestamp - previousMessageTimes[index];
             double intervalSeconds = intervalMillis / 1000d;
             // Calculate the message rate in seconds.
             double actualFrequency;
-            if (intervalSeconds > 0)
-            {
+            if (intervalSeconds > 0) {
                 actualFrequency = messageHistorySize / intervalSeconds;
                 actualFrequency = Math.round(actualFrequency * 100d) / 100d;
             }
             // If the interval is zero, it means all the messages were sent
             // in the same instant. In that case, there's no frequency to
             // calculate really, so set it to one more than the limit.
-            else
-            {
+            else {
                 actualFrequency = maxFrequency + 1;
             }
             // If the rate is too high, toss this message and do not record it,
             // so the history represents the rate of messages actually delivered.
-            if (maxFrequency > 0 && actualFrequency > maxFrequency)
-            {
+            if (maxFrequency > 0 && actualFrequency > maxFrequency) {
                 Result result = ThrottleManager.getResult(policy);
                 String detail = "[actual-frequency=" + actualFrequency + ", max-frequency=" + maxFrequency + "]";
                 return new ThrottleResult(result, detail);
@@ -98,10 +91,9 @@ public class MessageFrequency
      * current time. This method should be used by callers of checkLimit method
      * once a message is successfully sent to the client.
      */
-    public void updateMessageFrequency()
-    {
+    public void updateMessageFrequency() {
         // Handle integer wrap
-        messageCount = messageCount == Integer.MAX_VALUE? 0 : messageCount;
+        messageCount = messageCount == Integer.MAX_VALUE ? 0 : messageCount;
 
         // Increase the messageCount and update the message times.
         previousMessageTimes[messageCount++ % messageHistorySize] = System.currentTimeMillis();

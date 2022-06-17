@@ -38,10 +38,8 @@ import flex.messaging.security.SecurityException;
  * The message broker directs requests to the appropriate service,
  * in Flex 1.5 terms, the Proxy Service. The response from the proxy
  * request is streamed back to the client.
- *
  */
-public class HTTPEndpoint extends BasePollingHTTPEndpoint
-{
+public class HTTPEndpoint extends BasePollingHTTPEndpoint {
     public static final String LOG_CATEGORY = LogCategories.ENDPOINT_HTTP;
 
     private static final int IMPROPER_CONTENT_TYPE = 10068;
@@ -55,8 +53,7 @@ public class HTTPEndpoint extends BasePollingHTTPEndpoint
     /**
      * Constructs an unmanaged <code>HTTPEndpoint</code>.
      */
-    public HTTPEndpoint()
-    {
+    public HTTPEndpoint() {
         this(false);
     }
 
@@ -64,10 +61,9 @@ public class HTTPEndpoint extends BasePollingHTTPEndpoint
      * Constructs a <code>HTTPEndpoint</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>HTTPEndpoint</code>
-     * is manageable; <code>false</code> otherwise.
+     *                         is manageable; <code>false</code> otherwise.
      */
-    public HTTPEndpoint(boolean enableManagement)
-    {
+    public HTTPEndpoint(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -75,8 +71,8 @@ public class HTTPEndpoint extends BasePollingHTTPEndpoint
      * Currently this override is a no-op to disable small messages over HTTP
      * endpoints.
      */
-    @Override public Message convertToSmallMessage(Message message)
-    {
+    @Override
+    public Message convertToSmallMessage(Message message) {
         return message;
     }
 
@@ -86,12 +82,11 @@ public class HTTPEndpoint extends BasePollingHTTPEndpoint
      * @param req The servlet request.
      * @param res The servlet response.
      */
-    @Override public void service(HttpServletRequest req, HttpServletResponse res)
-    {
+    @Override
+    public void service(HttpServletRequest req, HttpServletResponse res) {
         String contentType = req.getContentType();
         boolean xmlContentType = contentType == null || contentType.equals(MessageIOConstants.XML_CONTENT_TYPE);
-        if (!xmlContentType)
-        {
+        if (!xmlContentType) {
             // HTTP endpoint ''{0}'' must be contacted via a HTTP request with proper content type.
             SecurityException se = new SecurityException();
             se.setMessage(IMPROPER_CONTENT_TYPE, new Object[]{id});
@@ -110,21 +105,18 @@ public class HTTPEndpoint extends BasePollingHTTPEndpoint
     /**
      * Create default filter chain or return current one if already present.
      */
-    @Override protected AMFFilter createFilterChain()
-    {
+    @Override
+    protected AMFFilter createFilterChain() {
         AMFFilter serializationFilter = new SerializationFilter(getLogCategory());
         AMFFilter batchFilter = new BatchProcessFilter();
-        AMFFilter sessionFilter = sessionRewritingEnabled? new SessionFilter() : null;
+        AMFFilter sessionFilter = sessionRewritingEnabled ? new SessionFilter() : null;
         AMFFilter messageBrokerFilter = new MessageBrokerFilter(this);
 
         serializationFilter.setNext(batchFilter);
-        if (sessionFilter != null)
-        {
+        if (sessionFilter != null) {
             batchFilter.setNext(sessionFilter);
             sessionFilter.setNext(messageBrokerFilter);
-        }
-        else
-        {
+        } else {
             batchFilter.setNext(messageBrokerFilter);
         }
 
@@ -134,8 +126,8 @@ public class HTTPEndpoint extends BasePollingHTTPEndpoint
     /**
      * Returns MessageIOConstants.XML_CONTENT_TYPE.
      */
-    @Override protected String getResponseContentType()
-    {
+    @Override
+    protected String getResponseContentType() {
         return MessageIOConstants.XML_CONTENT_TYPE;
     }
 
@@ -144,8 +136,8 @@ public class HTTPEndpoint extends BasePollingHTTPEndpoint
      *
      * @return The log category of the endpoint.
      */
-    @Override protected String getLogCategory()
-    {
+    @Override
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
@@ -154,8 +146,8 @@ public class HTTPEndpoint extends BasePollingHTTPEndpoint
      *
      * @return The deserializer class name used by the endpoint.
      */
-    @Override protected String getDeserializerClassName()
-    {
+    @Override
+    protected String getDeserializerClassName() {
         return "flex.messaging.io.amfx.AmfxMessageDeserializer";
     }
 
@@ -164,8 +156,8 @@ public class HTTPEndpoint extends BasePollingHTTPEndpoint
      *
      * @return The serializer class name used by the endpoint.
      */
-    @Override protected String getSerializerClassName()
-    {
+    @Override
+    protected String getSerializerClassName() {
         return "flex.messaging.io.amfx.AmfxMessageSerializer";
     }
 
@@ -174,10 +166,10 @@ public class HTTPEndpoint extends BasePollingHTTPEndpoint
      * corresponding MBean control.
      *
      * @param broker The <code>MessageBroker</code> that manages this
-     * <code>HTTPEndpoint</code>.
+     *               <code>HTTPEndpoint</code>.
      */
-    @Override protected void setupEndpointControl(MessageBroker broker)
-    {
+    @Override
+    protected void setupEndpointControl(MessageBroker broker) {
         controller = new HTTPEndpointControl(this, broker.getControl());
         controller.register();
         setControl(controller);

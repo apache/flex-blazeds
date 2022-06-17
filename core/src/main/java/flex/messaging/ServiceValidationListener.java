@@ -19,12 +19,12 @@ package flex.messaging;
 /**
  *
  */
-public interface ServiceValidationListener
-{
+public interface ServiceValidationListener {
     /**
      * This method gets called before any other processing of the describeServices method.
      * It allows a hook for external systems that need to update the service destinations at runtime.
      */
     void validateServices();
+
     void validateDestination(String destination);
 }

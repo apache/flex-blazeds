@@ -57,14 +57,11 @@ import java.util.Map;
  * The MessageBroker itself has no knowledge of configuration specifics;
  * instead, this object sets the relevant values on the broker using
  * information which a ConfigurationParser has provided for it.
- *
- *
  */
-public class MessagingConfiguration implements ServicesConfiguration
-{
+public class MessagingConfiguration implements ServicesConfiguration {
     private final String asyncMessageBrokerType = "flex.messaging.AsyncMessageBroker";
     private final String asyncFlexClientManagerType = "flex.messaging.client.AsyncFlexClientManager";
-    
+
     private final Map<String, ChannelSettings> channelSettings;
     private final List<String> defaultChannels;
     private final SecuritySettings securitySettings;
@@ -81,10 +78,8 @@ public class MessagingConfiguration implements ServicesConfiguration
     /**
      * Constructor.
      * Construct a MessagingConfiguration object
-     *
      */
-    public MessagingConfiguration()
-    {
+    public MessagingConfiguration() {
         channelSettings = new HashMap<String, ChannelSettings>();
         defaultChannels = new ArrayList<String>(4);
         clusterSettings = new HashMap<String, ClusterSettings>();
@@ -101,10 +96,9 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @param broker current MessageBroker object
      */
-    public void configureBroker(MessageBroker broker)
-    {
+    public void configureBroker(MessageBroker broker) {
         boolean async = (broker.getClass().getName().equals(asyncMessageBrokerType));
-        
+
         broker.setChannelSettings(channelSettings);
         broker.setSecuritySettings(securitySettings);
         broker.setSystemSettings(systemSettings);
@@ -117,16 +111,16 @@ public class MessagingConfiguration implements ServicesConfiguration
         createFlexClientManager(broker);
         createRedeployManager(broker);
         createFactories(broker);
-        
+
         if (async)
             createSharedServers(broker);
-        
+
         createEndpoints(broker);
         // Default channels have to be set after endpoints are created.
         broker.setDefaultChannels(defaultChannels);
         prepareClusters(broker);
         createServices(broker);
-        
+
         if (async)
             createMessageFilters(broker);
 
@@ -136,12 +130,11 @@ public class MessagingConfiguration implements ServicesConfiguration
     /**
      * Create a MessageBroker object with the Id.
      *
-     * @param id String the MessageBroker Id
+     * @param id     String the MessageBroker Id
      * @param loader the ClassLoader used to load the MessageBroker class
      * @return the created MessageBroker object
      */
-    public MessageBroker createBroker(String id, ClassLoader loader)
-    {
+    public MessageBroker createBroker(String id, ClassLoader loader) {
         // Construct MessageBroker with manageable constructor to avoid loading
         // any JMX classes in case manageable is set to false. 
         MessageBroker broker;
@@ -150,9 +143,8 @@ public class MessagingConfiguration implements ServicesConfiguration
             @SuppressWarnings("unchecked")
             Class<? extends MessageBroker> messageBrokerClass = ClassUtil.createClass(asyncMessageBrokerType, loader);
             Constructor constructor = messageBrokerClass.getConstructor(boolean.class);
-            broker = (MessageBroker)constructor.newInstance(systemSettings.isManageable());
-        }
-        catch (Throwable t) // Otherwise, use the default MessageBroker.
+            broker = (MessageBroker) constructor.newInstance(systemSettings.isManageable());
+        } catch (Throwable t) // Otherwise, use the default MessageBroker.
         {
             broker = new MessageBroker(systemSettings.isManageable());
         }
@@ -166,36 +158,31 @@ public class MessagingConfiguration implements ServicesConfiguration
         return broker;
     }
 
-    private void createFactories(MessageBroker broker)
-    {
-        for (Iterator<Map.Entry<String,FactorySettings>> iter=factorySettings.entrySet().iterator(); iter.hasNext(); )
-        {
-            Map.Entry<String,FactorySettings> entry = iter.next();
+    private void createFactories(MessageBroker broker) {
+        for (Iterator<Map.Entry<String, FactorySettings>> iter = factorySettings.entrySet().iterator(); iter.hasNext(); ) {
+            Map.Entry<String, FactorySettings> entry = iter.next();
             String id = entry.getKey();
             FactorySettings factorySetting = entry.getValue();
             broker.addFactory(id, factorySetting.createFactory(broker.getClassLoader()));
         }
     }
 
-    private void createFlexClientManager(MessageBroker broker)
-    {
+    private void createFlexClientManager(MessageBroker broker) {
         FlexClientManager flexClientManager = null;
         try // Use the async version, if possible.
-        {            
+        {
             @SuppressWarnings("unchecked")
             Class<? extends FlexClientManager> flexClientManagerClass = ClassUtil.createClass(asyncFlexClientManagerType, broker.getClassLoader());
             Constructor ctor = flexClientManagerClass.getConstructor(broker.getClass());
-            flexClientManager = (FlexClientManager)ctor.newInstance(broker);
-        }
-        catch (Throwable t) // Otherwise, use the default FlexClientManager.
+            flexClientManager = (FlexClientManager) ctor.newInstance(broker);
+        } catch (Throwable t) // Otherwise, use the default FlexClientManager.
         {
             flexClientManager = new FlexClientManager(broker.isManaged(), broker);
-        }        
+        }
         broker.setFlexClientManager(flexClientManager);
     }
 
-    private void createRedeployManager(MessageBroker broker)
-    {
+    private void createRedeployManager(MessageBroker broker) {
         RedeployManager redeployManager = new RedeployManager();
         redeployManager.setEnabled(systemSettings.getRedeployEnabled());
         redeployManager.setWatchInterval(systemSettings.getWatchInterval());
@@ -204,8 +191,7 @@ public class MessagingConfiguration implements ServicesConfiguration
         broker.setRedeployManager(redeployManager);
     }
 
-    private void createAuthorizationManager(MessageBroker broker)
-    {
+    private void createAuthorizationManager(MessageBroker broker) {
         LoginManager loginManager = new LoginManager();
 
         // Create a Login Command for the LoginManager.
@@ -214,32 +200,25 @@ public class MessagingConfiguration implements ServicesConfiguration
         Map loginCommands = securitySettings.getLoginCommands();
 
         // If default Login Command is enabled, use it.
-        LoginCommandSettings loginCommandSettings = (LoginCommandSettings)loginCommands.get(LoginCommandSettings.SERVER_MATCH_OVERRIDE);
-        if (loginCommandSettings != null)
-        {
+        LoginCommandSettings loginCommandSettings = (LoginCommandSettings) loginCommands.get(LoginCommandSettings.SERVER_MATCH_OVERRIDE);
+        if (loginCommandSettings != null) {
             loginCommand = initLoginCommand(loginCommandSettings);
         }
         // Otherwise, try a server specific Login Command.
-        else
-        {
+        else {
             String serverInfo = securitySettings.getServerInfo();
-            loginCommandSettings = (LoginCommandSettings)loginCommands.get(serverInfo);
+            loginCommandSettings = (LoginCommandSettings) loginCommands.get(serverInfo);
 
-            if (loginCommandSettings != null)
-            {
+            if (loginCommandSettings != null) {
                 loginCommand = initLoginCommand(loginCommandSettings);
-            }
-            else
-            {
+            } else {
                 // Try a partial match of serverInfo
                 serverInfo = serverInfo.toLowerCase();
-                for (Iterator iterator = loginCommands.keySet().iterator(); iterator.hasNext();)
-                {
-                    String serverMatch = (String)iterator.next();
-                    loginCommandSettings = (LoginCommandSettings)loginCommands.get(serverMatch);
+                for (Iterator iterator = loginCommands.keySet().iterator(); iterator.hasNext(); ) {
+                    String serverMatch = (String) iterator.next();
+                    loginCommandSettings = (LoginCommandSettings) loginCommands.get(serverMatch);
 
-                    if (serverInfo.indexOf(serverMatch.toLowerCase()) != -1)
-                    {
+                    if (serverInfo.indexOf(serverMatch.toLowerCase()) != -1) {
                         // add this match for easier lookup next time around
                         loginCommands.put(serverInfo, loginCommandSettings);
                         loginCommand = initLoginCommand(loginCommandSettings);
@@ -249,16 +228,13 @@ public class MessagingConfiguration implements ServicesConfiguration
             }
         }
 
-        if (loginCommand == null)
-        {
+        if (loginCommand == null) {
             if (Log.isWarn())
                 Log.getLogger(ConfigurationManager.LOG_CATEGORY).warn
-                ("No login command was found for '" + securitySettings.getServerInfo()
-                        + "'. Please ensure that the login-command tag has the correct server attribute value"
-                        + ", or use 'all' to use the login command regardless of the server.");
-        }
-        else
-        {
+                        ("No login command was found for '" + securitySettings.getServerInfo()
+                                + "'. Please ensure that the login-command tag has the correct server attribute value"
+                                + ", or use 'all' to use the login command regardless of the server.");
+        } else {
             loginManager.setLoginCommand(loginCommand);
         }
 
@@ -268,48 +244,41 @@ public class MessagingConfiguration implements ServicesConfiguration
         broker.setLoginManager(loginManager);
     }
 
-    private LoginCommand initLoginCommand(LoginCommandSettings loginCommandSettings)
-    {
+    private LoginCommand initLoginCommand(LoginCommandSettings loginCommandSettings) {
         String loginClass = loginCommandSettings.getClassName();
         Class c = ClassUtil.createClass(loginClass,
                 FlexContext.getMessageBroker() == null ? null :
-                FlexContext.getMessageBroker().getClassLoader());
-        LoginCommand loginCommand = (LoginCommand)ClassUtil.createDefaultInstance(c, LoginCommand.class);
+                        FlexContext.getMessageBroker().getClassLoader());
+        LoginCommand loginCommand = (LoginCommand) ClassUtil.createDefaultInstance(c, LoginCommand.class);
 
         return loginCommand;
     }
 
-    private void createSharedServers(MessageBroker broker)
-    {
-        for (SharedServerSettings settings : sharedServerSettings)
-        {
+    private void createSharedServers(MessageBroker broker) {
+        for (SharedServerSettings settings : sharedServerSettings) {
             String id = settings.getId();
             String className = settings.getClassName();
             Class serverClass = ClassUtil.createClass(className, broker.getClassLoader());
-            FlexComponent server = (FlexComponent)ClassUtil.createDefaultInstance(serverClass, serverClass);
+            FlexComponent server = (FlexComponent) ClassUtil.createDefaultInstance(serverClass, serverClass);
             server.initialize(id, settings.getProperties());
-            if (broker.isManaged() && (server instanceof ManageableComponent))
-            {
-                ManageableComponent manageableServer = (ManageableComponent)server;
+            if (broker.isManaged() && (server instanceof ManageableComponent)) {
+                ManageableComponent manageableServer = (ManageableComponent) server;
                 manageableServer.setManaged(true);
                 manageableServer.setParent(broker);
             }
-            
+
             // TODO: move this to only AsyncMessageBroker.
-            broker.addServer((Server)server);
-            
-            if (Log.isInfo())
-            {
+            broker.addServer((Server) server);
+
+            if (Log.isInfo()) {
                 Log.getLogger(ConfigurationManager.LOG_CATEGORY).info
-                ("Server '" + id + "' of type '" + className + "' created.");
+                        ("Server '" + id + "' of type '" + className + "' created.");
             }
         }
     }
 
-    private void createEndpoints(MessageBroker broker)
-    {
-        for (Iterator<String> iter = channelSettings.keySet().iterator(); iter.hasNext();)
-        {
+    private void createEndpoints(MessageBroker broker) {
+        for (Iterator<String> iter = channelSettings.keySet().iterator(); iter.hasNext(); ) {
             String id = iter.next();
             ChannelSettings chanSettings = channelSettings.get(id);
             String url = chanSettings.getUri();
@@ -317,57 +286,51 @@ public class MessagingConfiguration implements ServicesConfiguration
 
             // Create the Endpoint
             Endpoint endpoint = broker.createEndpoint(id, url, endpointClassName);
-            
+
             // Cast to AbstractEndpoint - these are newer properties that post-date the locked Endpoint interface.
-            if (endpoint instanceof AbstractEndpoint)
-            {   
-                AbstractEndpoint abstractEndpoint = (AbstractEndpoint)endpoint;
+            if (endpoint instanceof AbstractEndpoint) {
+                AbstractEndpoint abstractEndpoint = (AbstractEndpoint) endpoint;
                 abstractEndpoint.setRemote(chanSettings.isRemote());
                 abstractEndpoint.setServerOnly(chanSettings.getServerOnly());
             }
-                        
+
             endpoint.setSecurityConstraint(chanSettings.getConstraint());
             endpoint.setClientType(chanSettings.getClientType());
 
             // Assign referenced server
             String referencedServerId = chanSettings.getServerId();
-            if ((referencedServerId != null) && (endpoint instanceof Endpoint2))
-            {
+            if ((referencedServerId != null) && (endpoint instanceof Endpoint2)) {
                 Server server = broker.getServer(referencedServerId);
-                if (server == null)
-                {
+                if (server == null) {
                     ConfigurationException ce = new ConfigurationException();
-                    ce.setMessage(11128, new Object[] {chanSettings.getId(), referencedServerId});
+                    ce.setMessage(11128, new Object[]{chanSettings.getId(), referencedServerId});
                     throw ce;
                 }
-                ((Endpoint2)endpoint).setServer(broker.getServer(referencedServerId));
+                ((Endpoint2) endpoint).setServer(broker.getServer(referencedServerId));
             }
 
             // Initialize with endpoint properties
             endpoint.initialize(id, chanSettings.getProperties());
 
-            if (Log.isInfo())
-            {
+            if (Log.isInfo()) {
                 String endpointURL = endpoint.getUrl();
                 String endpointSecurity = EndpointControl.getSecurityConstraintOf(endpoint);
                 if (StringUtils.isEmpty(endpointSecurity))
                     endpointSecurity = "None";
                 Log.getLogger(ConfigurationManager.LOG_CATEGORY).info
-                ("Endpoint '" + id + "' created with security: " +
-                        endpointSecurity + StringUtils.NEWLINE +
-                        "at URL: " + endpointURL);
+                        ("Endpoint '" + id + "' created with security: " +
+                                endpointSecurity + StringUtils.NEWLINE +
+                                "at URL: " + endpointURL);
             }
         }
     }
 
-    private void createServices(MessageBroker broker)
-    {
+    private void createServices(MessageBroker broker) {
         //the broker needs its AuthenticationService always
         AuthenticationService authService = new AuthenticationService();
         authService.setMessageBroker(broker);
 
-        for (Iterator<ServiceSettings> iter = serviceSettings.iterator(); iter.hasNext();)
-        {
+        for (Iterator<ServiceSettings> iter = serviceSettings.iterator(); iter.hasNext(); ) {
             ServiceSettings svcSettings = iter.next();
             String svcId = svcSettings.getId();
             String svcClassName = svcSettings.getClassName();
@@ -381,47 +344,41 @@ public class MessagingConfiguration implements ServicesConfiguration
             service.initialize(svcId, svcSettings.getProperties());
 
             // Default Channels
-            for (Iterator chanIter = svcSettings.getDefaultChannels().iterator(); chanIter.hasNext();)
-            {
-                ChannelSettings chanSettings = (ChannelSettings)chanIter.next();
+            for (Iterator chanIter = svcSettings.getDefaultChannels().iterator(); chanIter.hasNext(); ) {
+                ChannelSettings chanSettings = (ChannelSettings) chanIter.next();
                 service.addDefaultChannel(chanSettings.getId());
             }
 
             // Adapter Definitions
             Map svcAdapterSettings = svcSettings.getAllAdapterSettings();
-            for (Iterator asIter = svcAdapterSettings.values().iterator(); asIter.hasNext();)
-            {
+            for (Iterator asIter = svcAdapterSettings.values().iterator(); asIter.hasNext(); ) {
                 AdapterSettings as = (AdapterSettings) asIter.next();
                 service.registerAdapter(as.getId(), as.getClassName());
-                if (as.isDefault())
-                {
+                if (as.isDefault()) {
                     service.setDefaultAdapter(as.getId());
                 }
             }
 
             // Destinations
             Map destinationSettings = svcSettings.getDestinationSettings();
-            for (Iterator destSettingsIter = destinationSettings.keySet().iterator(); destSettingsIter.hasNext();)
-            {
-                String destName = (String)destSettingsIter.next();
-                DestinationSettings destSettings = (DestinationSettings)destinationSettings.get(destName);
+            for (Iterator destSettingsIter = destinationSettings.keySet().iterator(); destSettingsIter.hasNext(); ) {
+                String destName = (String) destSettingsIter.next();
+                DestinationSettings destSettings = (DestinationSettings) destinationSettings.get(destName);
 
                 createDestination(destSettings, service, svcSettings);
             }
         }
     }
 
-    private void createDestination(DestinationSettings destSettings, Service service, ServiceSettings svcSettings)
-    {
+    private void createDestination(DestinationSettings destSettings, Service service, ServiceSettings svcSettings) {
         String destId = destSettings.getId();
         Destination destination = service.createDestination(destId);
 
         // Channels
         List chanSettings = destSettings.getChannelSettings();
-        if (chanSettings.size() > 0)
-        {
+        if (chanSettings.size() > 0) {
             List<String> channelIds = new ArrayList<String>(2);
-            for (Iterator iter = chanSettings.iterator(); iter.hasNext();) {
+            for (Iterator iter = chanSettings.iterator(); iter.hasNext(); ) {
                 ChannelSettings cs = (ChannelSettings) iter.next();
                 channelIds.add(cs.getId());
             }
@@ -441,8 +398,7 @@ public class MessagingConfiguration implements ServicesConfiguration
         createAdapter(destination, destSettings, svcSettings);
     }
 
-    private void createAdapter(Destination destination, DestinationSettings destSettings, ServiceSettings svcSettings)
-    {
+    private void createAdapter(Destination destination, DestinationSettings destSettings, ServiceSettings svcSettings) {
         AdapterSettings adapterSettings = destSettings.getAdapterSettings();
         String adapterId = adapterSettings.getId();
 
@@ -456,17 +412,14 @@ public class MessagingConfiguration implements ServicesConfiguration
     }
 
     /**
-     *
      * Used by the MessageBrokerServlet to set up the singleton Log instance
      * and add any targets defined in the logging configuration.
      * This needs to be invoked ahead of creating and bootstrapping a MessageBroker
      * instance so we're sure to have the logging system running in case the bootstrap
      * process needs to log anything out.
      */
-    public void createLogAndTargets()
-    {
-        if (loggingSettings == null)
-        {
+    public void createLogAndTargets() {
+        if (loggingSettings == null) {
             Log.setPrettyPrinterClass(ToStringPrettyPrinter.class.getName());
             return;
         }
@@ -476,8 +429,7 @@ public class MessagingConfiguration implements ServicesConfiguration
         ConfigMap properties = loggingSettings.getProperties();
 
         // Override default pretty printer for FDS to traverse deep Object graphs
-        if (properties.getPropertyAsString("pretty-printer", null) == null)
-        {
+        if (properties.getPropertyAsString("pretty-printer", null) == null) {
             Log.setPrettyPrinterClass(ToStringPrettyPrinter.class.getName());
         }
 
@@ -486,24 +438,20 @@ public class MessagingConfiguration implements ServicesConfiguration
         // Targets
         List targets = loggingSettings.getTargets();
         Iterator it = targets.iterator();
-        while (it.hasNext())
-        {
-            TargetSettings targetSettings = (TargetSettings)it.next();
+        while (it.hasNext()) {
+            TargetSettings targetSettings = (TargetSettings) it.next();
             String className = targetSettings.getClassName();
 
             Class c = ClassUtil.createClass(className,
-                        FlexContext.getMessageBroker() == null ? null :
-                        FlexContext.getMessageBroker().getClassLoader());
-            try
-            {
-                Target target = (Target)c.newInstance();
+                    FlexContext.getMessageBroker() == null ? null :
+                            FlexContext.getMessageBroker().getClassLoader());
+            try {
+                Target target = (Target) c.newInstance();
                 target.setLevel(Log.readLevel(targetSettings.getLevel()));
                 target.setFilters(targetSettings.getFilters());
                 target.initialize(null, targetSettings.getProperties());
                 Log.addTarget(target);
-            }
-            catch (Throwable t)
-            {
+            } catch (Throwable t) {
                 // Unwrap to get to the interesting exception
                 if (t instanceof InvocationTargetException)
                     t = t.getCause();
@@ -512,76 +460,66 @@ public class MessagingConfiguration implements ServicesConfiguration
                 t.printStackTrace();
 
                 ConfigurationException cx = new ConfigurationException();
-                cx.setMessage(10126, new Object[] { className });
+                cx.setMessage(10126, new Object[]{className});
                 cx.setRootCause(t);
                 throw cx;
             }
         }
     }
 
-    private void createMessageFilters(MessageBroker broker)
-    {
+    private void createMessageFilters(MessageBroker broker) {
         Class asyncFilterClass = ClassUtil.createClass("flex.messaging.filters.BaseAsyncMessageFilter");
         Class syncFilterClass = ClassUtil.createClass("flex.messaging.filters.BaseSyncMessageFilter");
-        
-        for (MessageFilterSettings settings : messageFilterSettings)
-        {
+
+        for (MessageFilterSettings settings : messageFilterSettings) {
             String id = settings.getId();
             String className = settings.getClassName();
             Class filterClass = ClassUtil.createClass(className, broker.getClassLoader());
-            FlexComponent filter = (FlexComponent)ClassUtil.createDefaultInstance(filterClass, null);
+            FlexComponent filter = (FlexComponent) ClassUtil.createDefaultInstance(filterClass, null);
             MessageFilterSettings.FilterType filterType = settings.getFilterType();
             boolean filterIsAsync = filterType == MessageFilterSettings.FilterType.ASYNC;
             // Validate filter is assignable to proper base class.
             if ((filterIsAsync && !asyncFilterClass.isAssignableFrom(filterClass)) ||
-                (!filterIsAsync && !syncFilterClass.isAssignableFrom(filterClass)))
-            {
+                    (!filterIsAsync && !syncFilterClass.isAssignableFrom(filterClass))) {
                 // Filter class is not a valid subclass of either supported base filter type.
                 ConfigurationException cx = new ConfigurationException();
                 int errorCode = filterIsAsync ? 11144 : 11145;
-                cx.setMessage(errorCode, new Object[] {settings.getId()});
+                cx.setMessage(errorCode, new Object[]{settings.getId()});
                 throw cx;
             }
-                        
+
             filter.initialize(id, settings.getProperties());
-            if (broker.isManaged() && (filter instanceof ManageableComponent))
-            {
-                ManageableComponent manageableFilter = (ManageableComponent)filter;
+            if (broker.isManaged() && (filter instanceof ManageableComponent)) {
+                ManageableComponent manageableFilter = (ManageableComponent) filter;
                 manageableFilter.setManaged(true);
                 manageableFilter.setParent(broker);
             }
-            
-            try
-            {
+
+            try {
                 String methodName = filterIsAsync ? "getAsyncMessageFilterChain" : "getSyncMessageFilterChain";
                 Method getMessageFilterChain = broker.getClass().getDeclaredMethod(methodName);
-                Object filterChain = getMessageFilterChain.invoke(broker, (Object[])null);
-                Class arg = filterIsAsync ? asyncFilterClass : syncFilterClass; 
+                Object filterChain = getMessageFilterChain.invoke(broker, (Object[]) null);
+                Class arg = filterIsAsync ? asyncFilterClass : syncFilterClass;
                 Method addFilter = filterChain.getClass().getDeclaredMethod("add", arg);
                 addFilter.invoke(filterChain, filter);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 // Hit an unexpected problem adding the filter instance to the broker's async or sync chain.
                 ConfigurationException cx = new ConfigurationException();
                 int errorCode = filterType == MessageFilterSettings.FilterType.ASYNC ? 11138 : 11143;
-                cx.setMessage(errorCode, new Object[] {settings.getId()});
+                cx.setMessage(errorCode, new Object[]{settings.getId()});
                 cx.setRootCause(e);
                 throw cx;
             }
 
-            if (Log.isInfo())
-            {
+            if (Log.isInfo()) {
                 Log.getLogger(ConfigurationManager.LOG_CATEGORY).info
-                ("MessageFilter '" + id + "' of type '" + className + "' created.");
+                        ("MessageFilter '" + id + "' of type '" + className + "' created.");
             }
         }
     }
 
-    private void createValidators(MessageBroker broker)
-    {
-        for (Iterator<ValidatorSettings> iter = validatorSettings.values().iterator(); iter.hasNext(); )
-        {
+    private void createValidators(MessageBroker broker) {
+        for (Iterator<ValidatorSettings> iter = validatorSettings.values().iterator(); iter.hasNext(); ) {
             ValidatorSettings settings = iter.next();
             String className = settings.getClassName();
             String type = settings.getType();
@@ -589,44 +527,38 @@ public class MessagingConfiguration implements ServicesConfiguration
             Class<?> expectedClass = ClassUtil.createClass(type, broker.getClassLoader());
             Object validator = ClassUtil.createDefaultInstance(validatorClass, expectedClass);
             // Only set the DeserializationValidator types for now.
-            if (validator instanceof DeserializationValidator)
-            {
-                DeserializationValidator deserializationValidator = (DeserializationValidator)validator;
+            if (validator instanceof DeserializationValidator) {
+                DeserializationValidator deserializationValidator = (DeserializationValidator) validator;
                 deserializationValidator.initialize(null, settings.getProperties());
                 broker.setDeserializationValidator(deserializationValidator);
-                if (Log.isInfo())
-                {
+                if (Log.isInfo()) {
                     Log.getLogger(ConfigurationManager.LOG_CATEGORY).info
-                    ("DeserializationValidator of type '" + className + "' created.");
+                            ("DeserializationValidator of type '" + className + "' created.");
                 }
             }
         }
     }
 
-    private void createUUIDGenerator(MessageBroker broker)
-    {
+    private void createUUIDGenerator(MessageBroker broker) {
         String className = systemSettings.getUUIDGeneratorClassName();
         if (className == null || className.length() == 0)
             return;
 
         Class uuidGeneratorClass = ClassUtil.createClass(className, broker.getClassLoader());
-        if (!UUIDGenerator.class.isAssignableFrom(uuidGeneratorClass))
-        {
+        if (!UUIDGenerator.class.isAssignableFrom(uuidGeneratorClass)) {
             // UUID Generator class is not a valid subclass of ''{0}''
             ConfigurationException cx = new ConfigurationException();
-            cx.setMessage(11148, new Object[] {UUIDGenerator.class.getName()});
+            cx.setMessage(11148, new Object[]{UUIDGenerator.class.getName()});
             throw cx;
         }
 
         Object uuidGenerator = ClassUtil.createDefaultInstance(uuidGeneratorClass, UUIDGenerator.class);
-        broker.setUUIDGenerator((UUIDGenerator)uuidGenerator);
+        broker.setUUIDGenerator((UUIDGenerator) uuidGenerator);
     }
 
-    private void prepareClusters(MessageBroker broker)
-    {
+    private void prepareClusters(MessageBroker broker) {
         ClusterManager clusterManager = broker.getClusterManager();
-        for (Iterator<String> iter=clusterSettings.keySet().iterator(); iter.hasNext(); )
-        {
+        for (Iterator<String> iter = clusterSettings.keySet().iterator(); iter.hasNext(); ) {
             String clusterId = iter.next();
             ClusterSettings cs = clusterSettings.get(clusterId);
             clusterManager.prepareCluster(cs);
@@ -638,39 +570,36 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @param settings the SharedServerSettings object
      **/
-    public void addSharedServerSettings(SharedServerSettings settings)
-    {
+    public void addSharedServerSettings(SharedServerSettings settings) {
         sharedServerSettings.add(settings);
     }
 
     /**
      * Add the Channel configurations.
      *
-     * @param id the ChannelSetting Id
+     * @param id       the ChannelSetting Id
      * @param settings the ChannelSettings
      **/
-    public void addChannelSettings(String id, ChannelSettings settings)
-    {
+    public void addChannelSettings(String id, ChannelSettings settings) {
         channelSettings.put(id, settings);
     }
 
     /**
      * Get the ChannelSettings by Id.
      *
-     * @param id the ChannelSettings Id 
+     * @param id the ChannelSettings Id
      * @return ChannelSettings the Channel settings
      **/
-    public ChannelSettings getChannelSettings(String id)
-    {
+    public ChannelSettings getChannelSettings(String id) {
         return channelSettings.get(id);
     }
 
     /**
      * Get all the ChannelSettings.
+     *
      * @return Map the Map of all the ChannelSettings, maped by Id
      **/
-    public Map getAllChannelSettings()
-    {
+    public Map getAllChannelSettings() {
         return channelSettings;
     }
 
@@ -679,8 +608,7 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @param id the Channel Id
      **/
-    public void addDefaultChannel(String id)
-    {
+    public void addDefaultChannel(String id) {
         defaultChannels.add(id);
     }
 
@@ -689,8 +617,7 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @return List, the list of default Channels
      **/
-    public List getDefaultChannels()
-    {
+    public List getDefaultChannels() {
         return defaultChannels;
     }
 
@@ -699,8 +626,7 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @return SecuritySettings current SecuritySettings
      **/
-    public SecuritySettings getSecuritySettings()
-    {
+    public SecuritySettings getSecuritySettings() {
         return securitySettings;
     }
 
@@ -709,8 +635,7 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @param settings the ServiceSettings object
      **/
-    public void addServiceSettings(ServiceSettings settings)
-    {
+    public void addServiceSettings(ServiceSettings settings) {
         serviceSettings.add(settings);
     }
 
@@ -720,10 +645,8 @@ public class MessagingConfiguration implements ServicesConfiguration
      * @param id the ServiceSettings Id
      * @return ServiceSettings the ServiceSettings object
      **/
-    public ServiceSettings getServiceSettings(String id)
-    {
-        for (Iterator<ServiceSettings> iter = serviceSettings.iterator(); iter.hasNext();)
-        {
+    public ServiceSettings getServiceSettings(String id) {
+        for (Iterator<ServiceSettings> iter = serviceSettings.iterator(); iter.hasNext(); ) {
             ServiceSettings serviceSettings = iter.next();
             if (serviceSettings.getId().equals(id))
                 return serviceSettings;
@@ -736,8 +659,7 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @return List all the service settings
      **/
-    public List getAllServiceSettings()
-    {
+    public List getAllServiceSettings() {
         return serviceSettings;
     }
 
@@ -746,8 +668,7 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @return LoggingSettings the LoggingSettings object
      **/
-    public LoggingSettings getLoggingSettings()
-    {
+    public LoggingSettings getLoggingSettings() {
         return loggingSettings;
     }
 
@@ -756,8 +677,7 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @param loggingSettings the LoggingSettings object
      **/
-    public void setLoggingSettings(LoggingSettings loggingSettings)
-    {
+    public void setLoggingSettings(LoggingSettings loggingSettings) {
         this.loggingSettings = loggingSettings;
     }
 
@@ -766,8 +686,7 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @param ss the SystemSettings object
      **/
-    public void setSystemSettings(SystemSettings ss)
-    {
+    public void setSystemSettings(SystemSettings ss) {
         systemSettings = ss;
     }
 
@@ -776,8 +695,7 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @return SystemSettings the LoggingSettings object
      **/
-    public SystemSettings getSystemSettings()
-    {
+    public SystemSettings getSystemSettings() {
         return systemSettings;
     }
 
@@ -786,8 +704,7 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @param value the FlexClientSettings object
      **/
-    public void setFlexClientSettings(FlexClientSettings value)
-    {
+    public void setFlexClientSettings(FlexClientSettings value) {
         flexClientSettings = value;
     }
 
@@ -796,8 +713,7 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @return FlexClientSettings the FlexClientSettings object
      **/
-    public FlexClientSettings getFlexClientSettings()
-    {
+    public FlexClientSettings getFlexClientSettings() {
         return flexClientSettings;
     }
 
@@ -806,26 +722,21 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @param settings the ClusterSettings object
      **/
-    public void addClusterSettings(ClusterSettings settings)
-    {
-        if (settings.isDefault())
-        {
-            for (Iterator<ClusterSettings> it = clusterSettings.values().iterator(); it.hasNext(); )
-            {
+    public void addClusterSettings(ClusterSettings settings) {
+        if (settings.isDefault()) {
+            for (Iterator<ClusterSettings> it = clusterSettings.values().iterator(); it.hasNext(); ) {
                 ClusterSettings cs = it.next();
 
-                if (cs.isDefault())
-                {
+                if (cs.isDefault()) {
                     ConfigurationException cx = new ConfigurationException();
-                    cx.setMessage(10214, new Object[] { settings.getClusterName(), cs.getClusterName() });
+                    cx.setMessage(10214, new Object[]{settings.getClusterName(), cs.getClusterName()});
                     throw cx;
                 }
             }
         }
-        if (clusterSettings.containsKey(settings.getClusterName()))
-        {
+        if (clusterSettings.containsKey(settings.getClusterName())) {
             ConfigurationException cx = new ConfigurationException();
-            cx.setMessage(10206, new Object[] { settings.getClusterName() });
+            cx.setMessage(10206, new Object[]{settings.getClusterName()});
             throw cx;
         }
         clusterSettings.put(settings.getClusterName(), settings);
@@ -837,10 +748,8 @@ public class MessagingConfiguration implements ServicesConfiguration
      * @param clusterId the ClusterSettings Id
      * @return ClusterSettings the ClusterSettings object
      **/
-    public ClusterSettings getClusterSettings(String clusterId)
-    {
-        for (Iterator<ClusterSettings> it = clusterSettings.values().iterator(); it.hasNext(); )
-        {
+    public ClusterSettings getClusterSettings(String clusterId) {
+        for (Iterator<ClusterSettings> it = clusterSettings.values().iterator(); it.hasNext(); ) {
             ClusterSettings cs = it.next();
             if (cs.getClusterName() == clusterId)
                 return cs; // handle null case
@@ -855,10 +764,8 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @return ClusterSettings the default ClusterSetting object
      **/
-    public ClusterSettings getDefaultCluster()
-    {
-        for (Iterator<ClusterSettings> it = clusterSettings.values().iterator(); it.hasNext(); )
-        {
+    public ClusterSettings getDefaultCluster() {
+        for (Iterator<ClusterSettings> it = clusterSettings.values().iterator(); it.hasNext(); ) {
             ClusterSettings cs = it.next();
             if (cs.isDefault())
                 return cs;
@@ -869,11 +776,10 @@ public class MessagingConfiguration implements ServicesConfiguration
     /**
      * Add FactorySettings by Id.
      *
-     * @param id the FactorySettings Id
+     * @param id       the FactorySettings Id
      * @param settings the FactorySettings object
      **/
-    public void addFactorySettings(String id, FactorySettings settings)
-    {
+    public void addFactorySettings(String id, FactorySettings settings) {
         factorySettings.put(id, settings);
     }
 
@@ -882,8 +788,7 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @param settings the MessageFilterSettings object
      **/
-    public void addMessageFilterSettings(MessageFilterSettings settings)
-    {
+    public void addMessageFilterSettings(MessageFilterSettings settings) {
         messageFilterSettings.add(settings);
     }
 
@@ -892,14 +797,12 @@ public class MessagingConfiguration implements ServicesConfiguration
      *
      * @param settings the ValidatorSettings object
      **/
-    public void addValidatorSettings(ValidatorSettings settings)
-    {
+    public void addValidatorSettings(ValidatorSettings settings) {
         String type = settings.getType();
-        if (validatorSettings.containsKey(type))
-        {
+        if (validatorSettings.containsKey(type)) {
             // Cannot add multiple validators with the same type ''{0}''
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(11136, new Object[] {type});
+            ce.setMessage(11136, new Object[]{type});
             throw ce;
         }
         validatorSettings.put(type, settings);
@@ -907,86 +810,74 @@ public class MessagingConfiguration implements ServicesConfiguration
 
     /**
      * Report unused properties.
-     *
      **/
-    public void reportUnusedProperties()
-    {
+    public void reportUnusedProperties() {
         ArrayList<Object[]> findings = new ArrayList<Object[]>();
 
         Iterator<ServiceSettings> serviceItr = serviceSettings.iterator();
-        while (serviceItr.hasNext())
-        {
+        while (serviceItr.hasNext()) {
             ServiceSettings serviceSettings = serviceItr.next();
             gatherUnusedProperties(serviceSettings.getId(), serviceSettings.getSourceFile(),
                     ConfigurationConstants.SERVICE_ELEMENT, serviceSettings, findings);
             Iterator destinationItr = serviceSettings.getDestinationSettings().values().iterator();
-            while (destinationItr.hasNext())
-            {
+            while (destinationItr.hasNext()) {
                 DestinationSettings destinationSettings = (DestinationSettings) destinationItr.next();
                 gatherUnusedProperties(destinationSettings.getId(), destinationSettings.getSourceFile(),
-                     ConfigurationConstants.DESTINATION_ELEMENT,
-                     destinationSettings, findings);
+                        ConfigurationConstants.DESTINATION_ELEMENT,
+                        destinationSettings, findings);
 
                 AdapterSettings adapterSettings = destinationSettings.getAdapterSettings();
-                if (adapterSettings != null)
-                {
+                if (adapterSettings != null) {
                     gatherUnusedProperties(adapterSettings.getId(), adapterSettings.getSourceFile(),
-                         ConfigurationConstants.ADAPTER_ELEMENT,
-                         adapterSettings, findings);
+                            ConfigurationConstants.ADAPTER_ELEMENT,
+                            adapterSettings, findings);
                 }
             }
         }
 
         Iterator<ChannelSettings> channelItr = channelSettings.values().iterator();
-        while (channelItr.hasNext())
-        {
+        while (channelItr.hasNext()) {
             ChannelSettings channelSettings = channelItr.next();
             // Skip property validation for remote channel-definitions
             if (channelSettings.isRemote())
                 continue;
 
             gatherUnusedProperties(channelSettings.getId(), channelSettings.getSourceFile(),
-            ConfigurationConstants.CHANNEL_ELEMENT, channelSettings, findings);
+                    ConfigurationConstants.CHANNEL_ELEMENT, channelSettings, findings);
         }
 
         Iterator<SharedServerSettings> serverItr = sharedServerSettings.iterator();
-        while (serverItr.hasNext())
-        {
+        while (serverItr.hasNext()) {
             SharedServerSettings serverSettings = serverItr.next();
             gatherUnusedProperties(serverSettings.getId(), serverSettings.getSourceFile(),
                     ConfigurationConstants.SERVER_ELEMENT, serverSettings, findings);
         }
 
-        if (!findings.isEmpty())
-        {
+        if (!findings.isEmpty()) {
             int errorNumber = 10149;
             ConfigurationException exception = new ConfigurationException();
             StringBuffer allDetails = new StringBuffer();
-            for (int i = 0; i < findings.size(); i++)
-            {
+            for (int i = 0; i < findings.size(); i++) {
                 allDetails.append(StringUtils.NEWLINE);
                 allDetails.append("  ");
                 exception.setDetails(errorNumber, "pattern", findings.get(i));
                 allDetails.append(exception.getDetails());
                 exception.setDetails(null);
             }
-            exception.setMessage(errorNumber, new Object[] {allDetails});
+            exception.setMessage(errorNumber, new Object[]{allDetails});
             throw exception;
         }
     }
 
     private void gatherUnusedProperties
-        (String settingsId, String settingsSource, String settingsType,
-         PropertiesSettings settings, Collection<Object[]> result)
-    {
+            (String settingsId, String settingsSource, String settingsType,
+             PropertiesSettings settings, Collection<Object[]> result) {
         List unusedProperties = settings.getProperties().findAllUnusedProperties();
         int size = unusedProperties.size();
-        if (size > 0)
-        {
-            for (int i = 0; i < size; i++)
-            {
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
                 String path = (String) unusedProperties.get(i);
-                result.add(new Object[] {path, settingsType, settingsId, settingsSource});
+                result.add(new Object[]{path, settingsType, settingsId, settingsSource});
             }
         }
     }

@@ -25,17 +25,15 @@ import org.jgroups.MembershipListener;
 import org.jgroups.View;
 
 /**
- *
  * Clusters employ this Listener in order to respond to nodes which
  * join and abandon it. This class bridges the low-level protocol layer
  * to the more abstract logical cluster.
  */
-class ClusterMembershipListener implements MembershipListener
-{
+class ClusterMembershipListener implements MembershipListener {
     /**
      * The cluster implementation that owns this listener.
      */
-   // TODO: The missing class JGroupsCluster seems to extend Cluster, but is missing from the repository.
+    // TODO: The missing class JGroupsCluster seems to extend Cluster, but is missing from the repository.
 //    private JGroupsCluster cluster;
 
     /**
@@ -53,8 +51,7 @@ class ClusterMembershipListener implements MembershipListener
      *
      * @param cluster The logical cluster implementation.
      */
-    public ClusterMembershipListener(Cluster cluster)
-    {
+    public ClusterMembershipListener(Cluster cluster) {
 //        this.cluster = (JGroupsCluster)cluster;
         this.members = new ArrayList<Address>();
         this.zombies = new ArrayList<Address>();
@@ -66,11 +63,9 @@ class ClusterMembershipListener implements MembershipListener
      *
      * @param membershipView Snapshot of members of the cluster.
      */
-    public void viewAccepted(View membershipView)
-    {
-        synchronized(this)
-        {
-            Vector<Address> currentMemberList = membershipView.getMembers();
+    public void viewAccepted(View membershipView) {
+        synchronized (this) {
+            List<Address> currentMemberList = membershipView.getMembers();
             handleArrivingMembers(currentMemberList);
             handleDepartedMembers(membershipView, currentMemberList);
         }
@@ -85,10 +80,8 @@ class ClusterMembershipListener implements MembershipListener
      *
      * @param zombieAddress The address of the suspect node.
      */
-    public void suspect(Address zombieAddress)
-    {
-        synchronized(this)
-        {
+    public void suspect(Address zombieAddress) {
+        synchronized (this) {
             zombies.add(zombieAddress);
         }
     }
@@ -97,8 +90,7 @@ class ClusterMembershipListener implements MembershipListener
      * This method from the core MembershipListener is a no-op for
      * the Flex destination Cluster.
      */
-    public void block()
-    {
+    public void block() {
         // No-op.
     }
 
@@ -109,17 +101,13 @@ class ClusterMembershipListener implements MembershipListener
      * @param address The node to check.
      * @return True, if the given address is a zombie.
      */
-    public boolean isZombie(Address address)
-    {
+    public boolean isZombie(Address address) {
         return zombies.contains(address);
     }
 
-    private void handleDepartedMembers(View membershipView, Vector<Address> currentMemberList)
-    {
-        for (Address member : members)
-        {
-            if (!membershipView.containsMember(member))
-            {
+    private void handleDepartedMembers(View membershipView, List<Address> currentMemberList) {
+        for (Address member : members) {
+            if (!membershipView.containsMember(member)) {
 //                cluster.removeClusterNode(member);
                 zombies.remove(member);
             }
@@ -127,10 +115,8 @@ class ClusterMembershipListener implements MembershipListener
         members = currentMemberList;
     }
 
-    private void handleArrivingMembers(Vector<Address> currentMemberList)
-    {
-        for (Address member : currentMemberList) 
-        {
+    private void handleArrivingMembers(List<Address> currentMemberList) {
+        for (Address member : currentMemberList) {
 /*            if (!cluster.getLocalAddress().equals(member) && !members.contains(member))
                 cluster.addClusterNode(member);*/
         }

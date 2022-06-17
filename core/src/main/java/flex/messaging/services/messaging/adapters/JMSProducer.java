@@ -32,11 +32,8 @@ import java.util.Map;
 
 /**
  * A JMSProxy subclass for <code>javax.jms.MessageProducer</code> instances.
- *
- *
  */
-public abstract class JMSProducer extends JMSProxy
-{
+public abstract class JMSProducer extends JMSProxy {
     /* JMS related variables */
     protected MessageProducer producer;
 
@@ -54,8 +51,7 @@ public abstract class JMSProducer extends JMSProxy
      * Create a new JMSProducer with default delivery mode of <code>javax.jms.Message.DEFAULT_DELIVERY_MODE</code>
      * and default message priority of <code>javax.jms.Message.DEFAULT_PRIORITY</code>.
      */
-    public JMSProducer()
-    {
+    public JMSProducer() {
         super();
         deliveryMode = javax.jms.Message.DEFAULT_DELIVERY_MODE;
         messagePriority = javax.jms.Message.DEFAULT_PRIORITY;
@@ -72,8 +68,7 @@ public abstract class JMSProducer extends JMSProxy
      *
      * @param settings JMS settings to use for initialization.
      */
-    public void initialize(JMSSettings settings)
-    {
+    public void initialize(JMSSettings settings) {
         super.initialize(settings);
 
         String deliveryString = settings.getDeliveryMode();
@@ -93,17 +88,15 @@ public abstract class JMSProducer extends JMSProxy
      * it is started. For <code>JMSProducer</code> to be in valid state, it needs
      * to have a message type assigned.
      */
-    protected void validate()
-    {
+    protected void validate() {
         super.validate();
 
         if (messageType == null || !(messageType.equals(JMSConfigConstants.TEXT_MESSAGE)
                 || messageType.equals(JMSConfigConstants.OBJECT_MESSAGE)
-                || messageType.equals(JMSConfigConstants.MAP_MESSAGE)) )
-        {
+                || messageType.equals(JMSConfigConstants.MAP_MESSAGE))) {
             // Unsupported JMS Message Type ''{0}''. Valid values are javax.jms.TextMessage, javax.jms.ObjectMessage, javax.jms.MapMessage.
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(JMSConfigConstants.INVALID_JMS_MESSAGE_TYPE, new Object[] {messageType});
+            ce.setMessage(JMSConfigConstants.INVALID_JMS_MESSAGE_TYPE, new Object[]{messageType});
             throw ce;
         }
     }
@@ -111,13 +104,12 @@ public abstract class JMSProducer extends JMSProxy
     /**
      * Starts the <code>JMSProducer</code>. Subclasses should call <code>super.start</code>.
      */
-    public void start() throws NamingException, JMSException
-    {
+    public void start() throws NamingException, JMSException {
         super.start();
 
         if (Log.isInfo())
             Log.getLogger(JMSAdapter.LOG_CATEGORY).info("JMS producer for JMS destination '"
-                    + destinationJndiName +"' is starting.");
+                    + destinationJndiName + "' is starting.");
     }
 
     /**
@@ -125,19 +117,15 @@ public abstract class JMSProducer extends JMSProxy
      * <code>MessageProducer</code>. It then calls <code>JMSProxy.close</code>
      * for session and connection closure.
      */
-    public void stop()
-    {
+    public void stop() {
         if (Log.isInfo())
             Log.getLogger(JMSAdapter.LOG_CATEGORY).info("JMS producer for JMS destination '" +
                     destinationJndiName + "' is stopping.");
 
-        try
-        {
+        try {
             if (producer != null)
                 producer.close();
-        }
-        catch (JMSException e)
-        {
+        } catch (JMSException e) {
             if (Log.isWarn())
                 Log.getLogger(JMSAdapter.LOG_CATEGORY).warn("JMS producer for JMS destination '" +
                         destinationJndiName + "' received an error while closing"
@@ -158,8 +146,7 @@ public abstract class JMSProducer extends JMSProxy
      *
      * @return The delivery mode used by the <code>JMSProducer</code>.
      */
-    public int getDeliveryMode()
-    {
+    public int getDeliveryMode() {
         return deliveryMode;
     }
 
@@ -170,8 +157,7 @@ public abstract class JMSProducer extends JMSProxy
      *
      * @param deliveryMode
      */
-    public void setDeliveryMode(int deliveryMode)
-    {
+    public void setDeliveryMode(int deliveryMode) {
         if (deliveryMode == javax.jms.Message.DEFAULT_DELIVERY_MODE
                 || deliveryMode == javax.jms.DeliveryMode.NON_PERSISTENT
                 || deliveryMode == javax.jms.DeliveryMode.PERSISTENT)
@@ -183,8 +169,7 @@ public abstract class JMSProducer extends JMSProxy
      *
      * @return an int specifying the message priority.
      */
-    public int getMessagePriority()
-    {
+    public int getMessagePriority() {
         return messagePriority;
     }
 
@@ -194,8 +179,7 @@ public abstract class JMSProducer extends JMSProxy
      *
      * @param messagePriority an int specifying the message priority.
      */
-    public void setMessagePriority(int messagePriority)
-    {
+    public void setMessagePriority(int messagePriority) {
         this.messagePriority = messagePriority;
     }
 
@@ -204,8 +188,7 @@ public abstract class JMSProducer extends JMSProxy
      *
      * @return The message type used by the <code>JMSProducer</code>.
      */
-    public String getMessageType()
-    {
+    public String getMessageType() {
         return messageType;
     }
 
@@ -216,8 +199,7 @@ public abstract class JMSProducer extends JMSProxy
      *
      * @param messageType String representing the message type used.
      */
-    public void setMessageType(String messageType)
-    {
+    public void setMessageType(String messageType) {
         this.messageType = messageType;
     }
 
@@ -227,61 +209,48 @@ public abstract class JMSProducer extends JMSProxy
     //
     //--------------------------------------------------------------------------
 
-    protected void copyHeadersToProperties(Map properties, javax.jms.Message message) throws JMSException
-    {
+    protected void copyHeadersToProperties(Map properties, javax.jms.Message message) throws JMSException {
         // Generic Flex headers become JMS properties, named Flex headers become JMS headers
-        for (Iterator iter = properties.keySet().iterator(); iter.hasNext();)
-        {
-            String propName = (String)iter.next();
+        for (Iterator iter = properties.keySet().iterator(); iter.hasNext(); ) {
+            String propName = (String) iter.next();
             Object propValue = properties.get(propName);
 
             // For now, only named property is TTL.
-            if (!propName.equals(JMSConfigConstants.TIME_TO_LIVE))
-            {
+            if (!propName.equals(JMSConfigConstants.TIME_TO_LIVE)) {
                 // MPI header contains a MessagePerformaceInfo object that cannot
                 // be set as a JMS header property. Instead, it is broken down
                 // to its primitive types and each primitive is individually
                 // set as a JMS header property.
-                if (propName.equals(MessagePerformanceUtils.MPI_HEADER_IN))
-                {
+                if (propName.equals(MessagePerformanceUtils.MPI_HEADER_IN)) {
                     Field[] fields = propValue.getClass().getFields();
-                    for (int i = 0; i < fields.length; i++)
-                    {
+                    for (int i = 0; i < fields.length; i++) {
                         Field field = fields[i];
                         // Use MPI_HEADER_IN as prefix to the property name so that
                         // they can be distinguished later when the MessagePerformanceInfo
                         // object gets built from the headers.
                         String mpiPropertyName = MessagePerformanceUtils.MPI_HEADER_IN + field.getName();
                         Object mpiPropertyValue = null;
-                        try
-                        {
+                        try {
                             mpiPropertyValue = field.get(propValue);
                             message.setObjectProperty(mpiPropertyName, mpiPropertyValue);
-                        }
-                        catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             if (Log.isWarn())
                                 Log.getLogger(JMSAdapter.LOG_CATEGORY).warn("JMSProducer could not retrieve the value of MessagePerformanceUtils property '"
                                         + propValue + "' from the Flex message, therefore it will not be set on the JMS message.");
                         }
                     }
-                }
-                else if (propValue != null)
-                {
+                } else if (propValue != null) {
                     message.setObjectProperty(propName, propValue);
                 }
             }
         }
     }
 
-    protected long getTimeToLive(Map properties) throws JMSException
-    {
+    protected long getTimeToLive(Map properties) throws JMSException {
         long timeToLive = producer.getTimeToLive();
-        if (properties.containsKey(JMSConfigConstants.TIME_TO_LIVE))
-        {
-            long l = ((Long)properties.get(JMSConfigConstants.TIME_TO_LIVE)).longValue();
-            if (l != 0)
-            {
+        if (properties.containsKey(JMSConfigConstants.TIME_TO_LIVE)) {
+            long l = ((Long) properties.get(JMSConfigConstants.TIME_TO_LIVE)).longValue();
+            if (l != 0) {
                 // Don't let Flex default override JMS implementation default,
                 // only explicit ActionScript TTL usage overrides JMS TTL.
                 timeToLive = l;
@@ -290,36 +259,24 @@ public abstract class JMSProducer extends JMSProxy
         return timeToLive;
     }
 
-    void sendMessage(flex.messaging.messages.Message flexMessage) throws JMSException
-    {
+    void sendMessage(flex.messaging.messages.Message flexMessage) throws JMSException {
         MessagePerformanceUtils.markServerPreAdapterExternalTime(flexMessage);
 
-        if (JMSConfigConstants.TEXT_MESSAGE.equals(messageType))
-        {
+        if (JMSConfigConstants.TEXT_MESSAGE.equals(messageType)) {
             sendTextMessage(flexMessage.getBody().toString(), flexMessage.getHeaders());
-        }
-        else if (JMSConfigConstants.OBJECT_MESSAGE.equals(messageType))
-        {
-            try
-            {
-                sendObjectMessage((Serializable)flexMessage.getBody(), flexMessage.getHeaders());
-            }
-            catch (ClassCastException ce)
-            {
+        } else if (JMSConfigConstants.OBJECT_MESSAGE.equals(messageType)) {
+            try {
+                sendObjectMessage((Serializable) flexMessage.getBody(), flexMessage.getHeaders());
+            } catch (ClassCastException ce) {
                 // The body of the Flex Message could not be converted to a Serializable Java Object.
                 MessageException me = new MessageException();
                 me.setMessage(JMSConfigConstants.NONSERIALIZABLE_MESSAGE_BODY);
                 throw me;
             }
-        }
-        else if (JMSConfigConstants.MAP_MESSAGE.equals(messageType))
-        {
-            try
-            {
-                sendMapMessage((Map<String,?>)flexMessage.getBody(), flexMessage.getHeaders());
-            }
-            catch (ClassCastException ce)
-            {
+        } else if (JMSConfigConstants.MAP_MESSAGE.equals(messageType)) {
+            try {
+                sendMapMessage((Map<String, ?>) flexMessage.getBody(), flexMessage.getHeaders());
+            } catch (ClassCastException ce) {
                 // 10812=The body of the Flex message could not be converted to a Java Map object.
                 MessageException me = new MessageException();
                 me.setMessage(JMSConfigConstants.NONMAP_MESSAGE_BODY);
@@ -332,5 +289,5 @@ public abstract class JMSProducer extends JMSProxy
 
     abstract void sendTextMessage(String text, Map properties) throws JMSException;
 
-    abstract void sendMapMessage(Map<String,?> map, Map properties) throws JMSException;
+    abstract void sendMapMessage(Map<String, ?> map, Map properties) throws JMSException;
 }

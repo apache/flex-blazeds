@@ -35,8 +35,7 @@ import java.util.Map;
  *
  * @version 1.0
  */
-public class PagedRowSet implements PageableRowSet
-{
+public class PagedRowSet implements PageableRowSet {
     private RowSet rowSet;
     private String[] colNames;
     private int pageSize = 50; //Default to 50 records a page
@@ -61,8 +60,7 @@ public class PagedRowSet implements PageableRowSet
      * @param r The RowSet to be paged.
      * @param p The initial page size.
      */
-    public PagedRowSet(RowSet r, int p)
-    {
+    public PagedRowSet(RowSet r, int p) {
         serviceName = DEFAULT_PAGING_SERVICE_NAME;
         rowSet = r;
         pageSize = p;
@@ -72,92 +70,69 @@ public class PagedRowSet implements PageableRowSet
 
     /**
      * Allows the unique id generation of the RowSet to be toggled.
-     * @see #PagedRowSet(RowSet, int)
      *
-     * @param r the row set
-     * @param p the page size
+     * @param r        the row set
+     * @param p        the page size
      * @param createID should we create an id?
+     * @see #PagedRowSet(RowSet, int)
      */
-    public PagedRowSet(RowSet r, int p, boolean createID)
-    {
+    public PagedRowSet(RowSet r, int p, boolean createID) {
         serviceName = DEFAULT_PAGING_SERVICE_NAME;
         rowSet = r;
         pageSize = p;
-        if (createID)
-        {
+        if (createID) {
             id = UUIDUtils.createUUID();
         }
         init();
     }
-    
-    private void init()
-    {
-        if (rowSet != null)
-        {
+
+    private void init() {
+        if (rowSet != null) {
             //Initialize columns
             initColumns();
 
             //Initialize records
             initRecords();
-        }
-        else
-        {
+        } else {
             colNames = new String[0];
         }
     }
 
 
-    private synchronized void initColumns()
-    {
-        try
-        {
+    private synchronized void initColumns() {
+        try {
             ResultSetMetaData rsmd = rowSet.getMetaData();
-            if (rsmd != null)
-            {
+            if (rsmd != null) {
                 colCount = rsmd.getColumnCount();
             }
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             colCount = 0;
         }
     }
 
 
-    private synchronized void initRecords()
-    {
+    private synchronized void initRecords() {
         //Determine rs size
-        if (rowSet != null)
-        {
-            try
-            {
+        if (rowSet != null) {
+            try {
                 int currentIndex = rowSet.getRow();
 
                 //Go to the end and get that row number
-                if (rowSet.last())
-                {
+                if (rowSet.last()) {
                     rowCount = rowSet.getRow();
                 }
 
                 //Put the cursor back
-                if (currentIndex > 0)
-                {
+                if (currentIndex > 0) {
                     rowSet.absolute(currentIndex);
-                }
-                else
-                {
+                } else {
                     rowSet.beforeFirst();
                 }
-            }
-            catch (SQLException ex)
-            {
+            } catch (SQLException ex) {
                 //TODO: Decide whether if absolute() not be supported, try first() as a last resort??
-                try
-                {
+                try {
                     rowSet.first();
-                }
-                catch (SQLException se)
-                {
+                } catch (SQLException se) {
                     //we won't try anymore.
                 }
             }
@@ -169,31 +144,24 @@ public class PagedRowSet implements PageableRowSet
      * List the column names of the result set.
      *
      * @return String[] An array of the column names as strings, as ordered
-     *         by the result set provider's column number assignment.
+     * by the result set provider's column number assignment.
      */
-    public synchronized String[] getColumnNames()
-    {
+    public synchronized String[] getColumnNames() {
         //  Cache the column names lookup
-        if (colNames == null)
-        {
-            try
-            {
+        if (colNames == null) {
+            try {
                 //Ensure column count is initialized
-                if (colCount == 0)
-                {
+                if (colCount == 0) {
                     initColumns();
                 }
 
                 colNames = new String[colCount];
 
-                for (int i = 0; i < colCount; i++)
-                {
+                for (int i = 0; i < colCount; i++) {
                     //Note: column numbers start at 1
                     colNames[i] = rowSet.getMetaData().getColumnName(i + 1);
                 }
-            }
-            catch (SQLException ex)
-            {
+            } catch (SQLException ex) {
                 colNames = new String[0];
             }
         }
@@ -210,18 +178,16 @@ public class PagedRowSet implements PageableRowSet
      * and an array of arrays of the actual data page itself.
      *
      * @param startIndex starting index
-     * @param count how many records to return
+     * @param count      how many records to return
      * @return Map A map with two fields, the index of the row to start the page, and an array of
-     *         arrays for the actual data page.
+     * arrays for the actual data page.
      * @throws SQLException if unable to get data from the rowset
      */
-    public synchronized Map getRecords(int startIndex, int count) throws SQLException
-    {
+    public synchronized Map getRecords(int startIndex, int count) throws SQLException {
         List aRecords = new ArrayList(); //Don't initialize with count as it could be Integer.MAX_VALUE
 
         //Ensure column count is initialized
-        if (colCount == 0)
-        {
+        if (colCount == 0) {
             initColumns();
         }
 
@@ -230,60 +196,44 @@ public class PagedRowSet implements PageableRowSet
             startIndex = 1;
 
         //Populate the page, moving cursor to index
-        if (rowSet.absolute(startIndex))
-        {
+        if (rowSet.absolute(startIndex)) {
             //Loop over the result set for the count specified
-            for (int i = 0; i < count; i++)
-            {
+            for (int i = 0; i < count; i++) {
                 boolean hasNext;
 
                 List row;
 
-                if (colCount > 0)
-                {
+                if (colCount > 0) {
                     row = new ArrayList(rowCount + 1);
                     //Loop over columns to create an array for the row
-                    for (int j = 1; j <= colCount; j++)
-                    {
+                    for (int j = 1; j <= colCount; j++) {
                         Object data = rowSet.getObject(j);
-                        if (data instanceof Clob)
-                        {
+                        if (data instanceof Clob) {
                             Clob clob = (Clob) data;
                             row.add(clob.getSubString(0, (int) clob.length()));
-                        }
-                        else if (data instanceof Blob)
-                        {
+                        } else if (data instanceof Blob) {
                             Blob blob = (Blob) data;
                             byte[] bytes = blob.getBytes(1, (int) blob.length());
                             row.add(bytes);
-                        }
-                        else
+                        } else
                             row.add(data);
                     }
-                }
-                else //HACK: Handle any ColdFusion Query Objects that have no column metadata!
+                } else //HACK: Handle any ColdFusion Query Objects that have no column metadata!
                 {
                     row = new ArrayList();
 
-                    try
-                    {
+                    try {
                         //Get as many columns as possible to build the row
                         //Stop on error or the first null column returned.
-                        for (int j = 1; j <= 50; j++)
-                        {
+                        for (int j = 1; j <= 50; j++) {
                             Object o = rowSet.getObject(j);
-                            if (o != null)
-                            {
+                            if (o != null) {
                                 row.add(o);
-                            }
-                            else
-                            {
+                            } else {
                                 break;
                             }
                         }
-                    }
-                    catch (SQLException ex)
-                    {
+                    } catch (SQLException ex) {
                         //Stop looking and just add the row.
                     }
                 }
@@ -293,8 +243,7 @@ public class PagedRowSet implements PageableRowSet
                 hasNext = rowSet.next();
 
                 //Cursor beyond last row, stop!
-                if (!hasNext)
-                {
+                if (!hasNext) {
                     break;
                 }
             }
@@ -312,8 +261,7 @@ public class PagedRowSet implements PageableRowSet
      *
      * @return int The total number of rows in the result set.
      */
-    public int getRowCount()
-    {
+    public int getRowCount() {
         return rowCount;
     }
 
@@ -325,17 +273,16 @@ public class PagedRowSet implements PageableRowSet
      *
      * @return the page size
      */
-    public int getInitialDownloadCount()
-    {
+    public int getInitialDownloadCount() {
         return pageSize;
     }
 
     /**
      * Return the id of this row set.
+     *
      * @return the id
      */
-    public String getID()
-    {
+    public String getID() {
         return id;
     }
 
@@ -344,8 +291,7 @@ public class PagedRowSet implements PageableRowSet
      *
      * @return String The name of the service that will manage this paged result.
      */
-    public String getServiceName()
-    {
+    public String getServiceName() {
         return serviceName;
     }
 
@@ -354,8 +300,7 @@ public class PagedRowSet implements PageableRowSet
      *
      * @param serviceName Update the name of the service that manages the pages for this query.
      */
-    public void setServicename(String serviceName)
-    {
+    public void setServicename(String serviceName) {
         this.serviceName = serviceName;
     }
 }

@@ -22,18 +22,17 @@ package flex.messaging.client;
  * To listen for FlexClient destruction, the implementation instance must add itself as a listener to
  * a specific FlexClient instance via the <code>addClientDestroyedListener()</code> method.
  */
-public interface FlexClientListener 
-{
+public interface FlexClientListener {
     /**
      * Notification that a FlexClient was created.
-     * 
+     *
      * @param client The FlexClient that was created.
      */
     void clientCreated(FlexClient client);
-    
+
     /**
      * Notification that a FlexClient is about to be destroyed.
-     * 
+     *
      * @param client The FlexClient that will be destroyed.
      */
     void clientDestroyed(FlexClient client);

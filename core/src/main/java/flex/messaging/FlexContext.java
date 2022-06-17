@@ -35,8 +35,7 @@ import java.security.Principal;
  * Any, or all, of the properties exposed by this class may be <code>null</code> depending upon
  * the current execution context so test for that before attempting to interact with them.
  */
-public class FlexContext
-{
+public class FlexContext {
     private static ThreadLocal<FlexClient> flexClients = new ThreadLocal<FlexClient>();
     private static ThreadLocal<FlexSession> sessions = new ThreadLocal<FlexSession>();
     private static ThreadLocal<MessageBroker> messageBrokers = new ThreadLocal<MessageBroker>();
@@ -49,18 +48,17 @@ public class FlexContext
     private static ThreadLocal<MessageRoutedNotifier> messageRoutedNotifiers = new ThreadLocal<MessageRoutedNotifier>();
     private static ServletConfig lastGoodServletConfig;
 
-    private FlexContext()
-    {
+    private FlexContext() {
     }
 
     /**
      * Users should not call this.
      *
-     * @param flexClient the Flex client
-     * @param session the Flex session
-     * @param broker the message broker
-     * @param request the http servlet request
-     * @param response the http servlet response
+     * @param flexClient    the Flex client
+     * @param session       the Flex session
+     * @param broker        the message broker
+     * @param request       the http servlet request
+     * @param response      the http servlet response
      * @param servletConfig the servlet config
      */
     public static void setThreadLocalObjects(FlexClient flexClient,
@@ -68,8 +66,7 @@ public class FlexContext
                                              MessageBroker broker,
                                              HttpServletRequest request,
                                              HttpServletResponse response,
-                                             ServletConfig servletConfig)
-    {
+                                             ServletConfig servletConfig) {
         if (flexClients == null) // In case releaseThreadLocalObjects has been called.
             return;
 
@@ -86,20 +83,17 @@ public class FlexContext
      * Users should not call this.
      *
      * @param flexClient the Flex client
-     * @param session the Flex session
-     * @param broker the message broker
+     * @param session    the Flex session
+     * @param broker     the message broker
      */
-    public static void setThreadLocalObjects(FlexClient flexClient, FlexSession session, MessageBroker broker)
-    {
+    public static void setThreadLocalObjects(FlexClient flexClient, FlexSession session, MessageBroker broker) {
         setThreadLocalObjects(flexClient, session, broker, null, null, null);
     }
 
     /**
      * Users should not call this.
-     *
      */
-    public static void clearThreadLocalObjects()
-    {
+    public static void clearThreadLocalObjects() {
         if (flexClients == null) // In case releaseThreadLocalObjects has been called.
             return;
 
@@ -124,9 +118,8 @@ public class FlexContext
      *
      * @return HttpServletRequest current HttpServletRequest object
      */
-    public static HttpServletRequest getHttpRequest()
-    {
-        return requests != null? requests.get() : null;
+    public static HttpServletRequest getHttpRequest() {
+        return requests != null ? requests.get() : null;
     }
 
     /**
@@ -134,8 +127,7 @@ public class FlexContext
      *
      * @param value HttpServletRequest object
      */
-    public static void setThreadLocalHttpRequest(HttpServletRequest value)
-    {
+    public static void setThreadLocalHttpRequest(HttpServletRequest value) {
         if (requests == null)
             return;
 
@@ -152,9 +144,8 @@ public class FlexContext
      *
      * @return HttpServletResponse current HttpServletResponse object
      */
-    public static HttpServletResponse getHttpResponse()
-    {
-        return responses != null? responses.get() : null;
+    public static HttpServletResponse getHttpResponse() {
+        return responses != null ? responses.get() : null;
     }
 
     /**
@@ -162,8 +153,7 @@ public class FlexContext
      *
      * @param value HttpServletResponse object
      */
-    public static void setThreadLocalHttpResponse(HttpServletResponse value)
-    {
+    public static void setThreadLocalHttpResponse(HttpServletResponse value) {
         if (responses == null)
             return;
 
@@ -180,9 +170,8 @@ public class FlexContext
      *
      * @return HttpServletRequest tunnel HttpServletRequest object
      */
-    public static HttpServletRequest getTunnelHttpRequest()
-    {
-        return tunnelRequests != null? tunnelRequests.get() : null;
+    public static HttpServletRequest getTunnelHttpRequest() {
+        return tunnelRequests != null ? tunnelRequests.get() : null;
     }
 
     /**
@@ -190,8 +179,7 @@ public class FlexContext
      *
      * @param value HttpServletRequest object
      */
-    public static void setThreadLocalTunnelHttpRequest(HttpServletRequest value)
-    {
+    public static void setThreadLocalTunnelHttpRequest(HttpServletRequest value) {
         if (tunnelRequests == null)
             return;
 
@@ -207,10 +195,8 @@ public class FlexContext
      *
      * @return ServletConfig current ServletConfig object
      */
-    public static ServletConfig getServletConfig()
-    {
-        if (servletConfigs != null && servletConfigs.get() != null)
-        {
+    public static ServletConfig getServletConfig() {
+        if (servletConfigs != null && servletConfigs.get() != null) {
             return servletConfigs.get();
         }
         return lastGoodServletConfig;
@@ -221,17 +207,13 @@ public class FlexContext
      *
      * @param value ServletConfig object
      */
-    public static void setThreadLocalServletConfig(ServletConfig value)
-    {
+    public static void setThreadLocalServletConfig(ServletConfig value) {
         if (servletConfigs == null)
             return;
 
-        if (value == null)
-        {
+        if (value == null) {
             servletConfigs.remove();
-        }
-        else
-        {
+        } else {
             servletConfigs.set(value);
             lastGoodServletConfig = value;
         }
@@ -242,9 +224,8 @@ public class FlexContext
      *
      * @return ServletContext current ServletContext object
      */
-    public static ServletContext getServletContext()
-    {
-        return getServletConfig() != null? getServletConfig().getServletContext() : null;
+    public static ServletContext getServletContext() {
+        return getServletConfig() != null ? getServletConfig().getServletContext() : null;
     }
 
     /**
@@ -252,9 +233,8 @@ public class FlexContext
      *
      * @return FlexClient the current FlexClient object
      */
-    public static FlexClient getFlexClient()
-    {
-        return flexClients != null? flexClients.get() : null;
+    public static FlexClient getFlexClient() {
+        return flexClients != null ? flexClients.get() : null;
     }
 
     /**
@@ -262,8 +242,7 @@ public class FlexContext
      *
      * @param flexClient FlexClient object
      */
-    public static void setThreadLocalFlexClient(FlexClient flexClient)
-    {
+    public static void setThreadLocalFlexClient(FlexClient flexClient) {
         if (flexClients == null)
             return;
 
@@ -278,9 +257,8 @@ public class FlexContext
      *
      * @return FlexSession the current FlexSession object
      */
-    public static FlexSession getFlexSession()
-    {
-        return sessions != null? sessions.get() : null;
+    public static FlexSession getFlexSession() {
+        return sessions != null ? sessions.get() : null;
     }
 
     /**
@@ -288,8 +266,7 @@ public class FlexContext
      *
      * @param session FlexSession object
      */
-    public static void setThreadLocalSession(FlexSession session)
-    {
+    public static void setThreadLocalSession(FlexSession session) {
         if (sessions == null)
             return;
 
@@ -304,9 +281,8 @@ public class FlexContext
      *
      * @return The MessageBroker for the current request
      */
-    public static MessageBroker getMessageBroker()
-    {
-        return messageBrokers != null? messageBrokers.get() : null;
+    public static MessageBroker getMessageBroker() {
+        return messageBrokers != null ? messageBrokers.get() : null;
     }
 
     /**
@@ -314,8 +290,7 @@ public class FlexContext
      *
      * @param value MessageBroker object
      */
-    public static void setThreadLocalMessageBroker(MessageBroker value)
-    {
+    public static void setThreadLocalMessageBroker(MessageBroker value) {
         // This is a special case because MessageBroker is sometimes accessed by
         // services, destinations, adapters during shutdown so it needs to be set
         // on the context even if a previous MessageBrokerServlet#destroy called
@@ -334,9 +309,8 @@ public class FlexContext
      *
      * @return The Endpoint for the current message
      */
-    public static Endpoint getEndpoint()
-    {
-        return endpoints != null? endpoints.get() : null;
+    public static Endpoint getEndpoint() {
+        return endpoints != null ? endpoints.get() : null;
     }
 
     /**
@@ -344,8 +318,7 @@ public class FlexContext
      *
      * @param value Endpoint object
      */
-    public static void setThreadLocalEndpoint(Endpoint value)
-    {
+    public static void setThreadLocalEndpoint(Endpoint value) {
         if (endpoints == null)
             return;
 
@@ -360,9 +333,8 @@ public class FlexContext
      *
      * @return MessageRoutedNotifier object
      */
-    public static MessageRoutedNotifier getMessageRoutedNotifier()
-    {
-        return messageRoutedNotifiers != null? messageRoutedNotifiers.get() : null;
+    public static MessageRoutedNotifier getMessageRoutedNotifier() {
+        return messageRoutedNotifiers != null ? messageRoutedNotifiers.get() : null;
     }
 
     /**
@@ -370,8 +342,7 @@ public class FlexContext
      *
      * @param value MessageRoutedNotifier object
      */
-    public static void setMessageRoutedNotifier(MessageRoutedNotifier value)
-    {
+    public static void setMessageRoutedNotifier(MessageRoutedNotifier value) {
         if (messageRoutedNotifiers == null)
             return;
 
@@ -387,9 +358,8 @@ public class FlexContext
      *
      * @return true if message from a peer
      */
-    public static boolean isMessageFromPeer()
-    {
-        return messageFromPeer != null? messageFromPeer.get() : false;
+    public static boolean isMessageFromPeer() {
+        return messageFromPeer != null ? messageFromPeer.get() : false;
     }
 
     /**
@@ -398,8 +368,7 @@ public class FlexContext
      *
      * @param value True if the message came from a peer; otherwise false.
      */
-    public static void setMessageFromPeer(boolean value)
-    {
+    public static void setMessageFromPeer(boolean value) {
         if (messageFromPeer == null)
             return;
 
@@ -411,14 +380,13 @@ public class FlexContext
      *
      * @return true if per-client-authentication is turned on.
      */
-    public static boolean isPerClientAuthentication()
-    {
+    public static boolean isPerClientAuthentication() {
         MessageBroker messageBroker = getMessageBroker();
         if (messageBroker == null)
             return false;
 
         LoginManager loginManager = messageBroker.getLoginManager();
-        return loginManager == null? false : loginManager.isPerClientAuthentication();
+        return loginManager == null ? false : loginManager.isPerClientAuthentication();
     }
 
     /**
@@ -428,16 +396,14 @@ public class FlexContext
      *
      * @return The principal associated with the session.
      */
-    public static Principal getUserPrincipal()
-    {
-        if (isPerClientAuthentication())
-        {
+    public static Principal getUserPrincipal() {
+        if (isPerClientAuthentication()) {
             FlexClient client = getFlexClient();
-            return client != null? client.getUserPrincipal() : null;
+            return client != null ? client.getUserPrincipal() : null;
         }
 
         FlexSession session = getFlexSession();
-        return session != null? session.getUserPrincipal() : null;
+        return session != null ? session.getUserPrincipal() : null;
     }
 
     /**
@@ -447,8 +413,7 @@ public class FlexContext
      * @param userPrincipal The principal to associate with the FlexClient or FlexSession
      *                      depending upon whether perClientAuthentication is in use.
      */
-    public static void setUserPrincipal(Principal userPrincipal)
-    {
+    public static void setUserPrincipal(Principal userPrincipal) {
         if (isPerClientAuthentication())
             getFlexClient().setUserPrincipal(userPrincipal);
         else
@@ -458,8 +423,7 @@ public class FlexContext
     /**
      * Create the static thread local storage.
      */
-    public static void createThreadLocalObjects()
-    {
+    public static void createThreadLocalObjects() {
         if (flexClients == null) // Allocate if needed.
         {
             flexClients = new ThreadLocal<FlexClient>();
@@ -479,10 +443,9 @@ public class FlexContext
      * Destroy the static thread local storage.
      * Call ONLY on shutdown
      */
-    public static void releaseThreadLocalObjects()
-    {
+    public static void releaseThreadLocalObjects() {
         clearThreadLocalObjects();
-        
+
         flexClients = null;
         sessions = null;
         messageBrokers = null;

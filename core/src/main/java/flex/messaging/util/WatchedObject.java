@@ -21,47 +21,40 @@ import java.io.FileNotFoundException;
 
 /**
  * Used by redeployment manager to monitor for changes to the files.
- *
- *
  */
-public class WatchedObject
-{
+public class WatchedObject {
     private String filename;
     private long modified;
 
     /**
      * Creates a watched object for the specified file.
-     * 
+     *
      * @param filename file to watch
      * @throws FileNotFoundException when specified file could not be found
      */
-    public WatchedObject(String filename) throws FileNotFoundException
-    {
+    public WatchedObject(String filename) throws FileNotFoundException {
         this.filename = filename;
         File file = new File(filename);
 
-        if (!file.isFile() && !file.isDirectory())
-        {
+        if (!file.isFile() && !file.isDirectory()) {
             throw new FileNotFoundException();
         }
         this.modified = file.lastModified();
     }
 
     /**
-     * Returns true if the watched file has been modified since creation of this 
+     * Returns true if the watched file has been modified since creation of this
      * watched object or since the last call to this method.
-     * 
-     * @return true if the watched file has been modified since creation of this 
+     *
+     * @return true if the watched file has been modified since creation of this
      * watched object or since the last call to this method
      */
-    public boolean isUptodate()
-    {
+    public boolean isUptodate() {
         boolean uptodate = true;
 
         long current = new File(filename).lastModified();
 
-        if (Math.abs(current - modified) > 1000)
-        {
+        if (Math.abs(current - modified) > 1000) {
             uptodate = false;
         }
 

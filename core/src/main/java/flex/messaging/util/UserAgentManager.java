@@ -27,16 +27,15 @@ import java.util.Map;
 /**
  * Manages user agent information.
  */
-public class UserAgentManager
-{
+public class UserAgentManager {
     /**
      * The name of the HTTP header that transports the user agent value.
      */
     public static final String USER_AGENT_HEADER_NAME = "User-Agent";
 
     /*
-    * Configuration constants
-    */
+     * Configuration constants
+     */
     private static final String KICKSTART_BYTES = "kickstart-bytes";
     private static final String MATCH_ON = "match-on";
     // max-streaming-connections-per-session is deprecated; use max-persistent-connections-per-session instead.
@@ -62,10 +61,9 @@ public class UserAgentManager
      *
      * @param matchOn The match-on string used to match a specific user agent.
      * @return The settings for that user agent, or null if no user agent settings
-     *         exist for that match-on string.
+     * exist for that match-on string.
      */
-    public UserAgentSettings getUserAgentSettings(String matchOn)
-    {
+    public UserAgentSettings getUserAgentSettings(String matchOn) {
         return userAgentSettingsMap.get(matchOn);
     }
 
@@ -75,8 +73,7 @@ public class UserAgentManager
      *
      * @return The (possibly empty) collection of user agent settings.
      */
-    public Collection<UserAgentSettings> getUserAgentSettings()
-    {
+    public Collection<UserAgentSettings> getUserAgentSettings() {
         return userAgentSettingsMap.values();
     }
 
@@ -84,30 +81,30 @@ public class UserAgentManager
      * Puts a new user agent to the existing list of user agents. If an existing
      * user agent with the same match-on property as the new user agent exists,
      * it is simply overwritten.
+     *
      * @param userAgent the UserAgentSettings
      */
-    public void putUserAgentSettings(UserAgentSettings userAgent)
-    {
+    public void putUserAgentSettings(UserAgentSettings userAgent) {
         userAgentSettingsMap.put(userAgent.getMatchOn(), userAgent);
     }
 
     /**
      * Removes the user agent with the same match-on property from the list of
      * existing user agents.
+     *
      * @param useAgent the UserAgentSettings object
      */
-    public void removeUserAgentSettings(UserAgentSettings userAgent)
-    {
+    public void removeUserAgentSettings(UserAgentSettings userAgent) {
         if (userAgent != null)
             userAgentSettingsMap.remove(userAgent.getMatchOn());
     }
 
     /**
      * Set the default settings to return when there is no match found.
+     *
      * @param settings the UserAgentSettings object
      */
-    public void setDefaultUserAgentSettings(UserAgentSettings settings)
-    {
+    public void setDefaultUserAgentSettings(UserAgentSettings settings) {
         defaultSettings = settings;
     }
 
@@ -119,21 +116,16 @@ public class UserAgentManager
      * @return settings or null if no match and no default.
      * @see UserAgentManager#setDefaultUserAgentSettings(flex.messaging.client.UserAgentSettings)
      */
-    public UserAgentSettings match(String userAgent)
-    {
+    public UserAgentSettings match(String userAgent) {
         // Dearch for the longest match
-        if (userAgent != null && userAgentSettingsMap.size() > 0)
-        {
+        if (userAgent != null && userAgentSettingsMap.size() > 0) {
             // Search for the best match based upon length.
             int bestMatchLength = 0;
             String matchedAgent = null;
-            for (String key : userAgentSettingsMap.keySet())
-            {
-                if (userAgent.indexOf(key) != -1)
-                {
+            for (String key : userAgentSettingsMap.keySet()) {
+                if (userAgent.indexOf(key) != -1) {
                     int matchLength = key.length();
-                    if (matchLength > bestMatchLength)
-                    {
+                    if (matchLength > bestMatchLength) {
                         bestMatchLength = matchLength;
                         matchedAgent = key;
                     }
@@ -155,8 +147,7 @@ public class UserAgentManager
      * @param properties configuration properties, possibly containing "user-agent-settings" element
      * @param manager    the UserAgentManager to configure
      */
-    public static void setupUserAgentManager(ConfigMap properties, UserAgentManager manager)
-    {
+    public static void setupUserAgentManager(ConfigMap properties, UserAgentManager manager) {
         // Add default entries for user agents.
         manager.putUserAgentSettings(UserAgentSettings.getAgent(UserAgentSettings.USER_AGENT_ANDROID));
         manager.putUserAgentSettings(UserAgentSettings.getAgent(UserAgentSettings.USER_AGENT_CHROME));
@@ -183,9 +174,8 @@ public class UserAgentManager
         if (userAgent == null || userAgent.size() == 0)
             return;
 
-        for (Object anUserAgent : userAgent)
-        {
-            ConfigMap agent = (ConfigMap)anUserAgent;
+        for (Object anUserAgent : userAgent) {
+            ConfigMap agent = (ConfigMap) anUserAgent;
             String matchOn = agent.getPropertyAsString(MATCH_ON, null);
             if (matchOn == null)
                 continue;

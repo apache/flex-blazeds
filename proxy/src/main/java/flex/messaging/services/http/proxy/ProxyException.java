@@ -19,11 +19,9 @@ package flex.messaging.services.http.proxy;
 import flex.messaging.MessageException;
 
 /**
- *
  * Simple exception used to get back to ErrorFilter from other filters.
  */
-public class ProxyException extends MessageException
-{
+public class ProxyException extends MessageException {
     static final long serialVersionUID = -6516172702871227717L;
 
     public static final String CODE_SERVER_PROXY_REQUEST_FAILED = "Server.Proxy.Request.Failed";
@@ -37,8 +35,7 @@ public class ProxyException extends MessageException
     /**
      * Default constructor.
      */
-    public ProxyException()
-    {
+    public ProxyException() {
         super();
         super.setCode(CODE_SERVER_PROXY_REQUEST_FAILED);
     }
@@ -48,8 +45,7 @@ public class ProxyException extends MessageException
      *
      * @param message The detailed message for the exception.
      */
-    public ProxyException(int message)
-    {
+    public ProxyException(int message) {
         this();
         setMessage(message);
     }

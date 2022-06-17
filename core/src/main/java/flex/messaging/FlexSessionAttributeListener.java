@@ -19,27 +19,26 @@ package flex.messaging;
 /**
  * Interface for Flex session attribute listeners.
  */
-public interface FlexSessionAttributeListener
-{
+public interface FlexSessionAttributeListener {
     /**
      * Callback invoked after an attribute is added to the session.
-     * 
+     *
      * @param event The event containing the associated session and attribute
      *              information.
      */
     void attributeAdded(FlexSessionBindingEvent event);
-    
+
     /**
      * Callback invoked after an attribute is removed from the session.
-     * 
+     *
      * @param event The event containing the associated session and attribute
      *              information.
      */
     void attributeRemoved(FlexSessionBindingEvent event);
-    
+
     /**
      * Callback invoked after an attribute has been replaced with a new value.
-     * 
+     *
      * @param event The event containing the associated session and attribute
      *              information.
      */

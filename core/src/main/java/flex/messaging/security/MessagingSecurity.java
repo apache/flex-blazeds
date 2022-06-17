@@ -23,27 +23,26 @@ import flex.messaging.services.messaging.Subtopic;
  * by the DataManagement Assembler instance.  If it is implemented, this
  * class is used to do security filtering of subscribe and send operations.
  */
-public interface MessagingSecurity 
-{
+public interface MessagingSecurity {
     /**
      * This method is invoked before a client subscribe request is processed,
      * so that custom application logic can determine whether the client
-     * should be allowed to subscribe to the specified subtopic. You can access 
+     * should be allowed to subscribe to the specified subtopic. You can access
      * the current user via
      * <code>FlexContext.getUserPrincipal()</code>.
-     * 
+     *
      * @param subtopic The subtopic the client is attempting to subscribe to.
      * @return true to allow the subscription, false to prevent it.
      */
     boolean allowSubscribe(Subtopic subtopic);
-    
+
     /**
      * This method is invoked before a client message is sent to a subtopic,
      * so that custom application logic can determine whether the client
-     * should be allowed to send to the specified subtopic. You can access 
+     * should be allowed to send to the specified subtopic. You can access
      * the current user via
      * <code>FlexContext.getUserPrincipal()</code>.
-     * 
+     *
      * @param subtopic The subtopic the client is attempting to send a message to.
      * @return true to allow the message to be sent, false to prevent it.
      */

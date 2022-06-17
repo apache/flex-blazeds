@@ -20,6 +20,6 @@
 <amfx ver="3" xmlns="http://www.macromedia.com/2005/amfx">
     <body>
         <string>A property.</string>
-        <body />
+        <body/>
     </body>
 </amfx>

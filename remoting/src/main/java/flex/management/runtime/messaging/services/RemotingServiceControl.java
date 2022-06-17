@@ -24,26 +24,25 @@ import flex.messaging.services.RemotingService;
  * for monitoring and managing a <code>RemotingService</code> at runtime.
  */
 public class RemotingServiceControl extends ServiceControl implements
-        RemotingServiceControlMBean
-{
+        RemotingServiceControlMBean {
     private static final String TYPE = "RemotingService";
-    
+
     /**
      * Constructs a <code>RemotingServiceControl</code>, assigning its id, managed
      * remoting service and parent MBean.
-     * 
+     *
      * @param service The <code>RemotingService</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent  The parent MBean in the management hierarchy.
      */
-    public RemotingServiceControl(RemotingService service, BaseControl parent)
-    {
+    public RemotingServiceControl(RemotingService service, BaseControl parent) {
         super(service, parent);
     }
 
-    /** {@inheritDoc} */
-    public String getType()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public String getType() {
         return TYPE;
     }
-    
+
 }

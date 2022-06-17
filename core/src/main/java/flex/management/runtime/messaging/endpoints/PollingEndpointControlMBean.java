@@ -22,8 +22,7 @@ import java.io.IOException;
  * Defines the runtime monitoring and management interface for managed polling
  * endpoints.
  */
-public interface PollingEndpointControlMBean extends EndpointControlMBean
-{
+public interface PollingEndpointControlMBean extends EndpointControlMBean {
     /**
      * Returns the maximum number of server poll response threads that will be
      * waiting for messages to arrive for clients.

@@ -26,23 +26,21 @@ import flex.messaging.services.remoting.RemotingDestination;
 /**
  * The <code>RemotingDestinationControl</code> class is the MBean implementation for
  * monitoring and managing a <code>RemotingDestination</code> at runtime.
- *
+ * <p>
  * This class performs no internal synchronization, so the statistics it tracks may differ slightly from
  * the true values but they don't warrant the cost full synchronization.
  */
 public class RemotingDestinationControl extends DestinationControl implements
-        RemotingDestinationControlMBean
-{
+        RemotingDestinationControlMBean {
     private static final String TYPE = "RemotingDestination";
 
     /**
      * Constructs a new <code>RemotingDestinationControl</code> instance.
      *
      * @param destination The <code>RemotingDestination</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent      The parent MBean in the management hierarchy.
      */
-    public RemotingDestinationControl(RemotingDestination destination, BaseControl parent)
-    {
+    public RemotingDestinationControl(RemotingDestination destination, BaseControl parent) {
         super(destination, parent);
     }
 
@@ -51,16 +49,18 @@ public class RemotingDestinationControl extends DestinationControl implements
     private int totalProcessingTimeMillis = 0;
     private int averageProcessingTimeMillis = 0;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getType()
-    {
+    public String getType() {
         return TYPE;
     }
 
-    /** {@inheritDoc} */
-    public Integer getInvocationSuccessCount() throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Integer getInvocationSuccessCount() throws IOException {
         return Integer.valueOf(invocationSuccessCount);
     }
 
@@ -69,23 +69,20 @@ public class RemotingDestinationControl extends DestinationControl implements
      *
      * @param processingTimeMillis The processing duration of the invocation success.
      */
-    public void incrementInvocationSuccessCount(int processingTimeMillis)
-    {
-        try
-        {
+    public void incrementInvocationSuccessCount(int processingTimeMillis) {
+        try {
             invocationSuccessCount++;
             totalProcessingTimeMillis += processingTimeMillis;
             averageProcessingTimeMillis = totalProcessingTimeMillis / (invocationSuccessCount + invocationFaultCount);
-        }
-        catch (Exception needsReset)
-        {
+        } catch (Exception needsReset) {
             reset();
         }
     }
 
-    /** {@inheritDoc} */
-    public Integer getInvocationFaultCount() throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Integer getInvocationFaultCount() throws IOException {
         return Integer.valueOf(invocationFaultCount);
     }
 
@@ -94,23 +91,20 @@ public class RemotingDestinationControl extends DestinationControl implements
      *
      * @param processingTimeMillis The processing duration of the invocation fault.
      */
-    public void incrementInvocationFaultCount(int processingTimeMillis)
-    {
-        try
-        {
+    public void incrementInvocationFaultCount(int processingTimeMillis) {
+        try {
             invocationFaultCount++;
             totalProcessingTimeMillis += processingTimeMillis;
             averageProcessingTimeMillis = totalProcessingTimeMillis / (invocationSuccessCount + invocationFaultCount);
-        }
-        catch (Exception needsReset)
-        {
+        } catch (Exception needsReset) {
             reset();
         }
     }
 
-    /** {@inheritDoc} */
-    public Integer getAverageInvocationProcessingTimeMillis() throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Integer getAverageInvocationProcessingTimeMillis() throws IOException {
         return Integer.valueOf(averageProcessingTimeMillis);
     }
 
@@ -118,23 +112,21 @@ public class RemotingDestinationControl extends DestinationControl implements
      * Callback used to register properties for display in the admin application.
      */
     @Override
-    protected void onRegistrationComplete()
-    {
+    protected void onRegistrationComplete() {
         String name = this.getObjectName().getCanonicalName();
 
-        String[] pollablePerInterval = { "InvocationSuccessCount", "InvocationFaultCount",
-                "AverageInvocationProcessingTimeMillis" };
+        String[] pollablePerInterval = {"InvocationSuccessCount", "InvocationFaultCount",
+                "AverageInvocationProcessingTimeMillis"};
 
         getRegistrar().registerObjects(
-                new int[] {AdminConsoleTypes.DESTINATION_POLLABLE, AdminConsoleTypes.GRAPH_BY_POLL_INTERVAL},
+                new int[]{AdminConsoleTypes.DESTINATION_POLLABLE, AdminConsoleTypes.GRAPH_BY_POLL_INTERVAL},
                 name, pollablePerInterval);
     }
 
     /**
      * Helper method to reset state in the case of errors updating statistics.
      */
-    private void reset()
-    {
+    private void reset() {
         invocationSuccessCount = 0;
         invocationFaultCount = 0;
         totalProcessingTimeMillis = 0;

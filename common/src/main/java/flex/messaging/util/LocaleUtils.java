@@ -21,8 +21,7 @@ import java.util.Locale;
 /**
  *
  */
-public class LocaleUtils
-{
+public class LocaleUtils {
     /**
      * Builds a <code>Locale</code> instance from the passed string. If the string
      * is <code>null</code> this method will return the default locale for the JVM.
@@ -30,24 +29,18 @@ public class LocaleUtils
      * @param locale The locale as a string.
      * @return The Locale instance built from the passed string.
      */
-    public static Locale buildLocale(String locale)
-    {
-        if (locale == null)
-        {
+    public static Locale buildLocale(String locale) {
+        if (locale == null) {
             return Locale.getDefault();
-        }
-        else
-        {
+        } else {
             int index = locale.indexOf('_');
-            if (index == -1)
-            {
+            if (index == -1) {
                 return new Locale(locale);
             }
             String language = locale.substring(0, index);
             String rest = locale.substring(index + 1);
             index = rest.indexOf('_');
-            if (index == -1)
-            {
+            if (index == -1) {
                 return new Locale(language, rest);
             }
             String country = rest.substring(0, index);

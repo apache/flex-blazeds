@@ -22,38 +22,29 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 /**
- *
  * Simple wrapper around PostMethod that exposes one method for ProxyServlet.
  */
-public class FlexPostMethod extends PostMethod
-{
-    public FlexPostMethod(String str)
-    {
+public class FlexPostMethod extends PostMethod {
+    public FlexPostMethod(String str) {
         super(str);
     }
 
-    public void setConnectionForced(boolean bool)
-    {
+    public void setConnectionForced(boolean bool) {
         setConnectionCloseForced(bool);
     }
 
-    protected String getContentCharSet(Header contentheader)
-    {
+    protected String getContentCharSet(Header contentheader) {
         String charset = null;
-        if (contentheader != null)
-        {
+        if (contentheader != null) {
             HeaderElement values[] = contentheader.getElements();
-            if (values.length == 1)
-            {
+            if (values.length == 1) {
                 NameValuePair param = values[0].getParameterByName("charset");
-                if (param != null)
-                {
+                if (param != null) {
                     charset = param.getValue();
                 }
             }
         }
-        if (charset == null)
-        {
+        if (charset == null) {
             charset = "UTF-8";
         }
         return charset;

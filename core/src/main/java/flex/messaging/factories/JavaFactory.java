@@ -46,8 +46,7 @@ import javax.servlet.ServletContext;
  * session (for session scoped components) so you can use these components in your
  * JSP as well.
  */
-public class JavaFactory implements FlexFactory, DestructibleFlexFactory
-{
+public class JavaFactory implements FlexFactory, DestructibleFlexFactory {
     private static final String ATTRIBUTE_ID = "attribute-id";
 
     private static final int SINGLETON_ERROR = 10656;
@@ -55,18 +54,17 @@ public class JavaFactory implements FlexFactory, DestructibleFlexFactory
     private static final int INVALID_CLASS_FOUND = 10654;
 
     /**
-     *
      * Default constructor
      */
-    public JavaFactory()
-    {
+    public JavaFactory() {
     }
 
     /**
      * This method can be used to provide additional configuration parameters
      * for the initializing this factory instance itself.
      */
-    public void initialize(String id, ConfigMap configMap) {}
+    public void initialize(String id, ConfigMap configMap) {
+    }
 
     /**
      * This method is called when we initialize the definition of an instance which
@@ -77,51 +75,40 @@ public class JavaFactory implements FlexFactory, DestructibleFlexFactory
      * scoped components, you do not need to implement this method as the lookup
      * method itself can be used to validate its configuration.
      */
-    public FactoryInstance createFactoryInstance(String id, ConfigMap properties)
-    {
+    public FactoryInstance createFactoryInstance(String id, ConfigMap properties) {
         JavaFactoryInstance instance = new JavaFactoryInstance(this, id, properties);
 
-        if (properties == null)
-        {
+        if (properties == null) {
             // Use destination id as the default attribute id to prevent unwanted sharing.
             instance.setSource(instance.getId());
             instance.setScope(SCOPE_REQUEST);
             instance.setAttributeId(id);
-        }
-        else
-        {
+        } else {
             instance.setSource(properties.getPropertyAsString(SOURCE, instance.getId()));
             instance.setScope(properties.getPropertyAsString(SCOPE, SCOPE_REQUEST));
             // Use destination id as the default attribute id to prevent unwanted sharing.
             instance.setAttributeId(properties.getPropertyAsString(ATTRIBUTE_ID, id));
         }
 
-        if (instance.getScope().equalsIgnoreCase(SCOPE_APPLICATION))
-        {
-            try
-            {
+        if (instance.getScope().equalsIgnoreCase(SCOPE_APPLICATION)) {
+            try {
                 MessageBroker mb = FlexContext.getMessageBroker();
-                ServletContext ctx = mb != null?  mb.getServletContext() : null;
+                ServletContext ctx = mb != null ? mb.getServletContext() : null;
                 if (ctx == null) // Should not be the case; just in case.
                     return instance;
 
-                synchronized (ctx)
-                {
+                synchronized (ctx) {
                     Object inst = ctx.getAttribute(instance.getAttributeId());
-                    if (inst == null)
-                    {
+                    if (inst == null) {
                         inst = instance.createInstance();
                         ctx.setAttribute(instance.getAttributeId(), inst);
-                    }
-                    else
-                    {
+                    } else {
                         Class configuredClass = instance.getInstanceClass();
                         Class instClass = inst.getClass();
                         if (configuredClass != instClass &&
-                                !configuredClass.isAssignableFrom(instClass))
-                        {
+                                !configuredClass.isAssignableFrom(instClass)) {
                             ServiceException e = new ServiceException();
-                            e.setMessage(INVALID_CLASS_FOUND, new Object[] {
+                            e.setMessage(INVALID_CLASS_FOUND, new Object[]{
                                     instance.getAttributeId(), "application", instance.getId(),
                                     instance.getInstanceClass(), inst.getClass()});
                             e.setCode("Server.Processing");
@@ -133,11 +120,9 @@ public class JavaFactory implements FlexFactory, DestructibleFlexFactory
                     // increment attribute-id reference count on MB
                     mb.incrementAttributeIdRefCount(instance.getAttributeId());
                 }
-            }
-            catch (Throwable t)
-            {
+            } catch (Throwable t) {
                 ConfigurationException ex = new ConfigurationException();
-                ex.setMessage(SINGLETON_ERROR, new Object[] { instance.getSource(), id });
+                ex.setMessage(SINGLETON_ERROR, new Object[]{instance.getSource(), id});
                 ex.setRootCause(t);
 
                 if (Log.isError())
@@ -145,9 +130,7 @@ public class JavaFactory implements FlexFactory, DestructibleFlexFactory
 
                 throw ex;
             }
-        }
-        else if(instance.getScope().equalsIgnoreCase(SCOPE_SESSION))
-        {
+        } else if (instance.getScope().equalsIgnoreCase(SCOPE_SESSION)) {
             // increment attribute-id reference count on MB for Session scoped instances
             MessageBroker mb = FlexContext.getMessageBroker();
             if (mb != null)
@@ -172,59 +155,46 @@ public class JavaFactory implements FlexFactory, DestructibleFlexFactory
      * @param inst the FactoryInstance to lookup.
      * @return the constructed and initialized component for this factory instance.
      */
-    public Object lookup(FactoryInstance inst)
-    {
+    public Object lookup(FactoryInstance inst) {
         JavaFactoryInstance factoryInstance = (JavaFactoryInstance) inst;
         Object instance;
 
-        if (factoryInstance.getScope().equalsIgnoreCase(SCOPE_APPLICATION))
-        {
+        if (factoryInstance.getScope().equalsIgnoreCase(SCOPE_APPLICATION)) {
             instance = factoryInstance.applicationInstance;
-        }
-        else if (factoryInstance.getScope().equalsIgnoreCase(SCOPE_SESSION))
-        {
+        } else if (factoryInstance.getScope().equalsIgnoreCase(SCOPE_SESSION)) {
             // See if an instance already exists in this http session first
             FlexSession session = FlexContext.getFlexSession();
-            if (session != null)
-            {
+            if (session != null) {
                 instance = session.getAttribute(factoryInstance.getAttributeId());
-                if (instance != null)
-                {
+                if (instance != null) {
                     Class configuredClass = factoryInstance.getInstanceClass();
                     Class instClass = instance.getClass();
                     if (configuredClass != instClass &&
-                        !configuredClass.isAssignableFrom(instClass))
-                    {
+                            !configuredClass.isAssignableFrom(instClass)) {
                         ServiceException e = new ServiceException();
-                        e.setMessage(INVALID_CLASS_FOUND, new Object[] {
-                                        factoryInstance.getAttributeId(),
-                                        "session",
-                                        factoryInstance.getId(),
-                                        factoryInstance.getInstanceClass(), instance.getClass()});
+                        e.setMessage(INVALID_CLASS_FOUND, new Object[]{
+                                factoryInstance.getAttributeId(),
+                                "session",
+                                factoryInstance.getId(),
+                                factoryInstance.getInstanceClass(), instance.getClass()});
                         e.setCode("Server.Processing");
                         throw e;
                     }
-                }
-                else
-                {
+                } else {
                     // none exists - create it the first time for each session
                     instance = factoryInstance.createInstance();
                     session.setAttribute(factoryInstance.getAttributeId(), instance);
                 }
-            }
-            else
+            } else
                 instance = null;
 
-            if (instance == null)
-            {
+            if (instance == null) {
                 ServiceException e = new ServiceException();
-                e.setMessage(SESSION_NOT_FOUND, new Object[] {factoryInstance.getId()});
+                e.setMessage(SESSION_NOT_FOUND, new Object[]{factoryInstance.getId()});
                 e.setCode("Server.Processing");
                 throw e;
             }
-        }
-        else
-        {
+        } else {
             instance = factoryInstance.createInstance();
         }
         return instance;
@@ -237,36 +207,29 @@ public class JavaFactory implements FlexFactory, DestructibleFlexFactory
      *
      * @param inst The FactoryInstance to be cleaned up
      */
-    public void destroyFactoryInstance(FactoryInstance inst)
-    {
+    public void destroyFactoryInstance(FactoryInstance inst) {
         JavaFactoryInstance factoryInstance = (JavaFactoryInstance) inst;
 
         // if we are stopping a destination with an Application or Session scoped assembler, we may
         // have to remove the assembler from the ServletContext or Session
-        if (factoryInstance != null)
-        {
+        if (factoryInstance != null) {
             MessageBroker mb = FlexContext.getMessageBroker();
             String attributeId = factoryInstance.getAttributeId();
 
-            if (FlexFactory.SCOPE_APPLICATION.equals(factoryInstance.getScope()))
-            {
+            if (FlexFactory.SCOPE_APPLICATION.equals(factoryInstance.getScope())) {
                 ServletContext ctx = mb.getServletContext();
                 if (ctx == null) // Should never be the case, but just in case.
                     return;
 
-                synchronized (ctx)
-                {
+                synchronized (ctx) {
                     // remove from ServletContext if reference count is zero
                     int refCount = (mb != null) ? mb.decrementAttributeIdRefCount(attributeId) : 0;
-                    if (refCount <= 0)
-                    {
+                    if (refCount <= 0) {
                         // remove assembler from servlet context
                         ctx.removeAttribute(attributeId);
                     }
                 }
-            }
-            else if (FlexFactory.SCOPE_SESSION.equals(factoryInstance.getScope()))
-            {
+            } else if (FlexFactory.SCOPE_SESSION.equals(factoryInstance.getScope())) {
                 FlexSession session = FlexContext.getFlexSession();
 
                 // if this is being stopped during runtime config, we should have a session available to us
@@ -277,8 +240,7 @@ public class JavaFactory implements FlexFactory, DestructibleFlexFactory
 
                 // remove from Session if reference count is zero
                 int refCount = (mb != null) ? mb.decrementAttributeIdRefCount(attributeId) : 0;
-                if (refCount <= 0)
-                {
+                if (refCount <= 0) {
                     // remove assembler from servlet context
                     session.removeAttribute(attributeId);
                 }
@@ -286,8 +248,7 @@ public class JavaFactory implements FlexFactory, DestructibleFlexFactory
 
             // Remove this instance from Session created listeners
             // Only helps if listener was created by the factory, but this is common (aka assembler classes)
-            if (factoryInstance.applicationInstance instanceof FlexSessionListener)
-            {
+            if (factoryInstance.applicationInstance instanceof FlexSessionListener) {
                 FlexSession.removeSessionCreatedListener((FlexSessionListener) factoryInstance.applicationInstance);
             }
         }

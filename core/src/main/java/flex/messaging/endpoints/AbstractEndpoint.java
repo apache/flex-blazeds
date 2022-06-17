@@ -67,16 +67,17 @@ import flex.messaging.validators.DeserializationValidator;
 /**
  * This is the default implementation of Endpoint, which provides a convenient
  * base for behavior and associations common to all endpoints.
- *
+ * <p>
  * These properties that appear in the endpoint configuration are only used by the
  * client, therefore they have to be set on the appropriate client classes: connect-timeout-seconds set on Channel.
  *
  * @see flex.messaging.endpoints.Endpoint
  */
 public abstract class AbstractEndpoint extends ManageableComponent
-        implements Endpoint2, ConfigurationConstants
-{
-    /** Log category for <code>AbstractEndpoint</code>. */
+        implements Endpoint2, ConfigurationConstants {
+    /**
+     * Log category for <code>AbstractEndpoint</code>.
+     */
     public static final String LOG_CATEGORY = LogCategories.ENDPOINT_GENERAL;
 
     /**
@@ -166,8 +167,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     /**
      * Constructs an unmanaged <code>AbstractEndpoint</code>.
      */
-    public AbstractEndpoint()
-    {
+    public AbstractEndpoint() {
         this(false);
     }
 
@@ -175,10 +175,9 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * Constructs an <code>AbstractEndpoint</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>AbstractEndpoint</code>
-     * is manageable; <code>false</code> otherwise.
+     *                         is manageable; <code>false</code> otherwise.
      */
-    public AbstractEndpoint(boolean enableManagement)
-    {
+    public AbstractEndpoint(boolean enableManagement) {
         super(enableManagement);
         this.log = Log.getLogger(getLogCategory());
         serializationContext = new SerializationContext();
@@ -194,12 +193,11 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * Initializes the <code>Endpoint</code> with the properties.
      * If subclasses override this method, they must call <code>super.initialize()</code>.
      *
-     * @param id The ID of the <code>Endpoint</code>.
+     * @param id         The ID of the <code>Endpoint</code>.
      * @param properties Properties for the <code>Endpoint</code>.
      */
     @Override
-    public void initialize(String id, ConfigMap properties)
-    {
+    public void initialize(String id, ConfigMap properties) {
         super.initialize(id, properties);
 
         if (properties == null || properties.size() == 0)
@@ -216,22 +214,17 @@ public abstract class AbstractEndpoint extends ManageableComponent
 
         // Check for a custom FlexClient outbound queue processor.
         ConfigMap outboundQueueConfig = properties.getPropertyAsMap(FLEX_CLIENT_OUTBOUND_QUEUE_PROCESSOR, null);
-        if (outboundQueueConfig != null)
-        {
+        if (outboundQueueConfig != null) {
             // Get nested props for the processor.
             flexClientOutboundQueueProcessorConfig = outboundQueueConfig.getPropertyAsMap(PROPERTIES_ELEMENT, null);
 
             String pClassName = outboundQueueConfig.getPropertyAsString(CLASS_ATTR, null);
-            if (pClassName != null)
-            {
-                try
-                {
+            if (pClassName != null) {
+                try {
                     flexClientOutboundQueueProcessClass = createClass(pClassName);
                     // And now create an instance and initialize to make sure the properties are valid.
                     setFlexClientOutboundQueueProcessorConfig(flexClientOutboundQueueProcessorConfig);
-                }
-                catch (Throwable t)
-                {
+                } catch (Throwable t) {
                     if (Log.isWarn())
                         log.warn("Cannot register custom FlexClient outbound queue processor class {0}", new Object[]{pClassName}, t);
                 }
@@ -239,8 +232,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
         }
 
         ConfigMap serialization = properties.getPropertyAsMap(SERIALIZATION, null);
-        if (serialization != null)
-        {
+        if (serialization != null) {
             // Custom deserializers
             List<?> deserializers = serialization.getPropertyAsList(CUSTOM_DESERIALIZER, null);
             if (deserializers != null && Log.isWarn())
@@ -253,15 +245,11 @@ public abstract class AbstractEndpoint extends ManageableComponent
 
             // Type Marshaller implementation
             String typeMarshallerClassName = serialization.getPropertyAsString(TYPE_MARSHALLER, null);
-            if (typeMarshallerClassName != null && typeMarshallerClassName.length() > 0)
-            {
-                try
-                {
+            if (typeMarshallerClassName != null && typeMarshallerClassName.length() > 0) {
+                try {
                     Class<?> tmc = createClass(typeMarshallerClassName);
-                    typeMarshaller = (TypeMarshaller)ClassUtil.createDefaultInstance(tmc, TypeMarshaller.class);
-                }
-                catch (Throwable t)
-                {
+                    typeMarshaller = (TypeMarshaller) ClassUtil.createDefaultInstance(tmc, TypeMarshaller.class);
+                } catch (Throwable t) {
                     if (Log.isWarn())
                         log.warn("Cannot register custom type marshaller for type {0}", new Object[]{typeMarshallerClassName}, t);
                 }
@@ -283,8 +271,8 @@ public abstract class AbstractEndpoint extends ManageableComponent
             serializationContext.allowXml = serialization.getPropertyAsBoolean(ALLOW_XML, false);
             serializationContext.allowXmlDoctypeDeclaration = serialization.getPropertyAsBoolean(ALLOW_XML_DOCTYPE_DECLARATION, false);
             serializationContext.allowXmlExternalEntityExpansion = serialization.getPropertyAsBoolean(ALLOW_XML_EXTERNAL_ENTITY_EXPANSION, false);
-            serializationContext.maxObjectNestLevel = (int)serialization.getPropertyAsLong(MAX_OBJECT_NEST_LEVEL, 512);
-            serializationContext.maxCollectionNestLevel = (int)serialization.getPropertyAsLong(MAX_COLLECTION_NEST_LEVEL, 15);
+            serializationContext.maxObjectNestLevel = (int) serialization.getPropertyAsLong(MAX_OBJECT_NEST_LEVEL, 512);
+            serializationContext.maxCollectionNestLevel = (int) serialization.getPropertyAsLong(MAX_COLLECTION_NEST_LEVEL, 15);
             serializationContext.preferVectors = serialization.getPropertyAsBoolean(PREFER_VECTORS, false);
 
             boolean showStacktraces = serialization.getPropertyAsBoolean(SHOW_STACKTRACES, false);
@@ -310,29 +298,25 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * they must call <code>super.start()</code>.
      */
     @Override
-    public void start()
-    {
+    public void start() {
         if (isStarted())
             return;
 
         // Check if the MessageBroker is started
         MessageBroker broker = getMessageBroker();
-        if (!broker.isStarted())
-        {
-            if (Log.isWarn())
-            {
+        if (!broker.isStarted()) {
+            if (Log.isWarn()) {
                 Log.getLogger(getLogCategory()).warn("Endpoint with id '{0}' cannot be started" +
-                        " when the MessageBroker is not started.",
+                                " when the MessageBroker is not started.",
                         new Object[]{getId()});
             }
             return;
         }
 
         // Set up management
-        if (isManaged() && broker.isManaged())
-        {
+        if (isManaged() && broker.isManaged()) {
             setupEndpointControl(broker);
-            MessageBrokerControl controller = (MessageBrokerControl)broker.getControl();
+            MessageBrokerControl controller = (MessageBrokerControl) broker.getControl();
             if (getControl() != null)
                 controller.addEndpoint(this);
         }
@@ -360,18 +344,15 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * call <code>super.stop()</code>.
      */
     @Override
-    public void stop()
-    {
+    public void stop() {
         if (!isStarted())
             return;
 
         super.stop();
 
         // Remove management
-        if (isManaged() && getMessageBroker().isManaged())
-        {
-            if (getControl() != null)
-            {
+        if (isManaged() && getMessageBroker().isManaged()) {
+            if (getControl() != null) {
                 getControl().unregister();
                 setControl(null);
             }
@@ -390,17 +371,14 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @param url A client-load-balancing URL.
      * @return <code>false</code> if the set already contains the URL, <code>true</code> otherwise.
-     *
      */
-    public boolean addClientLoadBalancingUrl(String url)
-    {
+    public boolean addClientLoadBalancingUrl(String url) {
         if (clientLoadBalancingUrls == null)
             clientLoadBalancingUrls = new HashSet<String>();
 
-        if (url == null || url.length() == 0)
-        {
+        if (url == null || url.length() == 0) {
             // Invalid {0} configuration for endpoint ''{1}''; cannot add empty url.
-            ConfigurationException  ce = new ConfigurationException();
+            ConfigurationException ce = new ConfigurationException();
             ce.setMessage(ERR_MSG_EMTPY_CLIENT_LOAD_BALACNING_URL, new Object[]{CLIENT_LOAD_BALANCING_ELEMENT, getId()});
             throw ce;
         }
@@ -414,8 +392,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * @param url The URL to remove.
      * @return <code>true</code> if the set contained the URL, <code>false</code> otherwise.
      */
-    public boolean removeClientLoadBalancingUrl(String url)
-    {
+    public boolean removeClientLoadBalancingUrl(String url) {
         if (clientLoadBalancingUrls != null)
             return clientLoadBalancingUrls.remove(url);
         return false;
@@ -427,9 +404,8 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * @return A snapshot of the current client-load-balancing URLs, or <code>null</code> if
      * no URL exists.
      */
-    public Set<String> getClientLoadBalancingUrls()
-    {
-        return clientLoadBalancingUrls == null? null : new HashSet<String>(clientLoadBalancingUrls);
+    public Set<String> getClientLoadBalancingUrls() {
+        return clientLoadBalancingUrls == null ? null : new HashSet<String>(clientLoadBalancingUrls);
     }
 
     /**
@@ -437,8 +413,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @return The corresponding client channel type for the endpoint.
      */
-    public String getClientType()
-    {
+    public String getClientType() {
         return clientType;
     }
 
@@ -447,8 +422,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @param type The corresponding client channel type for the endpoint.
      */
-    public void setClientType(String type)
-    {
+    public void setClientType(String type) {
         this.clientType = type;
     }
 
@@ -457,8 +431,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @return The <code>FlexClientOutboundQueueProcessorClass</code> of the endpoint.
      */
-    public Class<?> getFlexClientOutboundQueueProcessorClass()
-    {
+    public Class<?> getFlexClientOutboundQueueProcessorClass() {
         return flexClientOutboundQueueProcessClass;
     }
 
@@ -467,12 +440,10 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @param flexClientOutboundQueueProcessorClass the Class of the Flex client outbound queue processor.
      */
-    public void setFlexClientOutboundQueueProcessorClass(Class<?> flexClientOutboundQueueProcessorClass)
-    {
+    public void setFlexClientOutboundQueueProcessorClass(Class<?> flexClientOutboundQueueProcessorClass) {
         this.flexClientOutboundQueueProcessClass = flexClientOutboundQueueProcessorClass;
-        if (flexClientOutboundQueueProcessClass != null && flexClientOutboundQueueProcessorConfig != null)
-        {
-            FlexClientOutboundQueueProcessor processor = (FlexClientOutboundQueueProcessor)ClassUtil.createDefaultInstance(flexClientOutboundQueueProcessClass, null);
+        if (flexClientOutboundQueueProcessClass != null && flexClientOutboundQueueProcessorConfig != null) {
+            FlexClientOutboundQueueProcessor processor = (FlexClientOutboundQueueProcessor) ClassUtil.createDefaultInstance(flexClientOutboundQueueProcessClass, null);
             processor.initialize(flexClientOutboundQueueProcessorConfig);
         }
     }
@@ -482,8 +453,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @return The properties for the <code>FlexClientOutboundQueueProcessor</code> of the endpoint.
      */
-    public ConfigMap getFlexClientOutboundQueueProcessorConfig()
-    {
+    public ConfigMap getFlexClientOutboundQueueProcessorConfig() {
         return flexClientOutboundQueueProcessorConfig;
     }
 
@@ -492,12 +462,10 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @param flexClientOutboundQueueProcessorConfig The configuration map.
      */
-    public void setFlexClientOutboundQueueProcessorConfig(ConfigMap flexClientOutboundQueueProcessorConfig)
-    {
+    public void setFlexClientOutboundQueueProcessorConfig(ConfigMap flexClientOutboundQueueProcessorConfig) {
         this.flexClientOutboundQueueProcessorConfig = flexClientOutboundQueueProcessorConfig;
-        if (flexClientOutboundQueueProcessorConfig != null && flexClientOutboundQueueProcessClass != null)
-        {
-            FlexClientOutboundQueueProcessor processor = (FlexClientOutboundQueueProcessor)ClassUtil.createDefaultInstance(flexClientOutboundQueueProcessClass, null);
+        if (flexClientOutboundQueueProcessorConfig != null && flexClientOutboundQueueProcessClass != null) {
+            FlexClientOutboundQueueProcessor processor = (FlexClientOutboundQueueProcessor) ClassUtil.createDefaultInstance(flexClientOutboundQueueProcessClass, null);
             processor.initialize(flexClientOutboundQueueProcessorConfig);
         }
     }
@@ -510,8 +478,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * @param id The endpoint ID.
      */
     @Override
-    public void setId(String id)
-    {
+    public void setId(String id) {
         String oldId = getId();
 
         if (oldId != null && oldId.equals(id))
@@ -521,8 +488,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
 
         // Update the endpoint id in the broker
         MessageBroker broker = getMessageBroker();
-        if (broker != null)
-        {
+        if (broker != null) {
             // broker must have the endpoint then
             broker.removeEndpoint(oldId);
             broker.addEndpoint(this);
@@ -534,9 +500,8 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @return The <code>MessageBroker</code> of the <code>AbstractEndpoint</code>.
      */
-    public MessageBroker getMessageBroker()
-    {
-        return (MessageBroker)getParent();
+    public MessageBroker getMessageBroker() {
+        return (MessageBroker) getParent();
     }
 
     /**
@@ -546,8 +511,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @param broker The <code>MessageBroker</code> of the <code>AbstractEndpoint</code>.
      */
-    public void setMessageBroker(MessageBroker broker)
-    {
+    public void setMessageBroker(MessageBroker broker) {
         MessageBroker oldBroker = getMessageBroker();
 
         setParent(broker);
@@ -563,10 +527,10 @@ public abstract class AbstractEndpoint extends ManageableComponent
     /**
      * Return the highest messaging version currently available via this
      * endpoint.
+     *
      * @return double the messaging version
      */
-    public double getMessagingVersion()
-    {
+    public double getMessagingVersion() {
         return messagingVersion;
     }
 
@@ -577,8 +541,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * @return The port of the URL of the endpoint, or 0 if the URL does not contain
      * a port number.
      */
-    public int getPort()
-    {
+    public int getPort() {
         return port;
     }
 
@@ -587,8 +550,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @return <code>false</code> by default.
      */
-    public boolean isSecure()
-    {
+    public boolean isSecure() {
         return false;
     }
 
@@ -600,8 +562,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * @return <code>true</code> if this endpoint will not process direct client connections and is just
      * a local representation of a symmetric endpoint on a remote host that will, <code>false</code> otherwise.
      */
-    public boolean isRemote()
-    {
+    public boolean isRemote() {
         return remote;
     }
 
@@ -609,29 +570,28 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * Sets the remote status for this endpoint.
      *
      * @param value <code>true</code> if this endpoint will not process direct client connections and is just
-     * a local representation of a symmetric endpoint on a remote host that will, <code>false</code> otherwise.
+     *              a local representation of a symmetric endpoint on a remote host that will, <code>false</code> otherwise.
      */
-    public void setRemote(boolean value)
-    {
+    public void setRemote(boolean value) {
         remote = value;
     }
 
     /**
      * Retrieves the <tt>Server</tt> that the endpoint is using, or <code>null</code> if
      * no server has been assigned.
+     *
      * @return Server The Server object the endpoint is using.
      */
-    public Server getServer()
-    {
+    public Server getServer() {
         return server;
     }
 
     /**
      * Sets the <tt>Server</tt> that the endpoint will use.
+     *
      * @param server The Server object.
      */
-    public void setServer(Server server)
-    {
+    public void setServer(Server server) {
         this.server = server;
     }
 
@@ -640,8 +600,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @return <code>true</code> if the endpoint is server only, <code>false</code> otherwise.
      */
-    public boolean getServerOnly()
-    {
+    public boolean getServerOnly() {
         return serverOnly;
     }
 
@@ -650,8 +609,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @param serverOnly <code>true</code> if the endpoint is server only, <code>false</code> otherwise.
      */
-    public void setServerOnly(boolean serverOnly)
-    {
+    public void setServerOnly(boolean serverOnly) {
         this.serverOnly = serverOnly;
     }
 
@@ -660,8 +618,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @return The <code>SecurityConstraint</code> of the <code>Endpoint</code>.
      */
-    public SecurityConstraint getSecurityConstraint()
-    {
+    public SecurityConstraint getSecurityConstraint() {
         return securityConstraint;
     }
 
@@ -670,8 +627,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @param securityConstraint The SecurityContraint object.
      */
-    public void setSecurityConstraint(SecurityConstraint securityConstraint)
-    {
+    public void setSecurityConstraint(SecurityConstraint securityConstraint) {
         this.securityConstraint = securityConstraint;
     }
 
@@ -680,8 +636,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @return The <code>SerializationContext</code> of the endpoint.
      */
-    public SerializationContext getSerializationContext()
-    {
+    public SerializationContext getSerializationContext() {
         return serializationContext;
     }
 
@@ -690,8 +645,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @param serializationContext The SerializationContext object.
      */
-    public void setSerializationContext(SerializationContext serializationContext)
-    {
+    public void setSerializationContext(SerializationContext serializationContext) {
         this.serializationContext = serializationContext;
     }
 
@@ -700,8 +654,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @return The <code>TypeMarshaller</code> of the endpoint.
      */
-    public TypeMarshaller getTypeMarshaller()
-    {
+    public TypeMarshaller getTypeMarshaller() {
         if (typeMarshaller == null)
             typeMarshaller = new ASTranslator();
 
@@ -713,8 +666,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @param typeMarshaller The TypeMarshaller object.
      */
-    public void setTypeMarshaller(TypeMarshaller typeMarshaller)
-    {
+    public void setTypeMarshaller(TypeMarshaller typeMarshaller) {
         this.typeMarshaller = typeMarshaller;
     }
 
@@ -723,8 +675,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @return The URL of the endpoint.
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
@@ -733,8 +684,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @param url The URL of the endpoint.
      */
-    public void setUrl(String url)
-    {
+    public void setUrl(String url) {
         this.url = url;
         port = internalParsePort(url);
         parsedForContext = null;
@@ -742,23 +692,17 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     *
      * Returns the url of the endpoint parsed for the client.
      *
      * @return The url of the endpoint parsed for the client.
      */
-    public String getUrlForClient()
-    {
-        if (!clientContextParsed)
-        {
+    public String getUrlForClient() {
+        if (!clientContextParsed) {
             HttpServletRequest req = FlexContext.getHttpRequest();
-            if (req != null)
-            {
+            if (req != null) {
                 String contextPath = req.getContextPath();
                 parseClientUrl(contextPath);
-            }
-            else
-            {
+            } else {
                 return url;
             }
         }
@@ -766,14 +710,12 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     *
      * Returns the total throughput for the endpoint.
      *
      * @return The total throughput for the endpoint.
      */
-    public long getThroughput()
-    {
-        EndpointControl control = (EndpointControl)getControl();
+    public long getThroughput() {
+        EndpointControl control = (EndpointControl) getControl();
 
         return control.getBytesDeserialized().longValue() + control.getBytesSerialized().longValue();
     }
@@ -785,8 +727,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     //--------------------------------------------------------------------------
 
 
-    public static void addNoCacheHeaders(HttpServletRequest req, HttpServletResponse res)
-    {
+    public static void addNoCacheHeaders(HttpServletRequest req, HttpServletResponse res) {
         String userAgent = req.getHeader(UserAgentManager.USER_AGENT_HEADER_NAME);
 
         // For MSIE over HTTPS, set additional Cache-Control values.
@@ -806,11 +747,9 @@ public abstract class AbstractEndpoint extends ManageableComponent
     /**
      *
      */
-    public Message convertToSmallMessage(Message message)
-    {
-        if (message instanceof SmallMessage)
-        {
-            Message smallMessage = ((SmallMessage)message).getSmallMessage();
+    public Message convertToSmallMessage(Message message) {
+        if (message instanceof SmallMessage) {
+            Message smallMessage = ((SmallMessage) message).getSmallMessage();
             if (smallMessage != null)
                 message = smallMessage;
         }
@@ -825,8 +764,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      *
      * @return ConfigMap The ConfigMap object.
      */
-    public ConfigMap describeEndpoint()
-    {
+    public ConfigMap describeEndpoint() {
         ConfigMap channelConfig = new ConfigMap();
 
         if (serverOnly) // Client does not need server only endpoints.
@@ -838,11 +776,9 @@ public abstract class AbstractEndpoint extends ManageableComponent
         ConfigMap properties = new ConfigMap();
 
         boolean containsClientLoadBalancing = clientLoadBalancingUrls != null && !clientLoadBalancingUrls.isEmpty();
-        if (containsClientLoadBalancing)
-        {
+        if (containsClientLoadBalancing) {
             ConfigMap clientLoadBalancing = new ConfigMap();
-            for (Iterator<String> iterator = clientLoadBalancingUrls.iterator(); iterator.hasNext();)
-            {
+            for (Iterator<String> iterator = clientLoadBalancingUrls.iterator(); iterator.hasNext(); ) {
                 ConfigMap url = new ConfigMap();
                 // Adding as a value rather than attribute to the parent.
                 url.addProperty(EMPTY_STRING, iterator.next());
@@ -852,37 +788,32 @@ public abstract class AbstractEndpoint extends ManageableComponent
         }
 
         // Add endpoint uri only if no client-load-balancing urls are defined.
-        if (!containsClientLoadBalancing)
-        {
+        if (!containsClientLoadBalancing) {
             ConfigMap endpointConfig = new ConfigMap();
             endpointConfig.addProperty(URI_ATTR, getUrlForClient());
             channelConfig.addProperty(ENDPOINT_ELEMENT, endpointConfig);
         }
 
-        if (connectTimeoutSeconds > 0)
-        {
+        if (connectTimeoutSeconds > 0) {
             ConfigMap connectTimeoutConfig = new ConfigMap();
             connectTimeoutConfig.addProperty(EMPTY_STRING, String.valueOf(connectTimeoutSeconds));
             properties.addProperty(CONNECT_TIMEOUT_SECONDS_ELEMENT, connectTimeoutConfig);
         }
 
-        if (requestTimeoutSeconds > 0)
-        {
+        if (requestTimeoutSeconds > 0) {
             ConfigMap requestTimeoutSeconds = new ConfigMap();
             requestTimeoutSeconds.addProperty(EMPTY_STRING, String.valueOf(requestTimeoutSeconds));
             properties.addProperty(REQUEST_TIMEOUT_SECONDS_ELEMENT, requestTimeoutSeconds);
         }
 
-        if (recordMessageTimes)
-        {
+        if (recordMessageTimes) {
             ConfigMap recordMessageTimesMap = new ConfigMap();
             // Adding as a value rather than attribute to the parent
             recordMessageTimesMap.addProperty(EMPTY_STRING, TRUE_STRING);
             properties.addProperty(RECORD_MESSAGE_TIMES_ELEMENT, recordMessageTimesMap);
         }
 
-        if (recordMessageSizes)
-        {
+        if (recordMessageSizes) {
             ConfigMap recordMessageSizesMap = new ConfigMap();
             // Adding as a value rather than attribute to the parent
             recordMessageSizesMap.addProperty(EMPTY_STRING, TRUE_STRING);
@@ -900,11 +831,9 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     *
      * Make sure this matches with ChannelSettings.getParsedUri.
      */
-    public String getParsedUrl(String contextPath)
-    {
+    public String getParsedUrl(String contextPath) {
         parseUrl(contextPath);
         return parsedUrl;
     }
@@ -912,13 +841,10 @@ public abstract class AbstractEndpoint extends ManageableComponent
     /**
      *
      */
-    public void handleClientMessagingVersion(Number version)
-    {
-        if (version != null)
-        {
+    public void handleClientMessagingVersion(Number version) {
+        if (version != null) {
             boolean clientSupportsSmallMessages = version.doubleValue() >= messagingVersion;
-            if (clientSupportsSmallMessages && getSerializationContext().enableSmallMessages)
-            {
+            if (clientSupportsSmallMessages && getSerializationContext().enableSmallMessages) {
                 FlexSession session = FlexContext.getFlexSession();
                 if (session != null)
                     session.setUseSmallMessages(true);
@@ -934,8 +860,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * @param req The HttpServletRequest object.
      * @param res The HttpServletResponse object.
      */
-    public void service(HttpServletRequest req, HttpServletResponse res)
-    {
+    public void service(HttpServletRequest req, HttpServletResponse res) {
         validateRequestProtocol(req);
     }
 
@@ -946,21 +871,17 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * @param message The decoded message data.
      * @return Message The transformed message.
      */
-    public Message serviceMessage(Message message)
-    {
-        if (isManaged())
-        {
+    public Message serviceMessage(Message message) {
+        if (isManaged()) {
             ((EndpointControl) getControl()).incrementServiceMessageCount();
         }
 
-        try
-        {
+        try {
             FlexContext.setThreadLocalEndpoint(this);
             Message ack = null;
 
             // Make sure this message is timestamped.
-            if (message.getTimestamp() == 0)
-            {
+            if (message.getTimestamp() == 0) {
                 message.setTimestamp(System.currentTimeMillis());
             }
 
@@ -972,9 +893,8 @@ public abstract class AbstractEndpoint extends ManageableComponent
                 message.setHeader(Message.VALIDATE_ENDPOINT_HEADER, Boolean.TRUE);
             message.setHeader(Message.ENDPOINT_HEADER, getId());
 
-            if (message instanceof CommandMessage)
-            {
-                CommandMessage command = (CommandMessage)message;
+            if (message instanceof CommandMessage) {
+                CommandMessage command = (CommandMessage) message;
 
                 // Apply channel endpoint level constraint; always allow login commands through.
                 int operation = command.getOperation();
@@ -984,37 +904,29 @@ public abstract class AbstractEndpoint extends ManageableComponent
                 // Handle general (not Consumer specific) poll requests here.
                 // We need to fetch all outbound messages for client subscriptions over this endpoint.
                 // We identify these general poll messages by their operation and a null clientId.
-                if (operation == CommandMessage.POLL_OPERATION && message.getClientId() == null)
-                {
+                if (operation == CommandMessage.POLL_OPERATION && message.getClientId() == null) {
                     verifyFlexClientSupport(command);
 
 
                     FlexClient flexClient = FlexContext.getFlexClient();
                     ack = handleFlexClientPollCommand(flexClient, command);
-                }
-                else if (operation == CommandMessage.DISCONNECT_OPERATION)
-                {
+                } else if (operation == CommandMessage.DISCONNECT_OPERATION) {
                     ack = handleChannelDisconnect(command);
-                }
-                else if (operation == CommandMessage.TRIGGER_CONNECT_OPERATION)
-                {
+                } else if (operation == CommandMessage.TRIGGER_CONNECT_OPERATION) {
                     ack = new AcknowledgeMessage();
-                    ((AcknowledgeMessage)ack).setCorrelationId(message.getMessageId());
+                    ((AcknowledgeMessage) ack).setCorrelationId(message.getMessageId());
 
                     boolean needsConfig = false;
                     if (command.getHeader(CommandMessage.NEEDS_CONFIG_HEADER) != null)
-                        needsConfig = ((Boolean)(command.getHeader(CommandMessage.NEEDS_CONFIG_HEADER)));
+                        needsConfig = ((Boolean) (command.getHeader(CommandMessage.NEEDS_CONFIG_HEADER)));
 
                     // Send configuration information only if the client requested.
-                    if (needsConfig)
-                    {
+                    if (needsConfig) {
                         ConfigMap serverConfig = getMessageBroker().describeServices(this);
                         if (serverConfig.size() > 0)
                             ack.setBody(serverConfig);
                     }
-                }
-                else
-                {
+                } else {
                     // Block a subset of commands for legacy clients that need to be recompiled to
                     // interop with a 2.5+ server.
                     if (operation == CommandMessage.SUBSCRIBE_OPERATION || operation == CommandMessage.POLL_OPERATION)
@@ -1023,9 +935,8 @@ public abstract class AbstractEndpoint extends ManageableComponent
                     ack = getMessageBroker().routeCommandToService((CommandMessage) message, this);
 
                     // Look for client advertised features on initial connect.
-                    if (operation == CommandMessage.CLIENT_PING_OPERATION || operation == CommandMessage.LOGIN_OPERATION)
-                    {
-                        Number clientVersion = (Number)command.getHeader(CommandMessage.MESSAGING_VERSION);
+                    if (operation == CommandMessage.CLIENT_PING_OPERATION || operation == CommandMessage.LOGIN_OPERATION) {
+                        Number clientVersion = (Number) command.getHeader(CommandMessage.MESSAGING_VERSION);
                         handleClientMessagingVersion(clientVersion);
 
                         // Also respond by advertising the messaging version on the
@@ -1033,9 +944,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
                         ack.setHeader(CommandMessage.MESSAGING_VERSION, new Double(messagingVersion));
                     }
                 }
-            }
-            else
-            {
+            } else {
                 // Block any AsyncMessages from a legacy client.
                 if (message instanceof AsyncMessage)
                     verifyFlexClientSupport(message);
@@ -1047,98 +956,84 @@ public abstract class AbstractEndpoint extends ManageableComponent
             }
 
             return ack;
-        }
-        finally
-        {
+        } finally {
             FlexContext.setThreadLocalEndpoint(null);
         }
     }
 
-   /**
-    * Utility method that endpoint implementations (or associated classes)
-    * should invoke when they receive an incoming message from a client but before
-    * servicing it. This method looks up or creates the proper FlexClient instance
-    * based upon the client the message came from and places it in the FlexContext.
-    *
-    * @param message The incoming message to process.
-    *
-    * @return The FlexClient, or <code>null</code> if the message did not contain a FlexClient ID value.
-    */
-   public FlexClient setupFlexClient(Message message)
-   {
-       FlexClient flexClient = null;
-       if (message.getHeaders().containsKey(Message.FLEX_CLIENT_ID_HEADER))
-       {
-           String id = (String)message.getHeaders().get(Message.FLEX_CLIENT_ID_HEADER);
-           // If the id is null, reset to the special token value that let's us differentiate
-           // between legacy clients and 2.5+ clients.
-           if (id == null)
-               id = FlexClient.NULL_FLEXCLIENT_ID;
-           flexClient = setupFlexClient(id);
-       }
-       return flexClient;
-   }
+    /**
+     * Utility method that endpoint implementations (or associated classes)
+     * should invoke when they receive an incoming message from a client but before
+     * servicing it. This method looks up or creates the proper FlexClient instance
+     * based upon the client the message came from and places it in the FlexContext.
+     *
+     * @param message The incoming message to process.
+     * @return The FlexClient, or <code>null</code> if the message did not contain a FlexClient ID value.
+     */
+    public FlexClient setupFlexClient(Message message) {
+        FlexClient flexClient = null;
+        if (message.getHeaders().containsKey(Message.FLEX_CLIENT_ID_HEADER)) {
+            String id = (String) message.getHeaders().get(Message.FLEX_CLIENT_ID_HEADER);
+            // If the id is null, reset to the special token value that let's us differentiate
+            // between legacy clients and 2.5+ clients.
+            if (id == null)
+                id = FlexClient.NULL_FLEXCLIENT_ID;
+            flexClient = setupFlexClient(id);
+        }
+        return flexClient;
+    }
 
-   /**
-    * Utility method that endpoint implementations (or associated classes)
-    * should invoke when they receive an incoming message from a client but before
-    * servicing it. This method looks up or creates the proper FlexClient instance
-    * based upon the FlexClient ID value received from the client.
-    * It also associates this FlexClient instance with the current FlexSession.
-    *
-    * @param id The FlexClient ID value from the client.
-    *
-    * @return The FlexClient or null if the provided ID was <code>null</code>.
-    */
-   public FlexClient setupFlexClient(String id)
-   {
-       FlexClient flexClient = null;
-       if (id != null)
-       {
-           // This indicates that we're dealing with a non-legacy client that hasn't been
-           // assigned a FlexClient Id yet. Reset to null to generate a fresh Id.
-           if (id.equals(FlexClient.NULL_FLEXCLIENT_ID))
-               id = null;
+    /**
+     * Utility method that endpoint implementations (or associated classes)
+     * should invoke when they receive an incoming message from a client but before
+     * servicing it. This method looks up or creates the proper FlexClient instance
+     * based upon the FlexClient ID value received from the client.
+     * It also associates this FlexClient instance with the current FlexSession.
+     *
+     * @param id The FlexClient ID value from the client.
+     * @return The FlexClient or null if the provided ID was <code>null</code>.
+     */
+    public FlexClient setupFlexClient(String id) {
+        FlexClient flexClient = null;
+        if (id != null) {
+            // This indicates that we're dealing with a non-legacy client that hasn't been
+            // assigned a FlexClient Id yet. Reset to null to generate a fresh Id.
+            if (id.equals(FlexClient.NULL_FLEXCLIENT_ID))
+                id = null;
 
-           flexClient = getMessageBroker().getFlexClientManager().getFlexClient(id);
-           // Make sure the FlexClient and FlexSession are associated.
-           FlexSession session = FlexContext.getFlexSession();
-           flexClient.registerFlexSession(session);
-           // And place the FlexClient in FlexContext for this request.
-           FlexContext.setThreadLocalFlexClient(flexClient);
-       }
-       return flexClient;
-   }
+            flexClient = getMessageBroker().getFlexClientManager().getFlexClient(id);
+            // Make sure the FlexClient and FlexSession are associated.
+            FlexSession session = FlexContext.getFlexSession();
+            flexClient.registerFlexSession(session);
+            // And place the FlexClient in FlexContext for this request.
+            FlexContext.setThreadLocalFlexClient(flexClient);
+        }
+        return flexClient;
+    }
 
-   /**
-    *
-    * Performance metrics gathering property
-    */
-    public boolean isRecordMessageSizes()
-    {
+    /**
+     * Performance metrics gathering property
+     */
+    public boolean isRecordMessageSizes() {
         return recordMessageSizes;
     }
 
-   /**
-    *
-    * Performance metrics gathering property
-    */
-    public boolean isRecordMessageTimes()
-    {
+    /**
+     * Performance metrics gathering property
+     */
+    public boolean isRecordMessageTimes() {
         return recordMessageTimes;
     }
 
     /**
      *
      */
-    public void setThreadLocals()
-    {
-        if (serializationContext != null)
-        {
-            SerializationContext context = (SerializationContext)serializationContext.clone();
+    public void setThreadLocals() {
+        if (serializationContext != null) {
+            SerializationContext context = (SerializationContext) serializationContext.clone();
             // Get the latest deserialization validator from the broker.
             MessageBroker broker = getMessageBroker();
-            DeserializationValidator validator = broker == null? null : broker.getDeserializationValidator();
+            DeserializationValidator validator = broker == null ? null : broker.getDeserializationValidator();
             context.setDeserializationValidator(validator);
             SerializationContext.setSerializationContext(context);
         }
@@ -1149,8 +1044,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
     /**
      *
      */
-    public void clearThreadLocals()
-    {
+    public void clearThreadLocals() {
         SerializationContext.clearThreadLocalObjects();
         TypeMarshallingContext.clearThreadLocalObjects();
     }
@@ -1168,8 +1062,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * @return The log category.
      */
     @Override
-    protected String getLogCategory()
-    {
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
@@ -1181,8 +1074,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * @param disconnectCommand The disconnect command.
      * @return The response; by default an empty <tt>AcknowledgeMessage</tt>.
      */
-    protected Message handleChannelDisconnect(CommandMessage disconnectCommand)
-    {
+    protected Message handleChannelDisconnect(CommandMessage disconnectCommand) {
         return new AcknowledgeMessage();
     }
 
@@ -1192,12 +1084,11 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * and if any messages are currently queued they are returned immediately. If no
      * messages are queued an empty response is returned immediately.
      *
-     * @param flexClient The FlexClient that issued the poll request.
+     * @param flexClient  The FlexClient that issued the poll request.
      * @param pollCommand The poll command from the client.
      * @return The FlushResult response.
      */
-    protected FlushResult handleFlexClientPoll(FlexClient flexClient, CommandMessage pollCommand)
-    {
+    protected FlushResult handleFlexClientPoll(FlexClient flexClient, CommandMessage pollCommand) {
         return flexClient.poll(getId());
     }
 
@@ -1205,56 +1096,48 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * Handles a general poll request from a FlexClient to this endpoint.
      * Subclasses may override to implement different poll handling strategies.
      *
-     * @param flexClient The FlexClient that issued the poll request.
+     * @param flexClient  The FlexClient that issued the poll request.
      * @param pollCommand The poll command from the client.
      * @return The poll response message; either for success or fault.
      */
-    protected Message handleFlexClientPollCommand(FlexClient flexClient, CommandMessage pollCommand)
-    {
+    protected Message handleFlexClientPollCommand(FlexClient flexClient, CommandMessage pollCommand) {
         if (Log.isDebug())
             Log.getLogger(getMessageBroker().getLogCategory(pollCommand)).debug(
-                 "Before handling general client poll request. " + StringUtils.NEWLINE +
-                 "  incomingMessage: " + pollCommand + StringUtils.NEWLINE);
+                    "Before handling general client poll request. " + StringUtils.NEWLINE +
+                            "  incomingMessage: " + pollCommand + StringUtils.NEWLINE);
 
         FlushResult flushResult = handleFlexClientPoll(flexClient, pollCommand);
         Message pollResponse = null;
 
         // Generate a no-op poll response if necessary; prevents a single client from busy polling when the server
         // is doing wait()-based long-polls.
-        if ((flushResult instanceof PollFlushResult) && ((PollFlushResult)flushResult).isClientProcessingSuppressed())
-        {
+        if ((flushResult instanceof PollFlushResult) && ((PollFlushResult) flushResult).isClientProcessingSuppressed()) {
             pollResponse = new CommandMessage(CommandMessage.CLIENT_SYNC_OPERATION);
             pollResponse.setHeader(CommandMessage.NO_OP_POLL_HEADER, Boolean.TRUE);
         }
 
-        if (pollResponse == null)
-        {
+        if (pollResponse == null) {
             List<Message> messagesToReturn = (flushResult != null) ? flushResult.getMessages() : null;
-            if (messagesToReturn != null && !messagesToReturn.isEmpty())
-            {
+            if (messagesToReturn != null && !messagesToReturn.isEmpty()) {
                 pollResponse = new CommandMessage(CommandMessage.CLIENT_SYNC_OPERATION);
                 pollResponse.setBody(messagesToReturn.toArray());
-            }
-            else
-            {
+            } else {
                 pollResponse = new AcknowledgeMessage();
             }
         }
 
         // Set the adaptive poll wait time if necessary.
-        if (flushResult != null)
-        {
+        if (flushResult != null) {
             int nextFlushWaitTime = flushResult.getNextFlushWaitTimeMillis();
             if (nextFlushWaitTime > 0)
                 pollResponse.setHeader(CommandMessage.POLL_WAIT_HEADER, new Integer(nextFlushWaitTime));
         }
 
-        if (Log.isDebug())
-        {
+        if (Log.isDebug()) {
             String debugPollResult = Log.getPrettyPrinter().prettify(pollResponse);
             Log.getLogger(getMessageBroker().getLogCategory(pollCommand)).debug(
-                 "After handling general client poll request. " + StringUtils.NEWLINE +
-                 "  reply: " + debugPollResult + StringUtils.NEWLINE);
+                    "After handling general client poll request. " + StringUtils.NEWLINE +
+                            "  reply: " + debugPollResult + StringUtils.NEWLINE);
         }
 
         return pollResponse;
@@ -1263,18 +1146,16 @@ public abstract class AbstractEndpoint extends ManageableComponent
     /**
      * Initializes the <code>Endpoint</code> with the client-load-balancing urls.
      *
-     * @param id Id of the <code>Endpoint</code>.
+     * @param id         Id of the <code>Endpoint</code>.
      * @param properties Properties for the <code>Endpoint</code>.
      */
 
-    protected void initializeClientLoadBalancing(String id, ConfigMap properties)
-    {
+    protected void initializeClientLoadBalancing(String id, ConfigMap properties) {
         if (!properties.containsKey(CLIENT_LOAD_BALANCING_ELEMENT))
             return;
 
         ConfigMap clientLoadBalancing = properties.getPropertyAsMap(CLIENT_LOAD_BALANCING_ELEMENT, null);
-        if (clientLoadBalancing == null)
-        {
+        if (clientLoadBalancing == null) {
             // Invalid {0} configuration for endpoint ''{1}''; no urls defined.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(ERR_MSG_EMPTY_CLIENT_LOAD_BALANCING_ELEMENT, new Object[]{CLIENT_LOAD_BALANCING_ELEMENT, getId()});
@@ -1283,26 +1164,22 @@ public abstract class AbstractEndpoint extends ManageableComponent
 
         @SuppressWarnings("unchecked")
         List<String> urls = clientLoadBalancing.getPropertyAsList(URL_ATTR, null);
-        if (urls == null || urls.isEmpty())
-        {
+        if (urls == null || urls.isEmpty()) {
             // Invalid {0} configuration for endpoint ''{1}''; no urls defined.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(ERR_MSG_EMPTY_CLIENT_LOAD_BALANCING_ELEMENT, new Object[]{CLIENT_LOAD_BALANCING_ELEMENT, getId()});
             throw ce;
         }
 
-        for (Iterator<String> iterator = urls.iterator(); iterator.hasNext();)
-        {
+        for (Iterator<String> iterator = urls.iterator(); iterator.hasNext(); ) {
             String url = iterator.next();
             if (!addClientLoadBalancingUrl(url) && Log.isWarn())
                 log.warn("Endpoint '{0}' is ignoring the url '{1}' as it's already in the set of client-load-balancing urls.", new Object[]{id, url});
         }
     }
 
-    protected void checkSecurityConstraint(Message message)
-    {
-        if (securityConstraint != null)
-        {
+    protected void checkSecurityConstraint(Message message) {
+        if (securityConstraint != null) {
             getMessageBroker().getLoginManager().checkConstraint(securityConstraint);
         }
     }
@@ -1342,31 +1219,27 @@ public abstract class AbstractEndpoint extends ManageableComponent
      * template method.
      *
      * @param broker The <code>MessageBroker</code> that manages this
-     * <code>AbstractEndpoint</code>.
+     *               <code>AbstractEndpoint</code>.
      */
     protected abstract void setupEndpointControl(MessageBroker broker);
 
     /**
      * Validates the endpoint url scheme.
      */
-    protected void validateEndpointProtocol()
-    {
-        String scheme = isSecure()? getSecureProtocolScheme() : getInsecureProtocolScheme();
-        if (!url.startsWith(scheme))
-        {
+    protected void validateEndpointProtocol() {
+        String scheme = isSecure() ? getSecureProtocolScheme() : getInsecureProtocolScheme();
+        if (!url.startsWith(scheme)) {
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(ERR_MSG_INVALID_URL_SCHEME, new Object[] {url, scheme});
+            ce.setMessage(ERR_MSG_INVALID_URL_SCHEME, new Object[]{url, scheme});
             throw ce;
         }
     }
 
-    protected void validateRequestProtocol(HttpServletRequest req)
-    {
+    protected void validateRequestProtocol(HttpServletRequest req) {
         // Secure url can talk to secure or non-secure endpoint.
         // Non-secure url can only talk to non-secure endpoint.
         boolean secure = req.isSecure();
-        if (!secure && isSecure())
-        {
+        if (!secure && isSecure()) {
             // Secure endpoints must be contacted via a secure protocol.
             String endpointPath = req.getServletPath() + req.getPathInfo();
             SecurityException se = new SecurityException();
@@ -1376,18 +1249,15 @@ public abstract class AbstractEndpoint extends ManageableComponent
     }
 
     /**
-     *
      * Verifies that the remote client supports the FlexClient API.
      * Legacy clients that do not support this receive a message fault for any messages they send.
      *
      * @param message The message to verify.
      */
-    protected void verifyFlexClientSupport(Message message)
-    {
-        if (FlexContext.getFlexClient() == null)
-        {
+    protected void verifyFlexClientSupport(Message message) {
+        if (FlexContext.getFlexClient() == null) {
             MessageException me = new MessageException();
-            me.setMessage(REQUIRES_FLEXCLIENT_SUPPORT, new Object[] {message.getDestination()});
+            me.setMessage(REQUIRES_FLEXCLIENT_SUPPORT, new Object[]{message.getDestination()});
             throw me;
         }
     }
@@ -1395,24 +1265,20 @@ public abstract class AbstractEndpoint extends ManageableComponent
     /**
      *
      */
-    protected Class<?> createClass(String className)
-    {
+    protected Class<?> createClass(String className) {
         return ClassUtil.createClass(className, FlexContext.getMessageBroker() == null ? null :
-                    FlexContext.getMessageBroker().getClassLoader());
+                FlexContext.getMessageBroker().getClassLoader());
     }
 
     // This should match with ChannelSetting.parseClientUri
-    private void parseClientUrl(String contextPath)
-    {
-        if (!clientContextParsed)
-        {
+    private void parseClientUrl(String contextPath) {
+        if (!clientContextParsed) {
             String channelEndpoint = url.trim();
 
             // either {context-root} or {context.root} is legal
             channelEndpoint = StringUtils.substitute(channelEndpoint, "{context-root}", ConfigurationConstants.CONTEXT_PATH_TOKEN);
 
-            if ((contextPath == null) && (channelEndpoint.indexOf(ConfigurationConstants.CONTEXT_PATH_TOKEN) != -1))
-            {
+            if ((contextPath == null) && (channelEndpoint.indexOf(ConfigurationConstants.CONTEXT_PATH_TOKEN) != -1)) {
                 // context root must be specified before it is used
                 ConfigurationException e = new ConfigurationException();
                 e.setMessage(ConfigurationConstants.UNDEFINED_CONTEXT_ROOT, new Object[]{getId()});
@@ -1421,15 +1287,13 @@ public abstract class AbstractEndpoint extends ManageableComponent
 
             // simplify the number of combinations to test by ensuring our
             // context path always starts with a slash
-            if (contextPath != null && !contextPath.startsWith("/"))
-            {
+            if (contextPath != null && !contextPath.startsWith("/")) {
                 contextPath = "/" + contextPath;
             }
 
             // avoid double-slashes from context root by replacing /{context.root}
             // in a single replacement step
-            if (channelEndpoint.indexOf(ConfigurationConstants.SLASH_CONTEXT_PATH_TOKEN) != -1)
-            {
+            if (channelEndpoint.indexOf(ConfigurationConstants.SLASH_CONTEXT_PATH_TOKEN) != -1) {
                 // but avoid double-slash for /{context.root}/etc when we have
                 // the default context root
                 if ("/".equals(contextPath) && !ConfigurationConstants.SLASH_CONTEXT_PATH_TOKEN.equals(channelEndpoint))
@@ -1438,8 +1302,7 @@ public abstract class AbstractEndpoint extends ManageableComponent
                 channelEndpoint = StringUtils.substitute(channelEndpoint, ConfigurationConstants.SLASH_CONTEXT_PATH_TOKEN, contextPath);
             }
             // otherwise we have something like {server.name}:{server.port}{context.root}...
-            else
-            {
+            else {
                 // but avoid double-slash for {context.root}/etc when we have
                 // the default context root
                 if ("/".equals(contextPath) && !ConfigurationConstants.CONTEXT_PATH_TOKEN.equals(channelEndpoint))
@@ -1453,31 +1316,26 @@ public abstract class AbstractEndpoint extends ManageableComponent
         }
     }
 
-    private int internalParsePort(String url)
-    {
+    private int internalParsePort(String url) {
         int port = ChannelSettings.parsePort(url);
         // If there is no specified port, log an info message as urls without ports are supported
         if (port == 0 && Log.isInfo())
             log.info("No port specified in channel URL:  {0}", new Object[]{url});
 
-        return port == -1? 0 : port; // Replace -1 with 0.
+        return port == -1 ? 0 : port; // Replace -1 with 0.
     }
 
-    private void parseUrl(String contextPath)
-    {
+    private void parseUrl(String contextPath) {
         // Parse again only if never parsed before or parsed for a different contextPath.
-        if (parsedForContext == null || !parsedForContext.equals(contextPath))
-        {
+        if (parsedForContext == null || !parsedForContext.equals(contextPath)) {
             String channelEndpoint = url.toLowerCase().trim();
 
             // Remove protocol and host info
             String insecureProtocol = getInsecureProtocolScheme() + "://";
             String secureProtocol = getSecureProtocolScheme() + "://";
-            if (channelEndpoint.startsWith(secureProtocol) || channelEndpoint.startsWith(insecureProtocol))
-            {
+            if (channelEndpoint.startsWith(secureProtocol) || channelEndpoint.startsWith(insecureProtocol)) {
                 int nextSlash = channelEndpoint.indexOf('/', 8);
-                if (nextSlash > 0)
-                {
+                if (nextSlash > 0) {
                     channelEndpoint = channelEndpoint.substring(nextSlash);
                 }
             }
@@ -1486,25 +1344,18 @@ public abstract class AbstractEndpoint extends ManageableComponent
             channelEndpoint = StringUtils.substitute(channelEndpoint, "{context-root}", ConfigurationConstants.CONTEXT_PATH_TOKEN);
 
             // Remove context path info
-            if (channelEndpoint.startsWith(ConfigurationConstants.CONTEXT_PATH_TOKEN))
-            {
+            if (channelEndpoint.startsWith(ConfigurationConstants.CONTEXT_PATH_TOKEN)) {
                 channelEndpoint = channelEndpoint.substring(ConfigurationConstants.CONTEXT_PATH_TOKEN.length());
-            }
-            else if (channelEndpoint.startsWith(ConfigurationConstants.SLASH_CONTEXT_PATH_TOKEN))
-            {
+            } else if (channelEndpoint.startsWith(ConfigurationConstants.SLASH_CONTEXT_PATH_TOKEN)) {
                 channelEndpoint = channelEndpoint.substring(ConfigurationConstants.SLASH_CONTEXT_PATH_TOKEN.length());
-            }
-            else if (contextPath.length() > 0)
-            {
-                if (channelEndpoint.startsWith(contextPath.toLowerCase()))
-                {
+            } else if (contextPath.length() > 0) {
+                if (channelEndpoint.startsWith(contextPath.toLowerCase())) {
                     channelEndpoint = channelEndpoint.substring(contextPath.length());
                 }
             }
 
             // We also don't match on trailing slashes
-            if (channelEndpoint.endsWith("/"))
-            {
+            if (channelEndpoint.endsWith("/")) {
                 channelEndpoint = channelEndpoint.substring(0, channelEndpoint.length() - 1);
             }
 

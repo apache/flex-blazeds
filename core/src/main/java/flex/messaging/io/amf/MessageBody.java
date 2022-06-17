@@ -24,8 +24,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.List;
 
-public class MessageBody implements Serializable
-{
+public class MessageBody implements Serializable {
     private static final int ERR_MSG_INVALID_REQUEST_TYPE = 10037;
 
     static final long serialVersionUID = 3874002169129668459L;
@@ -36,80 +35,69 @@ public class MessageBody implements Serializable
 
     protected Object data;
 
-    public MessageBody()
-    {
+    public MessageBody() {
     }
 
-    public MessageBody(String targetURI, String responseURI, Object data)
-    {
+    public MessageBody(String targetURI, String responseURI, Object data) {
         setTargetURI(targetURI);
         setResponseURI(responseURI);
         this.data = data;
     }
 
 
-    public String getTargetURI()
-    {
+    public String getTargetURI() {
         return targetURI;
     }
 
-    public void setTargetURI(String uri)
-    {
+    public void setTargetURI(String uri) {
         if (uri == null)
             uri = "";
 
         targetURI = uri;
     }
 
-    public void setReplyMethod(String methodName)
-    {
+    public void setReplyMethod(String methodName) {
         if (targetURI.endsWith(MessageIOConstants.STATUS_METHOD) || targetURI.endsWith(MessageIOConstants.RESULT_METHOD))
             targetURI = targetURI.substring(0, targetURI.lastIndexOf('/'));
 
         targetURI = targetURI + methodName;
     }
 
-    public String getReplyMethod()
-    {
+    public String getReplyMethod() {
         return targetURI.substring((targetURI.lastIndexOf('/') + 1), targetURI.length());
     }
 
 
-    public String getResponseURI()
-    {
+    public String getResponseURI() {
         return responseURI;
     }
 
-    public void setResponseURI(String uri)
-    {
+    public void setResponseURI(String uri) {
         if (uri == null)
             uri = "";
 
         responseURI = uri;
     }
 
-    public Object getData()
-    {
+    public Object getData() {
         return data;
     }
 
-    public Message getDataAsMessage()
-    {
+    public Message getDataAsMessage() {
         if (data instanceof List)
-            data = ((List)data).get(0);
+            data = ((List) data).get(0);
         else if (data.getClass().isArray())
             data = Array.get(data, 0);
 
         if (data instanceof Message)
-            return (Message)data;
+            return (Message) data;
 
         MessageException me = new MessageException();
-        me.setMessage(ERR_MSG_INVALID_REQUEST_TYPE, new Object[] {data.getClass().getName()});
+        me.setMessage(ERR_MSG_INVALID_REQUEST_TYPE, new Object[]{data.getClass().getName()});
         throw me;
     }
 
-    public void setData(Object data)
-    {
+    public void setData(Object data) {
         this.data = data;
     }
 }

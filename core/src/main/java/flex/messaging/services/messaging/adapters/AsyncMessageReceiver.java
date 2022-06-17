@@ -23,11 +23,8 @@ import javax.jms.MessageListener;
 
 /**
  * A <code>MessageReceiver</code> that receives messages asynchronously from JMS.
- *
- *
  */
-class AsyncMessageReceiver implements MessageReceiver, ExceptionListener, MessageListener
-{
+class AsyncMessageReceiver implements MessageReceiver, ExceptionListener, MessageListener {
     private JMSConsumer jmsConsumer;
 
     /**
@@ -35,24 +32,21 @@ class AsyncMessageReceiver implements MessageReceiver, ExceptionListener, Messag
      *
      * @param jmsConsumer JMSConsumer associated with the AsyncMessageReceiver.
      */
-    public AsyncMessageReceiver(JMSConsumer jmsConsumer)
-    {
+    public AsyncMessageReceiver(JMSConsumer jmsConsumer) {
         this.jmsConsumer = jmsConsumer;
     }
 
     /**
      * Implements MessageReceiver.startReceive.
      */
-    public void startReceive() throws JMSException
-    {
+    public void startReceive() throws JMSException {
         jmsConsumer.setMessageListener(this);
     }
 
     /**
      * Implements MessageReceiver.stopReceive.
      */
-    public void stopReceive()
-    {
+    public void stopReceive() {
         // Nothing to do.
     }
 
@@ -61,8 +55,7 @@ class AsyncMessageReceiver implements MessageReceiver, ExceptionListener, Messag
      *
      * @param exception JMS exception received from the JMS server.
      */
-    public void onException(JMSException exception)
-    {
+    public void onException(JMSException exception) {
         jmsConsumer.onException(exception);
     }
 
@@ -71,8 +64,7 @@ class AsyncMessageReceiver implements MessageReceiver, ExceptionListener, Messag
      *
      * @param message JMS message received from the JMS server.
      */
-    public void onMessage(Message message)
-    {
+    public void onMessage(Message message) {
         jmsConsumer.onMessage(message);
     }
 }

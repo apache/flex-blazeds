@@ -21,53 +21,45 @@ import java.util.Enumeration;
 import java.util.List;
 
 /**
- * Proxies serialization of a Dictionary and considers all keys as String based property 
- * names. Additionally, bean properties from the instance are also included and override 
+ * Proxies serialization of a Dictionary and considers all keys as String based property
+ * names. Additionally, bean properties from the instance are also included and override
  * any Dictionary entries with the same name.
  */
-public class DictionaryProxy extends BeanProxy
-{
+public class DictionaryProxy extends BeanProxy {
     static final long serialVersionUID = 1501461889185692712L;
 
-    public DictionaryProxy()
-    {
+    public DictionaryProxy() {
         super();
         //dynamic = true;
     }
 
-    public DictionaryProxy(Dictionary defaultInstance)
-    {
+    public DictionaryProxy(Dictionary defaultInstance) {
         super(defaultInstance);
     }
 
-    public List getPropertyNames(Object instance)
-    {
+    public List getPropertyNames(Object instance) {
         if (instance == null)
             return null;
 
         List propertyNames = null;
         List excludes = null;
 
-        if (descriptor != null)
-        {
+        if (descriptor != null) {
             excludes = descriptor.getExcludesForInstance(instance);
             if (excludes == null)
                 excludes = descriptor.getExcludes();
         }
 
         // Add all Dictionary keys as properties
-        if (instance instanceof Dictionary)
-        {
-            Dictionary dictionary = (Dictionary)instance;
+        if (instance instanceof Dictionary) {
+            Dictionary dictionary = (Dictionary) instance;
 
             propertyNames = new ArrayList(dictionary.size());
 
             Enumeration keys = dictionary.keys();
-            while (keys.hasMoreElements())
-            {
+            while (keys.hasMoreElements()) {
                 Object key = keys.nextElement();
-                if (key != null)
-                {
+                if (key != null) {
                     if (excludes != null && excludes.contains(key))
                         continue;
 
@@ -78,20 +70,16 @@ public class DictionaryProxy extends BeanProxy
 
         // Then, check for bean properties
         List beanProperties = super.getPropertyNames(instance);
-        if (propertyNames == null)
-        {
+        if (propertyNames == null) {
             propertyNames = beanProperties;
-        }
-        else
-        {
+        } else {
             propertyNames.addAll(beanProperties);
         }
 
         return propertyNames;
     }
 
-    public Object getValue(Object instance, String propertyName)
-    {
+    public Object getValue(Object instance, String propertyName) {
         if (instance == null || propertyName == null)
             return null;
 
@@ -99,12 +87,11 @@ public class DictionaryProxy extends BeanProxy
         Object value = super.getValue(instance, propertyName);
 
         // Then check for Dictionary entry
-        if (value == null && instance instanceof Dictionary)
-        {
-            Dictionary dictionary = (Dictionary)instance;
+        if (value == null && instance instanceof Dictionary) {
+            Dictionary dictionary = (Dictionary) instance;
             value = dictionary.get(propertyName);
         }
 
-        return value; 
+        return value;
     }
 }

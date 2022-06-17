@@ -22,22 +22,20 @@ import flex.messaging.MessageException;
  * Typically signifies that a fatal exception happened during deserialization or
  * serialization. The messaging framework should try to get a meaningful
  * message back to the client in a response, however this is not always possible,
- * especially for batched AMF messages, so at the very least the error should be 
+ * especially for batched AMF messages, so at the very least the error should be
  * logged.
- * 
+ * <p>
  * A special sub-class RecoverableSerializationException can be thrown for non-fatal
  * serialization exceptions.
- * 
+ *
  * @see flex.messaging.io.RecoverableSerializationException
  */
-public class SerializationException extends MessageException
-{
+public class SerializationException extends MessageException {
     static final long serialVersionUID = -5723542920189973518L;
 
     public static final String CLIENT_PACKET_ENCODING = "Client.Packet.Encoding";
-    
-    public SerializationException()
-    {
+
+    public SerializationException() {
         setCode(CLIENT_PACKET_ENCODING);
     }
 }

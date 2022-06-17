@@ -22,11 +22,10 @@ package flex.messaging;
  * the server to manage the running state of server components
  * through a consistent interface.
  */
-public interface FlexComponent extends FlexConfigurable
-{
+public interface FlexComponent extends FlexConfigurable {
     /**
      * Invoked to start the component.
-     * The {@link FlexConfigurable#initialize(String, flex.messaging.config.ConfigMap)} method inherited 
+     * The {@link FlexConfigurable#initialize(String, flex.messaging.config.ConfigMap)} method inherited
      * from the {@link FlexConfigurable} interface must be invoked before this method is invoked.
      * Once this method returns, {@link #isStarted()} must return true.
      */
@@ -40,9 +39,9 @@ public interface FlexComponent extends FlexConfigurable
 
     /**
      * Indicates whether the component is started and running.
-     * 
-     * @return <code>true</code> if the component has started; 
-     *         otherwise <code>false</code>.
+     *
+     * @return <code>true</code> if the component has started;
+     * otherwise <code>false</code>.
      */
-    boolean isStarted();   
+    boolean isStarted();
 }

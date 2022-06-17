@@ -24,14 +24,13 @@ import flex.messaging.MessageException;
 import flex.messaging.client.FlexClient;
 import flex.messaging.config.ServerSettings.RoutingMode;
 import flex.messaging.log.Log;
+import flex.messaging.log.LogCategories;
 import flex.messaging.messages.AsyncMessage;
 import flex.messaging.messages.Message;
 import flex.messaging.security.MessagingSecurity;
 import flex.messaging.services.MessageService;
 import flex.messaging.services.ServiceAdapter;
 import flex.messaging.services.ServiceException;
-import flex.messaging.services.messaging.selector.JMSSelector;
-import flex.messaging.services.messaging.selector.JMSSelectorException;
 import flex.messaging.util.StringUtils;
 import flex.messaging.util.TimeoutManager;
 
@@ -45,12 +44,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 
 /**
- *
  * The SubscriptionManager monitors subscribed clients for MessageService
  * and its subclasses, such as DataService.
  */
-public class SubscriptionManager extends ManageableComponent
-{
+public class SubscriptionManager extends ManageableComponent {
     public static final String TYPE = "SubscriptionManager";
     private static final int SUBTOPICS_NOT_SUPPORTED = 10553;
     private static final int WILDCARD_SUBTOPICS_NOT_ALLOWED = 10560;
@@ -65,13 +62,19 @@ public class SubscriptionManager extends ManageableComponent
     // This lock protects allSubscriptions as synchronizing on a Concurrent class does not work.
     private final Object allSubscriptionsLock = new Object();
 
-    /** Subscriptions with no subtopic. */
+    /**
+     * Subscriptions with no subtopic.
+     */
     private final TopicSubscription globalSubscribers = new TopicSubscription();
 
-    /** Subscriptions with a simple subtopic. */
+    /**
+     * Subscriptions with a simple subtopic.
+     */
     private final Map<Subtopic, TopicSubscription> subscribersPerSubtopic = new ConcurrentHashMap<Subtopic, TopicSubscription>();
 
-    /** Subscriptions with a wildcard subtopic. */
+    /**
+     * Subscriptions with a wildcard subtopic.
+     */
     private final Map<Subtopic, TopicSubscription> subscribersPerSubtopicWildcard = new ConcurrentHashMap<Subtopic, TopicSubscription>();
 
     protected final MessageDestination destination;
@@ -86,22 +89,19 @@ public class SubscriptionManager extends ManageableComponent
      *
      * @param destination the destination
      */
-    public SubscriptionManager(MessageDestination destination)
-    {
+    public SubscriptionManager(MessageDestination destination) {
         this(destination, false);
     }
 
     /**
      * Construct a subscription manager for a destination.
      *
-     * @param destination the destination
+     * @param destination      the destination
      * @param enableManagement turn on management?
      */
-    public SubscriptionManager(MessageDestination destination, boolean enableManagement)
-    {
+    public SubscriptionManager(MessageDestination destination, boolean enableManagement) {
         super(enableManagement);
-        synchronized (classMutex)
-        {
+        synchronized (classMutex) {
             super.setId(TYPE + ++instanceCount);
         }
         this.destination = destination;
@@ -110,41 +110,39 @@ public class SubscriptionManager extends ManageableComponent
     }
 
     // This component's id should never be changed as it's generated internally
-    /** {@inheritDoc} */
-    @Override public void setId(String id)
-    {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setId(String id) {
         // No-op
     }
 
     /**
      * Stops the subscription manager.
      */
-    @Override public void stop()
-    {
+    @Override
+    public void stop() {
         super.stop();
 
         // Remove management.
-        if (isManaged() && getControl() != null)
-        {
+        if (isManaged() && getControl() != null) {
             getControl().unregister();
             setControl(null);
             setManaged(false);
         }
 
         // Destroy subscriptions
-        synchronized (this)
-        {
-            if (subscriberSessionManager != null)
-            {
+        synchronized (this) {
+            if (subscriberSessionManager != null) {
                 subscriberSessionManager.shutdown();
                 subscriberSessionManager = null;
             }
         }
 
-        synchronized (allSubscriptionsLock)
-        {
-            if (!allSubscriptions.isEmpty())
-            {
+        synchronized (allSubscriptionsLock) {
+            if (!allSubscriptions.isEmpty()) {
                 for (Map.Entry<Object, MessageClient> objectMessageClientEntry : allSubscriptions.entrySet())
                     removeSubscriber(objectMessageClientEntry.getValue());
             }
@@ -156,21 +154,18 @@ public class SubscriptionManager extends ManageableComponent
      *
      * @param value the timeout value in milliseconds
      */
-    public void setSubscriptionTimeoutMillis(long value)
-    {
+    public void setSubscriptionTimeoutMillis(long value) {
         subscriptionTimeoutMillis = value;
-        if (subscriptionTimeoutMillis > 0)
-        {
-            subscriberSessionManager = new TimeoutManager(new ThreadFactory()
-                                                            {
-                                                                int counter = 1;
-                                                                public synchronized Thread newThread(Runnable runnable)
-                                                                {
-                                                                    Thread t = new Thread(runnable);
-                                                                    t.setName(destination.getId() + "-SubscriptionTimeoutThread-" + counter++);
-                                                                    return t;
-                                                                }
-                                                            });
+        if (subscriptionTimeoutMillis > 0) {
+            subscriberSessionManager = new TimeoutManager(new ThreadFactory() {
+                int counter = 1;
+
+                public synchronized Thread newThread(Runnable runnable) {
+                    Thread t = new Thread(runnable);
+                    t.setName(destination.getId() + "-SubscriptionTimeoutThread-" + counter++);
+                    return t;
+                }
+            });
         }
     }
 
@@ -179,8 +174,7 @@ public class SubscriptionManager extends ManageableComponent
      *
      * @return the timeout in milliseconds
      */
-    public long getSubscriptionTimeoutMillis()
-    {
+    public long getSubscriptionTimeoutMillis() {
         return subscriptionTimeoutMillis;
     }
 
@@ -191,26 +185,22 @@ public class SubscriptionManager extends ManageableComponent
      * remote server, iterate through the maps of subscriptions and
      * for each "unique" subscription it writes the selector and
      * subtopic.
-     *
+     * <p>
      * synchronization note: this assumes no add/remove subscriptions
      * are occurring while this method is called.
      *
      * @return a List of subscriptions selectors and subtopics
      */
-    public Object getSubscriptionState()
-    {
+    public Object getSubscriptionState() {
         ArrayList<String> subState = new ArrayList<String>();
 
         if (globalSubscribers.defaultSubscriptions != null &&
-            !globalSubscribers.defaultSubscriptions.isEmpty())
-        {
+                !globalSubscribers.defaultSubscriptions.isEmpty()) {
             subState.add(null); // selector string
             subState.add(null); // subtopic string
         }
-        if (globalSubscribers.selectorSubscriptions != null)
-        {
-            for (String s : globalSubscribers.selectorSubscriptions.keySet())
-            {
+        if (globalSubscribers.selectorSubscriptions != null) {
+            for (String s : globalSubscribers.selectorSubscriptions.keySet()) {
                 subState.add(s);
                 subState.add(null); // subtopic
             }
@@ -224,22 +214,17 @@ public class SubscriptionManager extends ManageableComponent
         return subState;
     }
 
-    private void addSubscriptionState(List<String> subState, Map<Subtopic, TopicSubscription> subsPerSubtopic)
-    {
-        for (Map.Entry<Subtopic, TopicSubscription> entry : subsPerSubtopic.entrySet())
-        {
+    private void addSubscriptionState(List<String> subState, Map<Subtopic, TopicSubscription> subsPerSubtopic) {
+        for (Map.Entry<Subtopic, TopicSubscription> entry : subsPerSubtopic.entrySet()) {
             Subtopic subtopic = entry.getKey();
             TopicSubscription tc = entry.getValue();
 
-            if (tc.defaultSubscriptions != null && !tc.defaultSubscriptions.isEmpty())
-            {
+            if (tc.defaultSubscriptions != null && !tc.defaultSubscriptions.isEmpty()) {
                 subState.add(null);
                 subState.add(subtopic.toString());
             }
-            if (tc.selectorSubscriptions != null)
-            {
-                for (String s : tc.selectorSubscriptions.keySet())
-                {
+            if (tc.selectorSubscriptions != null) {
+                for (String s : tc.selectorSubscriptions.keySet()) {
                     subState.add(s);
                     subState.add(subtopic.toString()); // subtopic
                 }
@@ -250,10 +235,10 @@ public class SubscriptionManager extends ManageableComponent
 
     /**
      * Get a string representation of the subscription state.
+     *
      * @return the string
      */
-    protected String getDebugSubscriptionState()
-    {
+    protected String getDebugSubscriptionState() {
         StringBuffer sb = new StringBuffer(100);
 
         sb.append(" global subscriptions: ").append(globalSubscribers).append(StringUtils.NEWLINE);
@@ -262,55 +247,49 @@ public class SubscriptionManager extends ManageableComponent
         return sb.toString();
     }
 
-    @Override protected String getLogCategory()
-    {
+    @Override
+    protected String getLogCategory() {
         return MessageService.LOG_CATEGORY;
     }
 
     /**
      * Return the ids of our subscribers.
+     *
      * @return a set of subscriber ids
      */
-    public Set<Object> getSubscriberIds()
-    {
+    public Set<Object> getSubscriberIds() {
         return allSubscriptions.keySet();
     }
 
     /**
      * Return the set of subscribers for a message.
      *
-     * @param message the message
+     * @param message      the message
      * @param evalSelector should the selector be evaluated?
      * @return the set of subscribers
      */
-    public Set<Object> getSubscriberIds(Message message, boolean evalSelector)
-    {
+    public Set<Object> getSubscriberIds(Message message, boolean evalSelector) {
         Set<Object> ids = new LinkedHashSet<Object>();
 
         Object subtopicObj = message.getHeader(AsyncMessage.SUBTOPIC_HEADER_NAME);
 
         if (subtopicObj instanceof Object[])
-            subtopicObj = Arrays.asList((Object[])subtopicObj);
+            subtopicObj = Arrays.asList((Object[]) subtopicObj);
 
-        if (subtopicObj instanceof String)
-        {
+        if (subtopicObj instanceof String) {
             String subtopicString = (String) subtopicObj;
 
             if (subtopicString.length() > 0)
                 addSubtopicSubscribers(subtopicString, message, ids, evalSelector);
             else
                 addTopicSubscribers(globalSubscribers, message, ids, evalSelector);
-        }
-        else if (subtopicObj instanceof List)
-        {
+        } else if (subtopicObj instanceof List) {
             @SuppressWarnings("unchecked")
-            List<String> subtopicList = (List<String>)subtopicObj;
-            for (String aSubtopicList : subtopicList)
-            {
+            List<String> subtopicList = (List<String>) subtopicObj;
+            for (String aSubtopicList : subtopicList) {
                 addSubtopicSubscribers(aSubtopicList, message, ids, evalSelector);
             }
-        }
-        else
+        } else
             addTopicSubscribers(globalSubscribers, message, ids, evalSelector);
 
         return ids;
@@ -319,23 +298,18 @@ public class SubscriptionManager extends ManageableComponent
     /**
      * Return the set of subscribers for a message.
      *
-     * @param message the message
+     * @param message      the message
      * @param evalSelector hould the selector be evaluated?
-     * @param subtopics the subtopics to use
+     * @param subtopics    the subtopics to use
      * @return the set of subscribers
      */
-    public Set<Object> getSubscriberIds(Message message, boolean evalSelector, List<Subtopic> subtopics)
-    {
+    public Set<Object> getSubscriberIds(Message message, boolean evalSelector, List<Subtopic> subtopics) {
         Set<Object> ids = new LinkedHashSet<Object>();
 
-        if (subtopics == null || subtopics.isEmpty())
-        {
+        if (subtopics == null || subtopics.isEmpty()) {
             addTopicSubscribers(globalSubscribers, message, ids, evalSelector);
-        }
-        else
-        {
-            for (Subtopic subtopic : subtopics)
-            {
+        } else {
+            for (Subtopic subtopic : subtopics) {
                 addSubtopicSubscribers(subtopic, message, ids, evalSelector);
             }
         }
@@ -346,12 +320,11 @@ public class SubscriptionManager extends ManageableComponent
      * Return the set of subscribers for a subtopic pattern.
      * Constructs a message and calls {@link #getSubscriberIds(flex.messaging.messages.Message, boolean)}.
      *
-     * @param subtopicPattern  the pattern to match
-     * @param messageHeaders the message headers
+     * @param subtopicPattern the pattern to match
+     * @param messageHeaders  the message headers
      * @return the set of subscribers
      */
-    public Set<Object> getSubscriberIds(String subtopicPattern, Map messageHeaders)
-    {
+    public Set<Object> getSubscriberIds(String subtopicPattern, Map messageHeaders) {
         // This could be more efficient but we'd have to change the SQLParser to accept a map.
         Message msg = new AsyncMessage();
         msg.setHeader(AsyncMessage.SUBTOPIC_HEADER_NAME, subtopicPattern);
@@ -360,39 +333,33 @@ public class SubscriptionManager extends ManageableComponent
         return getSubscriberIds(msg, true);
     }
 
-    void addSubtopicSubscribers(String subtopicString, Message message, Set<Object> ids, boolean evalSelector)
-    {
+    void addSubtopicSubscribers(String subtopicString, Message message, Set<Object> ids, boolean evalSelector) {
         Subtopic subtopic = getSubtopic(subtopicString);
         addSubtopicSubscribers(subtopic, message, ids, evalSelector);
     }
 
-    void addSubtopicSubscribers(Subtopic subtopic, Message message, Set<Object> ids, boolean evalSelector)
-    {
+    void addSubtopicSubscribers(Subtopic subtopic, Message message, Set<Object> ids, boolean evalSelector) {
         // If we have a subtopic, we need to route the message only to that
         // subset of subscribers.
-        if (!destination.getServerSettings().getAllowSubtopics())
-        {
+        if (!destination.getServerSettings().getAllowSubtopics()) {
             // Throw an error - the destination doesn't allow subtopics.
             ServiceException se = new ServiceException();
-            se.setMessage(SUBTOPICS_NOT_SUPPORTED, new Object[] {subtopic.getValue(), destination.getId()});
+            se.setMessage(SUBTOPICS_NOT_SUPPORTED, new Object[]{subtopic.getValue(), destination.getId()});
             throw se;
         }
 
         // Give a MessagingAdapter a chance to block the send to this subtopic.
         ServiceAdapter adapter = destination.getAdapter();
-        if (adapter instanceof MessagingSecurity)
-        {
-            if (!((MessagingSecurity)adapter).allowSend(subtopic))
-            {
+        if (adapter instanceof MessagingSecurity) {
+            if (!((MessagingSecurity) adapter).allowSend(subtopic)) {
                 ServiceException se = new ServiceException();
-                se.setMessage(10558, new Object[] {subtopic.getValue()});
+                se.setMessage(10558, new Object[]{subtopic.getValue()});
                 throw se;
             }
         }
 
         TopicSubscription ts;
-        if (subscribersPerSubtopic.containsKey(subtopic))
-        {
+        if (subscribersPerSubtopic.containsKey(subtopic)) {
             ts = subscribersPerSubtopic.get(subtopic);
             addTopicSubscribers(ts, message, ids, evalSelector);
         }
@@ -402,12 +369,9 @@ public class SubscriptionManager extends ManageableComponent
          * a hashtable lookup rather than a linear search
          */
         Set<Subtopic> subtopics = subscribersPerSubtopicWildcard.keySet();
-        if (!subtopics.isEmpty())
-        {
-            for (Subtopic st : subtopics)
-            {
-                if (st.matches(subtopic))
-                {
+        if (!subtopics.isEmpty()) {
+            for (Subtopic st : subtopics) {
+                if (st.matches(subtopic)) {
                     ts = subscribersPerSubtopicWildcard.get(st);
                     addTopicSubscribers(ts, message, ids, evalSelector);
                 }
@@ -415,8 +379,7 @@ public class SubscriptionManager extends ManageableComponent
         }
     }
 
-    void addTopicSubscribers(TopicSubscription ts, Message message, Set<Object> ids, boolean evalSelector)
-    {
+    void addTopicSubscribers(TopicSubscription ts, Message message, Set<Object> ids, boolean evalSelector) {
         if (ts == null)
             return;
 
@@ -427,15 +390,14 @@ public class SubscriptionManager extends ManageableComponent
         if (ts.selectorSubscriptions == null)
             return;
 
-        for (Map.Entry<String, Map<Object, MessageClient>> entry : ts.selectorSubscriptions.entrySet())
-        {
+        for (Map.Entry<String, Map<Object, MessageClient>> entry : ts.selectorSubscriptions.entrySet()) {
             String selector = entry.getKey();
             subs = entry.getValue();
 
-            if (!evalSelector)
-            {
-                ids.addAll(subs.keySet());
-            }
+            /*if (!evalSelector)
+            {*/
+            ids.addAll(subs.keySet());
+            /*}
             else
             {
                 JMSSelector jmsSel = new JMSSelector(selector);
@@ -456,7 +418,7 @@ public class SubscriptionManager extends ManageableComponent
                                 "  selector: " + selector);
                     }
                 }
-            }
+            }*/
         }
     }
 
@@ -468,8 +430,7 @@ public class SubscriptionManager extends ManageableComponent
      * @param clientId The clientId of the target subscriber.
      * @return The subscriber, or null if the subscriber is not found.
      */
-    public MessageClient getSubscriber(Object clientId)
-    {
+    public MessageClient getSubscriber(Object clientId) {
         MessageClient client = allSubscriptions.get(clientId);
         if (client != null && !client.isTimingOut())
             monitorTimeout(client);
@@ -482,8 +443,7 @@ public class SubscriptionManager extends ManageableComponent
      *
      * @param client the client
      */
-    public void removeSubscriber(MessageClient client)
-    {
+    public void removeSubscriber(MessageClient client) {
         // Sends unsub messages for each subscription for this MessageClient which
         // should mean we remove the client at the end.
         client.invalidate();
@@ -495,49 +455,44 @@ public class SubscriptionManager extends ManageableComponent
     /**
      * Add a subscriber.
      *
-     * @param clientId the client id
-     * @param selector the selector
+     * @param clientId       the client id
+     * @param selector       the selector
      * @param subtopicString the subtopic
-     * @param endpointId the endpoint
+     * @param endpointId     the endpoint
      */
-    public void addSubscriber(Object clientId, String selector, String subtopicString, String endpointId)
-    {
+    public void addSubscriber(Object clientId, String selector, String subtopicString, String endpointId) {
         addSubscriber(clientId, selector, subtopicString, endpointId, 0);
     }
 
     /**
      * Add a subscriber.
      *
-     * @param clientId the client id
-     * @param selector the selector
+     * @param clientId       the client id
+     * @param selector       the selector
      * @param subtopicString the subtopic
-     * @param endpointId the endpoint
-     * @param maxFrequency maximum frequency
+     * @param endpointId     the endpoint
+     * @param maxFrequency   maximum frequency
      */
-    public void addSubscriber(Object clientId, String selector, String subtopicString, String endpointId, int maxFrequency)
-    {
+    public void addSubscriber(Object clientId, String selector, String subtopicString, String endpointId, int maxFrequency) {
         Subtopic subtopic = getSubtopic(subtopicString);
         MessageClient client = null;
         TopicSubscription topicSub;
         Map<Object, MessageClient> subs;
         Map<Subtopic, TopicSubscription> map;
 
-        try
-        {
+        try {
             // Handle resubscribes from the same client and duplicate subscribes from different clients
             boolean subscriptionAlreadyExists = (getSubscriber(clientId) != null);
             client = getMessageClient(clientId, endpointId);
 
             FlexClient flexClient = FlexContext.getFlexClient();
-            if (subscriptionAlreadyExists)
-            {
+            if (subscriptionAlreadyExists) {
                 // Block duplicate subscriptions from multiple FlexClients if they
                 // attempt to use the same clientId.  (when this is called from a remote
                 // subscription, there won't be a flex client so skip this test).
-                if (flexClient != null && !flexClient.getId().equals(client.getFlexClient().getId()))
-                {
+                if (flexClient != null && !flexClient.getId().equals(client.getFlexClient().getId())) {
                     ServiceException se = new ServiceException();
-                    se.setMessage(10559, new Object[] {clientId});
+                    se.setMessage(10559, new Object[]{clientId});
                     throw se;
                 }
 
@@ -549,35 +504,28 @@ public class SubscriptionManager extends ManageableComponent
             ServiceAdapter adapter = destination.getAdapter();
             client.updateLastUse();
 
-            if (subtopic == null)
-            {
+            if (subtopic == null) {
                 topicSub = globalSubscribers;
-            }
-            else
-            {
-                if (!destination.getServerSettings().getAllowSubtopics())
-                {
+            } else {
+                if (!destination.getServerSettings().getAllowSubtopics()) {
                     // Throw an error - the destination doesn't allow subtopics.
                     ServiceException se = new ServiceException();
-                    se.setMessage(SUBTOPICS_NOT_SUPPORTED, new Object[] {subtopicString, destination.getId()});
+                    se.setMessage(SUBTOPICS_NOT_SUPPORTED, new Object[]{subtopicString, destination.getId()});
                     throw se;
                 }
 
-                if (subtopic.containsSubtopicWildcard() && destination.getServerSettings().isDisallowWildcardSubtopics())
-                {
+                if (subtopic.containsSubtopicWildcard() && destination.getServerSettings().isDisallowWildcardSubtopics()) {
                     // Attempt to subscribe to the subtopic, ''{0}'', on destination, ''{1}'', that does not allow wilcard subtopics failed.
                     ServiceException se = new ServiceException();
-                    se.setMessage(WILDCARD_SUBTOPICS_NOT_ALLOWED, new Object[] {subtopicString, destination.getId()});
+                    se.setMessage(WILDCARD_SUBTOPICS_NOT_ALLOWED, new Object[]{subtopicString, destination.getId()});
                     throw se;
                 }
 
                 // Give a MessagingAdapter a chance to block the subscribe.
-                if ((adapter instanceof MessagingSecurity) && (subtopic != null))
-                {
-                    if (!((MessagingSecurity)adapter).allowSubscribe(subtopic))
-                    {
+                if ((adapter instanceof MessagingSecurity) && (subtopic != null)) {
+                    if (!((MessagingSecurity) adapter).allowSubscribe(subtopic)) {
                         ServiceException se = new ServiceException();
-                        se.setMessage(10557, new Object[] {subtopicString});
+                        se.setMessage(10557, new Object[]{subtopicString});
                         throw se;
                     }
                 }
@@ -592,11 +540,9 @@ public class SubscriptionManager extends ManageableComponent
                 else
                     map = subscribersPerSubtopic;
 
-                synchronized (this)
-                {
+                synchronized (this) {
                     topicSub = map.get(subtopic);
-                    if (topicSub == null)
-                    {
+                    if (topicSub == null) {
                         topicSub = new TopicSubscription();
                         map.put(subtopic, topicSub);
                     }
@@ -604,49 +550,38 @@ public class SubscriptionManager extends ManageableComponent
             }
 
             /* Subscribing with no selector */
-            if (selector == null)
-            {
+            if (selector == null) {
                 subs = topicSub.defaultSubscriptions;
-                if (subs == null)
-                {
-                    synchronized (this)
-                    {
+                if (subs == null) {
+                    synchronized (this) {
                         if ((subs = topicSub.defaultSubscriptions) == null)
                             topicSub.defaultSubscriptions = subs = new ConcurrentHashMap<Object, MessageClient>();
                     }
                 }
             }
             /* Subscribing with a selector - store all subscriptions under the selector key */
-            else
-            {
-                synchronized (this)
-                {
+            else {
+                synchronized (this) {
                     if (topicSub.selectorSubscriptions == null)
-                        topicSub.selectorSubscriptions = new ConcurrentHashMap<String,  Map<Object, MessageClient>>();
+                        topicSub.selectorSubscriptions = new ConcurrentHashMap<String, Map<Object, MessageClient>>();
                 }
 
                 subs = topicSub.selectorSubscriptions.get(selector);
-                if (subs == null)
-                {
-                    synchronized (this)
-                    {
+                if (subs == null) {
+                    synchronized (this) {
                         if ((subs = topicSub.selectorSubscriptions.get(selector)) == null)
                             topicSub.selectorSubscriptions.put(selector, subs = new ConcurrentHashMap<Object, MessageClient>());
                     }
                 }
             }
 
-            if (subs.containsKey(clientId))
-            {
+            if (subs.containsKey(clientId)) {
                 /* I'd rather this be an error but in 2.0 we allowed this without error */
                 if (Log.isWarn())
-                    Log.getLogger(JMSSelector.LOG_CATEGORY).warn("Client: " + clientId + " already subscribed to: " + destination.getId() + " selector: " + selector + " subtopic: " + subtopicString);
-            }
-            else
-            {
+                    Log.getLogger(LogCategories.MESSAGE_SELECTOR).warn("Client: " + clientId + " already subscribed to: " + destination.getId() + " selector: " + selector + " subtopic: " + subtopicString);
+            } else {
                 client.addSubscription(selector, subtopicString, maxFrequency);
-                synchronized (this)
-                {
+                synchronized (this) {
                     /*
                      * Make sure other members of the cluster know that we are subscribed to
                      * this info if we are in server-to-server mode
@@ -656,7 +591,7 @@ public class SubscriptionManager extends ManageableComponent
                      * subscription state matches the one in the local server.
                      */
                     if (subs.isEmpty() && destination.isClustered() &&
-                        destination.getServerSettings().getRoutingMode() == RoutingMode.SERVER_TO_SERVER)
+                            destination.getServerSettings().getRoutingMode() == RoutingMode.SERVER_TO_SERVER)
                         sendSubscriptionToPeer(true, selector, subtopicString);
                     subs.put(clientId, client);
                 }
@@ -667,9 +602,7 @@ public class SubscriptionManager extends ManageableComponent
                 if (!subscriptionAlreadyExists)
                     client.notifyCreatedListeners();
             }
-        }
-        finally
-        {
+        } finally {
             releaseMessageClient(client);
         }
 
@@ -678,18 +611,15 @@ public class SubscriptionManager extends ManageableComponent
     /**
      * Remove a subscriber.
      *
-     * @param clientId the client id
-     * @param selector the selector
+     * @param clientId       the client id
+     * @param selector       the selector
      * @param subtopicString the subtopic
-     * @param endpointId the endpoint
+     * @param endpointId     the endpoint
      */
-    public void removeSubscriber(Object clientId, String selector, String subtopicString, String endpointId)
-    {
+    public void removeSubscriber(Object clientId, String selector, String subtopicString, String endpointId) {
         MessageClient client = null;
-        try
-        {
-            synchronized (allSubscriptionsLock)
-            {
+        try {
+            synchronized (allSubscriptionsLock) {
                 // Do a simple lookup first to avoid the creation of a new MessageClient instance
                 // in the following call to getMessageClient() if the subscription is already removed.
                 client = allSubscriptions.get(clientId);
@@ -705,12 +635,9 @@ public class SubscriptionManager extends ManageableComponent
             Map<Object, MessageClient> subs;
             Map<Subtopic, TopicSubscription> map = null;
 
-            if (subtopic == null)
-            {
+            if (subtopic == null) {
                 topicSub = globalSubscribers;
-            }
-            else
-            {
+            } else {
                 if (subtopic.containsSubtopicWildcard())
                     map = subscribersPerSubtopicWildcard;
                 else
@@ -730,40 +657,33 @@ public class SubscriptionManager extends ManageableComponent
             if (subs == null || subs.get(clientId) == null)
                 throw new MessageException("Client: " + clientId + " not subscribed to destination with selector: " + selector);
 
-            synchronized (this)
-            {
+            synchronized (this) {
                 subs.remove(clientId);
                 if (subs.isEmpty() &&
-                    destination.isClustered() && destination.getServerSettings().getRoutingMode() == RoutingMode.SERVER_TO_SERVER)
+                        destination.isClustered() && destination.getServerSettings().getRoutingMode() == RoutingMode.SERVER_TO_SERVER)
                     sendSubscriptionToPeer(false, selector, subtopicString);
 
-                if (subs.isEmpty())
-                {
-                    if (selector != null)
-                    {
+                if (subs.isEmpty()) {
+                    if (selector != null) {
                         if (topicSub.selectorSubscriptions != null && !topicSub.selectorSubscriptions.isEmpty())
                             topicSub.selectorSubscriptions.remove(selector);
                     }
 
                     if (subtopic != null &&
-                        (topicSub.selectorSubscriptions == null || topicSub.selectorSubscriptions.isEmpty()) &&
-                        (topicSub.defaultSubscriptions == null || topicSub.defaultSubscriptions.isEmpty()))
-                    {
-                           if ((topicSub.selectorSubscriptions == null || topicSub.selectorSubscriptions.isEmpty()) &&
-                               (topicSub.defaultSubscriptions == null || topicSub.defaultSubscriptions.isEmpty()))
-                               map.remove(subtopic);
+                            (topicSub.selectorSubscriptions == null || topicSub.selectorSubscriptions.isEmpty()) &&
+                            (topicSub.defaultSubscriptions == null || topicSub.defaultSubscriptions.isEmpty())) {
+                        if ((topicSub.selectorSubscriptions == null || topicSub.selectorSubscriptions.isEmpty()) &&
+                                (topicSub.defaultSubscriptions == null || topicSub.defaultSubscriptions.isEmpty()))
+                            map.remove(subtopic);
                     }
                 }
             }
 
-            if (client.removeSubscription(selector, subtopicString))
-            {
+            if (client.removeSubscription(selector, subtopicString)) {
                 allSubscriptions.remove(clientId);
                 client.invalidate(); // Destroy the MessageClient.
             }
-        }
-        finally
-        {
+        } finally {
             if (client != null)
                 releaseMessageClient(client);
         }
@@ -772,12 +692,11 @@ public class SubscriptionManager extends ManageableComponent
     /**
      * Create a new MessageClient object.
      *
-     * @param clientId the client id
+     * @param clientId   the client id
      * @param endpointId the endpoint
      * @return constructed MessageClient
      */
-    protected MessageClient newMessageClient(Object clientId, String endpointId)
-    {
+    protected MessageClient newMessageClient(Object clientId, String endpointId) {
         return new MessageClient(clientId, destination, endpointId, true);
     }
 
@@ -787,12 +706,11 @@ public class SubscriptionManager extends ManageableComponent
      * a given clientId for as long as this session is valid (or the
      * subscription times out).
      *
-     * @param clientId the client id
+     * @param clientId   the client id
      * @param endpointId the endpoint
      * @return registered MessageClient
      */
-    public MessageClient registerMessageClient(Object clientId, String endpointId)
-    {
+    public MessageClient registerMessageClient(Object clientId, String endpointId) {
         MessageClient client = getMessageClient(clientId, endpointId);
 
         monitorTimeout(client);
@@ -813,17 +731,14 @@ public class SubscriptionManager extends ManageableComponent
     /**
      * Return a message client, creating it if needed.
      *
-     * @param clientId the client if
+     * @param clientId   the client if
      * @param endpointId the endpoint
      * @return the MessageClient
      */
-    public MessageClient getMessageClient(Object clientId, String endpointId)
-    {
-        synchronized (allSubscriptionsLock)
-        {
+    public MessageClient getMessageClient(Object clientId, String endpointId) {
+        synchronized (allSubscriptionsLock) {
             MessageClient client = allSubscriptions.get(clientId);
-            if (client == null)
-            {
+            if (client == null) {
                 client = newMessageClient(clientId, endpointId);
                 allSubscriptions.put(clientId, client);
             }
@@ -838,15 +753,12 @@ public class SubscriptionManager extends ManageableComponent
      *
      * @param client the client to release
      */
-    public void releaseMessageClient(MessageClient client)
-    {
+    public void releaseMessageClient(MessageClient client) {
         if (client == null)
             return;
 
-        synchronized (allSubscriptionsLock)
-        {
-            if (client.decrementReferences())
-            {
+        synchronized (allSubscriptionsLock) {
+            if (client.decrementReferences()) {
                 allSubscriptions.remove(client.getClientId());
                 client.invalidate(); // Destroy the MessageClient.
             }
@@ -858,14 +770,10 @@ public class SubscriptionManager extends ManageableComponent
      *
      * @param client the client
      */
-    protected void monitorTimeout(MessageClient client)
-    {
-        if (subscriberSessionManager != null)
-        {
-            synchronized (client)
-            {
-                if (!client.isTimingOut())
-                {
+    protected void monitorTimeout(MessageClient client) {
+        if (subscriberSessionManager != null) {
+            synchronized (client) {
+                if (!client.isTimingOut()) {
                     subscriberSessionManager.scheduleTimeout(client);
                     client.setTimingOut(true);
                 }
@@ -873,9 +781,8 @@ public class SubscriptionManager extends ManageableComponent
         }
     }
 
-    private Subtopic getSubtopic(String subtopic)
-    {
-        return subtopic != null?
+    private Subtopic getSubtopic(String subtopic) {
+        return subtopic != null ?
                 new Subtopic(subtopic, destination.getServerSettings().getSubtopicSeparator()) : null;
     }
 
@@ -884,27 +791,29 @@ public class SubscriptionManager extends ManageableComponent
      * of this server's interest in messages matching this selector and subtopic.
      *
      * @param subscribe are we subscribing?
-     * @param selector the selector
-     * @param subtopic the subtopic
+     * @param selector  the selector
+     * @param subtopic  the subtopic
      */
-    protected void sendSubscriptionToPeer(boolean subscribe, String selector, String subtopic)
-    {
+    protected void sendSubscriptionToPeer(boolean subscribe, String selector, String subtopic) {
         if (Log.isDebug())
             Log.getLogger(MessageService.LOG_CATEGORY).debug("Sending subscription to peers for subscribe? " + subscribe + " selector: " + selector + " subtopic: " + subtopic);
 
-        ((MessageService)destination.getService()).sendSubscribeFromPeer(destination.getId(), subscribe, selector, subtopic);
+        ((MessageService) destination.getService()).sendSubscribeFromPeer(destination.getId(), subscribe, selector, subtopic);
     }
 
-    static class TopicSubscription
-    {
-        /** This is the Map of clientId to MessageClient for each client subscribed to this topic with no selector. */
+    static class TopicSubscription {
+        /**
+         * This is the Map of clientId to MessageClient for each client subscribed to this topic with no selector.
+         */
         Map<Object, MessageClient> defaultSubscriptions;
 
-        /** A map of selector string to Map of clientId to MessageClient. */
-        Map<String,  Map<Object, MessageClient>> selectorSubscriptions;
+        /**
+         * A map of selector string to Map of clientId to MessageClient.
+         */
+        Map<String, Map<Object, MessageClient>> selectorSubscriptions;
 
-        @Override public String toString()
-        {
+        @Override
+        public String toString() {
             StringBuffer sb = new StringBuffer(100);
 
             sb.append("default subscriptions: ").append(defaultSubscriptions).append(StringUtils.NEWLINE);

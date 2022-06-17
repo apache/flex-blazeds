@@ -19,8 +19,7 @@ package flex.messaging.log;
 /**
  *
  */
-public class ConsoleTarget extends LineFormattedTarget
-{
+public class ConsoleTarget extends LineFormattedTarget {
     //--------------------------------------------------------------------------
     //
     // Constructor
@@ -30,13 +29,11 @@ public class ConsoleTarget extends LineFormattedTarget
     /**
      * Default constructor.
      */
-    public ConsoleTarget()
-    {
+    public ConsoleTarget() {
         super();
     }
 
-    protected void internalLog(String message)
-    {
+    protected void internalLog(String message) {
         System.out.println(message);
     }
 }

@@ -16,18 +16,15 @@
  */
 package flex.messaging.io.amfx.testtypes;
 
-public abstract class EweCheese implements Cheese
-{
-    protected EweCheese()
-    {
+public abstract class EweCheese implements Cheese {
+    protected EweCheese() {
         rating = 2.5;
     }
 
     public double rating;
     protected Cheese paring;
 
-    public String getMilkType()
-    {
+    public String getMilkType() {
         return "Ewe";
     }
 }

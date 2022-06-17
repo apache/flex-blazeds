@@ -22,37 +22,35 @@ import java.util.Date;
 import flex.management.runtime.messaging.DestinationControlMBean;
 
 /**
- *
  * Defines the runtime monitoring and management interface for managed
  * <code>HTTPProxyDestination</code>s.
  */
 public interface HTTPProxyDestinationControlMBean extends
-        DestinationControlMBean
-{
+        DestinationControlMBean {
     /**
      * Returns the number of SOAP invocations the HTTP proxy service has processed.
-     * 
+     *
      * @return The number of SOAP invocations the HTTP proxy service has processed.
      * @throws IOException Throws IOException.
      */
     Integer getInvokeSOAPCount() throws IOException;
-    
+
     /**
      * Resets the count of SOAP invocations.
      *
      * @throws IOException Throws IOException.
      */
     void resetInvokeSOAPCount() throws IOException;
-    
+
     /**
      * Returns the timestamp of the most recent SOAP invocation processed by the
      * HTTP proxy service.
-     * 
+     *
      * @return The timestamp for the most recent SOAP invocation.
      * @throws IOException Throws IOException.
      */
     Date getLastInvokeSOAPTimestamp() throws IOException;
-    
+
     /**
      * Returns the number of SOAP invocations per minute.
      *
@@ -60,31 +58,31 @@ public interface HTTPProxyDestinationControlMBean extends
      * @throws IOException Throws IOException.
      */
     Double getInvokeSOAPFrequency() throws IOException;
-    
+
     /**
      * Returns the number of HTTP invocations the HTTP proxy service has processed.
-     * 
+     *
      * @return The number of HTTP invocations the HTTP proxy service has processed.
      * @throws IOException Throws IOException.
      */
     Integer getInvokeHTTPCount() throws IOException;
-    
+
     /**
      * Resets the count of HTTP invocations.
      *
      * @throws IOException Throws IOException.
      */
     void resetInvokeHTTPCount() throws IOException;
-    
+
     /**
      * Returns the timestamp of the most recent HTTP invocation processed by the
      * HTTP proxy service.
-     * 
+     *
      * @return The timestamp for the most recent HTTP invocation.
      * @throws IOException Throws IOException.
      */
     Date getLastInvokeHTTPTimestamp() throws IOException;
-    
+
     /**
      * Returns the number of HTTP invocations per minute.
      *

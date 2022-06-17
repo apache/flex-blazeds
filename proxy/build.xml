@@ -34,7 +34,8 @@
         <fileset dir="${lib.dir}" erroronmissingdir="false" includes="flex-messaging-common.jar"/>
         <fileset dir="${lib.dir}" erroronmissingdir="false" includes="flex-messaging-core.jar"/>
         <fileset dir="${servlet.dir}" erroronmissingdir="false" includes="servlet-api-${servlet.version}.jar"/>
-        <fileset dir="${httpclient.dir}" erroronmissingdir="false" includes="commons-httpclient-${httpclient.version}.jar"/>
+        <fileset dir="${httpclient.dir}" erroronmissingdir="false"
+                 includes="commons-httpclient-${httpclient.version}.jar"/>
     </path>
 
     <target name="main" depends="clean,prepare,run-depend,jar" description="cleans and runs the full build"/>
@@ -47,8 +48,8 @@
     <target name="run-depend" if="src.depend">
         <echo message="Removing class files that changed and dependent class files."/>
         <depend cache="${module.classes}" srcdir="${module.src}" destdir="${module.classes}"/>
-    </target>   
-                
+    </target>
+
     <target name="clean" description="clean">
         <delete file="${module.jar}" failonerror="false"/>
         <delete failonerror="false" includeEmptyDirs="true">
@@ -58,13 +59,13 @@
                 <exclude name=".dependency-info/**"/>
             </fileset>
         </delete>
-        <delete quiet="true" dir="${module.classes}" />
+        <delete quiet="true" dir="${module.classes}"/>
         <echo>modules/proxy clean</echo>
     </target>
 
     <target name="compile" depends="prepare" description="compile">
         <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${module.src}"
-            includes="**/*.java" classpathref="classpath"/>
+               includes="**/*.java" classpathref="classpath"/>
         <echo file="${module.classes}/flex/messaging/version.properties" append="false">build=${build.number}</echo>
         <copy todir="${module.classes}/flex/messaging" overwrite="true">
             <fileset dir="${module.src}/flex/messaging" includes="*.properties"/>
@@ -79,8 +80,9 @@
             <exclude name=".dependency-info/**"/>
             <manifest>
                 <attribute name="Sealed" value="${manifest.sealed}"/>
-                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Community Edition - Proxy Module"/>
-                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+                <attribute name="Implementation-Title"
+                           value="${manifest.Implementation-Title} - Community Edition - Proxy Module"/>
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/>
                 <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
             </manifest>
         </jar>

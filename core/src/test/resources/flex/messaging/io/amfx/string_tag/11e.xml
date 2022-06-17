@@ -21,8 +21,8 @@
     <body>
         <array length="3">
             <string>Locus classicus</string>
-            <string id="0" />
-            <string id="0" />
+            <string id="0"/>
+            <string id="0"/>
         </array>
     </body>
 </amfx>

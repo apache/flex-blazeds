@@ -25,8 +25,7 @@ import flex.messaging.io.SerializationContext;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class AmfMessageDeserializer implements MessageDeserializer
-{
+public class AmfMessageDeserializer implements MessageDeserializer {
     public static final String CODE_VERSION_MISMATCH = "VersionMismatch";
     private static final int UNSUPPORTED_AMF_VERSION = 10310;
 
@@ -35,12 +34,10 @@ public class AmfMessageDeserializer implements MessageDeserializer
     protected AmfTrace debugTrace;
     protected boolean isDebug;
 
-    public AmfMessageDeserializer()
-    {
+    public AmfMessageDeserializer() {
     }
 
-    public void initialize(SerializationContext context, InputStream in, AmfTrace trace)
-    {
+    public void initialize(SerializationContext context, InputStream in, AmfTrace trace) {
         amfIn = new Amf0Input(context);
         amfIn.setInputStream(in);
 
@@ -49,22 +46,20 @@ public class AmfMessageDeserializer implements MessageDeserializer
         amfIn.setDebugTrace(debugTrace);
     }
 
-    public void readMessage(ActionMessage m, ActionContext context) throws ClassNotFoundException, IOException
-    {
+    public void readMessage(ActionMessage m, ActionContext context) throws ClassNotFoundException, IOException {
         if (isDebug)
             debugTrace.startRequest("Deserializing AMF/HTTP request");
 
         int version = amfIn.readUnsignedShort();
-        
+
         // Treat FMS's AMF1 as AMF0.
         if (version == MessageIOConstants.AMF1)
-            version = MessageIOConstants.AMF0; 
+            version = MessageIOConstants.AMF0;
 
-        if (version != MessageIOConstants.AMF0 && version != MessageIOConstants.AMF3)
-        {
+        if (version != MessageIOConstants.AMF0 && version != MessageIOConstants.AMF3) {
             //Unsupported AMF version {version}.
             MessageException ex = new MessageException();
-            ex.setMessage(UNSUPPORTED_AMF_VERSION, new Object[] {new Integer(version)});
+            ex.setMessage(UNSUPPORTED_AMF_VERSION, new Object[]{new Integer(version)});
             ex.setCode(CODE_VERSION_MISMATCH);
             throw ex;
         }
@@ -77,8 +72,7 @@ public class AmfMessageDeserializer implements MessageDeserializer
 
         // Read headers
         int headerCount = amfIn.readUnsignedShort();
-        for (int i = 0; i < headerCount; ++i)
-        {
+        for (int i = 0; i < headerCount; ++i) {
             MessageHeader header = new MessageHeader();
             m.addHeader(header);
             readHeader(header, i);
@@ -86,8 +80,7 @@ public class AmfMessageDeserializer implements MessageDeserializer
 
         // Read bodies
         int bodyCount = amfIn.readUnsignedShort();
-        for (int i = 0; i < bodyCount; ++i)
-        {
+        for (int i = 0; i < bodyCount; ++i) {
             MessageBody body = new MessageBody();
             m.addBody(body);
             readBody(body, i);
@@ -104,12 +97,11 @@ public class AmfMessageDeserializer implements MessageDeserializer
      * DATA kObject
      *
      * @param header - will hold the deserialized message header
-     * @param index header index for debugging
-     * @throws IOException thrown by the underlying stream
+     * @param index  header index for debugging
+     * @throws IOException            thrown by the underlying stream
      * @throws ClassNotFoundException if we don't find the class for the header data.
      */
-    public void readHeader(MessageHeader header, int index) throws ClassNotFoundException, IOException
-    {
+    public void readHeader(MessageHeader header, int index) throws ClassNotFoundException, IOException {
         String name = amfIn.readUTF();
         header.setName(name);
         boolean mustUnderstand = amfIn.readBoolean();
@@ -123,17 +115,12 @@ public class AmfMessageDeserializer implements MessageDeserializer
         if (isDebug)
             debugTrace.startHeader(name, mustUnderstand, index);
 
-        try
-        {
+        try {
             data = readObject();
-        }
-        catch (RecoverableSerializationException ex)
-        {
+        } catch (RecoverableSerializationException ex) {
             ex.setCode("Client.Header.Encoding");
             data = ex;
-        }
-        catch (MessageException ex)
-        {
+        } catch (MessageException ex) {
             ex.setCode("Client.Header.Encoding");
             throw ex;
         }
@@ -148,13 +135,12 @@ public class AmfMessageDeserializer implements MessageDeserializer
     /**
      * Deserialize a message body from the input stream.
      *
-     * @param body - will hold the deserialized message body
+     * @param body  - will hold the deserialized message body
      * @param index message index for debugging
-     * @throws IOException thrown by the underlying stream
+     * @throws IOException            thrown by the underlying stream
      * @throws ClassNotFoundException if we don't find the class for the body data.
      */
-    public void readBody(MessageBody body, int index) throws ClassNotFoundException, IOException
-    {
+    public void readBody(MessageBody body, int index) throws ClassNotFoundException, IOException {
         String targetURI = amfIn.readUTF();
         body.setTargetURI(targetURI);
         String responseURI = amfIn.readUTF();
@@ -168,17 +154,12 @@ public class AmfMessageDeserializer implements MessageDeserializer
         if (isDebug)
             debugTrace.startMessage(targetURI, responseURI, index);
 
-        try
-        {
+        try {
             data = readObject();
-        }
-        catch (RecoverableSerializationException ex)
-        {
+        } catch (RecoverableSerializationException ex) {
             ex.setCode("Client.Message.Encoding");
             data = ex;
-        }
-        catch (MessageException ex)
-        {
+        } catch (MessageException ex) {
             ex.setCode("Client.Message.Encoding");
             throw ex;
         }
@@ -191,11 +172,11 @@ public class AmfMessageDeserializer implements MessageDeserializer
 
     /**
      * Read Object.
+     *
      * @return Object the object read from AmfInput
      * @throws ClassNotFoundException, IOException when exceptions occurs in reading the object
      */
-    public Object readObject() throws ClassNotFoundException, IOException
-    {
+    public Object readObject() throws ClassNotFoundException, IOException {
         return amfIn.readObject();
     }
 }

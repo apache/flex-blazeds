@@ -21,23 +21,19 @@ import flex.messaging.MessageException;
 /**
  *
  */
-public class TranslationException extends MessageException
-{
+public class TranslationException extends MessageException {
     static final long serialVersionUID = 3312487017261810877L;
 
-    public TranslationException(String message)
-    {
+    public TranslationException(String message) {
         super(message);
     }
 
-    public TranslationException(String message, Throwable rootCause)
-    {
+    public TranslationException(String message, Throwable rootCause) {
         super(message);
         setRootCause(rootCause);
     }
 
-    public TranslationException(String message, String details)
-    {
+    public TranslationException(String message, String details) {
         super(message);
         setDetails(details);
     }

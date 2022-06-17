@@ -24,12 +24,10 @@ package flex.messaging.io;
  * The BatchProcessFilter will add an error message to the response
  * of any messages which have a recoverable serialization exception.
  */
-public class RecoverableSerializationException extends SerializationException
-{
+public class RecoverableSerializationException extends SerializationException {
     static final long serialVersionUID = 2671402324412964558L;
 
-    public RecoverableSerializationException()
-    {
+    public RecoverableSerializationException() {
         super();
     }
 }

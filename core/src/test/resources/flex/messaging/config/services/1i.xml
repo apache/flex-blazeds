@@ -27,25 +27,25 @@ Tests config using all the possible includes from a directory.
     <services>
 
         <service id="foo-service"
-            class="flex.messaging.services.FooService"
-            messageTypes="flex.messaging.messages.FooMessage">
+                 class="flex.messaging.services.FooService"
+                 messageTypes="flex.messaging.messages.FooMessage">
 
             <adapters>
-                <adapter-include directory-path="adapters" />
+                <adapter-include directory-path="adapters"/>
             </adapters>
 
             <default-channels>
-                <channel ref="foo-channel" />
+                <channel ref="foo-channel"/>
             </default-channels>
 
-            <destination-include directory-path="destinations" />
+            <destination-include directory-path="destinations"/>
 
         </service>
 
     </services>
 
     <channels>
-        <channel-include directory-path="channels" />
+        <channel-include directory-path="channels"/>
     </channels>
 
     <security>

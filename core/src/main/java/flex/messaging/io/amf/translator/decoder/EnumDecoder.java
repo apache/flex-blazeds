@@ -18,18 +18,16 @@ package flex.messaging.io.amf.translator.decoder;
 
 /**
  * Decode an ActionScript enumeration object (generally a string) to a Java enum.
- *
  */
-public class EnumDecoder extends ActionScriptDecoder
-{
+public class EnumDecoder extends ActionScriptDecoder {
     /**
      * Does this type have a placeholder shell?
      * True for Enumerations.
+     *
      * @return boolean true if it has a shell
      */
     @Override
-    public boolean hasShell()
-    {
+    public boolean hasShell() {
         return true;
     }
 
@@ -37,12 +35,11 @@ public class EnumDecoder extends ActionScriptDecoder
      * Create the enumeration object based on the string.
      *
      * @param encodedObject the object
-     * @param desiredClass ignored
+     * @param desiredClass  ignored
      * @return Object the created shell object
      */
     @Override
-    public Object createShell(Object encodedObject, Class desiredClass)
-    {
+    public Object createShell(Object encodedObject, Class desiredClass) {
         if (encodedObject instanceof Enum)
             return encodedObject;
 
@@ -58,14 +55,14 @@ public class EnumDecoder extends ActionScriptDecoder
      * Decode an object.
      * For the enum type, the createShell has already done the work, so we just
      * return the shell itself.
-     * @param shell the shell object
+     *
+     * @param shell         the shell object
      * @param encodedObject the encodedObject
-     * @param desiredClass the desired class for decoded object
+     * @param desiredClass  the desired class for decoded object
      * @return Object the decoded object
      */
     @Override
-    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass)
-    {
-        return (shell == null || encodedObject == null)? null : shell;
+    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass) {
+        return (shell == null || encodedObject == null) ? null : shell;
     }
 }

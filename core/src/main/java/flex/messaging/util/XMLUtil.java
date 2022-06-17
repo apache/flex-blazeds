@@ -35,16 +35,12 @@ import java.io.StringWriter;
 /**
  * Utility class for converting strings to XML documents and
  * vice versa.
- *
- *
  */
-public class XMLUtil
-{
+public class XMLUtil {
     public static String INDENT_XML = "no";
     public static String OMIT_XML_DECLARATION = "yes";
 
-    private XMLUtil()
-    {
+    private XMLUtil() {
     }
 
     /**
@@ -55,12 +51,10 @@ public class XMLUtil
      * @return An XML String.
      * @throws IOException if an error occurs during transformation.
      */
-    public static String documentToString(Document document) throws IOException
-    {
+    public static String documentToString(Document document) throws IOException {
         String xml;
 
-        try
-        {
+        try {
             DOMSource dom = new DOMSource(document);
             StringWriter writer = new StringWriter();
             StreamResult output = new StreamResult(writer);
@@ -80,9 +74,7 @@ public class XMLUtil
             transformer.transform(dom, output);
 
             xml = writer.toString();
-        }
-        catch (TransformerException te)
-        {
+        } catch (TransformerException te) {
             throw new IOException("Error serializing Document as String: " + te.getMessageAndLocation());
         }
         return xml;
@@ -95,8 +87,7 @@ public class XMLUtil
      * @param xml XML serialized as a String
      * @return Document
      */
-    public static Document stringToDocument(String xml)
-    {
+    public static Document stringToDocument(String xml) {
         return stringToDocument(xml, true, false, false);
     }
 
@@ -104,32 +95,27 @@ public class XMLUtil
      * Uses the current DocumentBuilderFactory to converts a String
      * representation of XML into a Document.
      *
-     * @param xml XML serialized as a String
+     * @param xml            XML serialized as a String
      * @param nameSpaceAware determines whether the constructed Document
-     * is name-space aware
+     *                       is name-space aware
      * @return Document
      */
     public static Document stringToDocument(String xml, boolean nameSpaceAware, boolean allowXmlDoctypeDeclaration,
-                                            boolean allowXmlExternalEntityExpansion)
-    {
+                                            boolean allowXmlExternalEntityExpansion) {
         ClassUtil.validateCreation(Document.class);
 
         Document document = null;
-        try
-        {
-            if (xml != null)
-            {
+        try {
+            if (xml != null) {
                 StringReader reader = new StringReader(xml);
                 InputSource input = new InputSource(reader);
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-                if(!allowXmlDoctypeDeclaration)
-                {
+                if (!allowXmlDoctypeDeclaration) {
                     factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
                 }
 
-                if(!allowXmlExternalEntityExpansion)
-                {
+                if (!allowXmlExternalEntityExpansion) {
                     // Disable local resolution of entities due to security issues
                     // See: https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Processing
                     factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
@@ -144,9 +130,7 @@ public class XMLUtil
 
                 document = builder.parse(input);
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             throw new MessageException("Error deserializing XML type " + ex.getMessage());
         }
 

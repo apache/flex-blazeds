@@ -24,10 +24,10 @@
             <int>-2000</int>
             <double>1000000</double>
             <string>Macromedia</string>
-            <null />
-            <undefined />
-            <true />
-            <false />
+            <null/>
+            <undefined/>
+            <true/>
+            <false/>
         </array>
     </body>
 </amfx>

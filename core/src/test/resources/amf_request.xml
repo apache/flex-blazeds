@@ -78,7 +78,7 @@ limitations under the License.
                             <string>Envelope</string>
                         </property>
                         <property name="headers">
-                            <array count="0" />
+                            <array count="0"/>
                         </property>
                         <property name="body">
                             <string>Hello World</string>

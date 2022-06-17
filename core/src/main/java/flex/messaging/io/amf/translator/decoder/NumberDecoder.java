@@ -23,31 +23,21 @@ import flex.messaging.io.SerializationContext;
 
 /**
  * Decode an ActionScript type (a string or a double) to a Java number (of any type).
- *
- *
  */
-public class NumberDecoder extends ActionScriptDecoder
-{
-    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass)
-    {
+public class NumberDecoder extends ActionScriptDecoder {
+    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass) {
         Object result = null;
 
-        if (encodedObject != null && encodedObject instanceof String)
-        {
-            String str = ((String)encodedObject).trim();
-            try
-            {
+        if (encodedObject != null && encodedObject instanceof String) {
+            String str = ((String) encodedObject).trim();
+            try {
                 // Short-ciruit String -> BigInteger,BigDecimal to avoid loss
                 // of precision that occurs if we go through Double
-                if (!SerializationContext.getSerializationContext().legacyBigNumbers)
-                {
-                    if (BigInteger.class.equals(desiredClass))
-                    {
+                if (!SerializationContext.getSerializationContext().legacyBigNumbers) {
+                    if (BigInteger.class.equals(desiredClass)) {
                         result = new BigInteger(str);
                         return result;
-                    }
-                    else if (BigDecimal.class.equals(desiredClass))
-                    {
+                    } else if (BigDecimal.class.equals(desiredClass)) {
                         result = new BigDecimal(str);
                         return result;
                     }
@@ -55,23 +45,19 @@ public class NumberDecoder extends ActionScriptDecoder
 
                 Double dbl = new Double(str);
                 encodedObject = dbl;
-            }
-            catch (NumberFormatException nfe)
-            {
+            } catch (NumberFormatException nfe) {
                 DecoderFactory.invalidType(encodedObject, desiredClass);
             }
         }
 
-        if (encodedObject instanceof Number || encodedObject == null)
-        {
+        if (encodedObject instanceof Number || encodedObject == null) {
             Double dbl;
 
-            if (desiredClass.isPrimitive())
-            {
+            if (desiredClass.isPrimitive()) {
                 if (encodedObject == null)
                     dbl = new Double(0);
                 else
-                    dbl = new Double(((Number)encodedObject).doubleValue());
+                    dbl = new Double(((Number) encodedObject).doubleValue());
 
                 if (Object.class.equals(desiredClass) || Double.TYPE.equals(desiredClass))
                     result = dbl;
@@ -85,10 +71,8 @@ public class NumberDecoder extends ActionScriptDecoder
                     result = new Short(dbl.shortValue());
                 else if (Byte.TYPE.equals(desiredClass))
                     result = new Byte(dbl.byteValue());
-            }
-            else if (encodedObject != null)
-            {
-                dbl = new Double(((Number)encodedObject).doubleValue());
+            } else if (encodedObject != null) {
+                dbl = new Double(((Number) encodedObject).doubleValue());
 
                 if (Object.class.equals(desiredClass) || Number.class.equals(desiredClass) ||
                         Double.class.equals(desiredClass))
@@ -103,8 +87,7 @@ public class NumberDecoder extends ActionScriptDecoder
                     result = dbl.isNaN() ? null : new Short(dbl.shortValue());
                 else if (Byte.class.equals(desiredClass))
                     result = dbl.isNaN() ? null : new Byte(dbl.byteValue());
-                else if (BigDecimal.class.equals(desiredClass))
-                {
+                else if (BigDecimal.class.equals(desiredClass)) {
                     // Though this is a little slower than using the
                     // double constructor for BigDecimal, it yields a rounded
                     // result which is more predicable (see the Javadoc for
@@ -113,35 +96,26 @@ public class NumberDecoder extends ActionScriptDecoder
                         result = new BigDecimal(dbl.doubleValue());
                     else
                         result = new BigDecimal(String.valueOf(dbl));
-                }
-                else if (BigInteger.class.equals(desiredClass))
-                {
+                } else if (BigInteger.class.equals(desiredClass)) {
                     // Must have no special characters or whitespace
                     String val = null;
                     long l = dbl.longValue();
-                    if (l > Integer.MAX_VALUE)
-                    {
+                    if (l > Integer.MAX_VALUE) {
                         Long lo = new Long(dbl.longValue());
                         val = lo.toString().toUpperCase();
                         int suffix = val.indexOf('L');
                         if (suffix != -1)
                             val = val.substring(0, suffix);
-                    }
-                    else
-                    {
+                    } else {
                         Integer i = new Integer(dbl.intValue());
                         val = i.toString();
                     }
                     result = new BigInteger(val.trim());
                 }
-            }
-            else
-            {
+            } else {
                 result = null;
             }
-        }
-        else
-        {
+        } else {
             DecoderFactory.invalidType(encodedObject, desiredClass);
         }
 

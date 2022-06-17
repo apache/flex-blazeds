@@ -57,8 +57,7 @@ import java.util.Map;
 /**
  * Adapter class for proxy services.
  */
-public class HTTPProxyAdapter extends ServiceAdapter
-{
+public class HTTPProxyAdapter extends ServiceAdapter {
     // NOTE: any changes to this class should also be made to the corresponding version in the .NET.
     // The corresponding class is at src/dotNet/libs/FlexASPlib/Aspx/Proxy/ServiceProxyModule.cs
 
@@ -102,8 +101,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
     /**
      * Constructs an unmanaged <code>HTTPProxyAdapter</code> instance.
      */
-    public HTTPProxyAdapter()
-    {
+    public HTTPProxyAdapter() {
         this(false);
     }
 
@@ -113,8 +111,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
      * @param enableManagement <code>true</code> if the <code>HTTPProxyAdapter</code> has a
      *                         corresponding MBean control for management; otherwise <code>false</code>.
      */
-    public HTTPProxyAdapter(boolean enableManagement)
-    {
+    public HTTPProxyAdapter(boolean enableManagement) {
         super(enableManagement);
 
         createFilterChain();
@@ -174,8 +171,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
      * @param id         The id of the destination.
      * @param properties Properties for the <code>Destination</code>.
      */
-    public void initialize(String id, ConfigMap properties)
-    {
+    public void initialize(String id, ConfigMap properties) {
         super.initialize(id, properties);
 
         if (properties == null || properties.size() == 0)
@@ -183,18 +179,15 @@ public class HTTPProxyAdapter extends ServiceAdapter
 
         // Connection Manager
         ConfigMap conn = properties.getPropertyAsMap(HTTPConnectionManagerSettings.CONNECTION_MANAGER, null);
-        if (conn != null)
-        {
+        if (conn != null) {
             // Cookie policy.
-            if (conn.getProperty(HTTPConnectionManagerSettings.COOKIE_POLICY) != null)
-            {
-                connectionManagerSettings.setCookiePolicy(conn.getPropertyAsString(HTTPConnectionManagerSettings.COOKIE_POLICY, 
+            if (conn.getProperty(HTTPConnectionManagerSettings.COOKIE_POLICY) != null) {
+                connectionManagerSettings.setCookiePolicy(conn.getPropertyAsString(HTTPConnectionManagerSettings.COOKIE_POLICY,
                         CookiePolicy.DEFAULT));
             }
 
             // Max Connections Total
-            if (conn.getProperty(HTTPConnectionManagerSettings.MAX_TOTAL_CONNECTIONS) != null)
-            {
+            if (conn.getProperty(HTTPConnectionManagerSettings.MAX_TOTAL_CONNECTIONS) != null) {
                 int maxTotal = conn.getPropertyAsInt(HTTPConnectionManagerSettings.MAX_TOTAL_CONNECTIONS,
                         MultiThreadedHttpConnectionManager.DEFAULT_MAX_TOTAL_CONNECTIONS);
                 connectionManagerSettings.setMaxTotalConnections(maxTotal);
@@ -202,113 +195,97 @@ public class HTTPProxyAdapter extends ServiceAdapter
 
             // Default Max Connections Per Host
             int defaultMaxConnsPerHost = MultiThreadedHttpConnectionManager.DEFAULT_MAX_HOST_CONNECTIONS;
-            if (conn.getProperty(HTTPConnectionManagerSettings.DEFAULT_MAX_CONNECTIONS_PER_HOST) != null)
-            {
+            if (conn.getProperty(HTTPConnectionManagerSettings.DEFAULT_MAX_CONNECTIONS_PER_HOST) != null) {
                 defaultMaxConnsPerHost = conn.getPropertyAsInt(HTTPConnectionManagerSettings.DEFAULT_MAX_CONNECTIONS_PER_HOST,
                         MultiThreadedHttpConnectionManager.DEFAULT_MAX_HOST_CONNECTIONS);
                 connectionManagerSettings.setDefaultMaxConnectionsPerHost(defaultMaxConnsPerHost);
             }
 
             // Connection Timeout
-            if (conn.getProperty(HTTPConnectionManagerSettings.CONNECTION_TIMEOUT) != null)
-            {
+            if (conn.getProperty(HTTPConnectionManagerSettings.CONNECTION_TIMEOUT) != null) {
                 int timeout = conn.getPropertyAsInt(HTTPConnectionManagerSettings.CONNECTION_TIMEOUT, 0);
                 if (timeout >= 0)
                     connectionManagerSettings.setConnectionTimeout(timeout);
             }
 
             // Socket Timeout
-            if (conn.getProperty(HTTPConnectionManagerSettings.SOCKET_TIMEOUT) != null)
-            {
+            if (conn.getProperty(HTTPConnectionManagerSettings.SOCKET_TIMEOUT) != null) {
                 int timeout = conn.getPropertyAsInt(HTTPConnectionManagerSettings.SOCKET_TIMEOUT, 0);
                 if (timeout >= 0)
                     connectionManagerSettings.setSocketTimeout(timeout);
             }
 
             // Stale Checking
-            if (conn.getProperty(HTTPConnectionManagerSettings.STALE_CHECKING_ENABLED) != null)
-            {
+            if (conn.getProperty(HTTPConnectionManagerSettings.STALE_CHECKING_ENABLED) != null) {
                 boolean staleCheck = conn.getPropertyAsBoolean(HTTPConnectionManagerSettings.STALE_CHECKING_ENABLED, true);
                 connectionManagerSettings.setStaleCheckingEnabled(staleCheck);
             }
 
             // Send Buffer Size
-            if (conn.getProperty(HTTPConnectionManagerSettings.SEND_BUFFER_SIZE) != null)
-            {
+            if (conn.getProperty(HTTPConnectionManagerSettings.SEND_BUFFER_SIZE) != null) {
                 int bufferSize = conn.getPropertyAsInt(HTTPConnectionManagerSettings.SEND_BUFFER_SIZE, 0);
                 if (bufferSize > 0)
                     connectionManagerSettings.setSendBufferSize(bufferSize);
             }
 
             // Send Receive Size
-            if (conn.getProperty(HTTPConnectionManagerSettings.RECEIVE_BUFFER_SIZE) != null)
-            {
+            if (conn.getProperty(HTTPConnectionManagerSettings.RECEIVE_BUFFER_SIZE) != null) {
                 int bufferSize = conn.getPropertyAsInt(HTTPConnectionManagerSettings.RECEIVE_BUFFER_SIZE, 0);
                 if (bufferSize > 0)
                     connectionManagerSettings.setReceiveBufferSize(bufferSize);
             }
 
             // TCP No Delay (Nagel's Algorithm)
-            if (conn.getProperty(HTTPConnectionManagerSettings.TCP_NO_DELAY) != null)
-            {
+            if (conn.getProperty(HTTPConnectionManagerSettings.TCP_NO_DELAY) != null) {
                 boolean noNagel = conn.getPropertyAsBoolean(HTTPConnectionManagerSettings.TCP_NO_DELAY, true);
                 connectionManagerSettings.setTcpNoDelay(noNagel);
             }
 
             // Linger
-            if (conn.getProperty(HTTPConnectionManagerSettings.LINGER) != null)
-            {
+            if (conn.getProperty(HTTPConnectionManagerSettings.LINGER) != null) {
                 int linger = conn.getPropertyAsInt(HTTPConnectionManagerSettings.LINGER, -1);
                 connectionManagerSettings.setLinger(linger);
             }
 
             // Max Connections Per Host
             List hosts = conn.getPropertyAsList(HTTPConnectionManagerSettings.MAX_PER_HOST, null);
-            if (hosts != null)
-            {
+            if (hosts != null) {
                 List hostSettings = new ArrayList();
                 Iterator it = hosts.iterator();
-                while (it.hasNext())
-                {
+                while (it.hasNext()) {
                     ConfigMap maxPerHost = (ConfigMap) it.next();
                     HostConfigurationSettings hostConfig = new HostConfigurationSettings();
 
                     // max-connections
-                    if (maxPerHost.getProperty(HostConfigurationSettings.MAX_CONNECTIONS) != null)
-                    {
+                    if (maxPerHost.getProperty(HostConfigurationSettings.MAX_CONNECTIONS) != null) {
                         int maxConn = maxPerHost.getPropertyAsInt(HostConfigurationSettings.MAX_CONNECTIONS,
                                 defaultMaxConnsPerHost);
                         hostConfig.setMaximumConnections(maxConn);
                     }
 
                     // host
-                    if (maxPerHost.getProperty(HostConfigurationSettings.HOST) != null)
-                    {
+                    if (maxPerHost.getProperty(HostConfigurationSettings.HOST) != null) {
                         String host = maxPerHost.getPropertyAsString(HostConfigurationSettings.HOST, null);
                         hostConfig.setHost(host);
-                        if (host != null)
-                        {
+                        if (host != null) {
                             // port
                             int port = maxPerHost.getPropertyAsInt(HostConfigurationSettings.PORT, 0);
                             hostConfig.setPort(port);
 
                             // protocol-factory
                             ConfigMap factoryMap = maxPerHost.getPropertyAsMap(HostConfigurationSettings.PROTOCOL_FACFORY, null);
-                            if (factoryMap != null)
-                            {
+                            if (factoryMap != null) {
                                 String className = factoryMap.getPropertyAsString(CLASS, null);
-                                if (className != null)
-                                {
+                                if (className != null) {
                                     Class factoryClass = ClassUtil.createClass(className);
-                                    ProtocolFactory protocolFactory = (ProtocolFactory)ClassUtil.createDefaultInstance(factoryClass, ProtocolFactory.class);
+                                    ProtocolFactory protocolFactory = (ProtocolFactory) ClassUtil.createDefaultInstance(factoryClass, ProtocolFactory.class);
                                     String factoryId = factoryMap.getPropertyAsString(ID, host + "_protocol_factory");
                                     ConfigMap protocolProperties = factoryMap.getPropertyAsMap(PROPERTIES, null);
                                     protocolFactory.initialize(factoryId, protocolProperties);
                                 }
                             }
                             // protocol
-                            else
-                            {
+                            else {
                                 String protocol = maxPerHost.getPropertyAsString(HostConfigurationSettings.PROTOCOL, null);
                                 hostConfig.setProtocol(protocol);
                             }
@@ -317,13 +294,11 @@ public class HTTPProxyAdapter extends ServiceAdapter
 
                     // proxy
                     ConfigMap proxy = maxPerHost.getPropertyAsMap(HostConfigurationSettings.PROXY, null);
-                    if (proxy != null)
-                    {
+                    if (proxy != null) {
                         // host
                         String proxyHost = proxy.getPropertyAsString(HostConfigurationSettings.HOST, null);
                         hostConfig.setProxyHost(proxyHost);
-                        if (proxyHost != null)
-                        {
+                        if (proxyHost != null) {
                             // port
                             int port = proxy.getPropertyAsInt(HostConfigurationSettings.PORT, 0);
                             hostConfig.setProxyPort(port);
@@ -331,15 +306,13 @@ public class HTTPProxyAdapter extends ServiceAdapter
                     }
 
                     // local-address
-                    if (maxPerHost.getProperty(HostConfigurationSettings.LOCAL_ADDRESS) != null)
-                    {
+                    if (maxPerHost.getProperty(HostConfigurationSettings.LOCAL_ADDRESS) != null) {
                         String localAddress = maxPerHost.getPropertyAsString(HostConfigurationSettings.LOCAL_ADDRESS, null);
                         hostConfig.setLocalAddress(localAddress);
                     }
 
                     // virtual-host
-                    if (maxPerHost.getProperty(HostConfigurationSettings.VIRTUAL_HOST) != null)
-                    {
+                    if (maxPerHost.getProperty(HostConfigurationSettings.VIRTUAL_HOST) != null) {
                         String virtualHost = maxPerHost.getPropertyAsString(HostConfigurationSettings.VIRTUAL_HOST, null);
                         hostConfig.setVirtualHost(virtualHost);
                     }
@@ -353,30 +326,26 @@ public class HTTPProxyAdapter extends ServiceAdapter
         }
 
         // Cookie Limit
-        if (properties.getProperty(COOKIE_LIMIT) != null)
-        {
+        if (properties.getProperty(COOKIE_LIMIT) != null) {
             int cl = properties.getPropertyAsInt(COOKIE_LIMIT, DEFAULT_COOKIE_LIMIT);
             setCookieLimit(cl);
         }
 
         // Allow Lax SSL
-        if (properties.getProperty(ALLOW_LAX_SSL) != null)
-        {
+        if (properties.getProperty(ALLOW_LAX_SSL) != null) {
             boolean lax = properties.getPropertyAsBoolean(ALLOW_LAX_SSL, false);
             setAllowLaxSSL(lax);
         }
 
         // Content Chunked
-        if (properties.getProperty(CONTENT_CHUNKED) != null)
-        {
+        if (properties.getProperty(CONTENT_CHUNKED) != null) {
             boolean ch = properties.getPropertyAsBoolean(CONTENT_CHUNKED, false);
             setContentChunked(ch);
         }
 
         // External Proxy
         ConfigMap extern = properties.getPropertyAsMap(ExternalProxySettings.EXTERNAL_PROXY, null);
-        if (extern != null)
-        {
+        if (extern != null) {
             ExternalProxySettings proxy = new ExternalProxySettings();
 
             String proxyServer = extern.getPropertyAsString(ExternalProxySettings.SERVER, null);
@@ -404,10 +373,9 @@ public class HTTPProxyAdapter extends ServiceAdapter
      * Returns <code>allow-lax-ssl</code> property.
      *
      * @return <code>true</code> if <code>allow-lax-ssl</code> property is
-     *         <code>true</code>; otherwise <code>false</code>.
+     * <code>true</code>; otherwise <code>false</code>.
      */
-    public boolean isAllowLaxSSL()
-    {
+    public boolean isAllowLaxSSL() {
         return allowLaxSSL;
     }
 
@@ -418,8 +386,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
      *
      * @param allowLaxSSL Whether lax SSL should be allowed.
      */
-    public void setAllowLaxSSL(boolean allowLaxSSL)
-    {
+    public void setAllowLaxSSL(boolean allowLaxSSL) {
         this.allowLaxSSL = allowLaxSSL;
     }
 
@@ -427,10 +394,9 @@ public class HTTPProxyAdapter extends ServiceAdapter
      * Returns the <code>content-chunked</code> property.
      *
      * @return <code>true</code> if <code>content-chunked</code> property is
-     *         <code>true</code>; otherwise <code>false</code>.
+     * <code>true</code>; otherwise <code>false</code>.
      */
-    public boolean isContentChunked()
-    {
+    public boolean isContentChunked() {
         return contentChunked;
     }
 
@@ -439,8 +405,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
      *
      * @param contentChunked The <code>content-chunked</code> property.
      */
-    public void setContentChunked(boolean contentChunked)
-    {
+    public void setContentChunked(boolean contentChunked) {
         this.contentChunked = contentChunked;
     }
 
@@ -449,8 +414,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
      *
      * @return The <code>cookie-limit</code> property.
      */
-    public int getCookieLimit()
-    {
+    public int getCookieLimit() {
         return cookieLimit;
     }
 
@@ -459,18 +423,17 @@ public class HTTPProxyAdapter extends ServiceAdapter
      *
      * @param cookieLimit The cookie limit for the proxy.
      */
-    public void setCookieLimit(int cookieLimit)
-    {
+    public void setCookieLimit(int cookieLimit) {
         this.cookieLimit = cookieLimit;
     }
 
     /**
      * Casts the <code>Destination</code> into <code>HTTPProxyDestination</code>
      * and calls super.setDestination.
+     *
      * @param destination The HTTP proxy destination.
      */
-    public void setDestination(Destination destination)
-    {
+    public void setDestination(Destination destination) {
         Destination dest = (HTTPProxyDestination) destination;
         super.setDestination(dest);
     }
@@ -480,8 +443,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
      *
      * @return the <code>ExternalProxySettings</code>
      */
-    public ExternalProxySettings getExternalProxySettings()
-    {
+    public ExternalProxySettings getExternalProxySettings() {
         return externalProxy;
     }
 
@@ -490,8 +452,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
      *
      * @param externalProxy The external proxy settings.
      */
-    public void setExternalProxySettings(ExternalProxySettings externalProxy)
-    {
+    public void setExternalProxySettings(ExternalProxySettings externalProxy) {
         this.externalProxy = externalProxy;
         initExternalProxy(externalProxy);
     }
@@ -501,8 +462,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
      *
      * @return the <code>HTTPConnectionManagerSettings</code>
      */
-    public HTTPConnectionManagerSettings getConnectionManagerSettings()
-    {
+    public HTTPConnectionManagerSettings getConnectionManagerSettings() {
         return connectionManagerSettings;
     }
 
@@ -511,8 +471,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
      *
      * @param connectionManagerSettings The connection manager settings.
      */
-    public void setConnectionManagerSettings(HTTPConnectionManagerSettings connectionManagerSettings)
-    {
+    public void setConnectionManagerSettings(HTTPConnectionManagerSettings connectionManagerSettings) {
         this.connectionManagerSettings = connectionManagerSettings;
         initHttpConnectionManagerParams(connectionManagerSettings);
         connectionManager = new MultiThreadedHttpConnectionManager();
@@ -525,9 +484,10 @@ public class HTTPProxyAdapter extends ServiceAdapter
     //
     //--------------------------------------------------------------------------
 
-    /** {@inheritDoc} */
-    public Object invoke(Message msg)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Object invoke(Message msg) {
         HTTPMessage message = (HTTPMessage) msg;
 
         ProxyContext context = new ProxyContext();
@@ -542,8 +502,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
 
         setupContext(context, message);
 
-        try
-        {
+        try {
             filterChain.invoke(context);
 
             //TODO: Do we want a return type that encapsulates the response data?
@@ -553,20 +512,15 @@ public class HTTPProxyAdapter extends ServiceAdapter
             ack.setBody(context.getResponse());
             ack.setHeader(Message.STATUS_CODE_HEADER, context.getStatusCode());
 
-            if (context.getRecordHeaders())
-            {
+            if (context.getRecordHeaders()) {
                 ack.setHeader(REQUEST_HEADERS, context.getRequestHeaders());
                 ack.setHeader(RESPONSE_HEADERS, context.getResponseHeaders());
             }
 
             return ack;
-        }
-        catch (MessageException ex)
-        {
+        } catch (MessageException ex) {
             throw ex;
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             // this should never happen- ErrorFilter should catch everything
             t.printStackTrace();
             throw new MessageException(t.toString());
@@ -579,8 +533,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
     //
     //--------------------------------------------------------------------------
 
-    protected void setupContext(ProxyContext context, HTTPMessage message)
-    {
+    protected void setupContext(ProxyContext context, HTTPMessage message) {
         Target target = new Target();
         context.setTarget(target);
 
@@ -614,11 +567,10 @@ public class HTTPProxyAdapter extends ServiceAdapter
         target.setRemoteUsername(message.getRemoteUsername());
         target.setRemotePassword(message.getRemotePassword());
 
-        HTTPProxyDestination destination = (HTTPProxyDestination)getDestination();
+        HTTPProxyDestination destination = (HTTPProxyDestination) getDestination();
         target.setUseCustomAuthentication(destination.isUseCustomAuthentication());
 
-        if (destination.getProtocolFactory() != null)
-        {
+        if (destination.getProtocolFactory() != null) {
             ProtocolFactory protocolFactory = destination.getProtocolFactory();
             context.setProtocol(protocolFactory.getProtocol());
         }
@@ -630,8 +582,7 @@ public class HTTPProxyAdapter extends ServiceAdapter
      *
      * @param destination The <code>Destination</code> that manages this <code>HTTPProxyAdapter</code>.
      */
-    protected void setupAdapterControl(Destination destination)
-    {
+    protected void setupAdapterControl(Destination destination) {
         controller = new HTTPProxyAdapterControl(this, destination.getControl());
         controller.register();
         setControl(controller);
@@ -640,10 +591,8 @@ public class HTTPProxyAdapter extends ServiceAdapter
     /**
      * Create default filter chain or return current one if already present.
      */
-    private ProxyFilter createFilterChain()
-    {
-        if (filterChain == null)
-        {
+    private ProxyFilter createFilterChain() {
+        if (filterChain == null) {
             // catch-all error filter
             ErrorFilter errorFilter = new ErrorFilter();
             // check proxy access
@@ -668,40 +617,32 @@ public class HTTPProxyAdapter extends ServiceAdapter
         return filterChain;
     }
 
-    private void initExternalProxy(ExternalProxySettings ep)
-    {
-        if (externalProxy != null)
-        {
+    private void initExternalProxy(ExternalProxySettings ep) {
+        if (externalProxy != null) {
 
             String proxyServer = externalProxy.getProxyServer();
             String proxyUsername = externalProxy.getUsername();
 
-            if (proxyUsername != null)
-            {
+            if (proxyUsername != null) {
                 String proxyPassword = externalProxy.getPassword();
                 String proxyDomain = externalProxy.getNTDomain();
-                if (proxyDomain != null)
-                {
+                if (proxyDomain != null) {
                     proxyCredentials = new NTCredentials(proxyUsername, proxyPassword, proxyServer, proxyDomain);
-                }
-                else
-                {
+                } else {
                     proxyCredentials = new UsernamePasswordCredentials(proxyUsername, proxyPassword);
                 }
             }
         }
     }
 
-    private void initHttpConnectionManagerParams(HTTPConnectionManagerSettings settings)
-    {
+    private void initHttpConnectionManagerParams(HTTPConnectionManagerSettings settings) {
         connectionParams = new HttpConnectionManagerParams();
         connectionParams.setMaxTotalConnections(settings.getMaxTotalConnections());
         connectionParams.setDefaultMaxConnectionsPerHost(settings.getDefaultMaxConnectionsPerHost());
 
-        if (!settings.getCookiePolicy().equals(CookiePolicy.DEFAULT))
-        {
+        if (!settings.getCookiePolicy().equals(CookiePolicy.DEFAULT)) {
             HttpClientParams httpClientParams = (HttpClientParams) connectionParams.getDefaults();
-            httpClientParams.setCookiePolicy(settings.getCookiePolicy()); 
+            httpClientParams.setCookiePolicy(settings.getCookiePolicy());
         }
 
         if (settings.getConnectionTimeout() >= 0)
@@ -721,54 +662,42 @@ public class HTTPProxyAdapter extends ServiceAdapter
         connectionParams.setTcpNoDelay(settings.isTcpNoDelay());
         connectionParams.setLinger(settings.getLinger());
 
-        if (settings.getMaxConnectionsPerHost() != null)
-        {
+        if (settings.getMaxConnectionsPerHost() != null) {
             Iterator it = settings.getMaxConnectionsPerHost().iterator();
-            while (it.hasNext())
-            {
-                HostConfigurationSettings hcs = (HostConfigurationSettings)it.next();
+            while (it.hasNext()) {
+                HostConfigurationSettings hcs = (HostConfigurationSettings) it.next();
                 HostConfiguration hostConfig = new HostConfiguration();
 
-                if (hcs.getProtocol() != null)
-                {
+                if (hcs.getProtocol() != null) {
                     Protocol protocol = Protocol.getProtocol(hcs.getProtocol());
                     hostConfig.setHost(hcs.getHost(), hcs.getPort(), protocol);
-                }
-                else if (hcs.getProtocolFactory() != null)
-                {
+                } else if (hcs.getProtocolFactory() != null) {
                     Protocol protocol = hcs.getProtocolFactory().getProtocol();
                     if (hcs.getPort() > 0)
                         hostConfig.setHost(hcs.getHost(), hcs.getPort(), protocol);
                     else
                         hostConfig.setHost(hcs.getHost(), protocol.getDefaultPort(), protocol);
-                }
-                else
-                {
+                } else {
                     if (hcs.getPort() > 0)
                         hostConfig.setHost(hcs.getHost(), hcs.getPort());
                     else
                         hostConfig.setHost(hcs.getHost());
                 }
 
-                if (hcs.getVirtualHost() != null)
-                {
+                if (hcs.getVirtualHost() != null) {
                     HostParams params = hostConfig.getParams();
                     if (params != null)
                         params.setVirtualHost(hcs.getVirtualHost());
                 }
 
-                if (hcs.getProxyHost() != null)
-                {
+                if (hcs.getProxyHost() != null) {
                     hostConfig.setProxy(hcs.getProxyHost(), hcs.getProxyPort());
                 }
 
-                try
-                {
+                try {
                     InetAddress addr = InetAddress.getByName(hcs.getLocalAddress());
                     hostConfig.setLocalAddress(addr);
-                }
-                catch (UnknownHostException ex)
-                {
+                } catch (UnknownHostException ex) {
                 }
                 connectionParams.setMaxConnectionsPerHost(hostConfig, hcs.getMaximumConnections());
             }

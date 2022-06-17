@@ -22,16 +22,16 @@
     <services>
 
         <service id="foo-service"
-            class="flex.messaging.services.FooService"
-            messageTypes="flex.messaging.messages.FooMessage">
+                 class="flex.messaging.services.FooService"
+                 messageTypes="flex.messaging.messages.FooMessage">
 
             <adapters>
-                <adapter-definition class="flex.messaging.services.foo.FooAdapter" id="foo" />
-                <adapter-definition class="flex.messaging.services.bar.BarAdapter" id="bar" default="true" />
+                <adapter-definition class="flex.messaging.services.foo.FooAdapter" id="foo"/>
+                <adapter-definition class="flex.messaging.services.bar.BarAdapter" id="bar" default="true"/>
             </adapters>
 
             <default-channels>
-                <channel ref="foo-channel" />
+                <channel ref="foo-channel"/>
             </default-channels>
 
             <destination id="foo-dest">
@@ -40,20 +40,20 @@
                 </properties>
 
                 <channels>
-                    <channel ref="foo-channel" />
+                    <channel ref="foo-channel"/>
                 </channels>
 
                 <security>
-                    <security-constraint ref="foo-constraint" />
+                    <security-constraint ref="foo-constraint"/>
                 </security>
 
-                <adapter ref="foo" />
+                <adapter ref="foo"/>
             </destination>
 
             <destination id="bar-dest"
-                channels="bar-channel,foo-channel"
-                security-constraint="bar-constraint"
-                adapter="bar">
+                         channels="bar-channel,foo-channel"
+                         security-constraint="bar-constraint"
+                         adapter="bar">
 
                 <properties>
                     <barString>barValue</barString>

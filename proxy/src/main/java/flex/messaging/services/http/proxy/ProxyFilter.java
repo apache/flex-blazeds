@@ -18,25 +18,20 @@ package flex.messaging.services.http.proxy;
 
 
 /**
- *
  * Base filter definition that defines the filter contract.
  * Filters perform pre- and post-processing duties on the ProxyContext
  */
-public abstract class ProxyFilter
-{
+public abstract class ProxyFilter {
     protected ProxyFilter next;
 
-    public ProxyFilter()
-    {
+    public ProxyFilter() {
     }
 
-    public ProxyFilter getNext()
-    {
+    public ProxyFilter getNext() {
         return next;
     }
 
-    public void setNext(ProxyFilter next)
-    {
+    public void setNext(ProxyFilter next) {
         this.next = next;
     }
 

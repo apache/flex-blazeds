@@ -25,8 +25,7 @@ import javax.management.ObjectName;
 /**
  * Defines the runtime monitoring and management interface for managed <code>MessageBroker</code>s.
  */
-public interface MessageBrokerControlMBean extends BaseControlMBean
-{
+public interface MessageBrokerControlMBean extends BaseControlMBean {
     /**
      * Returns <code>true</code> if the <code>MessageBroker</code> is running.
      *

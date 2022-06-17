@@ -19,8 +19,7 @@ package flex.messaging.services.http;
 /**
  * External Proxy Settings for a proxy service.
  */
-public class ExternalProxySettings
-{
+public class ExternalProxySettings {
 
     public static final int DEFAULT_PROXY_PORT = 80;
 
@@ -34,7 +33,7 @@ public class ExternalProxySettings
 
     public static final String USERNAME = "username";
 
-    public static final String PASSWORD = "password";    
+    public static final String PASSWORD = "password";
     private static final String HTTP = "http://";
 
     private String proxyServer;
@@ -46,29 +45,25 @@ public class ExternalProxySettings
     /**
      * Creates a default <code>ExternalProxySettings</code> instance.
      */
-    public ExternalProxySettings()
-    {
+    public ExternalProxySettings() {
     }
 
     /**
      * Returns the <code>server</code> property.
-     * 
+     *
      * @return the property as a string
      */
-    public String getProxyServer()
-    {
+    public String getProxyServer() {
         return proxyServer;
     }
 
     /**
      * Sets the <code>server</code> property.
-     * 
+     *
      * @param s The IP or server name of the proxy server.
      */
-    public void setProxyServer(String s)
-    {
-        if (s != null)
-        {
+    public void setProxyServer(String s) {
+        if (s != null) {
             if (s.endsWith("/"))
                 s = s.substring(0, s.length() - 1);
 
@@ -76,8 +71,7 @@ public class ExternalProxySettings
             if (!hasProtocol && isDotNet())
                 s = HTTP + s;
 
-            if (!isDotNet() && hasProtocol)
-            {
+            if (!isDotNet() && hasProtocol) {
                 if (s.startsWith(HTTP))
                     s = s.substring(HTTP.length());
                 else
@@ -91,92 +85,82 @@ public class ExternalProxySettings
 
     /**
      * Returns the <code>port</code> property.
-     * 
+     *
      * @return the <code>port</code>
      */
-    public int getProxyPort()
-    {
+    public int getProxyPort() {
         return proxyPort;
     }
 
     /**
      * Sets the <code>port</code> property. Default is 80.
-     * 
+     *
      * @param p The port number.
      */
-    public void setProxyPort(int p)
-    {
-        if (p > 0)
-        {
+    public void setProxyPort(int p) {
+        if (p > 0) {
             proxyPort = p;
         }
     }
 
     /**
      * Returns the <code>username</code> property.
-     * 
+     *
      * @return the <code>username</code>
      */
-    public String getUsername()
-    {
+    public String getUsername() {
         return username;
     }
 
     /**
-     * Sets the <code>username</code> property. 
-     * 
+     * Sets the <code>username</code> property.
+     *
      * @param username The user name for logging into the proxy server.
      */
-    public void setUsername(String username)
-    {
+    public void setUsername(String username) {
         this.username = username;
     }
 
     /**
      * Returns the <code>password</code> property.
-     * 
+     *
      * @return the <code>password</code>
      */
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 
     /**
      * Sets the <code>password</code> property.
-     * 
+     *
      * @param password The password for loggin into the proxy server.
      */
-    public void setPassword(String password)
-    {
+    public void setPassword(String password) {
         this.password = password;
     }
 
     /**
      * Returns the <code>nt-domain</code> property.
-     * 
+     *
      * @return a string containing the <code>nt-domain</code>
      */
-    public String getNTDomain()
-    {
+    public String getNTDomain() {
         return ntDomain;
     }
 
     /**
      * Sets the <code>nt-domain</code> property.
-     * 
+     *
      * @param ntDomain The NT domain for the proxy server.
      */
-    public void setNTDomain(String ntDomain)
-    {
+    public void setNTDomain(String ntDomain) {
         this.ntDomain = ntDomain;
     }
 
     /**
      *
      */
-    public static boolean isDotNet()
-    {
+    public static boolean isDotNet() {
         return System.getProperty("flex.platform.CLR") != null;
     }
 }

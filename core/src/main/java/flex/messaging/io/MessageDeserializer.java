@@ -27,8 +27,7 @@ import java.io.InputStream;
  * An interface to allow for either AMF or AMFX based deserializers
  * to process requests.
  */
-public interface MessageDeserializer
-{
+public interface MessageDeserializer {
     void initialize(SerializationContext context, InputStream in, AmfTrace trace);
 
     void readMessage(ActionMessage m, ActionContext context) throws ClassNotFoundException, IOException;

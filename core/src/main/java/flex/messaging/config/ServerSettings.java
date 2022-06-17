@@ -21,8 +21,7 @@ import flex.messaging.services.messaging.MessagingConstants;
 /**
  * Server settings for a message destination.
  */
-public class ServerSettings
-{
+public class ServerSettings {
     // Errors
     private static final int INVALID_CLUSTER_MESSAGE_ROUTING = 11121;
 
@@ -33,14 +32,15 @@ public class ServerSettings
     private int priority = -1;
     private String subtopicSeparator;
     private RoutingMode routingMode = RoutingMode.SERVER_TO_SERVER;
-    
-    public static enum RoutingMode {NONE,BROADCAST,SERVER_TO_SERVER};
+
+    public static enum RoutingMode {NONE, BROADCAST, SERVER_TO_SERVER}
+
+    ;
 
     /**
      * Creates a default <code>ServerSettings</code> instance.
      */
-    public ServerSettings()
-    {
+    public ServerSettings() {
         isDurable = false;
         subtopicSeparator = MessagingConstants.DEFAULT_SUBTOPIC_SEPARATOR;
     }
@@ -50,8 +50,7 @@ public class ServerSettings
      *
      * @return a boolean specifying whether or not the server has the <code>allow-subtopics</code> property.
      */
-    public boolean getAllowSubtopics()
-    {
+    public boolean getAllowSubtopics() {
         return allowSubtopics;
     }
 
@@ -60,8 +59,7 @@ public class ServerSettings
      *
      * @param value The value for <code>allow-subtopics</code> property.
      */
-    public void setAllowSubtopics(boolean value)
-    {
+    public void setAllowSubtopics(boolean value) {
         allowSubtopics = value;
     }
 
@@ -70,39 +68,35 @@ public class ServerSettings
      *
      * @return a boolean specifying whether or not the server has the <code>cluster-message-routing</code> property.
      */
-    public boolean isBroadcastRoutingMode()
-    {
+    public boolean isBroadcastRoutingMode() {
         return routingMode == RoutingMode.BROADCAST;
     }
 
     /**
      * Returns the routing mode configured.
-     * 
+     *
      * @return The configured routing mode.
      */
-    public RoutingMode getRoutingMode()
-    {
+    public RoutingMode getRoutingMode() {
         return routingMode;
     }
-    
+
     /**
      * Sets the <code>cluster-message-routing</code> property.
      *
      * @param routingMode <code>server-to-server</code>(default)
-     * or <code>broadcast</code>.
+     *                    or <code>broadcast</code>.
      */
-    public void setBroadcastRoutingMode(String routingMode)
-    {
+    public void setBroadcastRoutingMode(String routingMode) {
         if (routingMode.equalsIgnoreCase("broadcast"))
             this.routingMode = RoutingMode.BROADCAST;
         else if (routingMode.equalsIgnoreCase("server-to-server"))
             this.routingMode = RoutingMode.SERVER_TO_SERVER;
         else if (routingMode.equalsIgnoreCase("none"))
             this.routingMode = RoutingMode.NONE;
-        else
-        {
+        else {
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(INVALID_CLUSTER_MESSAGE_ROUTING, new Object[] {routingMode});
+            ce.setMessage(INVALID_CLUSTER_MESSAGE_ROUTING, new Object[]{routingMode});
             throw ce;
         }
     }
@@ -110,16 +104,14 @@ public class ServerSettings
     /**
      * @deprecated Not used anymore.
      */
-    public int getMaxCacheSize()
-    {
+    public int getMaxCacheSize() {
         return 0;
     }
 
     /**
      * @deprecated Not used anymore.
      */
-    public void setMaxCacheSize(int size)
-    {
+    public void setMaxCacheSize(int size) {
         // No-op.
     }
 
@@ -128,8 +120,7 @@ public class ServerSettings
      *
      * @return the <code>message-time-to-live</code> property.
      */
-    public long getMessageTTL()
-    {
+    public long getMessageTTL() {
         return messageTTL;
     }
 
@@ -138,8 +129,7 @@ public class ServerSettings
      *
      * @param ttl The value for <code>message-time-to-live</code> property.
      */
-    public void setMessageTTL(long ttl)
-    {
+    public void setMessageTTL(long ttl) {
         messageTTL = ttl;
     }
 
@@ -148,8 +138,7 @@ public class ServerSettings
      *
      * @return true if wilcard subtopics are disallowed.
      */
-    public boolean isDisallowWildcardSubtopics()
-    {
+    public boolean isDisallowWildcardSubtopics() {
         return disallowWildcardSubtopics;
     }
 
@@ -158,8 +147,7 @@ public class ServerSettings
      *
      * @param value Whether the wildcard subtopics are disallowed.
      */
-    public void setDisallowWildcardSubtopics(boolean value)
-    {
+    public void setDisallowWildcardSubtopics(boolean value) {
         disallowWildcardSubtopics = value;
     }
 
@@ -168,8 +156,7 @@ public class ServerSettings
      *
      * @return <code>true</code> if destination is durable; otherwise <code>false</code>.
      */
-    public boolean isDurable()
-    {
+    public boolean isDurable() {
         return isDurable;
     }
 
@@ -178,43 +165,39 @@ public class ServerSettings
      *
      * @param durable The value for <code>durable</code> property.
      */
-    public void setDurable(boolean durable)
-    {
+    public void setDurable(boolean durable) {
         isDurable = durable;
     }
 
     /**
      * Returns the default message priority for the destination which is a numerical
      * value between 0 and 9 (and -1 means no default priority).
-     * 
+     *
      * @return The default message priority for the destination.
      */
-    public int getPriority()
-    {
+    public int getPriority() {
         return priority;
     }
 
     /**
-     * Sets the default message priority of the destination which should be 
+     * Sets the default message priority of the destination which should be
      * a numerical value between 0 and 9. Values less than 0 and greater than 9
      * are treated as 0 and 9 respectively.
-     * 
+     *
      * @param priority The new value for the priority.
      */
-    public void setPriority(int priority)
-    {
-        priority = priority < 0? 0 : priority > 9? 9 : priority;
+    public void setPriority(int priority) {
+        priority = priority < 0 ? 0 : priority > 9 ? 9 : priority;
         this.priority = priority;
     }
 
-    
+
     /**
      * Returns the <code>subtopic-separator</code> property.
      *
      * @return the <code>subtopic-separator</code> property.
      */
-    public String getSubtopicSeparator()
-    {
+    public String getSubtopicSeparator() {
         return subtopicSeparator;
     }
 
@@ -224,8 +207,7 @@ public class ServerSettings
      *
      * @param value The value for <code>subtopic-separator</code> property.
      */
-    public void setSubtopicSeparator(String value)
-    {
+    public void setSubtopicSeparator(String value) {
         subtopicSeparator = value;
     }
 }

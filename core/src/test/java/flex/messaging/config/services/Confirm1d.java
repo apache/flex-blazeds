@@ -27,12 +27,10 @@ import flex.messaging.config.SecurityConstraint;
 import flex.messaging.config.DestinationSettings;
 import flex.messaging.LocalizedException;
 
-public class Confirm1d extends ConfigurationConfirmation
-{
+public class Confirm1d extends ConfigurationConfirmation {
     private MessagingConfiguration EXPECTED_VALUE;
 
-    public Confirm1d()
-    {
+    public Confirm1d() {
         MessagingConfiguration config = new MessagingConfiguration();
 
         // Security
@@ -99,13 +97,11 @@ public class Confirm1d extends ConfigurationConfirmation
         EXPECTED_VALUE = config;
     }
 
-    public MessagingConfiguration getExpectedConfiguration()
-    {
+    public MessagingConfiguration getExpectedConfiguration() {
         return EXPECTED_VALUE;
     }
 
-    public LocalizedException getExpectedException()
-    {
+    public LocalizedException getExpectedException() {
         return null;
     }
 }

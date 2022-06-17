@@ -31,21 +31,17 @@ import flex.messaging.messages.Message;
 import flex.messaging.services.messaging.ThrottleManager.ThrottleResult.Result;
 
 /**
- *
- *
  * The ThrottleManager provides functionality to limit the frequency of messages
  * routed through the system in message/second terms. Message frequency can be managed
  * on a per-client basis and also on a per-destination basis by tweaking different
  * parameters. Each MessageDestination has one ThrottleManager.
- *
+ * <p>
  * Message frequency can be throttled differently for incoming messages, which are messages
  * published by Flash/Flex producers, and for outgoing messages, which are messages
  * consumed by Flash/Flex subscribers that may have been produced by either Flash clients
  * or external message producers (such as data feeds, JMS publishers, etc).
- *
  */
-public class ThrottleManager extends ManageableComponent
-{
+public class ThrottleManager extends ManageableComponent {
     //--------------------------------------------------------------------------
     //
     // Public Static Constants
@@ -80,8 +76,7 @@ public class ThrottleManager extends ManageableComponent
     /**
      * Constructs an unmanaged <code>ThrottleManager</code> instance.
      */
-    public ThrottleManager()
-    {
+    public ThrottleManager() {
         this(false);
     }
 
@@ -89,13 +84,11 @@ public class ThrottleManager extends ManageableComponent
      * Constructs a <code>ThrottleManager</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>ThrottleManager</code>
-     * is manageable; otherwise <code>false</code>.
+     *                         is manageable; otherwise <code>false</code>.
      */
-    public ThrottleManager(boolean enableManagement)
-    {
+    public ThrottleManager(boolean enableManagement) {
         super(enableManagement);
-        synchronized (classMutex)
-        {
+        synchronized (classMutex) {
             super.setId(TYPE + ++instanceCount);
         }
     }
@@ -121,14 +114,12 @@ public class ThrottleManager extends ManageableComponent
      * Starts the throttle manager.
      */
     @Override
-    public void start()
-    {
+    public void start() {
         // Use the default ThrottleSettings if one is not set already.
         if (settings == null)
             settings = new ThrottleSettings();
 
-        if (settings.isDestinationThrottleEnabled())
-        {
+        if (settings.isDestinationThrottleEnabled()) {
             inboundDestinationMark = new MessageFrequency(settings.getIncomingDestinationFrequency());
             outboundDestinationMark = new MessageFrequency(settings.getOutgoingDestinationFrequency());
         }
@@ -142,13 +133,11 @@ public class ThrottleManager extends ManageableComponent
      * Stops the throttle manager.
      */
     @Override
-    public void stop()
-    {
+    public void stop() {
         super.stop();
 
         // Remove management.
-        if (isManaged() && getControl() != null)
-        {
+        if (isManaged() && getControl() != null) {
             getControl().unregister();
             setControl(null);
             setManaged(false);
@@ -167,8 +156,7 @@ public class ThrottleManager extends ManageableComponent
      * @param policy The policy.
      * @return The result for the policy.
      */
-    public static Result getResult(Policy policy)
-    {
+    public static Result getResult(Policy policy) {
         if (Policy.IGNORE == policy)
             return Result.IGNORE;
         else if (Policy.ERROR == policy)
@@ -185,9 +173,8 @@ public class ThrottleManager extends ManageableComponent
      *
      * @return The outbound policy for the throttle manager.
      */
-    public Policy getOutboundPolicy()
-    {
-        return settings == null? null : settings.getOutboundPolicy();
+    public Policy getOutboundPolicy() {
+        return settings == null ? null : settings.getOutboundPolicy();
     }
 
 
@@ -197,19 +184,16 @@ public class ThrottleManager extends ManageableComponent
      * @param id The id.
      */
     @Override
-    public void setId(String id)
-    {
+    public void setId(String id) {
         // No-op
     }
 
     /**
-     *
      * Used by the MessageClient in its cleanup process.
      *
      * @param clientId The id of the MessageClient.
      */
-    public void removeClientThrottleMark(Object clientId)
-    {
+    public void removeClientThrottleMark(Object clientId) {
         if (inboundClientMarks != null)
             inboundClientMarks.remove(clientId);
         // Note that the outBoundClientMarks that is maintained by the FlexClientOutboundQueueProcessor
@@ -221,12 +205,10 @@ public class ThrottleManager extends ManageableComponent
      *
      * @param throttleSettings The throttling settings for the throttle manager.
      */
-    public void setThrottleSettings(ThrottleSettings throttleSettings)
-    {
+    public void setThrottleSettings(ThrottleSettings throttleSettings) {
         // Make sure that we have valid outbound policies.
         Policy outPolicy = throttleSettings.getOutboundPolicy();
-        if (outPolicy != Policy.NONE && outPolicy != Policy.IGNORE)
-        {
+        if (outPolicy != Policy.NONE && outPolicy != Policy.IGNORE) {
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage("Invalid outbound throttle policy '" + outPolicy
                     + "' for destination '" + throttleSettings.getDestinationName()
@@ -242,21 +224,18 @@ public class ThrottleManager extends ManageableComponent
      * @param message Message to be throttled.
      * @return True if the message was throttled; otherwise false.
      */
-    public boolean throttleIncomingMessage(Message message)
-    {
+    public boolean throttleIncomingMessage(Message message) {
         // destination-level throttling comes before client-level, because if it
         // fails then it doesn't matter what the client-level throttle reports.
         ThrottleResult throttleResult = throttleDestinationLevel(message, true);
-        if (throttleResult.getResult() == Result.OK)
-        {
+        if (throttleResult.getResult() == Result.OK) {
             // client-level throttling allows the system to further refine a
             // different throttle for individual clients, which may be a subset
             // but never a superset of destination-level throttle settings
             throttleResult = throttleIncomingClientLevel(message);
             handleIncomingThrottleResult(message, throttleResult, true /*isClientLevel*/);
             boolean throttled = throttleResult.getResult() != Result.OK;
-            if (!throttled)
-            {
+            if (!throttled) {
                 updateMessageFrequencyDestinationLevel(true /* incoming */);
                 updateMessageFrequencyIncomingClientLevel(message);
             }
@@ -265,8 +244,7 @@ public class ThrottleManager extends ManageableComponent
 
         handleIncomingThrottleResult(message, throttleResult, false /*isClientLevel*/);
         boolean throttled = throttleResult.getResult() != Result.OK;
-        if (!throttled)
-        {
+        if (!throttled) {
             updateMessageFrequencyDestinationLevel(true /* incoming */);
             updateMessageFrequencyIncomingClientLevel(message);
         }
@@ -280,8 +258,7 @@ public class ThrottleManager extends ManageableComponent
      * @param message The message to be throttled.
      * @return The result of throttling attempt.
      */
-    public ThrottleResult throttleOutgoingMessage(Message message)
-    {
+    public ThrottleResult throttleOutgoingMessage(Message message) {
         ThrottleResult throttleResult = throttleDestinationLevel(message, false);
         // Outbound client-level throttling happens in FlexClientOutboundQueueProcessor.
         handleOutgoingThrottleResult(message, throttleResult, false /*isClientLevel*/);
@@ -291,27 +268,24 @@ public class ThrottleManager extends ManageableComponent
     /**
      * A utility method to handle outgoing throttling results in a common way.
      *
-     * @param message The message that is being throttled.
+     * @param message        The message that is being throttled.
      * @param throttleResult The throttling result.
-     * @param isClientLevel Whether the message is being throttled at the client level
-     * or not.
+     * @param isClientLevel  Whether the message is being throttled at the client level
+     *                       or not.
      */
-    public void handleOutgoingThrottleResult(Message message, ThrottleResult throttleResult, boolean isClientLevel)
-    {
+    public void handleOutgoingThrottleResult(Message message, ThrottleResult throttleResult, boolean isClientLevel) {
         Result result = throttleResult.getResult();
 
         // Update the management metrics.
-        if (result != Result.OK && isManaged())
-        {
+        if (result != Result.OK && isManaged()) {
             if (isClientLevel)
-                ((ThrottleManagerControl)getControl()).incrementClientOutgoingMessageThrottleCount();
+                ((ThrottleManagerControl) getControl()).incrementClientOutgoingMessageThrottleCount();
             else
-                ((ThrottleManagerControl)getControl()).incrementDestinationOutgoingMessageThrottleCount();
+                ((ThrottleManagerControl) getControl()).incrementDestinationOutgoingMessageThrottleCount();
         }
 
         // Result can only be IGNORE (or NONE which means no throttling)
-        if (result == Result.IGNORE)
-        {
+        if (result == Result.IGNORE) {
             // Improve the detail message for IGNORE.
             if (isClientLevel)
                 throttleResult.setDetail("Message '" + message.getMessageId() + "' ignored: Too many messages sent to client '"
@@ -328,19 +302,15 @@ public class ThrottleManager extends ManageableComponent
     /**
      * Attempts to throttle destination-level incoming and outgoing messages.
      *
-     * @param message Message to throttle.
+     * @param message  Message to throttle.
      * @param incoming Whether the message is incoming or outgoing.
      * @return The result of the throttling attempt.
      */
-    public ThrottleResult throttleDestinationLevel(Message message, boolean incoming)
-    {
-        if (incoming && settings.isInboundDestinationThrottleEnabled())
-        {
+    public ThrottleResult throttleDestinationLevel(Message message, boolean incoming) {
+        if (incoming && settings.isInboundDestinationThrottleEnabled()) {
             ThrottleResult result = inboundDestinationMark.checkLimit(settings.getIncomingDestinationFrequency(), settings.getInboundPolicy());
             return result;
-        }
-        else if (!incoming && settings.isOutboundDestinationThrottleEnabled())
-        {
+        } else if (!incoming && settings.isOutboundDestinationThrottleEnabled()) {
             ThrottleResult result = outboundDestinationMark.checkLimit(settings.getOutgoingDestinationFrequency(), settings.getOutboundPolicy());
             return result;
         }
@@ -350,11 +320,10 @@ public class ThrottleManager extends ManageableComponent
 
     /**
      * Updates the destination level message frequency.
-     *
+     * <p>
      * param incoming Whether the message is incoming or outgoing.
      */
-    public void updateMessageFrequencyDestinationLevel(boolean incoming)
-    {
+    public void updateMessageFrequencyDestinationLevel(boolean incoming) {
         if (incoming && settings.isInboundDestinationThrottleEnabled())
             inboundDestinationMark.updateMessageFrequency();
         else if (!incoming && settings.isOutboundDestinationThrottleEnabled())
@@ -364,11 +333,9 @@ public class ThrottleManager extends ManageableComponent
     /**
      * Updates the incoming client level message frequency.
      */
-    public void updateMessageFrequencyIncomingClientLevel(Message message)
-    {
-        String clientId = (String)message.getClientId();
-        if (settings.isInboundClientThrottleEnabled())
-        {
+    public void updateMessageFrequencyIncomingClientLevel(Message message) {
+        String clientId = (String) message.getClientId();
+        if (settings.isInboundClientThrottleEnabled()) {
             MessageFrequency clientLevelMark = inboundClientMarks.get(clientId);
             if (clientLevelMark != null)
                 clientLevelMark.updateMessageFrequency();
@@ -385,45 +352,40 @@ public class ThrottleManager extends ManageableComponent
      * Returns the log category for the throttle manager.
      */
     @Override
-    protected String getLogCategory()
-    {
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
     /**
      * A utility method to handle incoming throttling results in a common way.
      *
-     * @param message The message that is being throttled.
+     * @param message        The message that is being throttled.
      * @param throttleResult The throttling result.
-     * @param isClientLevel Whether the message is being throttled at the client level
-     * or not.
+     * @param isClientLevel  Whether the message is being throttled at the client level
+     *                       or not.
      */
-    protected void handleIncomingThrottleResult(Message message, ThrottleResult throttleResult, boolean isClientLevel)
-    {
+    protected void handleIncomingThrottleResult(Message message, ThrottleResult throttleResult, boolean isClientLevel) {
         Result result = throttleResult.getResult();
 
         // Update the management metrics.
-        if (result != Result.OK && isManaged())
-        {
+        if (result != Result.OK && isManaged()) {
             if (isClientLevel)
-                ((ThrottleManagerControl)getControl()).incrementClientIncomingMessageThrottleCount();
+                ((ThrottleManagerControl) getControl()).incrementClientIncomingMessageThrottleCount();
             else
-                ((ThrottleManagerControl)getControl()).incrementDestinationIncomingMessageThrottleCount();
+                ((ThrottleManagerControl) getControl()).incrementDestinationIncomingMessageThrottleCount();
         }
 
         // Result can be IGNORE or ERROR (or NONE which means no throttling).
-        if (result == Result.IGNORE || result == Result.ERROR)
-        {
+        if (result == Result.IGNORE || result == Result.ERROR) {
             if (isClientLevel)
                 throttleResult.setDetail("Message '" + message.getMessageId() + "' throttled: Too many messages sent by the client '"
                         + message.getClientId() + "' in too small of a time interval " + throttleResult.getDetail());
             else
                 throttleResult.setDetail("Message '" + message.getMessageId() + "' throttled: Too many messages sent to destination '"
-                    + message.getDestination() + "' in too small of a time interval " + throttleResult.getDetail());
+                        + message.getDestination() + "' in too small of a time interval " + throttleResult.getDetail());
 
             String detail = throttleResult.getDetail();
-            if (result == Result.ERROR)
-            {
+            if (result == Result.ERROR) {
                 if (Log.isError())
                     Log.getLogger(LOG_CATEGORY).error(detail);
                 // And, throw an exception, so the client gets the error.
@@ -443,11 +405,9 @@ public class ThrottleManager extends ManageableComponent
      * @param message Message to throttle.
      * @return The result of the throttling attempt.
      */
-    protected ThrottleResult throttleIncomingClientLevel(Message message)
-    {
-        String clientId = (String)message.getClientId();
-        if (settings.isInboundClientThrottleEnabled())
-        {
+    protected ThrottleResult throttleIncomingClientLevel(Message message) {
+        String clientId = (String) message.getClientId();
+        if (settings.isInboundClientThrottleEnabled()) {
             MessageFrequency clientLevelMark;
             clientLevelMark = inboundClientMarks.get(clientId);
             if (clientLevelMark == null)
@@ -470,13 +430,11 @@ public class ThrottleManager extends ManageableComponent
     /**
      * This class is used to keep track of throttling results.
      */
-    public static class ThrottleResult
-    {
+    public static class ThrottleResult {
         /**
          * Result enum.
          */
-        public enum Result
-        {
+        public enum Result {
             OK, IGNORE, ERROR, BUFFER, CONFLATE
         }
 
@@ -486,8 +444,7 @@ public class ThrottleManager extends ManageableComponent
         /**
          * Creates a ThrottleResult with Result.OK.
          */
-        public ThrottleResult()
-        {
+        public ThrottleResult() {
             this(Result.OK);
         }
 
@@ -518,8 +475,7 @@ public class ThrottleManager extends ManageableComponent
          *
          * @return The detail.
          */
-        public String getDetail()
-        {
+        public String getDetail() {
             return detail;
         }
 
@@ -528,8 +484,7 @@ public class ThrottleManager extends ManageableComponent
          *
          * @param detail The detail.
          */
-        public void setDetail(String detail)
-        {
+        public void setDetail(String detail) {
             this.detail = detail;
         }
 
@@ -538,8 +493,7 @@ public class ThrottleManager extends ManageableComponent
          *
          * @return The result.
          */
-        public Result getResult()
-        {
+        public Result getResult() {
             return result;
         }
 
@@ -548,8 +502,7 @@ public class ThrottleManager extends ManageableComponent
          *
          * @param result The result.
          */
-        public void setResult(Result result)
-        {
+        public void setResult(Result result) {
             this.result = result;
         }
     }

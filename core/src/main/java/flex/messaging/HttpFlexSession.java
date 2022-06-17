@@ -40,8 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * FlexSession implementation for use with HTTP-based channels.
  */
 public class HttpFlexSession extends FlexSession
-    implements HttpSessionBindingListener, HttpSessionListener, HttpSessionAttributeListener, Serializable
-{
+        implements HttpSessionBindingListener, HttpSessionListener, HttpSessionAttributeListener, Serializable {
     //--------------------------------------------------------------------------
     //
     // Constructor
@@ -49,21 +48,18 @@ public class HttpFlexSession extends FlexSession
     //--------------------------------------------------------------------------
 
     /**
-     *
      * Not for public use. This constructor is used to create an instance of this class that
      * will operate as a javax.servlet.http.HttpSessionListener registered in web.xml.
      */
-    public HttpFlexSession()
-    {}
+    public HttpFlexSession() {
+    }
 
     /**
-     *
      * Not for public use. Constructs new instances that effectively wrap pre-existing JEE HttpSession instances.
      *
      * @param provider HttpFlexSessionProvider object
      */
-    public HttpFlexSession(HttpFlexSessionProvider provider) 
-    {
+    public HttpFlexSession(HttpFlexSessionProvider provider) {
         super(provider);
     }
 
@@ -127,7 +123,6 @@ public class HttpFlexSession extends FlexSession
     /* package-private */ HttpSession httpSession;
 
     /**
-     *
      * Static lock for creating httpSessionToFlexSession map
      */
     public static final Object mapLock = new Object();
@@ -141,20 +136,18 @@ public class HttpFlexSession extends FlexSession
 
     /**
      * HttpSessionAttributeListener callback; processes the addition of an attribute to an HttpSession.
-     *
+     * <p>
      * NOTE: Callback is not made against an HttpFlexSession associated with a request
      * handling thread.
+     *
      * @param event the HttpSessionBindingEvent
      */
-    public void attributeAdded(HttpSessionBindingEvent event)
-    {
-        if (!event.getName().equals(SESSION_ATTRIBUTE))
-        {
+    public void attributeAdded(HttpSessionBindingEvent event) {
+        if (!event.getName().equals(SESSION_ATTRIBUTE)) {
             // Accessing flexSession via map because it may have already been unbound from httpSession.
             Map httpSessionToFlexSessionMap = getHttpSessionToFlexSessionMap(event.getSession());
-            HttpFlexSession flexSession = (HttpFlexSession)httpSessionToFlexSessionMap.get(event.getSession().getId());
-            if (flexSession != null)
-            {
+            HttpFlexSession flexSession = (HttpFlexSession) httpSessionToFlexSessionMap.get(event.getSession().getId());
+            if (flexSession != null) {
                 String name = event.getName();
                 Object value = event.getValue();
                 flexSession.notifyAttributeBound(name, value);
@@ -165,20 +158,18 @@ public class HttpFlexSession extends FlexSession
 
     /**
      * HttpSessionAttributeListener callback; processes the removal of an attribute from an HttpSession.
-     *
+     * <p>
      * NOTE: Callback is not made against an HttpFlexSession associated with a request
      * handling thread.
+     *
      * @param event the HttpSessionBindingEvent
      */
-    public void attributeRemoved(HttpSessionBindingEvent event)
-    {
-        if (!event.getName().equals(SESSION_ATTRIBUTE))
-        {
+    public void attributeRemoved(HttpSessionBindingEvent event) {
+        if (!event.getName().equals(SESSION_ATTRIBUTE)) {
             // Accessing flexSession via map because it may have already been unbound from httpSession.
             Map httpSessionToFlexSessionMap = getHttpSessionToFlexSessionMap(event.getSession());
-            HttpFlexSession flexSession = (HttpFlexSession)httpSessionToFlexSessionMap.get(event.getSession().getId());
-            if (flexSession != null)
-            {
+            HttpFlexSession flexSession = (HttpFlexSession) httpSessionToFlexSessionMap.get(event.getSession().getId());
+            if (flexSession != null) {
                 String name = event.getName();
                 Object value = event.getValue();
                 flexSession.notifyAttributeUnbound(name, value);
@@ -189,20 +180,18 @@ public class HttpFlexSession extends FlexSession
 
     /**
      * HttpSessionAttributeListener callback; processes the replacement of an attribute in an HttpSession.
-     *
+     * <p>
      * NOTE: Callback is not made against an HttpFlexSession associated with a request
      * handling thread.
+     *
      * @param event the HttpSessionBindingEvent
      */
-    public void attributeReplaced(HttpSessionBindingEvent event)
-    {
-        if (!event.getName().equals(SESSION_ATTRIBUTE))
-        {
+    public void attributeReplaced(HttpSessionBindingEvent event) {
+        if (!event.getName().equals(SESSION_ATTRIBUTE)) {
             // Accessing flexSession via map because it may have already been unbound from httpSession.
             Map httpSessionToFlexSessionMap = getHttpSessionToFlexSessionMap(event.getSession());
-            HttpFlexSession flexSession = (HttpFlexSession)httpSessionToFlexSessionMap.get(event.getSession().getId());
-            if (flexSession != null)
-            {
+            HttpFlexSession flexSession = (HttpFlexSession) httpSessionToFlexSessionMap.get(event.getSession().getId());
+            if (flexSession != null) {
                 String name = event.getName();
                 Object value = event.getValue();
                 Object newValue = flexSession.getAttribute(name);
@@ -219,43 +208,34 @@ public class HttpFlexSession extends FlexSession
      * Not intended for public use.
      *
      * @param req The Http request.
-     *
      * @return The HttpFlexSession.
-     * 
-     * @deprecated This method has been deprecated in favor of session providers registered with a <tt>MessageBroker</tt>.
      * @see flex.messaging.FlexSessionManager
      * @see flex.messaging.HttpFlexSessionProvider
+     * @deprecated This method has been deprecated in favor of session providers registered with a <tt>MessageBroker</tt>.
      */
-    public static HttpFlexSession getFlexSession(HttpServletRequest req)
-    {
+    public static HttpFlexSession getFlexSession(HttpServletRequest req) {
         HttpFlexSession flexSession;
         HttpSession httpSession = req.getSession(true);
 
-        if (!isHttpSessionListener && !warnedNoEventRedispatch)
-        {
+        if (!isHttpSessionListener && !warnedNoEventRedispatch) {
             warnedNoEventRedispatch = true;
             if (Log.isWarn())
                 Log.getLogger(WARN_LOG_CATEGORY).warn("HttpFlexSession has not been registered as a listener in web.xml for this application so no events will be dispatched to FlexSessionAttributeListeners or FlexSessionBindingListeners. To correct this, register flex.messaging.HttpFlexSession as a listener in web.xml.");
         }
 
         boolean isNew = false;
-        synchronized (httpSession)
-        {
-            flexSession = (HttpFlexSession)httpSession.getAttribute(HttpFlexSession.SESSION_ATTRIBUTE);
-            if (flexSession == null)
-            {
+        synchronized (httpSession) {
+            flexSession = (HttpFlexSession) httpSession.getAttribute(HttpFlexSession.SESSION_ATTRIBUTE);
+            if (flexSession == null) {
                 flexSession = new HttpFlexSession();
                 // Correlate this FlexSession to the HttpSession before triggering any listeners.
                 FlexContext.setThreadLocalSession(flexSession);
                 httpSession.setAttribute(SESSION_ATTRIBUTE, flexSession);
                 flexSession.setHttpSession(httpSession);
                 isNew = true;
-            }
-            else
-            {
+            } else {
                 FlexContext.setThreadLocalSession(flexSession);
-                if (flexSession.httpSession == null)
-                {
+                if (flexSession.httpSession == null) {
                     // httpSession is null if the instance is new or is from
                     // serialization.
                     flexSession.setHttpSession(httpSession);
@@ -264,8 +244,7 @@ public class HttpFlexSession extends FlexSession
             }
         }
 
-        if (isNew)
-        {
+        if (isNew) {
             flexSession.notifyCreated();
 
             if (Log.isDebug())
@@ -273,7 +252,7 @@ public class HttpFlexSession extends FlexSession
         }
 
         return flexSession;
-    }    
+    }
 
     /**
      * Returns the user principal associated with the session. This will
@@ -281,11 +260,9 @@ public class HttpFlexSession extends FlexSession
      *
      * @return The Principal associated with the session.
      */
-    public Principal getUserPrincipal()
-    {
+    public Principal getUserPrincipal() {
         Principal p = super.getUserPrincipal();
-        if (p == null)
-        {
+        if (p == null) {
             HttpServletRequest req = FlexContext.getHttpRequest();
             if (req != null && req.getAttribute(INVALIDATED_REQUEST) == null)
                 p = req.getUserPrincipal();
@@ -296,8 +273,7 @@ public class HttpFlexSession extends FlexSession
     /**
      * Invalidates the session.
      */
-    public void invalidate()
-    {
+    public void invalidate() {
         // If the HttpFlexSession is the current active FlexSession for the thread
         // we'll invalidate it but we need to recreate a new HttpFlexSession because
         // the client's HttpSession is still active.
@@ -306,7 +282,6 @@ public class HttpFlexSession extends FlexSession
     }
 
     /**
-     *
      * Used by Http endpoints when they receive notification from a client that it has
      * disconnected its channel.
      * Supports invalidating the HttpFlexSession and underlying JEE HttpSession without
@@ -314,27 +289,19 @@ public class HttpFlexSession extends FlexSession
      *
      * @param recreate true if the http session should be recreated.
      */
-    public void invalidate(boolean recreate)
-    {
-        synchronized (httpSession)
-        {
-            try
-            {
+    public void invalidate(boolean recreate) {
+        synchronized (httpSession) {
+            try {
                 // Invalidating the HttpSession will trigger invalidation of the HttpFlexSession
                 // either via the sessionDestroyed() event if registration as an HttpSession listener worked
                 // or via the valueUnbound() event if it didn't.
                 httpSession.invalidate();
-            }
-            catch (IllegalStateException e)
-            {
+            } catch (IllegalStateException e) {
                 // Make sure any related mapping is removed.
-                try
-                {
+                try {
                     Map httpSessionToFlexSessionMap = getHttpSessionToFlexSessionMap(httpSession);
                     httpSessionToFlexSessionMap.remove(httpSession.getId());
-                }
-                catch (Exception ignore)
-                {
+                } catch (Exception ignore) {
                     // NOWARN
                 }
 
@@ -342,26 +309,24 @@ public class HttpFlexSession extends FlexSession
                 super.invalidate();
             }
         }
-        if (recreate)
-        {
+        if (recreate) {
             HttpServletRequest req = FlexContext.getHttpRequest();
 
-            if (req != null)
-            {
+            if (req != null) {
                 // Set an attribute on the request denoting that the userPrincipal in the request
                 // is now invalid.
                 req.setAttribute(INVALIDATED_REQUEST, "true");
 
                 AbstractFlexSessionProvider sessionProvider = getFlexSessionProvider();
-                
+
                 // BLZ-531: When using spring integration getting a null pointer exception when calling invalidate 
                 // on a FlexSession twice
                 // If originally the HttpFlexSession was created using the deprecated HttpFlexSession.getFlexSession(request) API, 
                 // it does not have an associated AbstractFlexSessionProvider. Invoking invalidate(true) on such a session 
                 // results in the "recreated" FlexSession being NULL. To prevent this from happening, in case session provider 
                 // is NULL, we create the session using the deprecated HttpFlexSession.getFlexSession(request) API.
-                FlexSession session = sessionProvider == null ? 
-                        getFlexSession(req) : ((HttpFlexSessionProvider)sessionProvider).getOrCreateSession(req);
+                FlexSession session = sessionProvider == null ?
+                        getFlexSession(req) : ((HttpFlexSessionProvider) sessionProvider).getOrCreateSession(req);
 
                 FlexContext.setThreadLocalObjects(FlexContext.getFlexClient(),
                         session, FlexContext.getMessageBroker(), req,
@@ -378,8 +343,7 @@ public class HttpFlexSession extends FlexSession
      * @param name The name the target attribute is bound to.
      * @return The attribute bound to the specified name.
      */
-    public Object getAttribute(String name)
-    {
+    public Object getAttribute(String name) {
         return httpSession.getAttribute(name);
     }
 
@@ -388,8 +352,7 @@ public class HttpFlexSession extends FlexSession
      *
      * @return The names of all attributes bound to the session.
      */
-    public Enumeration getAttributeNames()
-    {
+    public Enumeration getAttributeNames() {
         return httpSession.getAttributeNames();
     }
 
@@ -398,20 +361,17 @@ public class HttpFlexSession extends FlexSession
      *
      * @return The Id for the session.
      */
-    public String getId()
-    {
+    public String getId() {
         return httpSession.getId();
     }
 
     /**
-     *
      * FlexClient invokes this to determine whether the session can be used to push messages
      * to the client.
      *
      * @return true if the FlexSession supports direct push; otherwise false (polling is assumed).
      */
-    public boolean isPushSupported()
-    {
+    public boolean isPushSupported() {
         return false;
     }
 
@@ -420,8 +380,7 @@ public class HttpFlexSession extends FlexSession
      *
      * @param name The name of the attribute to remove.
      */
-    public void removeAttribute(String name)
-    {
+    public void removeAttribute(String name) {
         httpSession.removeAttribute(name);
     }
 
@@ -432,10 +391,10 @@ public class HttpFlexSession extends FlexSession
      * session destruction.
      * NOTE: This method is not invoked against an HttpFlexSession associated with a request
      * handling thread.
+     *
      * @param event the HttpSessionEvent
      */
-    public void sessionCreated(HttpSessionEvent event)
-    {
+    public void sessionCreated(HttpSessionEvent event) {
         isHttpSessionListener = true;
     }
 
@@ -444,15 +403,14 @@ public class HttpFlexSession extends FlexSession
      * When an HttpSession is destroyed, the associated HttpFlexSession is also destroyed.
      * NOTE: This method is not invoked against an HttpFlexSession associated with a request
      * handling thread.
+     *
      * @param event the HttpSessionEvent
      */
-    public void sessionDestroyed(HttpSessionEvent event)
-    {
+    public void sessionDestroyed(HttpSessionEvent event) {
         HttpSession session = event.getSession();
         Map httpSessionToFlexSessionMap = getHttpSessionToFlexSessionMap(session);
-        HttpFlexSession flexSession = (HttpFlexSession)httpSessionToFlexSessionMap.remove(session.getId());
-        if (flexSession != null)
-        {
+        HttpFlexSession flexSession = (HttpFlexSession) httpSessionToFlexSessionMap.remove(session.getId());
+        if (flexSession != null) {
             // invalidate the flex session
             flexSession.superInvalidate();
 
@@ -461,23 +419,18 @@ public class HttpFlexSession extends FlexSession
             // but Java servlet 2.4 says session destroy is first, then attributes.
             // Guard against pre-2.4 containers that dispatch events in an incorrect order, 
             // meaning skip attribute processing here if the underlying session state is no longer valid.
-            try
-            {
-                for (Enumeration e = session.getAttributeNames(); e.hasMoreElements(); )
-                {
+            try {
+                for (Enumeration e = session.getAttributeNames(); e.hasMoreElements(); ) {
                     String name = (String) e.nextElement();
                     if (name.equals(SESSION_ATTRIBUTE))
                         continue;
                     Object value = session.getAttribute(name);
-                    if (value != null)
-                    {
+                    if (value != null) {
                         flexSession.notifyAttributeUnbound(name, value);
                         flexSession.notifyAttributeRemoved(name, value);
                     }
                 }
-            }
-            catch (IllegalStateException ignore)
-            {
+            } catch (IllegalStateException ignore) {
                 // NOWARN
                 // Old servlet container that dispatches events out of order.
             }
@@ -487,12 +440,10 @@ public class HttpFlexSession extends FlexSession
     /**
      * Binds an attribute to the session under the specified name.
      *
-     * @param name The name to bind the attribute under.
-     *
+     * @param name  The name to bind the attribute under.
      * @param value The attribute value.
      */
-    public void setAttribute(String name, Object value)
-    {
+    public void setAttribute(String name, Object value) {
         httpSession.setAttribute(name, value);
     }
 
@@ -501,10 +452,10 @@ public class HttpFlexSession extends FlexSession
      * This is a no-op.
      * NOTE: This method is not invoked against an HttpFlexSession associated with a request
      * handling thread.
+     *
      * @param event the HttpSessionBindingEvent
      */
-    public void valueBound(HttpSessionBindingEvent event)
-    {
+    public void valueBound(HttpSessionBindingEvent event) {
         // No-op.
     }
 
@@ -515,14 +466,13 @@ public class HttpFlexSession extends FlexSession
      * can't shut down based on the HttpSession being invalidated.
      * NOTE: This method is not invoked against an HttpFlexSession associated with a request
      * handling thread.
+     *
      * @param event the HttpSessionBindingEvent
      */
-    public void valueUnbound(HttpSessionBindingEvent event)
-    {
-        if (!isHttpSessionListener)
-        {
+    public void valueUnbound(HttpSessionBindingEvent event) {
+        if (!isHttpSessionListener) {
             Map httpSessionToFlexSessionMap = getHttpSessionToFlexSessionMap(event.getSession());
-            HttpFlexSession flexSession = (HttpFlexSession)httpSessionToFlexSessionMap.remove(event.getSession().getId());
+            HttpFlexSession flexSession = (HttpFlexSession) httpSessionToFlexSessionMap.remove(event.getSession().getId());
             if (flexSession != null)
                 flexSession.superInvalidate();
         }
@@ -537,8 +487,7 @@ public class HttpFlexSession extends FlexSession
     /**
      * We don't need to do anything here other than log out some info about the session that's shutting down.
      */
-    protected void internalInvalidate()
-    {
+    protected void internalInvalidate() {
         if (Log.isDebug())
             Log.getLogger(FLEX_SESSION_LOG_CATEGORY).debug("FlexSession with id '" + getId() + "' for an Http-based client connection has been invalidated.");
     }
@@ -554,10 +503,8 @@ public class HttpFlexSession extends FlexSession
      *
      * @param httpSession The HttpSession to associate with the FlexSession.
      */
-    /* package-private */ void setHttpSession(HttpSession httpSession)
-    {
-        synchronized (lock)
-        {
+    /* package-private */ void setHttpSession(HttpSession httpSession) {
+        synchronized (lock) {
             this.httpSession = httpSession;
             // Update lookup table for event redispatch.
             Map httpSessionToFlexSessionMap = getHttpSessionToFlexSessionMap(httpSession);
@@ -566,12 +513,10 @@ public class HttpFlexSession extends FlexSession
     }
 
     /**
-     *
      * Invoked by HttpSessionListener or binding listener on HttpSession invalidation to invalidate the wrapping
      * FlexSession.
      */
-    private void superInvalidate()
-    {
+    private void superInvalidate() {
         super.invalidate();
     }
 
@@ -581,21 +526,15 @@ public class HttpFlexSession extends FlexSession
      *
      * @param stream The stream to read instance state from.
      */
-    private void writeObject(ObjectOutputStream stream)
-    {
-        try
-        {
+    private void writeObject(ObjectOutputStream stream) {
+        try {
             Principal principal = super.getUserPrincipal();
             if (principal != null && principal instanceof Serializable)
                 stream.writeObject(principal);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // Principal was Serializable and non-null; if this happens there's nothing we can do.
             // The user will need to reauthenticate if necessary.
-        }
-        catch (LocalizedException ignore)
-        {
+        } catch (LocalizedException ignore) {
             // This catch block added for bug 194144.
             // On BEA WebLogic, writeObject() is sometimes invoked on invalidated session instances
             // and in this case the checkValid() invocation in super.getUserPrincipal() throws.
@@ -609,14 +548,10 @@ public class HttpFlexSession extends FlexSession
      *
      * @param stream The stream to write instance state to.
      */
-    private void readObject(ObjectInputStream stream)
-    {
-        try
-        {
-            setUserPrincipal((Principal)stream.readObject());
-        }
-        catch (Exception e)
-        {
+    private void readObject(ObjectInputStream stream) {
+        try {
+            setUserPrincipal((Principal) stream.readObject());
+        } catch (Exception e) {
             // Principal was not serialized or failed to serialize; ignore.
             // The user will need to reauthenticate if necessary.
         }
@@ -631,33 +566,29 @@ public class HttpFlexSession extends FlexSession
      * has already been unbound... Additionally, we need it to handle attribute removal events that happen
      * during HttpSession destruction because the FlexSession can be unbound from the session before the
      * other attributes we receive notification for.
-     *
+     * <p>
      * Because of this, it's simplest to just maintain this lookup table and use it for all HttpSession
      * related event handling.
-     *
+     * <p>
      * The table is maintained on the servlet context instead of statically in order to prevent collisions
      * across web-apps.
      */
-    private Map getHttpSessionToFlexSessionMap(HttpSession session)
-    {
-        try
-        {
+    private Map getHttpSessionToFlexSessionMap(HttpSession session) {
+        try {
             ServletContext context = session.getServletContext();
-            Map map = (Map)context.getAttribute(SESSION_MAP);
+            Map map = (Map) context.getAttribute(SESSION_MAP);
 
-            if(map==null){
+            if (map == null) {
                 // map should never be null here as it is created during MessageBrokerServlet start-up
                 if (Log.isError())
                     Log.getLogger(FLEX_SESSION_LOG_CATEGORY).error("HttpSession to FlexSession map not created in message broker for "
                             + session.getId());
                 MessageException me = new MessageException();
-                me.setMessage(10032, new Object[] {session.getId()});
+                me.setMessage(10032, new Object[]{session.getId()});
                 throw me;
             }
             return map;
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             if (Log.isDebug())
                 Log.getLogger(FLEX_SESSION_LOG_CATEGORY).debug("Unable to get HttpSession to FlexSession map for "
                         + session.getId() + " " + e.toString());

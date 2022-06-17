@@ -18,11 +18,8 @@ package flex.messaging.config;
 
 /**
  * Settings for <code>LoginCommand</code> class.
- *
- *
  */
-public class LoginCommandSettings
-{
+public class LoginCommandSettings {
     public static final String SERVER_MATCH_OVERRIDE = "all";
 
     private String className;
@@ -32,8 +29,7 @@ public class LoginCommandSettings
     /**
      * Create a new <code>LoginCommandSettings</code> instance with default settings.
      */
-    public LoginCommandSettings()
-    {
+    public LoginCommandSettings() {
         perClientAuthentication = false;
     }
 
@@ -42,8 +38,7 @@ public class LoginCommandSettings
      *
      * @return The class name.
      */
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
@@ -52,8 +47,7 @@ public class LoginCommandSettings
      *
      * @param className The class name.
      */
-    public void setClassName(String className)
-    {
+    public void setClassName(String className) {
         this.className = className;
     }
 
@@ -62,8 +56,7 @@ public class LoginCommandSettings
      *
      * @return The server name.
      */
-    public String getServer()
-    {
+    public String getServer() {
         return server;
     }
 
@@ -72,8 +65,7 @@ public class LoginCommandSettings
      *
      * @param server The server name.
      */
-    public void setServer(String server)
-    {
+    public void setServer(String server) {
         this.server = server;
     }
 
@@ -83,8 +75,7 @@ public class LoginCommandSettings
      * @return <code>true</code> if per client authentication is enabled;
      * otherwise <code>false</code>.
      */
-    public boolean isPerClientAuthentication()
-    {
+    public boolean isPerClientAuthentication() {
         return perClientAuthentication;
     }
 
@@ -92,10 +83,9 @@ public class LoginCommandSettings
      * Sets whether per client authentication is enabled or not.
      *
      * @param perClientAuthentication <code>true</code> if per client authentication
-     * is enabled; otherwise <code>false</code>.
+     *                                is enabled; otherwise <code>false</code>.
      */
-    public void setPerClientAuthentication(boolean perClientAuthentication)
-    {
+    public void setPerClientAuthentication(boolean perClientAuthentication) {
         this.perClientAuthentication = perClientAuthentication;
     }
 }

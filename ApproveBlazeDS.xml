@@ -34,360 +34,365 @@
     </condition>
 
     <condition property="isMac" value="mac">
-        <os family="mac" />
+        <os family="mac"/>
     </condition>
     <condition property="isWindows" value="windows">
-        <os family="windows" />
+        <os family="windows"/>
     </condition>
     <condition property="isLinux" value="linux">
-		<and>
-			<os family="unix" />
-			<not>
-				<isset property="isMac" />
-			</not>
-		</and>
+        <and>
+            <os family="unix"/>
+            <not>
+                <isset property="isMac"/>
+            </not>
+        </and>
     </condition>
     <condition property="package.suffix" value="zip">
-        <os family="windows" />
+        <os family="windows"/>
     </condition>
-	<property name="package.suffix" value="tar.gz" />
-	
-	<property name="rat.report" value="${basedir}/rat-report.txt"/>
-	<property name="apache.rat.jar" value="apache-rat-0.8.jar" />
-	<property name="apache.rat.tasks.jar" value="apache-rat-tasks-0.8.jar" />
-	<property name="apache.rat.url" value="http://people.apache.org/~aharui/rat" />
-	
-	<property name="mac.text.display" value="cat" />
-	<property name="win.text.display" value="type" />
-	<property name="linux.text.display" value="cat" />
-    
+    <property name="package.suffix" value="tar.gz"/>
+
+    <property name="rat.report" value="${basedir}/rat-report.txt"/>
+    <property name="apache.rat.jar" value="apache-rat-0.8.jar"/>
+    <property name="apache.rat.tasks.jar" value="apache-rat-tasks-0.8.jar"/>
+    <property name="apache.rat.url" value="http://people.apache.org/~aharui/rat"/>
+
+    <property name="mac.text.display" value="cat"/>
+    <property name="win.text.display" value="type"/>
+    <property name="linux.text.display" value="cat"/>
+
     <property file="${basedir}/approveblazeds.properties"/>
     <property environment="env"/>
 
-    <property name="build.target" value="main" />
-    
-	<condition property="do.copy.downloads" >
-		<isset property="download.cache.dir" /> 
-	</condition>
-	
+    <property name="build.target" value="main"/>
+
+    <condition property="do.copy.downloads">
+        <isset property="download.cache.dir"/>
+    </condition>
+
     <fail message="The ANT_HOME environment variable is not set."
-        unless="env.ANT_HOME"/>
-		
-	<available file="${env.FLEX_HOME}" 
-		type="dir" 
-		property="FLEX_HOME" value="${env.FLEX_HOME}" />
+          unless="env.ANT_HOME"/>
+
+    <available file="${env.FLEX_HOME}"
+               type="dir"
+               property="FLEX_HOME" value="${env.FLEX_HOME}"/>
 
     <fail message="The FLEX_HOME property is not set in environment or command-line."
-        unless="FLEX_HOME"/>
-				
-	<available file="${env.AIR_HOME}" 
-		type="dir" 
-		property="AIR_HOME" value="${env.AIR_HOME}" />
+          unless="FLEX_HOME"/>
+
+    <available file="${env.AIR_HOME}"
+               type="dir"
+               property="AIR_HOME" value="${env.AIR_HOME}"/>
 
     <fail message="The AIR_HOME property is not set in environment or command-line."
-        unless="AIR_HOME"/>
-		
+          unless="AIR_HOME"/>
+
     <available file="${env.ANT_HOME}/lib/${apache.rat.jar}"
-        type="file"
-        property="apache.rat.found"/>
+               type="file"
+               property="apache.rat.found"/>
     <available file="${env.ANT_HOME}/lib/${apache.rat.tasks.jar}"
-        type="file"
-        property="apache.rat.tasks.found"/>
-		
+               type="file"
+               property="apache.rat.tasks.found"/>
+
     <fail message="The release version is not set.  Specify -Drelease.version=&lt;release version (e.g. 3.1, 3.2, etc)&gt;"
-    unless="release.version"/>
-       
+          unless="release.version"/>
+
     <fail message="The folder number is not set.  Specify -Dfolder.number=&lt;folder number (e.g. 1001, 1002, etc)&gt;"
-       unless="folder.number"/>
-       
-    <property name="package.url.base" value="://repository.apache.org/content/repositories/orgapacheflex-${folder.number}/org/apache/flex/blazeds" />
-	<property name="package.url.path" value="https${package.url.base}/blazeds/${release.version}" />
-	<property name="package.url.name" value="blazeds-${release.version}-source-release" />
-	
+          unless="folder.number"/>
+
+    <property name="package.url.base"
+              value="://repository.apache.org/content/repositories/orgapacheflex-${folder.number}/org/apache/flex/blazeds"/>
+    <property name="package.url.path" value="https${package.url.base}/blazeds/${release.version}"/>
+    <property name="package.url.name" value="blazeds-${release.version}-source-release"/>
+
     <condition property="zip.compressed">
-        <equals arg1="zip" arg2="${package.suffix}" />
+        <equals arg1="zip" arg2="${package.suffix}"/>
     </condition>
-    
-	<target name="display-text-mac" if="isMac">
-		<echo>========================= Begin ${file} ==============================</echo>
-		<exec executable="${mac.text.display}" >
-			<arg value="${file}" /> 
-		</exec>
-		<echo>========================= End ${file} ==============================</echo>
-	</target>
-	<target name="display-text-win" if="isWindows">
-		<pathconvert targetos="windows" property="winfile">
-			<path path="${file}" />
-		</pathconvert>
-		<echo>========================= Begin ${winfile} ==============================</echo>
-		<exec executable="cmd.exe" >
-			<arg value="/c" />
-			<arg value="${win.text.display}" />
-			<arg value="${winfile}" /> 
-		</exec>		
-		<echo>========================= End ${winfile} ==============================</echo>
-	</target>
-	<target name="display-text-linux" if="isLinux">
-		<echo>========================= Begin ${file} ==============================</echo>
-		<exec executable="${linux.text.display}" >
-			<arg value="${file}" /> 
-		</exec>
-		<echo>========================= End ${file} ==============================</echo>
-	</target>
-	
-	<target name="install-rat" depends="install-rat.jar,install-rat.tasks.jar" />
-	<target name="install-rat.jar" unless="apache.rat.found">
-		<get src="${apache.rat.url}/${apache.rat.jar}" dest="${env.ANT_HOME}/lib/${apache.rat.jar}" />
-	</target>
-	<target name="install-rat.tasks.jar" unless="apache.rat.tasks.found">
-		<get src="${apache.rat.url}/${apache.rat.tasks.jar}" dest="${env.ANT_HOME}/lib/${apache.rat.tasks.jar}" />
-	</target>
-	
+
+    <target name="display-text-mac" if="isMac">
+        <echo>========================= Begin ${file} ==============================</echo>
+        <exec executable="${mac.text.display}">
+            <arg value="${file}"/>
+        </exec>
+        <echo>========================= End ${file} ==============================</echo>
+    </target>
+    <target name="display-text-win" if="isWindows">
+        <pathconvert targetos="windows" property="winfile">
+            <path path="${file}"/>
+        </pathconvert>
+        <echo>========================= Begin ${winfile} ==============================</echo>
+        <exec executable="cmd.exe">
+            <arg value="/c"/>
+            <arg value="${win.text.display}"/>
+            <arg value="${winfile}"/>
+        </exec>
+        <echo>========================= End ${winfile} ==============================</echo>
+    </target>
+    <target name="display-text-linux" if="isLinux">
+        <echo>========================= Begin ${file} ==============================</echo>
+        <exec executable="${linux.text.display}">
+            <arg value="${file}"/>
+        </exec>
+        <echo>========================= End ${file} ==============================</echo>
+    </target>
+
+    <target name="install-rat" depends="install-rat.jar,install-rat.tasks.jar"/>
+    <target name="install-rat.jar" unless="apache.rat.found">
+        <get src="${apache.rat.url}/${apache.rat.jar}" dest="${env.ANT_HOME}/lib/${apache.rat.jar}"/>
+    </target>
+    <target name="install-rat.tasks.jar" unless="apache.rat.tasks.found">
+        <get src="${apache.rat.url}/${apache.rat.tasks.jar}" dest="${env.ANT_HOME}/lib/${apache.rat.tasks.jar}"/>
+    </target>
+
     <target name="rat-taskdef" description="Rat taskdef">
         <typedef resource="org/apache/rat/anttasks/antlib.xml"
-        uri="antlib:org.apache.rat.anttasks"
-        classpathref="anttask.classpath"/>
+                 uri="antlib:org.apache.rat.anttasks"
+                 classpathref="anttask.classpath"/>
     </target>
 
-    <target name="main" depends="install-rat,download,check-sigs,uncompress,rat-check,check-notices,binaries,build,approve" description="Perform required release approval steps">
+    <target name="main"
+            depends="install-rat,download,check-sigs,uncompress,rat-check,check-notices,binaries,build,approve"
+            description="Perform required release approval steps">
     </target>
-    
-    <target name="main-no-download" depends="install-rat,check-sigs,uncompress,rat-check,check-notices,binaries,build,approve" description="Perform required release approval steps">
-    </target>
-	
-    <target name="test" >
-		<echo>${rat.report}.bin.txt</echo>
-		<replaceregexp file="${rat.report}.bin.txt" match="..AL.*" replace="" byline="true"/>
-    </target>
-	
-	<target name="display-text" >
-		<antcall target="display-text-mac" />
-		<antcall target="display-text-win" />
-		<antcall target="display-text-linux" />
-	</target>
 
-	<target name="display-text-test" >
-		<antcall target="display-text" >
-			<param name="file" value="${basedir}/rat-report.txt" />
-		</antcall>
-	</target>
-	
+    <target name="main-no-download"
+            depends="install-rat,check-sigs,uncompress,rat-check,check-notices,binaries,build,approve"
+            description="Perform required release approval steps">
+    </target>
+
+    <target name="test">
+        <echo>${rat.report}.bin.txt</echo>
+        <replaceregexp file="${rat.report}.bin.txt" match="..AL.*" replace="" byline="true"/>
+    </target>
+
+    <target name="display-text">
+        <antcall target="display-text-mac"/>
+        <antcall target="display-text-win"/>
+        <antcall target="display-text-linux"/>
+    </target>
+
+    <target name="display-text-test">
+        <antcall target="display-text">
+            <param name="file" value="${basedir}/rat-report.txt"/>
+        </antcall>
+    </target>
+
     <target name="download" depends="download-asc" description="download the release package">
         <get src="${package.url.path}/${package.url.name}.${package.suffix}"
-            dest="${basedir}/${package.url.name}.${package.suffix}" />
+             dest="${basedir}/${package.url.name}.${package.suffix}"/>
         <get src="${package.url.path}/${package.url.name}.${package.suffix}.md5"
-            dest="${basedir}/${package.url.name}.${package.suffix}.md5" />
+             dest="${basedir}/${package.url.name}.${package.suffix}.md5"/>
     </target>
-    
+
     <target name="download-asc" unless="no.asc" description="download the release package">
         <get src="${package.url.path}/${package.url.name}.${package.suffix}.asc"
-        dest="${basedir}/${package.url.name}.${package.suffix}.asc" />
+             dest="${basedir}/${package.url.name}.${package.suffix}.asc"/>
     </target>
 
     <target name="check-md5" description="check md5">
         <echo message="Checking MD5..."/>
-		<replace file="${basedir}/${package.url.name}.${package.suffix}.md5"
-			token=" " />
-		<checksum file="${basedir}/${package.url.name}.${package.suffix}" algorithm="md5" verifyproperty="md5.ok" />
+        <replace file="${basedir}/${package.url.name}.${package.suffix}.md5"
+                 token=" "/>
+        <checksum file="${basedir}/${package.url.name}.${package.suffix}" algorithm="md5" verifyproperty="md5.ok"/>
         <condition property="MD5Invalid">
-			<not>
-				<equals arg1="${md5.ok}" arg2="true" />
-			</not>
+            <not>
+                <equals arg1="${md5.ok}" arg2="true"/>
+            </not>
         </condition>
-        <fail message="MD5 checksum did not match" if="MD5Invalid" />
+        <fail message="MD5 checksum did not match" if="MD5Invalid"/>
     </target>
 
     <target name="check-sigs" depends="check-md5" unless="no.asc" description="check md5 and gpg sigs">
-		<exec executable="gpg" failonerror="true">
-			<arg value="--verify" />
-			<arg value="${basedir}/${package.url.name}.${package.suffix}.asc" />
-			<arg value="${basedir}/${package.url.name}.${package.suffix}" />
-		</exec>
+        <exec executable="gpg" failonerror="true">
+            <arg value="--verify"/>
+            <arg value="${basedir}/${package.url.name}.${package.suffix}.asc"/>
+            <arg value="${basedir}/${package.url.name}.${package.suffix}"/>
+        </exec>
     </target>
 
 
-    <target name="uncompress" depends="pre-clean, untar-file, unzip-file" />
+    <target name="uncompress" depends="pre-clean, untar-file, unzip-file"/>
 
-    <target name="pre-clean" description="remove old uncompressed package" >
-		<delete dir="${basedir}/${package.url.name}" failonerror="false" />
-	</target>
-	
+    <target name="pre-clean" description="remove old uncompressed package">
+        <delete dir="${basedir}/${package.url.name}" failonerror="false"/>
+    </target>
+
     <target name="untar-file" unless="zip.compressed" description="Untars zipFile">
         <untar src="${basedir}/${package.url.name}.${package.suffix}"
-                dest="${basedir}/${package.url.name}" compression="gzip"/>
+               dest="${basedir}/${package.url.name}" compression="gzip"/>
     </target>
 
     <target name="unzip-file" if="zip.compressed" description="Unzips zipFile">
         <unzip src="${basedir}/${package.url.name}.${package.suffix}"
-                dest="${basedir}/${package.url.name}"/>
+               dest="${basedir}/${package.url.name}"/>
     </target>
-    
+
     <target name="binaries" if="isMac">
         <get src="http${package.url.base}/"
-        dest="${basedir}/folderlist.txt" />
+             dest="${basedir}/folderlist.txt"/>
         <!-- remove everything up to 'Parent Directory' -->
         <replaceregexp file="${basedir}/folderlist.txt" match=".*Parent Directory" replace=""
-            flags="s" byline="false"/>
+                       flags="s" byline="false"/>
         <!-- remove everything except the text after an href -->
         <replaceregexp file="${basedir}/folderlist.txt" match="(.*)href=(.*)&gt;(.*)&lt;/a" replace="\3"
-                flags="g" byline="false"/>
+                       flags="g" byline="false"/>
         <!-- remove everything inside single line td's -->
         <replaceregexp file="${basedir}/folderlist.txt" match="&lt;td.*&lt;/td&gt;" replace=""
-                flags="g" byline="false"/>
+                       flags="g" byline="false"/>
         <!-- remove everything all other html tags -->
         <replaceregexp file="${basedir}/folderlist.txt" match="&lt;.*&gt;" replace=""
-                flags="g" byline="false"/>
+                       flags="g" byline="false"/>
         <!-- remove everything up to &nbsp; -->
         <replaceregexp file="${basedir}/folderlist.txt" match="&amp;nbsp;" replace=""
-                flags="g" byline="false"/>
+                       flags="g" byline="false"/>
         <!-- remove all whitespace -->
         <replaceregexp file="${basedir}/folderlist.txt" match="\s" replace=""
-                flags="g" byline="false"/>
+                       flags="g" byline="false"/>
         <!-- remove blazeds folder -->
         <replaceregexp file="${basedir}/folderlist.txt" match="blazeds/&gt;" replace=""
-                flags="g" byline="false"/>
+                       flags="g" byline="false"/>
         <!-- remove opt folder -->
         <replaceregexp file="${basedir}/folderlist.txt" match="flex-messaging-opt/&gt;" replace=""
-                flags="g" byline="false"/>
+                       flags="g" byline="false"/>
         <!-- replace trailing /> with commas -->
         <replaceregexp file="${basedir}/folderlist.txt" match="/&gt;" replace=","
-                flags="g" byline="false"/>
+                       flags="g" byline="false"/>
         <!-- remove trailing comma -->
         <replaceregexp file="${basedir}/folderlist.txt" match=",$" replace=""
-                flags="m" byline="false"/>
-        
-        <antcall target="examine-jars" />
+                       flags="m" byline="false"/>
+
+        <antcall target="examine-jars"/>
     </target>
 
     <!-- how to do tar and sort on Windows? -->
     <target name="examine-jars" if="isMac">
         <!-- comma delimited list, no spaces, not one file per line -->
-        <copy file="folderlist.txt" tofile="loop.txt" />
-        <ant antfile="ApproveBlazeDS.xml" target="loopOnce" inheritAll="false" />
+        <copy file="folderlist.txt" tofile="loop.txt"/>
+        <ant antfile="ApproveBlazeDS.xml" target="loopOnce" inheritAll="false"/>
     </target>
-    <target name="loopOnce" >
+    <target name="loopOnce">
         <!-- make a copy of the list so we can munge it to
          get the first item in the list -->
-        <delete file="loop1.txt" />
-        <copy file="loop.txt" tofile="loop1.txt" />
-        <loadfile srcFile="loop.txt" property="checkiflast" />
+        <delete file="loop1.txt"/>
+        <copy file="loop.txt" tofile="loop1.txt"/>
+        <loadfile srcFile="loop.txt" property="checkiflast"/>
         <condition property="islast" value="true">
             <not>
-                <contains string="${checkiflast}" substring="," />
+                <contains string="${checkiflast}" substring=","/>
             </not>
         </condition>
-        <antcall target="notlast" />
-        <antcall target="lastone" />
+        <antcall target="notlast"/>
+        <antcall target="lastone"/>
     </target>
     <target name="notlast" unless="islast">
-        <loadfile srcFile="loop1.txt" property="echoFile" />
-        <replaceregexp file="loop1.txt" match="^(.*),(.*)" replace="\2" />
-        <loadfile srcFile="loop1.txt" property="thisFile" />
-        <antcall target="jar-check" />
-        <replaceregexp file="loop.txt" match="^(.*),(.*)" replace="\1" />
+        <loadfile srcFile="loop1.txt" property="echoFile"/>
+        <replaceregexp file="loop1.txt" match="^(.*),(.*)" replace="\2"/>
+        <loadfile srcFile="loop1.txt" property="thisFile"/>
+        <antcall target="jar-check"/>
+        <replaceregexp file="loop.txt" match="^(.*),(.*)" replace="\1"/>
         <ant antfile="ApproveBlazeDS.xml" target="loopOnce" inheritAll="false"/>
     </target>
     <target name="lastone" if="islast">
-        <loadfile srcFile="loop1.txt" property="thisFile" />
-        <antcall target="jar-check" />
-        <delete file="loop.txt" />
-        <delete file="loop1.txt" />
+        <loadfile srcFile="loop1.txt" property="thisFile"/>
+        <antcall target="jar-check"/>
+        <delete file="loop.txt"/>
+        <delete file="loop1.txt"/>
     </target>
 
-    <target name="jar-check" >
-        <delete dir="${basedir}/jar" failonerror="false" />
-        <delete dir="${basedir}/${thisFile}.jar" failonerror="false" />
-        <mkdir dir="${basedir}/jar" />
+    <target name="jar-check">
+        <delete dir="${basedir}/jar" failonerror="false"/>
+        <delete dir="${basedir}/${thisFile}.jar" failonerror="false"/>
+        <mkdir dir="${basedir}/jar"/>
         <get src="https${package.url.base}/${thisFile}/${release.version}/${thisFile}-${release.version}.jar"
-            dest="${basedir}/${thisFile}.jar" />
+             dest="${basedir}/${thisFile}.jar"/>
         <get src="https${package.url.base}/${thisFile}/${release.version}/${thisFile}-${release.version}.jar.asc"
-            dest="${basedir}/${thisFile}.jar.asc" />
+             dest="${basedir}/${thisFile}.jar.asc"/>
         <get src="https${package.url.base}/${thisFile}/${release.version}/${thisFile}-${release.version}.jar.md5"
-            dest="${basedir}/${thisFile}.jar.md5" />
+             dest="${basedir}/${thisFile}.jar.md5"/>
         <echo message="Checking MD5..."/>
         <replace file="${basedir}/${thisFile}.jar.md5"
-            token=" " />
-        <checksum file="${basedir}/${thisFile}.jar" algorithm="md5" verifyproperty="jar.md5.ok" />
+                 token=" "/>
+        <checksum file="${basedir}/${thisFile}.jar" algorithm="md5" verifyproperty="jar.md5.ok"/>
         <condition property="JARMD5Invalid">
             <not>
-                <equals arg1="${jar.md5.ok}" arg2="true" />
+                <equals arg1="${jar.md5.ok}" arg2="true"/>
             </not>
         </condition>
-        <fail message="MD5 checksum did not match" if="JARMD5Invalid" />
+        <fail message="MD5 checksum did not match" if="JARMD5Invalid"/>
         <exec executable="gpg" failonerror="true">
-            <arg value="--verify" />
-            <arg value="${basedir}/${thisFile}.jar.asc" />
-            <arg value="${basedir}/${thisFile}.jar" />
+            <arg value="--verify"/>
+            <arg value="${basedir}/${thisFile}.jar.asc"/>
+            <arg value="${basedir}/${thisFile}.jar"/>
         </exec>
-        <unjar src="${basedir}/${thisFile}.jar" dest="${basedir}/jar" />
+        <unjar src="${basedir}/${thisFile}.jar" dest="${basedir}/jar"/>
         <exec executable="tar" output="${basedir}/jarclasses.txt">
-            <arg value="tf" />
-            <arg value="${basedir}/${thisFile}.jar" />
+            <arg value="tf"/>
+            <arg value="${basedir}/${thisFile}.jar"/>
         </exec>
         <replaceregexp file="${basedir}/jarclasses.txt" match="(.*)/(.*)" replace="\1" flags="m" byline="true"/>
         <exec executable="sort" output="${basedir}/jarpaths.txt">
-            <arg value="-u" />
-            <arg value="${basedir}/jarclasses.txt" />
+            <arg value="-u"/>
+            <arg value="${basedir}/jarclasses.txt"/>
         </exec>
-        <antcall target="display-text" >
-            <param name="file" value="${basedir}/jarpaths.txt" />
+        <antcall target="display-text">
+            <param name="file" value="${basedir}/jarpaths.txt"/>
         </antcall>
         <input
-        message="Above is the list of folders in this ${thisFile}.&#xA;Folder names can sometimes indicate presence of third-party content that needs to be in LICENSE and/or NOTICE files.&#xA;Press the Enter key to see the LICENSE for this jar."/>
-        
+                message="Above is the list of folders in this ${thisFile}.&#xA;Folder names can sometimes indicate presence of third-party content that needs to be in LICENSE and/or NOTICE files.&#xA;Press the Enter key to see the LICENSE for this jar."/>
+
         <fail message="LICENSE not in ${basedir}/${thisFile}.jar">
             <condition>
                 <not>
-                    <available file="${basedir}/jar/META-INF/LICENSE" />
+                    <available file="${basedir}/jar/META-INF/LICENSE"/>
                 </not>
             </condition>
         </fail>
         <fail message="NOTICE not in ${basedir}/${thisFile}.jar">
             <condition>
                 <not>
-                    <available file="${basedir}/jar/META-INF/NOTICE" />
+                    <available file="${basedir}/jar/META-INF/NOTICE"/>
                 </not>
             </condition>
         </fail>
-        <antcall target="display-text" >
-            <param name="file" value="${basedir}/jar/META-INF/LICENSE" />
+        <antcall target="display-text">
+            <param name="file" value="${basedir}/jar/META-INF/LICENSE"/>
         </antcall>
         <input
-        message="Check the LICENSE for the Apache License and third-party licenses. Is it ok?"
-        validargs="y,n"
-        defaultvalue="y"
-        addproperty="jar.license.ok"/>
+                message="Check the LICENSE for the Apache License and third-party licenses. Is it ok?"
+                validargs="y,n"
+                defaultvalue="y"
+                addproperty="jar.license.ok"/>
         <fail message="LICENSE for ${basedir}/${thisFile}.jar not correct">
             <condition>
                 <not>
-                    <equals arg1="${jar.license.ok}" arg2="y" />
+                    <equals arg1="${jar.license.ok}" arg2="y"/>
                 </not>
             </condition>
         </fail>
-        <antcall target="display-text" >
-            <param name="file" value="${basedir}/jar/META-INF/NOTICE" />
+        <antcall target="display-text">
+            <param name="file" value="${basedir}/jar/META-INF/NOTICE"/>
         </antcall>
         <input
-        message="Check the NOTICE for required notices from third-parties. Is it ok?"
-        validargs="y,n"
-        defaultvalue="y"
-        addproperty="jar.notice.ok"/>
+                message="Check the NOTICE for required notices from third-parties. Is it ok?"
+                validargs="y,n"
+                defaultvalue="y"
+                addproperty="jar.notice.ok"/>
         <fail message="NOTICE for ${basedir}/${thisFile}.jar not correct">
             <condition>
                 <not>
-                    <equals arg1="${jar.notice.ok}" arg2="y" />
+                    <equals arg1="${jar.notice.ok}" arg2="y"/>
                 </not>
             </condition>
         </fail>
-        
+
     </target>
 
-    <target name="rat-check" >
+    <target name="rat-check">
 
         <echo message="Checking files at ${basedir}/${package.url.name}, report is ${rat.report}"/>
 
         <rat:report xmlns:rat="antlib:org.apache.rat.anttasks"
-            reportFile="${rat.report}">
+                    reportFile="${rat.report}">
             <fileset dir="${basedir}/${package.url.name}">
                 <!-- exclude media (png, gif, jpg, mp3, flv) -->
                 <exclude name="**/*.png"/>
@@ -397,152 +402,153 @@
                 <exclude name="**/*.flv"/>
                 <exclude name="installer/build.number"/>
                 <exclude name="**/swfobject.js"/>
-                <exclude name="**/DoNotDeleteUntilFile.txt" />
+                <exclude name="**/DoNotDeleteUntilFile.txt"/>
                 <exclude name="CONTRIBUTORS"/>
                 <exclude name="CONTRIBUTING"/>
             </fileset>
         </rat:report>
-		<antcall target="display-text" >
-            <param name="file" value="${rat.report}" />
+        <antcall target="display-text">
+            <param name="file" value="${rat.report}"/>
         </antcall>
         <input
-			message="Check that there are no unknown or unapproved licenses or archives. Is it ok?"
-            validargs="y,n"
-        defaultvalue="y"
-        addproperty="rat.license.ok"/>
-		<echo>filtering out AL files to make it easier to see binary files</echo>
-		<copy file="${rat.report}" tofile="${rat.report}.bin.txt" />
+                message="Check that there are no unknown or unapproved licenses or archives. Is it ok?"
+                validargs="y,n"
+                defaultvalue="y"
+                addproperty="rat.license.ok"/>
+        <echo>filtering out AL files to make it easier to see binary files</echo>
+        <copy file="${rat.report}" tofile="${rat.report}.bin.txt"/>
         <replaceregexp file="${rat.report}.bin.txt" match="..AL.*" replace="__AL" byline="true"/>
         <replaceregexp file="${rat.report}.bin.txt" flags="gs" match="__AL." replace="" byline="false"/>
-		<antcall target="display-text" >
-            <param name="file" value="${rat.report}.bin.txt" />
+        <antcall target="display-text">
+            <param name="file" value="${rat.report}.bin.txt"/>
         </antcall>
         <input
-			message="Check that there are no unexpected binaries.  Is it ok?"
-            validargs="y,n"
-        defaultvalue="n"
-        addproperty="rat.binaries.ok"/>
+                message="Check that there are no unexpected binaries.  Is it ok?"
+                validargs="y,n"
+                defaultvalue="n"
+                addproperty="rat.binaries.ok"/>
     </target>
 
-    <target name="check-notices" description="open each notice file for review, grep for a few things" >
+    <target name="check-notices" description="open each notice file for review, grep for a few things">
         <fail message="README not in package">
-			<condition>
-	            <not>
-    	            <available file="${basedir}/${package.url.name}/blazeds-${release.version}/README" />
-        	    </not>
-			</condition>
+            <condition>
+                <not>
+                    <available file="${basedir}/${package.url.name}/blazeds-${release.version}/README"/>
+                </not>
+            </condition>
         </fail>
         <fail message="RELEASE_NOTES not in package">
-			<condition>
-				<not>
-					<available file="${basedir}/${package.url.name}/blazeds-${release.version}/RELEASE_NOTES" />
-				</not>
-			</condition>
+            <condition>
+                <not>
+                    <available file="${basedir}/${package.url.name}/blazeds-${release.version}/RELEASE_NOTES"/>
+                </not>
+            </condition>
         </fail>
         <fail message="NOTICE not in package">
-			<condition>
-				<not>
-					<available file="${basedir}/${package.url.name}/blazeds-${release.version}/NOTICE" />
-				</not>
-			</condition>
+            <condition>
+                <not>
+                    <available file="${basedir}/${package.url.name}/blazeds-${release.version}/NOTICE"/>
+                </not>
+            </condition>
         </fail>
         <fail message="LICENSE not in package">
-			<condition>
-				<not>
-					<available file="${basedir}/${package.url.name}/blazeds-${release.version}/LICENSE" />
-				</not>
-			</condition>
+            <condition>
+                <not>
+                    <available file="${basedir}/${package.url.name}/blazeds-${release.version}/LICENSE"/>
+                </not>
+            </condition>
         </fail>
-		<antcall target="display-text" >
-            <param name="file" value="${basedir}/${package.url.name}/blazeds-${release.version}/README" />
+        <antcall target="display-text">
+            <param name="file" value="${basedir}/${package.url.name}/blazeds-${release.version}/README"/>
         </antcall>
-		<input
-			message="Check the README for version numbers, spelling, grammar, accuracy.  Is it ok?"
-            validargs="y,n"
-        defaultvalue="y"
-        addproperty="readme.ok"/>
-		
-		<antcall target="display-text" >
-            <param name="file" value="${basedir}/${package.url.name}/blazeds-${release.version}/RELEASE_NOTES" />
-        </antcall>
-		<input
-			message="Check the RELEASE_NOTES for copyright years, spelling, grammar, accuracy. Is it ok?"
-            validargs="y,n"
-        defaultvalue="y"
-        addproperty="releasenotes.ok"/>
-		
-		<antcall target="display-text" >
-            <param name="file" value="${basedir}/${package.url.name}/blazeds-${release.version}/NOTICE" />
-        </antcall>
-		<input
-			message="Check the NOTICE for required notices from third-parties. Is it ok?"
-            validargs="y,n"
-        defaultvalue="y"
-        addproperty="notice.ok"/>
+        <input
+                message="Check the README for version numbers, spelling, grammar, accuracy.  Is it ok?"
+                validargs="y,n"
+                defaultvalue="y"
+                addproperty="readme.ok"/>
 
-		<antcall target="display-text" >
-            <param name="file" value="${basedir}/${package.url.name}/blazeds-${release.version}/LICENSE" />
+        <antcall target="display-text">
+            <param name="file" value="${basedir}/${package.url.name}/blazeds-${release.version}/RELEASE_NOTES"/>
         </antcall>
-		<input
-			message="Check the LICENSE for the Apache License and third-party licenses. Is it ok?"
-            validargs="y,n"
-        defaultvalue="y"
-        addproperty="license.ok"/>
+        <input
+                message="Check the RELEASE_NOTES for copyright years, spelling, grammar, accuracy. Is it ok?"
+                validargs="y,n"
+                defaultvalue="y"
+                addproperty="releasenotes.ok"/>
+
+        <antcall target="display-text">
+            <param name="file" value="${basedir}/${package.url.name}/blazeds-${release.version}/NOTICE"/>
+        </antcall>
+        <input
+                message="Check the NOTICE for required notices from third-parties. Is it ok?"
+                validargs="y,n"
+                defaultvalue="y"
+                addproperty="notice.ok"/>
+
+        <antcall target="display-text">
+            <param name="file" value="${basedir}/${package.url.name}/blazeds-${release.version}/LICENSE"/>
+        </antcall>
+        <input
+                message="Check the LICENSE for the Apache License and third-party licenses. Is it ok?"
+                validargs="y,n"
+                defaultvalue="y"
+                addproperty="license.ok"/>
     </target>
 
     <target name="build" depends="copy.downloads">
-		<input
-			message="The final step is to run the build and any tests the build script runs.  This can take several minutes.  Press y to start the build."
-            validargs="y"
-        defaultvalue="y" />
-        <exec dir="${basedir}/${package.url.name}/blazeds-${release.version}" executable="mvn" >
-            <arg value="install" />
+        <input
+                message="The final step is to run the build and any tests the build script runs.  This can take several minutes.  Press y to start the build."
+                validargs="y"
+                defaultvalue="y"/>
+        <exec dir="${basedir}/${package.url.name}/blazeds-${release.version}" executable="mvn">
+            <arg value="install"/>
         </exec>
     </target>
 
-    <target name="copy.downloads" if="${do.copy.downloads}" description="instead of actually downloading all of the dependencies, you can save lots of time by just copying from some other folder in some other SDK.">
-		<echo>Copying downloads</echo>
-        <copy todir="${basedir}/${package.url.name}/in" >
-			<fileset dir="${download.cache.dir}" />
-		</copy>
+    <target name="copy.downloads" if="${do.copy.downloads}"
+            description="instead of actually downloading all of the dependencies, you can save lots of time by just copying from some other folder in some other SDK.">
+        <echo>Copying downloads</echo>
+        <copy todir="${basedir}/${package.url.name}/in">
+            <fileset dir="${download.cache.dir}"/>
+        </copy>
     </target>
-    	
-	<target name="approve" >
-		<condition property="vote" value="+1">
-			<and>
-				<equals arg1="${rat.license.ok}" arg2="y" />
-				<equals arg1="${rat.binaries.ok}" arg2="y" />
-				<equals arg1="${readme.ok}" arg2="y" />
-				<equals arg1="${releasenotes.ok}" arg2="y" />
-				<equals arg1="${notice.ok}" arg2="y" />
-				<equals arg1="${license.ok}" arg2="y" />
-			</and>
-		</condition>
-		<property name="vote" value="-1" />
-		<echo>
-${vote}
-Package ${package.url.path}/${package.url.name}.${package.suffix}
-Java ${ant.java.version}
-OS: ${os.name} ${os.arch} ${os.version}
-Source kit signatures match: y
-Source kit builds: y
-README is ok: ${readme.ok}
-RELEASE_NOTES is ok: ${releasenotes.ok}
-NOTICE is ok: ${notice.ok}
-LICENSE is ok: ${license.ok}
-No unapproved licenses or files in jars: y
-No unapproved licenses or archives: ${rat.license.ok}
-No unapproved binaries: ${rat.binaries.ok}
-		</echo>
-		<fail>
-			<condition>
-	            <equals arg1="-1" arg2="${vote}"/>
-			</condition>
-		</fail>
-		<antcall target="no-asc" />
-	</target>
 
-	<target name="no-asc" if="no.asc" >
-		<echo>PGP signature not checked</echo>
-	</target>
+    <target name="approve">
+        <condition property="vote" value="+1">
+            <and>
+                <equals arg1="${rat.license.ok}" arg2="y"/>
+                <equals arg1="${rat.binaries.ok}" arg2="y"/>
+                <equals arg1="${readme.ok}" arg2="y"/>
+                <equals arg1="${releasenotes.ok}" arg2="y"/>
+                <equals arg1="${notice.ok}" arg2="y"/>
+                <equals arg1="${license.ok}" arg2="y"/>
+            </and>
+        </condition>
+        <property name="vote" value="-1"/>
+        <echo>
+            ${vote}
+            Package ${package.url.path}/${package.url.name}.${package.suffix}
+            Java ${ant.java.version}
+            OS: ${os.name} ${os.arch} ${os.version}
+            Source kit signatures match: y
+            Source kit builds: y
+            README is ok: ${readme.ok}
+            RELEASE_NOTES is ok: ${releasenotes.ok}
+            NOTICE is ok: ${notice.ok}
+            LICENSE is ok: ${license.ok}
+            No unapproved licenses or files in jars: y
+            No unapproved licenses or archives: ${rat.license.ok}
+            No unapproved binaries: ${rat.binaries.ok}
+        </echo>
+        <fail>
+            <condition>
+                <equals arg1="-1" arg2="${vote}"/>
+            </condition>
+        </fail>
+        <antcall target="no-asc"/>
+    </target>
+
+    <target name="no-asc" if="no.asc">
+        <echo>PGP signature not checked</echo>
+    </target>
 </project>

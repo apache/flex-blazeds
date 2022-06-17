@@ -19,20 +19,17 @@ package flex.messaging.services.http.proxy;
 import org.apache.commons.httpclient.auth.AuthScope;
 
 /**
- *
  * Methods used by multiple proxy classes.
  */
-public class ProxyUtil
-{
+public class ProxyUtil {
     private static AuthScope anyAuthScope = new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT);
 
     /**
      * Returns the default authScope.
-     * 
+     *
      * @return The default authScope.
      */
-    public static AuthScope getDefaultAuthScope()
-    {
+    public static AuthScope getDefaultAuthScope() {
         return anyAuthScope;
     }
 }

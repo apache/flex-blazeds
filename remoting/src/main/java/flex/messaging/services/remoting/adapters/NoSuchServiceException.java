@@ -21,17 +21,15 @@ import flex.messaging.MessageException;
 /**
  *
  */
-public class NoSuchServiceException extends MessageException
-{
+public class NoSuchServiceException extends MessageException {
     static final long serialVersionUID = -8758088739688377326L;
 
     /**
      * Constructor.
-     * 
+     *
      * @param message message describing this exception
-     */    
-    public NoSuchServiceException(String s)
-    {
+     */
+    public NoSuchServiceException(String s) {
         super(s);
         setCode("Server.ResourceNotFound"); //MessagingException.SERVER_RESOURCE_NOTFOUND
     }

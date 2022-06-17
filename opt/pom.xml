@@ -16,50 +16,52 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.flex.blazeds</groupId>
-    <artifactId>blazeds</artifactId>
-    <version>4.7.3</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.flex.blazeds</groupId>
+        <artifactId>blazeds</artifactId>
+        <version>4.8.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>flex-messaging-opt</artifactId>
-  <packaging>pom</packaging>
+    <artifactId>flex-messaging-opt</artifactId>
+    <packaging>pom</packaging>
 
-  <modules>
-    <module>tomcat</module>
-    <!-- TODO: Commented out these project as they have third-party dependencies that might be problematic. -->
-    <!--module>websphere</module-->
-    <!--module>weblogic</module-->
-    <!--module>oracle</module-->
-    <module>blazeds-spring-boot-starter</module>
-  </modules>
+    <modules>
+        <module>tomcat</module>
+        <!-- TODO: Commented out these project as they have third-party dependencies that might be problematic. -->
+        <!--module>websphere</module-->
+        <!--module>weblogic</module-->
+        <!--module>oracle</module-->
+        <!-- TODO: Commented out this project, as the spring-flex-core project is not continued and it pulls in loads of CVEs, even Spring would be challenging to rid of all reported CVEs with really high threat-levels -->
+        <!--module>blazeds-spring-boot-starter</module-->
+    </modules>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.flex.blazeds</groupId>
-      <artifactId>flex-messaging-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.flex.blazeds</groupId>
+            <artifactId>flex-messaging-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

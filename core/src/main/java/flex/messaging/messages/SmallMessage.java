@@ -20,10 +20,8 @@ package flex.messaging.messages;
 /**
  * A marker interface that is used to indicate that a Message has an
  * alternative smaller form for serialization.
- *
  */
-public interface SmallMessage extends Message
-{
+public interface SmallMessage extends Message {
     /**
      * This method must be implemented by subclasses that have an
      * <code>java.io.Externalizable</code> or "small" form, or null to

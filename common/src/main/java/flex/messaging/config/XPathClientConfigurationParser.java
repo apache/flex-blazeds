@@ -31,59 +31,42 @@ import javax.xml.xpath.XPathFactory;
  * NOTE: Since reference ids are used between elements, certain
  * sections of the document need to be parsed first.
  * </p>
- *
- *
  */
-public class XPathClientConfigurationParser extends ClientConfigurationParser
-{
+public class XPathClientConfigurationParser extends ClientConfigurationParser {
     private XPath xpath;
 
-    protected void initializeExpressionQuery()
-    {
+    protected void initializeExpressionQuery() {
         this.xpath = XPathFactory.newInstance().newXPath();
     }
 
-    protected Node selectSingleNode(Node source, String expression)
-    {
-        try
-        {
+    protected Node selectSingleNode(Node source, String expression) {
+        try {
             return (Node) xpath.evaluate(expression, source, XPathConstants.NODE);
-        }
-        catch (XPathExpressionException expressionException)
-        {
+        } catch (XPathExpressionException expressionException) {
             throw wrapException(expressionException);
         }
     }
 
-    protected NodeList selectNodeList(Node source, String expression)
-    {
-        try
-        {
+    protected NodeList selectNodeList(Node source, String expression) {
+        try {
             return (NodeList) xpath.evaluate(expression, source, XPathConstants.NODESET);
-        }
-        catch (XPathExpressionException expressionException)
-        {
+        } catch (XPathExpressionException expressionException) {
             throw wrapException(expressionException);
         }
     }
 
-    protected Object evaluateExpression(Node source, String expression)
-    {
-        try
-        {
+    protected Object evaluateExpression(Node source, String expression) {
+        try {
             return xpath.evaluate(expression, source, XPathConstants.STRING);
-        }
-        catch (XPathExpressionException expressionException)
-        {
+        } catch (XPathExpressionException expressionException) {
             throw wrapException(expressionException);
         }
     }
 
-    private ConfigurationException wrapException(XPathExpressionException exception)
-    {
-       ConfigurationException result = new ConfigurationException();
-       result.setDetails(PARSER_INTERNAL_ERROR);
-       result.setRootCause(exception);
-       return result;
+    private ConfigurationException wrapException(XPathExpressionException exception) {
+        ConfigurationException result = new ConfigurationException();
+        result.setDetails(PARSER_INTERNAL_ERROR);
+        result.setRootCause(exception);
+        return result;
     }
 }

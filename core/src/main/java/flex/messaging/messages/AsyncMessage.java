@@ -27,8 +27,7 @@ import flex.messaging.log.Log;
  * This type of message contains information necessary to perform
  * point-to-point or publish-subscribe messaging.
  */
-public class AsyncMessage extends AbstractMessage implements SmallMessage
-{
+public class AsyncMessage extends AbstractMessage implements SmallMessage {
     /**
      * This number was generated using the 'serialver' command line tool.
      * This number should remain consistent with the version used by
@@ -52,8 +51,7 @@ public class AsyncMessage extends AbstractMessage implements SmallMessage
     /**
      * Default constructor for <code>AsyncMessage</code>.
      */
-    public AsyncMessage()
-    {
+    public AsyncMessage() {
         // No-op.
     }
 
@@ -62,8 +60,7 @@ public class AsyncMessage extends AbstractMessage implements SmallMessage
      *
      * @return The correlation id.
      */
-    public String getCorrelationId()
-    {
+    public String getCorrelationId() {
         return correlationId;
     }
 
@@ -72,40 +69,35 @@ public class AsyncMessage extends AbstractMessage implements SmallMessage
      *
      * @param correlationId The correlationId for the message.
      */
-    public void setCorrelationId(String correlationId)
-    {
+    public void setCorrelationId(String correlationId) {
         this.correlationId = correlationId;
     }
 
     /**
      *
      */
-    public Message getSmallMessage()
-    {
-        return getClass() == AsyncMessage.class? new AsyncMessageExt(this) : null;
+    public Message getSmallMessage() {
+        return getClass() == AsyncMessage.class ? new AsyncMessageExt(this) : null;
     }
 
     /**
      *
      */
-    @Override public void readExternal(ObjectInput input)throws IOException, ClassNotFoundException
-    {
+    @Override
+    public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
         super.readExternal(input);
 
         short[] flagsArray = readFlags(input);
-        for (int i = 0; i < flagsArray.length; i++)
-        {
+        for (int i = 0; i < flagsArray.length; i++) {
             short flags = flagsArray[i];
             short reservedPosition = 0;
 
-            if (i == 0)
-            {
+            if (i == 0) {
                 if ((flags & CORRELATION_ID_FLAG) != 0)
-                    correlationId = (String)input.readObject();
+                    correlationId = (String) input.readObject();
 
-                if ((flags & CORRELATION_ID_BYTES_FLAG) != 0)
-                {
-                    correlationIdBytes = (byte[])input.readObject();
+                if ((flags & CORRELATION_ID_BYTES_FLAG) != 0) {
+                    correlationIdBytes = (byte[]) input.readObject();
                     correlationId = UUIDUtils.fromByteArray(correlationIdBytes);
                 }
 
@@ -114,10 +106,8 @@ public class AsyncMessage extends AbstractMessage implements SmallMessage
 
             // For forwards compatibility, read in any other flagged objects
             // to preserve the integrity of the input stream...
-            if ((flags >> reservedPosition) != 0)
-            {
-                for (short j = reservedPosition; j < 6; j++)
-                {
+            if ((flags >> reservedPosition) != 0) {
+                for (short j = reservedPosition; j < 6; j++) {
                     if (((flags >> j) & 1) != 0)
                         input.readObject();
                 }
@@ -128,8 +118,8 @@ public class AsyncMessage extends AbstractMessage implements SmallMessage
     /**
      *
      */
-    @Override public void writeExternal(ObjectOutput output) throws IOException
-    {
+    @Override
+    public void writeExternal(ObjectOutput output) throws IOException {
         super.writeExternal(output);
 
         if (correlationIdBytes == null && correlationId != null)
@@ -152,8 +142,8 @@ public class AsyncMessage extends AbstractMessage implements SmallMessage
             output.writeObject(correlationIdBytes);
     }
 
-    @Override protected String toStringFields(int indentLevel)
-    {
+    @Override
+    protected String toStringFields(int indentLevel) {
         String sep = getFieldSeparator(indentLevel);
         String s = sep + "clientId = " + (Log.isExcludedProperty("clientId") ? Log.VALUE_SUPRESSED : clientId);
         s += sep + "correlationId = " + (Log.isExcludedProperty("correlationId") ? Log.VALUE_SUPRESSED : correlationId);

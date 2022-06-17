@@ -21,22 +21,18 @@ import java.net.URLEncoder;
 
 /**
  * Utility class for URL encoding
- * 
- *
  */
-public class URLEncoderUtil
-{
+public class URLEncoderUtil {
     /**
      * Encode a URL into using the specified encoding string.
-     * 
-     * @param s URL to encode
+     *
+     * @param s        URL to encode
      * @param encoding encoding string
      * @return encoded URL
      * @throws UnsupportedEncodingException Throws UnsupportedEncodingException
      */
     public static String encode(String s, String encoding)
-        throws UnsupportedEncodingException
-    {
+            throws UnsupportedEncodingException {
         return URLEncoder.encode(s, encoding);
     }
 }

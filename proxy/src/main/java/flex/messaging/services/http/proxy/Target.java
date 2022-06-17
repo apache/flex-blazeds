@@ -21,11 +21,9 @@ import org.apache.commons.httpclient.HostConfiguration;
 import java.net.URL;
 
 /**
- *
  * Encapsulates information about a proxy target.
  */
-public class Target
-{
+public class Target {
     // FIXME: this class turned out not to be as useful as originally thought.  Should move this information
     // directly into ProxyContext
 
@@ -37,73 +35,59 @@ public class Target
     private String remotePassword;
     private HostConfiguration hostConfig;
 
-    public URL getUrl()
-    {
+    public URL getUrl() {
         return url;
     }
 
-    public void setUrl(URL url)
-    {
+    public void setUrl(URL url) {
         this.url = url;
     }
 
-    public boolean isHTTPS()
-    {
+    public boolean isHTTPS() {
         return isHTTPS;
     }
 
-    public void setHTTPS(boolean HTTPS)
-    {
+    public void setHTTPS(boolean HTTPS) {
         isHTTPS = HTTPS;
     }
 
-    public String getEncodedPath()
-    {
+    public String getEncodedPath() {
         return encodedPath;
     }
 
-    public void setEncodedPath(String encodedPath)
-    {
+    public void setEncodedPath(String encodedPath) {
         this.encodedPath = encodedPath;
     }
 
-    public HostConfiguration getHostConfig()
-    {
+    public HostConfiguration getHostConfig() {
         return hostConfig;
     }
 
-    public void setHostConfig(HostConfiguration hostConfig)
-    {
+    public void setHostConfig(HostConfiguration hostConfig) {
         this.hostConfig = hostConfig;
     }
 
-    public String getRemoteUsername()
-    {
+    public String getRemoteUsername() {
         return remoteUsername;
     }
 
-    public void setRemoteUsername(String name)
-    {
+    public void setRemoteUsername(String name) {
         remoteUsername = name;
     }
 
-    public String getRemotePassword()
-    {
+    public String getRemotePassword() {
         return remotePassword;
     }
 
-    public void setRemotePassword(String pass)
-    {
+    public void setRemotePassword(String pass) {
         remotePassword = pass;
     }
 
-    public boolean useCustomAuthentication()
-    {
+    public boolean useCustomAuthentication() {
         return useCustomAuthentication;
     }
 
-    public void setUseCustomAuthentication(boolean b)
-    {
+    public void setUseCustomAuthentication(boolean b) {
         useCustomAuthentication = b;
     }
 }

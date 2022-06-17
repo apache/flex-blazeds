@@ -54,11 +54,8 @@ import java.util.Map;
  * This class intends to match the Flash Player 8 C++ code
  * in avmglue/DataIO.cpp
  * </p>
- *
- *
  */
-public class Amf3Output extends AbstractAmfOutput implements Amf3Types
-{
+public class Amf3Output extends AbstractAmfOutput implements Amf3Types {
     /**
      *
      */
@@ -74,14 +71,12 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
      */
     protected HashMap<String, Integer> stringTable;
 
-    public Amf3Output(SerializationContext context)
-    {
+    public Amf3Output(SerializationContext context) {
         super(context);
         context.supportDatesByReference = true;
     }
 
-    public void reset()
-    {
+    public void reset() {
         super.reset();
         if (objectTable != null)
             objectTable.clear();
@@ -97,68 +92,49 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
 
     /**
      * Serialize an Object using AMF 3.
+     *
      * @param o the object to write
      * @throws IOException if the write failed
      */
-    public void writeObject(Object o) throws IOException
-    {
-        if (o == null)
-        {
+    public void writeObject(Object o) throws IOException {
+        if (o == null) {
             writeAMFNull();
             return;
         }
-        
-        if (!context.legacyExternalizable && o instanceof Externalizable)
-        {
+
+        if (!context.legacyExternalizable && o instanceof Externalizable) {
             writeCustomObject(o);
-        }
-        else if (o instanceof String || o instanceof Character)
-        {
+        } else if (o instanceof String || o instanceof Character) {
             String s = o.toString();
             writeAMFString(s);
-        }
-        else if (o instanceof Number)
-        {
-            if (o instanceof Integer || o instanceof Short || o instanceof Byte)
-            {
-                int i = ((Number)o).intValue();
+        } else if (o instanceof Number) {
+            if (o instanceof Integer || o instanceof Short || o instanceof Byte) {
+                int i = ((Number) o).intValue();
                 writeAMFInt(i);
-            }
-            else if (!context.legacyBigNumbers &&
-                    (o instanceof BigInteger || o instanceof BigDecimal))
-            {
+            } else if (!context.legacyBigNumbers &&
+                    (o instanceof BigInteger || o instanceof BigDecimal)) {
                 // Using double to write big numbers such as BigInteger or
                 // BigDecimal can result in information loss so we write
                 // them as String by default...
                 writeAMFString(o.toString());
-            }
-            else
-            {
-                double d = ((Number)o).doubleValue();
+            } else {
+                double d = ((Number) o).doubleValue();
                 writeAMFDouble(d);
             }
-        }
-        else if (o instanceof Boolean)
-        {
-            writeAMFBoolean(((Boolean)o).booleanValue());
+        } else if (o instanceof Boolean) {
+            writeAMFBoolean(((Boolean) o).booleanValue());
         }
         // We have a complex type...
-        else if (o instanceof Date)
-        {
-            writeAMFDate((Date)o);
-        }
-        else if (o instanceof Calendar)
-        {
-            writeAMFDate(((Calendar)o).getTime());
-        }
-        else if (o instanceof Document)
-        {
+        else if (o instanceof Date) {
+            writeAMFDate((Date) o);
+        } else if (o instanceof Calendar) {
+            writeAMFDate(((Calendar) o).getTime());
+        } else if (o instanceof Document) {
             if (context.legacyXMLDocument)
                 out.write(kXMLType); // Legacy flash.xml.XMLDocument Type
             else
                 out.write(kAvmPlusXmlType); // New E4X XML Type
-            if (!byReference(o))
-            {
+            if (!byReference(o)) {
                 String xml = documentToString(o);
                 if (isDebug)
                     trace.write(xml);
@@ -168,54 +144,39 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
         }
         // If there is a proxy for this,write it as a custom object so the default
         // behavior can be overriden.
-        else if (o instanceof Enum && PropertyProxyRegistry.getRegistry().getProxy(o.getClass()) == null)
-        {
-            Enum<?> enumValue = (Enum<?>)o;
+        else if (o instanceof Enum && PropertyProxyRegistry.getRegistry().getProxy(o.getClass()) == null) {
+            Enum<?> enumValue = (Enum<?>) o;
             writeAMFString(enumValue.name());
-        }
-        else
-        {
+        } else {
             // We have an Object or Array type...
             Class cls = o.getClass();
 
-            if (context.legacyMap && o instanceof Map && !(o instanceof ASObject))
-            {
-                writeMapAsECMAArray((Map)o);
-            }
-            else if (!context.legacyDictionary && o instanceof Dictionary)
-            {
-                writeDictionary((Dictionary)o);
-            }
-            else if (o instanceof Collection)
-            {
+            if (context.legacyMap && o instanceof Map && !(o instanceof ASObject)) {
+                writeMapAsECMAArray((Map) o);
+            } else if (!context.legacyDictionary && o instanceof Dictionary) {
+                writeDictionary((Dictionary) o);
+            } else if (o instanceof Collection) {
                 if (o instanceof List && context.preferVectors)
-                    writeListAsTypedVector((List)o);
+                    writeListAsTypedVector((List) o);
                 else if (context.legacyCollection)
-                    writeCollection((Collection)o, null);
+                    writeCollection((Collection) o, null);
                 else
-                    writeArrayCollection((Collection)o, null);
-            }
-            else if (cls.isArray())
-            {
+                    writeArrayCollection((Collection) o, null);
+            } else if (cls.isArray()) {
                 Class<?> componentType = cls.getComponentType();
                 // Convert to vector if requested, except for character and byte arrays
                 if (context.preferVectors &&
-                        !(componentType.equals(Byte.class) || componentType.equals(byte.class))&&
+                        !(componentType.equals(Byte.class) || componentType.equals(byte.class)) &&
                         !(componentType.equals(Character.class) || componentType.equals(char.class)))
                     writeArrayAsTypedVector(o, componentType);
                 else
                     writeAMFArray(o, componentType);
-            }
-            else
-            {
+            } else {
                 //Special Case: wrap RowSet in PageableRowSet for Serialization
-                if (o instanceof RowSet)
-                {
-                    o = new PagedRowSet((RowSet)o, Integer.MAX_VALUE, false);
-                }
-                else if (context.legacyThrowable && o instanceof Throwable)
-                {
-                    o = new StatusInfoProxy((Throwable)o);
+                if (o instanceof RowSet) {
+                    o = new PagedRowSet((RowSet) o, Integer.MAX_VALUE, false);
+                } else if (context.legacyThrowable && o instanceof Throwable) {
+                    o = new StatusInfoProxy((Throwable) o);
                 }
 
                 writeCustomObject(o);
@@ -223,26 +184,22 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
         }
     }
 
-    public void writeObjectTraits(TraitsInfo ti) throws IOException
-    {
+    public void writeObjectTraits(TraitsInfo ti) throws IOException {
         String className = ti.getClassName();
 
-        if (isDebug)
-        {
+        if (isDebug) {
             if (ti.isExternalizable())
                 trace.startExternalizableObject(className, getObjectTableSize());
             else
                 trace.startAMFObject(className, getObjectTableSize());
         }
 
-        if (!byReference(ti))
-        {
+        if (!byReference(ti)) {
             int count = 0;
             List propertyNames = null;
             boolean externalizable = ti.isExternalizable();
 
-            if (!externalizable)
-            {
+            if (!externalizable) {
                 propertyNames = ti.getProperties();
                 if (propertyNames != null)
                     count = propertyNames.size();
@@ -253,10 +210,8 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
             writeUInt29(3 | (externalizable ? 4 : 0) | (dynamic ? 8 : 0) | (count << 4));
             writeStringWithoutType(className);
 
-            if (!externalizable && propertyNames != null)
-            {
-                for (int i = 0; i < count; i++)
-                {
+            if (!externalizable && propertyNames != null) {
+                for (int i = 0; i < count; i++) {
                     String propName = ti.getProperty(i);
                     writeStringWithoutType(propName);
                 }
@@ -264,8 +219,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
         }
     }
 
-    public void writeObjectProperty(String name, Object value) throws IOException
-    {
+    public void writeObjectProperty(String name, Object value) throws IOException {
         if (isDebug)
             trace.namedElement(name);
         increaseNestObjectLevel();
@@ -273,8 +227,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
         decreaseNestObjectLevel();
     }
 
-    public void writeObjectEnd() throws IOException
-    {
+    public void writeObjectEnd() throws IOException {
         // No action required for AMF 3
 
         if (isDebug)
@@ -288,8 +241,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeAMFBoolean(boolean b) throws IOException
-    {
+    protected void writeAMFBoolean(boolean b) throws IOException {
         if (isDebug)
             trace.write(b);
 
@@ -302,12 +254,10 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeAMFDate(Date d) throws IOException
-    {
+    protected void writeAMFDate(Date d) throws IOException {
         out.write(kDateType);
 
-        if (!byReference(d))
-        {
+        if (!byReference(d)) {
             if (isDebug)
                 trace.write(d);
 
@@ -315,15 +265,14 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
             writeUInt29(1);
 
             // Write the time as 64bit value in ms
-            out.writeDouble((double)d.getTime());
+            out.writeDouble((double) d.getTime());
         }
     }
 
     /**
      *
      */
-    protected void writeAMFDouble(double d) throws IOException
-    {
+    protected void writeAMFDouble(double d) throws IOException {
         if (isDebug)
             trace.write(d);
 
@@ -334,10 +283,8 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeAMFInt(int i) throws IOException
-    {
-        if (i >= INT28_MIN_VALUE && i <= INT28_MAX_VALUE)
-        {
+    protected void writeAMFInt(int i) throws IOException {
+        if (i >= INT28_MIN_VALUE && i <= INT28_MAX_VALUE) {
             if (isDebug)
                 trace.write(i);
 
@@ -348,16 +295,13 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
             i = i & UINT29_MASK; // Mask is 2^29 - 1
             out.write(kIntegerType);
             writeUInt29(i);
-        }
-        else
-        {
+        } else {
             // Promote large int to a double
             writeAMFDouble(i);
         }
     }
 
-    protected void writeDictionary(Dictionary dictionary) throws IOException
-    {
+    protected void writeDictionary(Dictionary dictionary) throws IOException {
         out.write(kDictionaryType);
 
         if (byReference(dictionary))
@@ -369,8 +313,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
         if (isDebug) trace.startAMFDictionary(objectTable.size() - 1);
 
         Enumeration keys = dictionary.keys();
-        while (keys.hasMoreElements())
-        {
+        while (keys.hasMoreElements()) {
             if (isDebug) trace.startDictionaryElement();
             Object key = keys.nextElement();
             increaseNestObjectLevel();
@@ -387,18 +330,14 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
             trace.endAMFDictionary();
     }
 
-    protected void writeArrayAsTypedVector(Object array, Class<?> componentType) throws IOException
-    {
+    protected void writeArrayAsTypedVector(Object array, Class<?> componentType) throws IOException {
         int vecType = kTypedVectorObject;
-        if (componentType.isPrimitive())
-        {
+        if (componentType.isPrimitive()) {
             if (int.class.equals(componentType))
                 vecType = kTypedVectorInt;
             else if (double.class.equals(componentType))
                 vecType = kTypedVectorDouble;
-        }
-        else
-        {
+        } else {
             if (Integer.class.equals(componentType))
                 vecType = kTypedVectorInt;
             else if (Double.class.equals(componentType))
@@ -414,19 +353,17 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
         writeUInt29((length << 1) | 1);
         writeBoolean(true /*fixed*/);
 
-        switch (vecType)
-        {
+        switch (vecType) {
             case kTypedVectorInt:
                 if (isDebug)
                     trace.startAMFVector(objectTable.size() - 1, VectorType.INT);
 
-                for (int i = 0; i < length; i++)
-                {
+                for (int i = 0; i < length; i++) {
                     if (isDebug)
                         trace.arrayElement(i);
 
                     Object element = Array.get(array, i);
-                    int value = ((Integer)element).intValue();
+                    int value = ((Integer) element).intValue();
 
                     if (isDebug)
                         trace.write(value);
@@ -438,13 +375,12 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
                 if (isDebug)
                     trace.startAMFVector(objectTable.size() - 1, VectorType.DOUBLE);
 
-                for (int i = 0; i < length; i++)
-                {
+                for (int i = 0; i < length; i++) {
                     if (isDebug)
                         trace.arrayElement(i);
 
                     Object element = Array.get(array, i);
-                    double value = ((Double)element).doubleValue();
+                    double value = ((Double) element).doubleValue();
 
                     if (isDebug)
                         trace.write(value);
@@ -460,8 +396,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
                 String className = componentType.getName();
                 writeStringWithoutType(className);
 
-                for (int i = 0; i < length; i++)
-                {
+                for (int i = 0; i < length; i++) {
                     if (isDebug)
                         trace.arrayElement(i);
 
@@ -479,33 +414,26 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
             trace.endAMFVector();
     }
 
-    protected void writeListAsTypedVector(List list) throws IOException
-    {
+    protected void writeListAsTypedVector(List list) throws IOException {
         // Peek at the first three elements of the list to figure out what type
         // of Vector it should be sent as.
         int vecType = -1;
         Class<?> initialElementClass = null;
         int peekSize = Math.min(list.size(), 3);
-        for (int i = 0; i < peekSize; i++)
-        {
+        for (int i = 0; i < peekSize; i++) {
             Object element = list.get(i);
-            if (i == 0)
-            {
-                initialElementClass = element != null? element.getClass() : null;
-            }
-            else
-            {
-                Class<?> currentElementClass = element != null? element.getClass() : null;
-                if (initialElementClass != currentElementClass)
-                {
+            if (i == 0) {
+                initialElementClass = element != null ? element.getClass() : null;
+            } else {
+                Class<?> currentElementClass = element != null ? element.getClass() : null;
+                if (initialElementClass != currentElementClass) {
                     vecType = kTypedVectorObject;
                     break;
                 }
             }
         }
 
-        if (vecType == -1)
-        {
+        if (vecType == -1) {
             if (initialElementClass == Integer.class)
                 vecType = kTypedVectorInt;
             else if (initialElementClass == Double.class)
@@ -524,19 +452,17 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
         writeUInt29((length << 1) | 1);
         writeBoolean(false /*fixed*/);
 
-        switch (vecType)
-        {
+        switch (vecType) {
             case kTypedVectorInt:
                 if (isDebug)
                     trace.startAMFVector(objectTable.size() - 1, VectorType.INT);
 
-                for (int i = 0; i < length; i++)
-                {
+                for (int i = 0; i < length; i++) {
                     if (isDebug)
                         trace.arrayElement(i);
 
                     Object element = list.get(i);
-                    int value = ((Integer)element).intValue();
+                    int value = ((Integer) element).intValue();
 
                     if (isDebug)
                         trace.write(value);
@@ -548,13 +474,12 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
                 if (isDebug)
                     trace.startAMFVector(objectTable.size() - 1, VectorType.DOUBLE);
 
-                for (int i = 0; i < length; i++)
-                {
+                for (int i = 0; i < length; i++) {
                     if (isDebug)
                         trace.arrayElement(i);
 
                     Object element = list.get(i);
-                    double value = ((Double)element).doubleValue();
+                    double value = ((Double) element).doubleValue();
 
                     if (isDebug)
                         trace.write(value);
@@ -567,11 +492,10 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
                     trace.startAMFVector(objectTable.size() - 1, VectorType.OBJECT);
 
                 // TODO - I don't think this className is used properly on the client currently.
-                String className = initialElementClass != null? initialElementClass.getName() : "";
+                String className = initialElementClass != null ? initialElementClass.getName() : "";
                 writeStringWithoutType(className);
 
-                for (int i = 0; i < length; i++)
-                {
+                for (int i = 0; i < length; i++) {
                     if (isDebug)
                         trace.arrayElement(i);
 
@@ -592,23 +516,19 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeMapAsECMAArray(Map map) throws IOException
-    {
+    protected void writeMapAsECMAArray(Map map) throws IOException {
         out.write(kArrayType);
 
-        if (!byReference(map))
-        {
+        if (!byReference(map)) {
             if (isDebug)
                 trace.startECMAArray(getObjectTableSize());
 
             writeUInt29((0 << 1) | 1);
 
             Iterator it = map.keySet().iterator();
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 Object key = it.next();
-                if (key != null)
-                {
+                if (key != null) {
                     String propName = key.toString();
                     writeStringWithoutType(propName);
 
@@ -631,8 +551,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeAMFNull() throws IOException
-    {
+    protected void writeAMFNull() throws IOException {
         if (isDebug)
             trace.writeNull();
 
@@ -642,13 +561,11 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeAMFString(String s) throws IOException
-    {
+    protected void writeAMFString(String s) throws IOException {
         out.write(kStringType);
         writeStringWithoutType(s);
 
-        if (isDebug)
-        {
+        if (isDebug) {
             trace.writeString(s);
         }
     }
@@ -656,10 +573,8 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeStringWithoutType(String s) throws IOException
-    {
-        if (s.length() == 0)
-        {
+    protected void writeStringWithoutType(String s) throws IOException {
+        if (s.length() == 0) {
             // don't create a reference for the empty string,
             // as it's represented by the one byte value 1
             // len = 0, ((len << 1) | 1).
@@ -667,8 +582,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
             return;
         }
 
-        if (!byReference(s))
-        {
+        if (!byReference(s)) {
             writeAMFUTF(s);
             return;
         }
@@ -677,45 +591,32 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeAMFArray(Object o, Class componentType) throws IOException
-    {
-        if (componentType.isPrimitive())
-        {
+    protected void writeAMFArray(Object o, Class componentType) throws IOException {
+        if (componentType.isPrimitive()) {
             writePrimitiveArray(o);
-        }
-        else if (componentType.equals(Byte.class))
-        {
-            writeAMFByteArray((Byte[])o);
-        }
-        else if (componentType.equals(Character.class))
-        {
-            writeCharArrayAsString((Character[])o);
-        }
-        else
-        {
-            writeObjectArray((Object[])o, null);
+        } else if (componentType.equals(Byte.class)) {
+            writeAMFByteArray((Byte[]) o);
+        } else if (componentType.equals(Character.class)) {
+            writeCharArrayAsString((Character[]) o);
+        } else {
+            writeObjectArray((Object[]) o, null);
         }
     }
 
     /**
      *
      */
-    protected void writeArrayCollection(Collection col, SerializationDescriptor desc) throws IOException
-    {
+    protected void writeArrayCollection(Collection col, SerializationDescriptor desc) throws IOException {
         out.write(kObjectType);
 
-        if (!byReference(col))
-        {
+        if (!byReference(col)) {
             ArrayCollection ac;
 
-            if (col instanceof ArrayCollection)
-            {
-                ac = (ArrayCollection)col;
+            if (col instanceof ArrayCollection) {
+                ac = (ArrayCollection) col;
                 // TODO: QUESTION: Pete, ignoring the descriptor here... not sure if
                 // we should modify the user's AC as that could cause corruption?
-            }
-            else
-            {
+            } else {
                 // Wrap any Collection in an ArrayCollection
                 ac = new ArrayCollection(col);
                 if (desc != null)
@@ -731,18 +632,15 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeCustomObject(Object o) throws IOException
-    {
+    protected void writeCustomObject(Object o) throws IOException {
         PropertyProxy proxy = null;
 
-        if (o instanceof PropertyProxy)
-        {
-            proxy = (PropertyProxy)o;
+        if (o instanceof PropertyProxy) {
+            proxy = (PropertyProxy) o;
             o = proxy.getDefaultInstance();
 
             // The proxy may wrap a null default instance, if so, short circuit here.
-            if (o == null)
-            {
+            if (o == null) {
                 writeAMFNull();
                 return;
             }
@@ -751,32 +649,25 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
             // or Collection or Map with legacyMap as true since we don't yet have
             // the ability to proxy multiple AMF types. We write an AMF Array directly
             // instead of an AMF Object...
-            else if (o instanceof Collection)
-            {
+            else if (o instanceof Collection) {
                 if (context.legacyCollection)
-                    writeCollection((Collection)o, proxy.getDescriptor());
+                    writeCollection((Collection) o, proxy.getDescriptor());
                 else
-                    writeArrayCollection((Collection)o, proxy.getDescriptor());
+                    writeArrayCollection((Collection) o, proxy.getDescriptor());
                 return;
-            }
-            else if (o.getClass().isArray())
-            {
-                writeObjectArray((Object[])o, proxy.getDescriptor());
+            } else if (o.getClass().isArray()) {
+                writeObjectArray((Object[]) o, proxy.getDescriptor());
                 return;
-            }
-            else if (context.legacyMap && o instanceof Map && !(o instanceof ASObject))
-            {
-                writeMapAsECMAArray((Map)o);
+            } else if (context.legacyMap && o instanceof Map && !(o instanceof ASObject)) {
+                writeMapAsECMAArray((Map) o);
                 return;
             }
         }
 
         out.write(kObjectType);
 
-        if (!byReference(o))
-        {
-            if (proxy == null)
-            {
+        if (!byReference(o)) {
+            if (proxy == null) {
                 proxy = PropertyProxyRegistry.getProxyAndRegister(o);
             }
 
@@ -787,14 +678,12 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writePropertyProxy(PropertyProxy proxy, Object instance) throws IOException
-    {
+    protected void writePropertyProxy(PropertyProxy proxy, Object instance) throws IOException {
         /*
          * At this point we substitute the instance we want to serialize.
          */
         Object newInst = proxy.getInstanceToSerialize(instance);
-        if (newInst != instance)
-        {
+        if (newInst != instance) {
             // We can't use writeAMFNull here I think since we already added this object
             // to the object table on the server side.  The player won't have any way
             // of knowing we have this reference mapped to null.
@@ -809,21 +698,16 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
         List propertyNames = null;
         boolean externalizable = proxy.isExternalizable(instance);
 
-        if (!externalizable)
-        {
+        if (!externalizable) {
             propertyNames = proxy.getPropertyNames(instance);
             // filter write-only properties
-            if (proxy instanceof BeanProxy)
-            {
-                BeanProxy bp = (BeanProxy)proxy;
-                if (propertyNames != null && !propertyNames.isEmpty())
-                {
+            if (proxy instanceof BeanProxy) {
+                BeanProxy bp = (BeanProxy) proxy;
+                if (propertyNames != null && !propertyNames.isEmpty()) {
                     List<String> propertiesToRemove = null;
-                    for (int i = 0; i < propertyNames.size(); i++)
-                    {
-                        String propName = (String)propertyNames.get(i);
-                        if (bp.isWriteOnly(instance, propName))
-                        {
+                    for (int i = 0; i < propertyNames.size(); i++) {
+                        String propName = (String) propertyNames.get(i);
+                        if (bp.isWriteOnly(instance, propName)) {
                             if (propertiesToRemove == null)
                                 propertiesToRemove = new ArrayList<String>();
                             propertiesToRemove.add(propName);
@@ -839,16 +723,12 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
         TraitsInfo ti = new TraitsInfo(proxy.getAlias(instance), proxy.isDynamic(), externalizable, propertyNames);
         writeObjectTraits(ti);
 
-        if (externalizable)
-        {
+        if (externalizable) {
             // Call user defined serialization
-            ((Externalizable)instance).writeExternal(this);
-        }
-        else if (propertyNames != null && !propertyNames.isEmpty())
-        {
-            for (int i = 0; i < propertyNames.size(); i++)
-            {
-                String propName = (String)propertyNames.get(i);
+            ((Externalizable) instance).writeExternal(this);
+        } else if (propertyNames != null && !propertyNames.isEmpty()) {
+            for (int i = 0; i < propertyNames.size(); i++) {
+                String propName = (String) propertyNames.get(i);
                 Object value = proxy.getValue(instance, propName);
                 writeObjectProperty(propName, value);
             }
@@ -866,31 +746,22 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
      * </p>
      *
      * @param obj An array of primitives
-     *
      */
-    protected void writePrimitiveArray(Object obj) throws IOException
-    {
+    protected void writePrimitiveArray(Object obj) throws IOException {
         Class aType = obj.getClass().getComponentType();
 
-        if (aType.equals(Character.TYPE))
-        {
+        if (aType.equals(Character.TYPE)) {
             //Treat char[] as a String
-            char[] c = (char[])obj;
+            char[] c = (char[]) obj;
             writeCharArrayAsString(c);
-        }
-        else if (aType.equals(Byte.TYPE))
-        {
-            writeAMFByteArray((byte[])obj);
-        }
-        else
-        {
+        } else if (aType.equals(Byte.TYPE)) {
+            writeAMFByteArray((byte[]) obj);
+        } else {
             out.write(kArrayType);
 
-            if (!byReference(obj))
-            {
-                if (aType.equals(Boolean.TYPE))
-                {
-                    boolean[] b = (boolean[])obj;
+            if (!byReference(obj)) {
+                if (aType.equals(Boolean.TYPE)) {
+                    boolean[] b = (boolean[]) obj;
 
                     // Write out an invalid reference, storing the length in the unused 28-bits.
                     writeUInt29((b.length << 1) | 1);
@@ -898,28 +769,21 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
                     // Send an empty string to imply no named keys
                     writeStringWithoutType(EMPTY_STRING);
 
-                    if (isDebug)
-                    {
+                    if (isDebug) {
                         trace.startAMFArray(getObjectTableSize());
 
-                        for (int i = 0; i < b.length; i++)
-                        {
+                        for (int i = 0; i < b.length; i++) {
                             trace.arrayElement(i);
                             writeAMFBoolean(b[i]);
                         }
 
                         trace.endAMFArray();
-                    }
-                    else
-                    {
-                        for (int i = 0; i < b.length; i++)
-                        {
+                    } else {
+                        for (int i = 0; i < b.length; i++) {
                             writeAMFBoolean(b[i]);
                         }
                     }
-                }
-                else if (aType.equals(Integer.TYPE) || aType.equals(Short.TYPE))
-                {
+                } else if (aType.equals(Integer.TYPE) || aType.equals(Short.TYPE)) {
                     //We have a primitive number, either an int or short
                     //We write all of these as Integers...
                     int length = Array.getLength(obj);
@@ -929,30 +793,23 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
                     // Send an empty string to imply no named keys
                     writeStringWithoutType(EMPTY_STRING);
 
-                    if (isDebug)
-                    {
+                    if (isDebug) {
                         trace.startAMFArray(getObjectTableSize());
 
-                        for (int i = 0; i < length; i++)
-                        {
+                        for (int i = 0; i < length; i++) {
                             trace.arrayElement(i);
                             int v = Array.getInt(obj, i);
                             writeAMFInt(v);
                         }
 
                         trace.endAMFArray();
-                    }
-                    else
-                    {
-                        for (int i = 0; i < length; i++)
-                        {
+                    } else {
+                        for (int i = 0; i < length; i++) {
                             int v = Array.getInt(obj, i);
                             writeAMFInt(v);
                         }
                     }
-                }
-                else
-                {
+                } else {
                     //We have a primitive number, either a double, float, or long
                     //We write all of these as doubles...
                     int length = Array.getLength(obj);
@@ -962,23 +819,18 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
                     // Send an empty string to imply no named keys
                     writeStringWithoutType(EMPTY_STRING);
 
-                    if (isDebug)
-                    {
+                    if (isDebug) {
                         trace.startAMFArray(getObjectTableSize());
 
-                        for (int i = 0; i < length; i++)
-                        {
+                        for (int i = 0; i < length; i++) {
                             trace.arrayElement(i);
                             double v = Array.getDouble(obj, i);
                             writeAMFDouble(v);
                         }
 
                         trace.endAMFArray();
-                    }
-                    else
-                    {
-                        for (int i = 0; i < length; i++)
-                        {
+                    } else {
+                        for (int i = 0; i < length; i++) {
                             double v = Array.getDouble(obj, i);
                             writeAMFDouble(v);
                         }
@@ -991,19 +843,16 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeAMFByteArray(byte[] ba) throws IOException
-    {
+    protected void writeAMFByteArray(byte[] ba) throws IOException {
         out.write(kByteArrayType);
 
-        if (!byReference(ba))
-        {
+        if (!byReference(ba)) {
             int length = ba.length;
 
             // Write out an invalid reference, storing the length in the unused 28-bits.
             writeUInt29((length << 1) | 1);
 
-            if (isDebug)
-            {
+            if (isDebug) {
                 trace.startByteArray(getObjectTableSize(), length);
             }
 
@@ -1014,24 +863,20 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeAMFByteArray(Byte[] ba) throws IOException
-    {
+    protected void writeAMFByteArray(Byte[] ba) throws IOException {
         out.write(kByteArrayType);
 
-        if (!byReference(ba))
-        {
+        if (!byReference(ba)) {
             int length = ba.length;
 
             // Write out an invalid reference, storing the length in the unused 28-bits.
             writeUInt29((length << 1) | 1);
 
-            if (isDebug)
-            {
+            if (isDebug) {
                 trace.startByteArray(getObjectTableSize(), length);
             }
 
-            for (int i = 0; i < ba.length; i++)
-            {
+            for (int i = 0; i < ba.length; i++) {
                 Byte b = ba[i];
                 if (b == null)
                     out.write(0);
@@ -1044,13 +889,11 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeCharArrayAsString(Character[] ca) throws IOException
-    {
+    protected void writeCharArrayAsString(Character[] ca) throws IOException {
         int length = ca.length;
         char[] chars = new char[length];
 
-        for (int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             Character c = ca[i];
             if (c == null)
                 chars[i] = 0;
@@ -1063,8 +906,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeCharArrayAsString(char[] ca) throws IOException
-    {
+    protected void writeCharArrayAsString(char[] ca) throws IOException {
         String str = new String(ca);
         writeAMFString(str);
     }
@@ -1072,12 +914,10 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeObjectArray(Object[] values, SerializationDescriptor descriptor) throws IOException
-    {
+    protected void writeObjectArray(Object[] values, SerializationDescriptor descriptor) throws IOException {
         out.write(kArrayType);
 
-        if (!byReference(values))
-        {
+        if (!byReference(values)) {
             if (isDebug)
                 trace.startAMFArray(getObjectTableSize());
 
@@ -1086,18 +926,16 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
             // Send an empty string to imply no named keys
             writeStringWithoutType(EMPTY_STRING);
 
-            for (int i = 0; i < values.length; ++i)
-            {
+            for (int i = 0; i < values.length; ++i) {
                 if (isDebug)
                     trace.arrayElement(i);
 
                 Object item = values[i];
                 if (item != null && descriptor != null && !(item instanceof String)
                         && !(item instanceof Number) && !(item instanceof Boolean)
-                        && !(item instanceof Character))
-                {
+                        && !(item instanceof Character)) {
                     PropertyProxy proxy = PropertyProxyRegistry.getProxy(item);
-                    proxy = (PropertyProxy)proxy.clone();
+                    proxy = (PropertyProxy) proxy.clone();
                     proxy.setDescriptor(descriptor);
                     proxy.setDefaultInstance(item);
                     item = proxy;
@@ -1115,15 +953,13 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeCollection(Collection c, SerializationDescriptor descriptor) throws IOException
-    {
+    protected void writeCollection(Collection c, SerializationDescriptor descriptor) throws IOException {
         out.write(kArrayType);
 
         // Note: We process Collections independently of Object[]
         // as we want the reference to be based on the actual
         // Collection.
-        if (!byReference(c))
-        {
+        if (!byReference(c)) {
             if (isDebug)
                 trace.startAMFArray(getObjectTableSize());
 
@@ -1134,8 +970,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
 
             Iterator it = c.iterator();
             int i = 0;
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 if (isDebug)
                     trace.arrayElement(i);
 
@@ -1143,10 +978,9 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
 
                 if (item != null && descriptor != null && !(item instanceof String)
                         && !(item instanceof Number) && !(item instanceof Boolean)
-                        && !(item instanceof Character))
-                {
+                        && !(item instanceof Character)) {
                     PropertyProxy proxy = PropertyProxyRegistry.getProxy(item);
-                    proxy = (PropertyProxy)proxy.clone();
+                    proxy = (PropertyProxy) proxy.clone();
                     proxy.setDescriptor(descriptor);
                     proxy.setDefaultInstance(item);
                     item = proxy;
@@ -1166,8 +1000,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected void writeUInt29(int ref) throws IOException
-    {
+    protected void writeUInt29(int ref) throws IOException {
         // Represent smaller integers with fewer bytes using the most
         // significant bit of each byte. The worst case uses 32-bits
         // to represent a 29-bit number, which is what we would have
@@ -1178,37 +1011,28 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
         // 0x00004000 - 0x001FFFFF : 1xxxxxxx 1xxxxxxx 0xxxxxxx
         // 0x00200000 - 0x3FFFFFFF : 1xxxxxxx 1xxxxxxx 1xxxxxxx xxxxxxxx
         // 0x40000000 - 0xFFFFFFFF : throw range exception
-        if (ref < 0x80)
-        {
+        if (ref < 0x80) {
             // 0x00000000 - 0x0000007F : 0xxxxxxx
             out.writeByte(ref);
-        }
-        else if (ref < 0x4000)
-        {
+        } else if (ref < 0x4000) {
             // 0x00000080 - 0x00003FFF : 1xxxxxxx 0xxxxxxx
             out.writeByte(((ref >> 7) & 0x7F) | 0x80);
             out.writeByte(ref & 0x7F);
 
-        }
-        else if (ref < 0x200000)
-        {
+        } else if (ref < 0x200000) {
             // 0x00004000 - 0x001FFFFF : 1xxxxxxx 1xxxxxxx 0xxxxxxx
             out.writeByte(((ref >> 14) & 0x7F) | 0x80);
             out.writeByte(((ref >> 7) & 0x7F) | 0x80);
             out.writeByte(ref & 0x7F);
 
-        }
-        else if (ref < 0x40000000)
-        {
+        } else if (ref < 0x40000000) {
             // 0x00200000 - 0x3FFFFFFF : 1xxxxxxx 1xxxxxxx 1xxxxxxx xxxxxxxx
             out.writeByte(((ref >> 22) & 0x7F) | 0x80);
             out.writeByte(((ref >> 15) & 0x7F) | 0x80);
             out.writeByte(((ref >> 8) & 0x7F) | 0x80);
             out.writeByte(ref & 0xFF);
 
-        }
-        else
-        {
+        } else {
             // 0x40000000 - 0xFFFFFFFF : throw range exception
             throw new MessageException("Integer out of range: " + ref);
         }
@@ -1217,8 +1041,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    public void writeAMFUTF(String s) throws IOException
-    {
+    public void writeAMFUTF(String s) throws IOException {
         int strlen = s.length();
         int utflen = 0;
         int c, count = 0;
@@ -1226,19 +1049,13 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
         char[] charr = getTempCharArray(strlen);
         s.getChars(0, strlen, charr, 0);
 
-        for (int i = 0; i < strlen; i++)
-        {
+        for (int i = 0; i < strlen; i++) {
             c = charr[i];
-            if (c <= 0x007F)
-            {
+            if (c <= 0x007F) {
                 utflen++;
-            }
-            else if (c > 0x07FF)
-            {
+            } else if (c > 0x07FF) {
                 utflen += 3;
-            }
-            else
-            {
+            } else {
                 utflen += 2;
             }
         }
@@ -1247,23 +1064,17 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
 
         byte[] bytearr = getTempByteArray(utflen);
 
-        for (int i = 0; i < strlen; i++)
-        {
+        for (int i = 0; i < strlen; i++) {
             c = charr[i];
-            if (c <= 0x007F)
-            {
-                bytearr[count++] = (byte)c;
-            }
-            else if (c > 0x07FF)
-            {
-                bytearr[count++] = (byte)(0xE0 | ((c >> 12) & 0x0F));
-                bytearr[count++] = (byte)(0x80 | ((c >> 6) & 0x3F));
-                bytearr[count++] = (byte)(0x80 | ((c >> 0) & 0x3F));
-            }
-            else
-            {
-                bytearr[count++] = (byte)(0xC0 | ((c >> 6) & 0x1F));
-                bytearr[count++] = (byte)(0x80 | ((c >> 0) & 0x3F));
+            if (c <= 0x007F) {
+                bytearr[count++] = (byte) c;
+            } else if (c > 0x07FF) {
+                bytearr[count++] = (byte) (0xE0 | ((c >> 12) & 0x0F));
+                bytearr[count++] = (byte) (0x80 | ((c >> 6) & 0x3F));
+                bytearr[count++] = (byte) (0x80 | ((c >> 0) & 0x3F));
+            } else {
+                bytearr[count++] = (byte) (0xC0 | ((c >> 6) & 0x1F));
+                bytearr[count++] = (byte) (0x80 | ((c >> 0) & 0x3F));
             }
         }
         out.write(bytearr, 0, utflen);
@@ -1275,15 +1086,11 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
      * in the reference collection for potential future encounter.
      *
      * @return Success/failure indicator as to whether the object could be
-     *         serialized as a reference.
-     *
+     * serialized as a reference.
      */
-    protected boolean byReference(Object o) throws IOException
-    {
-        if (objectTable != null && objectTable.containsKey(o))
-        {
-            try
-            {
+    protected boolean byReference(Object o) throws IOException {
+        if (objectTable != null && objectTable.containsKey(o)) {
+            try {
                 int refNum = objectTable.get(o).intValue();
 
                 if (isDebug)
@@ -1292,9 +1099,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
                 writeUInt29(refNum << 1);
 
                 return true;
-            }
-            catch (ClassCastException e)
-            {
+            } catch (ClassCastException e) {
                 throw new IOException("Object reference is not an Integer");
             }
         }
@@ -1308,20 +1113,16 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    public void addObjectReference(Object o) throws IOException
-    {
+    public void addObjectReference(Object o) throws IOException {
         byReference(o);
     }
 
     /**
      *
      */
-    protected boolean byReference(String s) throws IOException
-    {
-        if (stringTable != null && stringTable.containsKey(s))
-        {
-            try
-            {
+    protected boolean byReference(String s) throws IOException {
+        if (stringTable != null && stringTable.containsKey(s)) {
+            try {
                 int refNum = stringTable.get(s).intValue();
 
                 writeUInt29(refNum << 1);
@@ -1329,9 +1130,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
                 if (isDebug && Trace.amf)
                     trace.writeStringRef(refNum);
                 return true;
-            }
-            catch (ClassCastException e)
-            {
+            } catch (ClassCastException e) {
                 throw new IOException("String reference is not an Integer");
             }
         }
@@ -1344,12 +1143,9 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
     /**
      *
      */
-    protected boolean byReference(TraitsInfo ti) throws IOException
-    {
-        if (traitsTable != null && traitsTable.containsKey(ti))
-        {
-            try
-            {
+    protected boolean byReference(TraitsInfo ti) throws IOException {
+        if (traitsTable != null && traitsTable.containsKey(ti)) {
+            try {
                 int refNum = traitsTable.get(ti).intValue();
 
                 writeUInt29((refNum << 2) | 1);
@@ -1357,9 +1153,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
                 if (isDebug && Trace.amf)
                     trace.writeTraitsInfoRef(refNum);
                 return true;
-            }
-            catch (ClassCastException e)
-            {
+            } catch (ClassCastException e) {
                 throw new IOException("TraitsInfo reference is not an Integer");
             }
         }
@@ -1369,8 +1163,7 @@ public class Amf3Output extends AbstractAmfOutput implements Amf3Types
         return false;
     }
 
-    protected int getObjectTableSize()
-    {
-        return objectTable != null? objectTable.size() - 1 : 0;
+    protected int getObjectTableSize() {
+        return objectTable != null ? objectTable.size() - 1 : 0;
     }
 }

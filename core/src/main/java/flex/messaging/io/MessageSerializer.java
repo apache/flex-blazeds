@@ -25,8 +25,7 @@ import java.io.OutputStream;
 /**
  *
  */
-public interface MessageSerializer
-{
+public interface MessageSerializer {
     void setVersion(int value);
 
     void initialize(SerializationContext context, OutputStream out, AmfTrace trace);

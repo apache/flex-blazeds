@@ -19,7 +19,7 @@
 -->
 <amfx ver="3" xmlns="http://www.macromedia.com/2005/amfx">
     <header name="Some Header">
-         <int>100</int>
+        <int>100</int>
     </header>
     <body>
         <string>Sample Value</string>

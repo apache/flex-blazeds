@@ -20,7 +20,7 @@
 <amfx ver="3" xmlns="http://www.macromedia.com/2005/amfx">
     <body>
         <array length="3">
-            <string benign="true"  />
+            <string benign="true"/>
             <string benign=""></string>
             <string benign="true">foo</string>
         </array>

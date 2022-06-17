@@ -23,8 +23,7 @@ import java.util.EventListener;
  * consumer. Implementations of this interface may add themselves as listeners
  * via <code>JMSConsumer.addJMSExceptionListener</code>.
  */
-public interface JMSExceptionListener extends EventListener
-{
+public interface JMSExceptionListener extends EventListener {
     /**
      * Notification that a JMS exception was encountered.
      *

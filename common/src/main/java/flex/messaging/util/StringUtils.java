@@ -30,15 +30,13 @@ import javax.xml.transform.stream.StreamSource;
 /**
  *
  */
-public class StringUtils
-{
+public class StringUtils {
     /**
      * The String to use for an OS specific line separator.
      */
     public static final String NEWLINE = System.getProperty("line.separator");
 
-    public static String substitute(String str, String from, String to)
-    {
+    public static String substitute(String str, String from, String to) {
         if (from == null || from.equals("") || to == null)
             return str;
 
@@ -50,8 +48,7 @@ public class StringUtils
         StringBuffer buf = new StringBuffer(str.length());
         int lastIndex = 0;
 
-        while (index != -1)
-        {
+        while (index != -1) {
             buf.append(str.substring(lastIndex, index));
             buf.append(to);
             lastIndex = index + from.length();
@@ -64,8 +61,7 @@ public class StringUtils
         return buf.toString();
     }
 
-    public static boolean findMatchWithWildcard(char[] src, char[] pat)
-    {
+    public static boolean findMatchWithWildcard(char[] src, char[] pat) {
         if (src == null || pat == null)
             return false;
 
@@ -83,10 +79,8 @@ public class StringUtils
         int srcIdx = 0;
         int patIdx = 0;
 
-        for (; srcIdx < srcLen; srcIdx++)
-        {
-            if (patIdx == patLen)
-            {
+        for (; srcIdx < srcLen; srcIdx++) {
+            if (patIdx == patLen) {
                 if (patLen < (srcLen - srcIdx))
                     patIdx = 0; //Start the search again
                 else
@@ -96,8 +90,7 @@ public class StringUtils
             char s = src[srcIdx];
             char m = pat[patIdx];
 
-            switch (m)
-            {
+            switch (m) {
                 case '*':
                     // star on the end
                     if (patIdx == pat.length - 1)
@@ -111,18 +104,14 @@ public class StringUtils
                     break;
 
                 default:
-                    if (s != m)
-                    {
-                        if (!star)
-                        {
+                    if (s != m) {
+                        if (!star) {
                             if (patLen < (srcLen - srcIdx))
                                 patIdx = 0; //Start the search again
                             else
                                 return false;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         star = false;
                         ++patIdx;
                     }
@@ -130,13 +119,10 @@ public class StringUtils
             }
         }
 
-        if (patIdx < patLen)
-        {
+        if (patIdx < patLen) {
             //read off the rest of the pattern and make sure it's all wildcard
-            for (; patIdx < patLen; patLen++)
-            {
-                if (pat[patIdx] != '*')
-                {
+            for (; patIdx < patLen; patLen++) {
+                if (pat[patIdx] != '*') {
                     return false;
                 }
             }
@@ -150,36 +136,29 @@ public class StringUtils
     /**
      * Returns a prettified version of the XML, with indentations and
      * linefeeds.  Returns the original string if there was an error.
+     *
      * @param xml the xml string
      * @return String the prettified xml string
      */
-    public static String prettifyXML(String xml)
-    {
+    public static String prettifyXML(String xml) {
         String result = xml;
-        try
-        {
+        try {
             StringReader reader = new StringReader(xml);
             StringWriter writer = new StringWriter();
             Transformer transformer =
-                TransformerFactory.newInstance().newTransformer();
+                    TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform
-                (new StreamSource(reader), new StreamResult(writer));
+                    (new StreamSource(reader), new StreamResult(writer));
             writer.close();
 
             result = writer.toString();
-        }
-        catch (TransformerFactoryConfigurationError error)
-        {
+        } catch (TransformerFactoryConfigurationError error) {
             // Ignore.
-        }
-        catch (TransformerException error)
-        {
+        } catch (TransformerException error) {
             // Ignore.
-        }
-        catch (IOException error)
-        {
+        } catch (IOException error) {
             // Ignore.
         }
         return result;
@@ -188,14 +167,13 @@ public class StringUtils
     /**
      * Returns a prettified version of the string, or the original
      * string if the operation is not possible.
+     *
      * @param string the string to check
      * @return String the prettified string
      */
-    public static String prettifyString(String string)
-    {
+    public static String prettifyString(String string) {
         String result = string;
-        if (string.startsWith("<?xml"))
-        {
+        if (string.startsWith("<?xml")) {
             result = prettifyXML(string);
         }
         return result;
@@ -203,11 +181,11 @@ public class StringUtils
 
     /**
      * Returns true if a string is null or empty.
+     *
      * @param string the String to check
      * @return boolean true if the string is an empty string
      */
-    public static boolean isEmpty(String string)
-    {
+    public static boolean isEmpty(String string) {
         return string == null || string.length() == 0;
     }
 }

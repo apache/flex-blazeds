@@ -49,111 +49,78 @@ import java.util.TreeSet;
  * </p>
  *
  * @see java.util.Collection
- *
- *
  */
-public class CollectionDecoder extends ActionScriptDecoder
-{
-    public boolean hasShell()
-    {
+public class CollectionDecoder extends ActionScriptDecoder {
+    public boolean hasShell() {
         return true;
     }
 
-    protected boolean isSuitableCollection(Object encodedObject, Class desiredClass)
-    {
+    protected boolean isSuitableCollection(Object encodedObject, Class desiredClass) {
         return (encodedObject instanceof Collection && desiredClass.isAssignableFrom(encodedObject.getClass()));
     }
 
-    public Object createShell(Object encodedObject, Class desiredClass)
-    {
+    public Object createShell(Object encodedObject, Class desiredClass) {
         Collection col = null;
 
-        try
-        {
-            if (encodedObject != null)
-            {
-                if (isSuitableCollection(encodedObject, desiredClass))
-                {
-                    col = (Collection)encodedObject;
-                }
-                else
-                {
-                    if (desiredClass.isInterface())
-                    {
-                        if (List.class.isAssignableFrom(desiredClass))
-                        {
+        try {
+            if (encodedObject != null) {
+                if (isSuitableCollection(encodedObject, desiredClass)) {
+                    col = (Collection) encodedObject;
+                } else {
+                    if (desiredClass.isInterface()) {
+                        if (List.class.isAssignableFrom(desiredClass)) {
                             col = new ArrayList();
-                        }
-                        else if (SortedSet.class.isAssignableFrom(desiredClass))
-                        {
+                        } else if (SortedSet.class.isAssignableFrom(desiredClass)) {
                             col = new TreeSet();
-                        }
-                        else if (Set.class.isAssignableFrom(desiredClass))
-                        {
+                        } else if (Set.class.isAssignableFrom(desiredClass)) {
                             col = new HashSet();
-                        }
-                        else if (Collection.class.isAssignableFrom(desiredClass))
-                        {
+                        } else if (Collection.class.isAssignableFrom(desiredClass)) {
                             col = new ArrayList();
                         }
-                    }
-                    else
-                    {
-                        col = (Collection)desiredClass.newInstance();
+                    } else {
+                        col = (Collection) desiredClass.newInstance();
                     }
                 }
+            } else {
+                col = (Collection) desiredClass.newInstance();
             }
-            else
-            {
-                col = (Collection)desiredClass.newInstance();
-            }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             TranslationException ex = new TranslationException("Could not create Collection " + desiredClass, e);
             ex.setCode("Server.Processing");
             throw ex;
         }
 
-        if (col == null)
-        {
+        if (col == null) {
             DecoderFactory.invalidType(encodedObject, desiredClass);
         }
 
         return col;
     }
 
-    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass)
-    {
+    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass) {
         if (shell == null || encodedObject == null)
             return null;
 
         // Don't decode if we already have a suitable Collection. 
-        if (isSuitableCollection(encodedObject, desiredClass))
-        {
+        if (isSuitableCollection(encodedObject, desiredClass)) {
             return encodedObject;
         }
 
-        return decodeCollection((Collection)shell, encodedObject);
+        return decodeCollection((Collection) shell, encodedObject);
     }
 
-    protected Collection decodeCollection(Collection collectionShell, Object encodedObject)
-    {
+    protected Collection decodeCollection(Collection collectionShell, Object encodedObject) {
         Object obj = null;
 
-        if (encodedObject instanceof String)
-        {
-            encodedObject = ((String)encodedObject).toCharArray();
-        }
-        else if (encodedObject instanceof Collection)
-        {
-            encodedObject = ((Collection)encodedObject).toArray();
+        if (encodedObject instanceof String) {
+            encodedObject = ((String) encodedObject).toCharArray();
+        } else if (encodedObject instanceof Collection) {
+            encodedObject = ((Collection) encodedObject).toArray();
         }
 
         int len = Array.getLength(encodedObject);
 
-        for (int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             obj = Array.get(encodedObject, i);
             collectionShell.add(obj);
         }

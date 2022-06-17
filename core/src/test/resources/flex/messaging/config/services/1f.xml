@@ -21,7 +21,7 @@
 
     <services>
 
-        <service-include file-path="1f_service_include.xml" />
+        <service-include file-path="1f_service_include.xml"/>
 
     </services>
 

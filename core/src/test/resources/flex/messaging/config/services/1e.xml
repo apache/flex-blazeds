@@ -22,25 +22,25 @@
     <services>
 
         <service id="foo-service"
-            class="flex.messaging.services.FooService"
-            messageTypes="flex.messaging.messages.FooMessage">
+                 class="flex.messaging.services.FooService"
+                 messageTypes="flex.messaging.messages.FooMessage">
 
             <adapters>
-                <adapter-include file-path="1e_adapter_include.xml" />
+                <adapter-include file-path="1e_adapter_include.xml"/>
             </adapters>
 
             <default-channels>
-                <channel ref="foo-channel" />
+                <channel ref="foo-channel"/>
             </default-channels>
 
-            <destination-include file-path="1e_destination_include.xml" />
+            <destination-include file-path="1e_destination_include.xml"/>
 
         </service>
 
     </services>
 
     <channels>
-        <channel-include file-path="1e_channel_include.xml" />
+        <channel-include file-path="1e_channel_include.xml"/>
     </channels>
 
     <security>

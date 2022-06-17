@@ -30,11 +30,8 @@ import java.util.Map;
  * to convert the encoded object into an instance of the desired class.
  *
  * @see ActionScriptDecoder
- *
- *
  */
-public class DecoderFactory
-{
+public class DecoderFactory {
     // The identity transform
     private static final NativeDecoder nativeDecoder = new NativeDecoder();
 
@@ -77,8 +74,7 @@ public class DecoderFactory
      * @param desiredClass the desire class for the decoded object
      * @return The <tt>ActionScriptDecoder</tt> to use for instances of the desired class.
      */
-    public static ActionScriptDecoder getDecoderForShell(Class desiredClass)
-    {
+    public static ActionScriptDecoder getDecoderForShell(Class desiredClass) {
         if (desiredClass == null)
             return nullDecoder;
 
@@ -102,7 +98,7 @@ public class DecoderFactory
      * or care about restoring references in the event that an instance was converted to
      * a new type. Since the all MessageDeserializes now convert directly to strongly
      * typed instances it is less likely that references will need to be tracked.
-     *
+     * <p>
      * A case where a reference may have needed to be tracked would be that a Class has
      * several properties of a subtype of Object[] (i.e. Array), Collection or Map but these
      * properties were not of the default type returned by the MessageDeserializer, that
@@ -111,13 +107,11 @@ public class DecoderFactory
      * (say HashMap -> TreeMap) would effectively clone these instances.
      *
      * @param encodedObject the encoded object
-     * @param desiredClass the desire class for the decoded object
+     * @param desiredClass  the desire class for the decoded object
      * @return The <tt>ActionScriptDecoder</tt> to use for instances of the desired class.
      */
-    public static ActionScriptDecoder getDecoder(Object encodedObject, Class desiredClass)
-    {
-        if (encodedObject != null)
-        {
+    public static ActionScriptDecoder getDecoder(Object encodedObject, Class desiredClass) {
+        if (encodedObject != null) {
             // If we already have a suitable instance, return immediately!
             if (desiredClass.isAssignableFrom(encodedObject.getClass()))
                 return nativeDecoder;
@@ -170,9 +164,9 @@ public class DecoderFactory
 
         if (encodedObject == null)
             return nullDecoder;
-        
+
         if (desiredClass.isEnum())
-            return enumDecoder;        
+            return enumDecoder;
 
         DecoderFactory.invalidType(encodedObject, desiredClass);
 
@@ -186,13 +180,11 @@ public class DecoderFactory
      * a lot of information when a complex type is converted.
      *
      * @param encodedObject the encoded object
-     * @param desiredClass the desire class for the decoded object
+     * @param desiredClass  the desire class for the decoded object
      * @return The <tt>ActionScriptDecoder</tt> to use for instances of the desired class.
      */
-    public static ActionScriptDecoder getReferenceAwareDecoder(Object encodedObject, Class desiredClass)
-    {
-        if (encodedObject != null)
-        {
+    public static ActionScriptDecoder getReferenceAwareDecoder(Object encodedObject, Class desiredClass) {
+        if (encodedObject != null) {
             if (String.class.equals(desiredClass))
                 return stringDecoder;
 
@@ -257,71 +249,55 @@ public class DecoderFactory
         return nativeDecoder;
     }
 
-    public static boolean isNumber(Class desiredClass)
-    {
+    public static boolean isNumber(Class desiredClass) {
         boolean isNum = false;
 
-        if (desiredClass.isPrimitive())
-        {
+        if (desiredClass.isPrimitive()) {
             if (desiredClass.equals(Integer.TYPE)
                     || desiredClass.equals(Double.TYPE)
                     || desiredClass.equals(Long.TYPE)
                     || desiredClass.equals(Float.TYPE)
                     || desiredClass.equals(Short.TYPE)
-                    || desiredClass.equals(Byte.TYPE))
-            {
+                    || desiredClass.equals(Byte.TYPE)) {
                 isNum = true;
             }
-        }
-        else if (Number.class.isAssignableFrom(desiredClass))
-        {
+        } else if (Number.class.isAssignableFrom(desiredClass)) {
             isNum = true;
         }
 
         return isNum;
     }
 
-    public static boolean isCharacter(Class desiredClass)
-    {
+    public static boolean isCharacter(Class desiredClass) {
         boolean isChar = false;
 
-        if (desiredClass.isPrimitive() && desiredClass.equals(Character.TYPE))
-        {
+        if (desiredClass.isPrimitive() && desiredClass.equals(Character.TYPE)) {
             isChar = true;
-        }
-        else if (desiredClass.equals(Character.class))
-        {
+        } else if (desiredClass.equals(Character.class)) {
             isChar = true;
         }
 
         return isChar;
     }
 
-    public static boolean isBoolean(Class desiredClass)
-    {
+    public static boolean isBoolean(Class desiredClass) {
         boolean isBool = false;
 
-        if (desiredClass.isPrimitive() && desiredClass.equals(Boolean.TYPE))
-        {
+        if (desiredClass.isPrimitive() && desiredClass.equals(Boolean.TYPE)) {
             isBool = true;
-        }
-        else if (desiredClass.equals(Boolean.class))
-        {
+        } else if (desiredClass.equals(Boolean.class)) {
             isBool = true;
         }
 
         return isBool;
     }
 
-    public static boolean isCharArray(Class desiredClass)
-    {
+    public static boolean isCharArray(Class desiredClass) {
         boolean isCharArray = false;
 
-        if (desiredClass.isArray())
-        {
+        if (desiredClass.isArray()) {
             Class type = desiredClass.getComponentType();
-            if (type != null && type.equals(Character.TYPE))
-            {
+            if (type != null && type.equals(Character.TYPE)) {
                 isCharArray = true;
             }
         }
@@ -329,43 +305,35 @@ public class DecoderFactory
         return isCharArray;
     }
 
-    public static boolean isTypedObject(Object encodedObject)
-    {
+    public static boolean isTypedObject(Object encodedObject) {
         boolean typed = false;
 
-        if (encodedObject instanceof ASObject)
-        {
+        if (encodedObject instanceof ASObject) {
             typed = TypeMarshallingContext.getType(encodedObject) != null;
         }
 
         return typed;
     }
 
-    public static void invalidType(Object object, Class desiredClass)
-    {
+    public static void invalidType(Object object, Class desiredClass) {
         String inputType = null;
 
-        if (object != null)
-        {
+        if (object != null) {
             inputType = object.getClass().getName();
         }
 
         StringBuffer message = new StringBuffer("Cannot convert ");
-        if (inputType != null)
-        {
+        if (inputType != null) {
             message.append("type ").append(inputType).append(" ");
         }
 
         if (object != null && (object instanceof String
                 || object instanceof Number
                 || object instanceof Boolean
-                || object instanceof Date))
-        {
+                || object instanceof Date)) {
             message.append("with value '").append(object.toString()).append("' ");
-        }
-        else if (object instanceof ASObject)
-        {
-            ASObject aso = (ASObject)object;
+        } else if (object instanceof ASObject) {
+            ASObject aso = (ASObject) object;
             message.append("with remote type specified as '").append(aso.getType()).append("' ");
         }
 

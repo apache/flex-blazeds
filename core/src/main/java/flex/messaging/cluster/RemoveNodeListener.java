@@ -18,13 +18,11 @@ package flex.messaging.cluster;
 
 
 /**
- *
  * Called when a node leaves the cluster.  Note that for JGroups at least, this
  * callback should not execute any "long running" operations.  This is indirectly
  * called from the MembershipListener interface in JGroups.
  */
-public interface RemoveNodeListener
-{
+public interface RemoveNodeListener {
     /**
      * Callback that the clustering subsystem uses to notify that a
      * node has been removed from the cluster.

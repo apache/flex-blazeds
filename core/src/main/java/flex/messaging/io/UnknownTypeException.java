@@ -19,12 +19,10 @@ package flex.messaging.io;
 /**
  *
  */
-public class UnknownTypeException extends SerializationException
-{
+public class UnknownTypeException extends SerializationException {
     static final long serialVersionUID = 8407391043989798441L;
 
-    public UnknownTypeException()
-    {
+    public UnknownTypeException() {
         super();
     }
 }

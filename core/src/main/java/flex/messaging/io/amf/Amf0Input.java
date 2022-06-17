@@ -35,17 +35,14 @@ import flex.messaging.util.ClassUtil;
 
 /**
  * An Amf0 input object.
- *
  */
-public class Amf0Input extends AbstractAmfInput implements AmfTypes
-{
+public class Amf0Input extends AbstractAmfInput implements AmfTypes {
     /**
      * Unfortunately the Flash Player starts AMF 3 messages off with the legacy
      * AMF 0 format and uses a type, AmfTypes.kAvmPlusObjectType, to indicate
      * that the next object in the stream is to be deserialized differently. The
      * original hope was for two independent encoding versions... but for now
      * we just keep a reference to objectInput here.
-     *
      */
     protected ActionMessageInput avmPlusInput;
 
@@ -54,8 +51,7 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
      */
     protected List objectsTable;
 
-    public Amf0Input(SerializationContext context)
-    {
+    public Amf0Input(SerializationContext context) {
         super(context);
 
         objectsTable = new ArrayList(64);
@@ -64,13 +60,12 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
     /**
      * Clear all object reference information so that the instance
      * can be used to deserialize another data structure.
-     *
+     * <p>
      * Reset should be called before reading a top level object,
      * such as a new header or a new body.
      */
     @Override
-    public void reset()
-    {
+    public void reset() {
         super.reset();
 
         objectsTable.clear();
@@ -88,19 +83,16 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
      * Public entry point to read a top level AMF Object, such as
      * a header value or a message body.
      */
-    public Object readObject() throws ClassNotFoundException, IOException
-    {
+    public Object readObject() throws ClassNotFoundException, IOException {
         int type = in.readByte();
 
         Object value = readObjectValue(type);
         return value;
     }
 
-    protected Object readObjectValue(int type) throws ClassNotFoundException, IOException
-    {
+    protected Object readObjectValue(int type) throws ClassNotFoundException, IOException {
         Object value = null;
-        switch (type)
-        {
+        switch (type) {
             case kNumberType:
                 value = Double.valueOf(readDouble());
                 break;
@@ -115,8 +107,7 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
 
             case kAvmPlusObjectType:
 
-                if (avmPlusInput == null)
-                {
+                if (avmPlusInput == null) {
                     avmPlusInput = new Amf3Input(context);
                     avmPlusInput.setDebugTrace(trace);
                     avmPlusInput.setInputStream(in);
@@ -138,7 +129,7 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
 
                 value = readLongUTF();
                 if (isDebug)
-                    trace.writeString((String)value);
+                    trace.writeString((String) value);
                 break;
 
             case kObjectType:
@@ -219,11 +210,10 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
         return value;
     }
 
-    protected Date readDate() throws IOException
-    {
+    protected Date readDate() throws IOException {
         ClassUtil.validateCreation(Date.class);
 
-        long time = (long)in.readDouble();
+        long time = (long) in.readDouble();
         /*
             We read in the timezone but do nothing with the value as
             we expect dates to be written in the UTC timezone. Client
@@ -240,10 +230,11 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
         return d;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean readBoolean() throws IOException
-    {
+    public boolean readBoolean() throws IOException {
         ClassUtil.validateCreation(Boolean.class);
 
         boolean b = super.readBoolean();
@@ -252,10 +243,11 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
         return b;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public double readDouble() throws IOException
-    {
+    public double readDouble() throws IOException {
         ClassUtil.validateCreation(Double.class);
 
         double d = super.readDouble();
@@ -267,19 +259,15 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
     /**
      * Deserialize the bits of an ECMA array w/o a prefixing type byte.
      */
-    protected Map readECMAArrayValue() throws ClassNotFoundException, IOException
-    {
+    protected Map readECMAArrayValue() throws ClassNotFoundException, IOException {
         ClassUtil.validateCreation(HashMap.class);
 
         int size = in.readInt();
         HashMap h;
-        if (size == 0)
-        {
+        if (size == 0) {
             h = new HashMap();
-        }
-        else
-        {
-            int initialCapacity = size < INITIAL_COLLECTION_CAPACITY? size : INITIAL_COLLECTION_CAPACITY;
+        } else {
+            int initialCapacity = size < INITIAL_COLLECTION_CAPACITY ? size : INITIAL_COLLECTION_CAPACITY;
             h = new HashMap(initialCapacity);
         }
 
@@ -290,17 +278,14 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
 
         String name = in.readUTF();
         int type = in.readByte();
-        while (type != kObjectEndType)
-        {
-            if (type != kObjectEndType)
-            {
+        while (type != kObjectEndType) {
+            if (type != kObjectEndType) {
                 if (isDebug)
                     trace.namedElement(name);
 
                 // Always read value but be careful to ignore erroneous 'length' prop that is sometimes sent by the player.
                 Object value = readObjectValueOneLevelDown(type, true);
-                if (!name.equals("length"))
-                {
+                if (!name.equals("length")) {
                     ClassUtil.validateAssignment(h, name, value);
                     h.put(name, value);
                 }
@@ -316,8 +301,7 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
         return h;
     }
 
-    protected String readString() throws IOException
-    {
+    protected String readString() throws IOException {
         ClassUtil.validateCreation(String.class);
 
         String s = readUTF();
@@ -330,22 +314,18 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
     /**
      * Deserialize the bits of an array w/o a prefixing type byte.
      */
-    protected Object readArrayValue() throws ClassNotFoundException, IOException
-    {
+    protected Object readArrayValue() throws ClassNotFoundException, IOException {
         int size = in.readInt();
         // Don't instantiate List/Array right away with the supplied size if it is more than
         // INITIAL_COLLECTION_CAPACITY in case the supplied size has been tampered.
         boolean useListTemporarily = false;
         Object l;
-        if (context.legacyCollection || size > INITIAL_COLLECTION_CAPACITY)
-        {
+        if (context.legacyCollection || size > INITIAL_COLLECTION_CAPACITY) {
             useListTemporarily = !context.legacyCollection;
             ClassUtil.validateCreation(ArrayList.class);
-            int initialCapacity = size < INITIAL_COLLECTION_CAPACITY? size : INITIAL_COLLECTION_CAPACITY;
+            int initialCapacity = size < INITIAL_COLLECTION_CAPACITY ? size : INITIAL_COLLECTION_CAPACITY;
             l = new ArrayList(initialCapacity);
-        }
-        else
-        {
+        } else {
             ClassUtil.validateCreation(Object[].class);
             l = new Object[size];
         }
@@ -354,8 +334,7 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
         if (isDebug)
             trace.startAMFArray(objectsTable.size() - 1);
 
-        for (int i = 0; i < size; ++i)
-        {
+        for (int i = 0; i < size; ++i) {
             if (isDebug)
                 trace.arrayElement(i);
 
@@ -364,7 +343,7 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
             Object value = readObjectValueOneLevelDown(type, true);
             ClassUtil.validateAssignment(l, i, value);
             if (l instanceof ArrayList)
-                ((ArrayList)l).add(value);
+                ((ArrayList) l).add(value);
             else
                 Array.set(l, i, value);
         }
@@ -372,9 +351,8 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
         if (isDebug)
             trace.endAMFArray();
 
-        if (useListTemporarily)
-        {
-            l = ((ArrayList)l).toArray();
+        if (useListTemporarily) {
+            l = ((ArrayList) l).toArray();
             objectsTable.set(objectId, l);
         }
 
@@ -384,16 +362,15 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
     /**
      * Deserialize the bits of a map w/o a prefixing type byte.
      */
-    protected Object readObjectValue(String className) throws ClassNotFoundException, IOException
-    {
+    protected Object readObjectValue(String className) throws ClassNotFoundException, IOException {
         // Prepare the parameters for createObjectInstance(). Use an array as a holder
         // to simulate two 'by-reference' parameters className and (initially null) proxy
-        Object[] params = new Object[] {className, null};
+        Object[] params = new Object[]{className, null};
         Object object = createObjectInstance(params);
 
         // Retrieve any changes to the className and the proxy parameters
-        className = (String)params[0];
-        PropertyProxy proxy = (PropertyProxy)params[1];
+        className = (String) params[0];
+        PropertyProxy proxy = (PropertyProxy) params[1];
 
         int objectId = rememberObject(object);
 
@@ -403,8 +380,7 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
         boolean isCollectionClass = isCollectionClass(object);
         String propertyName = in.readUTF();
         int type = in.readByte();
-        while (type != kObjectEndType)
-        {
+        while (type != kObjectEndType) {
             if (isDebug)
                 trace.namedElement(propertyName);
             Object value = readObjectValueOneLevelDown(type, isCollectionClass);
@@ -426,8 +402,7 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
         // temporary object.  it would be possible to warn users about
         // that problem by tracking if we read any references to this object
         // in the readObject call above.
-        if (newObj != object)
-        {
+        if (newObj != object) {
             objectsTable.set(objectId, newObj);
             object = newObj;
         }
@@ -441,26 +416,23 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
      *
      * @return the read String
      * @throws java.io.UTFDataFormatException if the UTF-8 encoding is incorrect
-     * @throws IOException            if an I/O error occurs.
+     * @throws IOException                    if an I/O error occurs.
      */
-    protected String readLongUTF() throws IOException
-    {
+    protected String readLongUTF() throws IOException {
         int utflen = in.readInt();
         checkUTFLength(utflen);
 
         int c, char2, char3;
         char[] charr = getTempCharArray(utflen);
-        byte bytearr [] = getTempByteArray(utflen);
+        byte bytearr[] = getTempByteArray(utflen);
         int count = 0;
         int chCount = 0;
 
         in.readFully(bytearr, 0, utflen);
 
-        while (count < utflen)
-        {
-            c = (int)bytearr[count] & 0xff;
-            switch (c >> 4)
-            {
+        while (count < utflen) {
+            c = (int) bytearr[count] & 0xff;
+            switch (c >> 4) {
                 case 0:
                 case 1:
                 case 2:
@@ -471,7 +443,7 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
                 case 7:
                     /* 0xxxxxxx*/
                     count++;
-                    charr[chCount] = (char)c;
+                    charr[chCount] = (char) c;
                     break;
                 case 12:
                 case 13:
@@ -479,24 +451,24 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
                     count += 2;
                     if (count > utflen)
                         throw new UTFDataFormatException();
-                    char2 = (int)bytearr[count - 1];
+                    char2 = (int) bytearr[count - 1];
                     if ((char2 & 0xC0) != 0x80)
                         throw new UTFDataFormatException();
-                    charr[chCount] = (char)(((c & 0x1F) << 6) | (char2 & 0x3F));
+                    charr[chCount] = (char) (((c & 0x1F) << 6) | (char2 & 0x3F));
                     break;
                 case 14:
                     /* 1110 xxxx  10xx xxxx  10xx xxxx */
                     count += 3;
                     if (count > utflen)
                         throw new UTFDataFormatException();
-                    char2 = (int)bytearr[count - 2];
-                    char3 = (int)bytearr[count - 1];
+                    char2 = (int) bytearr[count - 2];
+                    char3 = (int) bytearr[count - 1];
                     if (((char2 & 0xC0) != 0x80) || ((char3 & 0xC0) != 0x80))
                         throw new UTFDataFormatException();
                     charr[chCount] = (char)
-                        (((c & 0x0F) << 12) |
-                         ((char2 & 0x3F) << 6) |
-                         ((char3 & 0x3F) << 0));
+                            (((c & 0x0F) << 12) |
+                                    ((char2 & 0x3F) << 6) |
+                                    ((char3 & 0x3F) << 0));
                     break;
                 default:
                     /* 10xx xxxx,  1111 xxxx */
@@ -508,8 +480,7 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
         return new String(charr, 0, chCount);
     }
 
-    protected Object readXml() throws IOException
-    {
+    protected Object readXml() throws IOException {
         String xml = readLongUTF();
 
         if (isDebug) {
@@ -530,15 +501,13 @@ public class Amf0Input extends AbstractAmfInput implements AmfTypes
     /**
      * Remember a deserialized object so that you can use it later through a reference.
      */
-    protected int rememberObject(Object obj)
-    {
+    protected int rememberObject(Object obj) {
         int id = objectsTable.size();
         objectsTable.add(obj);
         return id;
     }
 
-    protected Object readObjectValueOneLevelDown(int type, boolean nestCollectionLevelDown) throws ClassNotFoundException, IOException
-    {
+    protected Object readObjectValueOneLevelDown(int type, boolean nestCollectionLevelDown) throws ClassNotFoundException, IOException {
         increaseNestObjectLevel();
         if (nestCollectionLevelDown)
             increaseNestCollectionLevel();

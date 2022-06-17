@@ -18,18 +18,14 @@ package flex.messaging.util;
 
 /**
  *
- *
  */
-public class AssertionFailedError extends Error
-{
+public class AssertionFailedError extends Error {
     static final long serialVersionUID = 6315002781136046939L;
 
-    public AssertionFailedError()
-    {
+    public AssertionFailedError() {
     }
 
-    public AssertionFailedError(String message)
-    {
+    public AssertionFailedError(String message) {
         super(message);
     }
 }

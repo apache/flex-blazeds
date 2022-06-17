@@ -30,29 +30,26 @@ import javax.management.ObjectName;
  * monitoring and managing a <code>Destination</code> at runtime.
  */
 public abstract class DestinationControl extends BaseControl implements
-        DestinationControlMBean
-{
+        DestinationControlMBean {
     protected Destination destination;
     private ObjectName adapter;
-        
+
     /**
      * Constructs a new <code>DestinationControl</code> instance.
-     * 
+     *
      * @param destination The <code>Destination</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent      The parent MBean in the management hierarchy.
      */
-    public DestinationControl(Destination destination, BaseControl parent)
-    {
+    public DestinationControl(Destination destination, BaseControl parent) {
         super(parent);
         this.destination = destination;
     }
-        
+
     /*
      *  (non-Javadoc)
      * @see flex.management.BaseControlMBean#getId()
      */
-    public String getId()
-    {
+    public String getId() {
         return destination.getId();
     }
 
@@ -60,57 +57,51 @@ public abstract class DestinationControl extends BaseControl implements
      *  (non-Javadoc)
      * @see flex.management.runtime.DestinationControlMBean#getAdapter()
      */
-    public ObjectName getAdapter()
-    {
+    public ObjectName getAdapter() {
         return adapter;
     }
-    
+
     /**
      * Sets the <code>ObjectName</code> for the adapter associated with the managed destination.
-     * 
+     *
      * @param value The <code>ObjectName</code> for the adapter.
      */
-    public void setAdapter(ObjectName value)
-    {
+    public void setAdapter(ObjectName value) {
         adapter = value;
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.DestinationControlMBean#isRunning()
      */
-    public Boolean isRunning()
-    {
+    public Boolean isRunning() {
         return Boolean.valueOf(destination.isStarted());
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.DestinationControlMBean#getStartTimestamp()
      */
-    public Date getStartTimestamp()
-    {
+    public Date getStartTimestamp() {
         return startTimestamp;
     }
-        
+
     /*
      *  (non-Javadoc)
      * @see javax.management.MBeanRegistration#preDeregister()
      */
-    public void preDeregister() throws Exception
-    {
-        ServiceControl parent = (ServiceControl)getParentControl();
+    public void preDeregister() throws Exception {
+        ServiceControl parent = (ServiceControl) getParentControl();
         parent.removeDestination(getObjectName());
-        
+
         // Unregister adapter of the destination
         ServiceAdapter child = destination.getAdapter();
-        if (child.getControl() != null)
-        {
+        if (child.getControl() != null) {
             child.getControl().unregister();
             child.setControl(null);
             child.setManaged(false);
         }
-        
+
         super.preDeregister();
     }
 

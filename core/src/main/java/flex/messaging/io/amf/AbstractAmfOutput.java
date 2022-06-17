@@ -29,10 +29,8 @@ import org.w3c.dom.Document;
  * An abstract serializer of AMF protocol data.
  *
  * @see ActionMessageOutput
- *
  */
-public abstract class AbstractAmfOutput extends AmfIO implements ActionMessageOutput
-{
+public abstract class AbstractAmfOutput extends AmfIO implements ActionMessageOutput {
     /**
      *
      */
@@ -40,10 +38,10 @@ public abstract class AbstractAmfOutput extends AmfIO implements ActionMessageOu
 
     /**
      * Construct a serializer without connecting it to an output stream.
+     *
      * @param context serialization parameters
      */
-    public AbstractAmfOutput(SerializationContext context)
-    {
+    public AbstractAmfOutput(SerializationContext context) {
         super(context);
     }
 
@@ -52,55 +50,55 @@ public abstract class AbstractAmfOutput extends AmfIO implements ActionMessageOu
      *
      * @param out DataOutputStream to use
      */
-    public void setOutputStream(OutputStream out)
-    {
-        if (out instanceof DataOutputStream)
-        {
+    public void setOutputStream(OutputStream out) {
+        if (out instanceof DataOutputStream) {
             this.out = (DataOutputStream) out;
-        }
-        else
-        {
+        } else {
             this.out = new DataOutputStream(out);
         }
         reset();
     }
 
-    protected String documentToString(Object value) throws IOException
-    {
-        return XMLUtil.documentToString((Document)value);
+    protected String documentToString(Object value) throws IOException {
+        return XMLUtil.documentToString((Document) value);
     }
 
     //
     // java.io.ObjectOutput implementations
     //
 
-    /** {@inheritDoc} */
-    public void close() throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void close() throws IOException {
         out.close();
     }
 
-    /** {@inheritDoc} */
-    public void flush() throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void flush() throws IOException {
         out.flush();
     }
 
-    /** {@inheritDoc} */
-    public void write(int b) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void write(int b) throws IOException {
         out.write(b);
     }
 
-    /** {@inheritDoc} */
-    public void write(byte bytes[]) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void write(byte bytes[]) throws IOException {
         out.write(bytes);
     }
 
-    /** {@inheritDoc} */
-    public void write(byte bytes[], int offset, int length) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void write(byte bytes[], int offset, int length) throws IOException {
         out.write(bytes, offset, length);
     }
 
@@ -109,69 +107,80 @@ public abstract class AbstractAmfOutput extends AmfIO implements ActionMessageOu
     // java.io.DataOutput implementations
     //
 
-    /** {@inheritDoc} */
-    public void writeBoolean(boolean v) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void writeBoolean(boolean v) throws IOException {
         out.writeBoolean(v);
     }
 
-    /** {@inheritDoc} */
-    public void writeByte(int v) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void writeByte(int v) throws IOException {
         out.writeByte(v);
     }
 
-    /** {@inheritDoc} */
-    public void writeBytes(String s) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void writeBytes(String s) throws IOException {
         out.writeBytes(s);
     }
 
-    /** {@inheritDoc} */
-    public void writeChar(int v) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void writeChar(int v) throws IOException {
         out.writeChar(v);
     }
 
-    /** {@inheritDoc} */
-    public void writeChars(String s) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void writeChars(String s) throws IOException {
         out.writeChars(s);
     }
 
-    /** {@inheritDoc} */
-    public void writeDouble(double v) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void writeDouble(double v) throws IOException {
         out.writeDouble(v);
     }
 
-    /** {@inheritDoc} */
-    public void writeFloat(float v) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void writeFloat(float v) throws IOException {
         out.writeFloat(v);
     }
 
-    /** {@inheritDoc} */
-    public void writeInt(int v) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void writeInt(int v) throws IOException {
         out.writeInt(v);
     }
 
-    /** {@inheritDoc} */
-    public void writeLong(long v) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void writeLong(long v) throws IOException {
         out.writeLong(v);
     }
 
-    /** {@inheritDoc} */
-    public void writeShort(int v) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void writeShort(int v) throws IOException {
         out.writeShort(v);
     }
 
-    /** {@inheritDoc} */
-    public void writeUTF(String s) throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void writeUTF(String s) throws IOException {
         out.writeUTF(s);
     }
 }

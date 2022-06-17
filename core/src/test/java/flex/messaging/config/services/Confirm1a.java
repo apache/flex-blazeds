@@ -22,12 +22,10 @@ import flex.messaging.config.MessagingConfiguration;
 import flex.messaging.config.ServiceSettings;
 import flex.messaging.LocalizedException;
 
-public class Confirm1a extends ConfigurationConfirmation
-{
+public class Confirm1a extends ConfigurationConfirmation {
     private MessagingConfiguration EXPECTED_VALUE;
 
-    public Confirm1a()
-    {
+    public Confirm1a() {
         MessagingConfiguration config = new MessagingConfiguration();
 
         ServiceSettings service = new ServiceSettings("foo-service");
@@ -41,13 +39,11 @@ public class Confirm1a extends ConfigurationConfirmation
         EXPECTED_VALUE = config;
     }
 
-    public MessagingConfiguration getExpectedConfiguration()
-    {
+    public MessagingConfiguration getExpectedConfiguration() {
         return EXPECTED_VALUE;
     }
 
-    public LocalizedException getExpectedException()
-    {
+    public LocalizedException getExpectedException() {
         return null;
     }
 }

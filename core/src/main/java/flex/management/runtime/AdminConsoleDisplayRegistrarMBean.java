@@ -23,11 +23,10 @@ import flex.management.BaseControlMBean;
 /**
  *
  */
-public interface AdminConsoleDisplayRegistrarMBean extends BaseControlMBean
-{
-    
+public interface AdminConsoleDisplayRegistrarMBean extends BaseControlMBean {
+
     Integer[] getSupportedTypes() throws IOException;
-    
+
     String[] listForType(int type) throws IOException;
- 
+
 }

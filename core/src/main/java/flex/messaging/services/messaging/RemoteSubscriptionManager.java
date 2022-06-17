@@ -31,11 +31,8 @@ import java.util.List;
  * each remote server.  It clientId is the address of the remote server.
  * Using a separate instance of this class keeps the subscriptions
  * of local clients separate from remote clients.
- *
- *
  */
-public class RemoteSubscriptionManager extends SubscriptionManager implements RemoveNodeListener
-{
+public class RemoteSubscriptionManager extends SubscriptionManager implements RemoveNodeListener {
     private Object syncLock = new Object();
 
     /*
@@ -44,29 +41,23 @@ public class RemoteSubscriptionManager extends SubscriptionManager implements Re
      */
     private static final Object initRemoteSubscriptionsLock = new Object();
 
-    public RemoteSubscriptionManager(MessageDestination destination)
-    {
+    public RemoteSubscriptionManager(MessageDestination destination) {
         this(destination, false);
     }
 
-    public RemoteSubscriptionManager(MessageDestination destination, boolean enableManagement)
-    {
+    public RemoteSubscriptionManager(MessageDestination destination, boolean enableManagement) {
         super(destination, enableManagement);
     }
 
-    public void setSessionTimeout(long sessionConfigValue)
-    {
+    public void setSessionTimeout(long sessionConfigValue) {
     }
 
-    public long getSessionTimeout()
-    {
+    public long getSessionTimeout() {
         return 0; // not used for remote subscriptions
     }
 
-    public void addSubscriber(String flexClientId, Object clientId, String selector, String subtopic)
-    {
-        synchronized (syncLock)
-        {
+    public void addSubscriber(String flexClientId, Object clientId, String selector, String subtopic) {
+        synchronized (syncLock) {
             /*
              * Only process subscriptions for servers whose subscription state we have received
              * We may receive a subscribe/unsubscribe from a peer before we get their
@@ -80,23 +71,19 @@ public class RemoteSubscriptionManager extends SubscriptionManager implements Re
         }
     }
 
-    public void removeSubscriber(String flexClientId, Object clientId, String selector, String subtopic, String endpoint)
-    {
-        synchronized (syncLock)
-        {
+    public void removeSubscriber(String flexClientId, Object clientId, String selector, String subtopic, String endpoint) {
+        synchronized (syncLock) {
             /* Only process subscriptions for servers whose subscription state we have received */
             if (allSubscriptions.get(clientId) != null)
                 super.removeSubscriber(clientId, selector, subtopic, null);
         }
     }
 
-    protected void sendSubscriptionToPeer(boolean subscribe, String selector, String subtopic)
-    {
+    protected void sendSubscriptionToPeer(boolean subscribe, String selector, String subtopic) {
         // Don't do this for remote subscriptions
     }
 
-    protected MessageClient newMessageClient(Object clientId, String endpointId)
-    {
+    protected MessageClient newMessageClient(Object clientId, String endpointId) {
         return new RemoteMessageClient(clientId, destination, endpointId);
     }
 
@@ -106,11 +93,11 @@ public class RemoteSubscriptionManager extends SubscriptionManager implements Re
      * registered in this table.  We also register the remote
      * subscription with a "per server" index so we can easily
      * remove them later on.
-     * @param state the subscription state object
+     *
+     * @param state   the subscription state object
      * @param address the remote cluster node address
      */
-    public void setSubscriptionState(Object state, Object address)
-    {
+    public void setSubscriptionState(Object state, Object address) {
         MessageClient client = newMessageClient(address, null);
 
         if (Log.isDebug())
@@ -123,19 +110,16 @@ public class RemoteSubscriptionManager extends SubscriptionManager implements Re
          * Also, we need to ensure we do not process any remote subscribe/unsubs
          * from a remote server until we finish this list.
          */
-        synchronized (syncLock)
-        {
+        synchronized (syncLock) {
             allSubscriptions.put(address, client);
 
             List list = (List) state;
 
-            for (int i = 0; i < list.size(); i+=2)
-            {
-                addSubscriber(null, address, (String) list.get(i), (String) list.get(i+1));
+            for (int i = 0; i < list.size(); i += 2) {
+                addSubscriber(null, address, (String) list.get(i), (String) list.get(i + 1));
             }
         }
-        synchronized (initRemoteSubscriptionsLock)
-        {
+        synchronized (initRemoteSubscriptionsLock) {
             initRemoteSubscriptionsLock.notifyAll();
         }
     }
@@ -144,17 +128,14 @@ public class RemoteSubscriptionManager extends SubscriptionManager implements Re
      * This method waits for some time for the receipt of the subscription
      * state for the server with the given address.  If we fail to receive
      * a message after waiting for the 5 seconds, a warning is printed.
+     *
      * @param addr the remote cluster node address
      */
-    public void waitForSubscriptions(Object addr)
-    {
+    public void waitForSubscriptions(Object addr) {
         /* If we have not gotten the response yet from this client... */
-        if (getSubscriber(addr) == null)
-        {
-            synchronized (initRemoteSubscriptionsLock)
-            {
-                try
-                {
+        if (getSubscriber(addr) == null) {
+            synchronized (initRemoteSubscriptionsLock) {
+                try {
                     if (Log.isDebug())
                         Log.getLogger(MessageService.LOG_CATEGORY).debug("Waiting for subscriptions from cluster node: " + addr + " for destination: " + destination.getId());
 
@@ -162,29 +143,27 @@ public class RemoteSubscriptionManager extends SubscriptionManager implements Re
 
                     if (Log.isDebug())
                         Log.getLogger(MessageService.LOG_CATEGORY).debug("Done waiting for subscriptions from cluster node: " + addr + " for destination: " + destination.getId());
+                } catch (InterruptedException exc) {
                 }
-                catch (InterruptedException exc) {}
             }
             if (getSubscriber(addr) == null && Log.isWarn())
                 Log.getLogger(MessageService.LOG_CATEGORY).warn("No response yet from request subscriptions request for server: " + addr + " for destination: " + destination.getId());
-        }
-        else if (Log.isDebug())
+        } else if (Log.isDebug())
             Log.getLogger(MessageService.LOG_CATEGORY).debug("Already have subscriptions from server: " + addr + " for destination: " + destination.getId());
     }
 
     /**
      * Called when a cluster node gets removed.  We need to make sure that all subscriptions
      * for this node are removed.
+     *
      * @param address the remote cluster node address
      */
-    public void removeClusterNode(Object address)
-    {
+    public void removeClusterNode(Object address) {
         if (Log.isDebug())
             Log.getLogger(MessageService.LOG_CATEGORY).debug("Cluster node: " + address + " subscriptions being removed for destination:" + destination.getId() + " before: " + StringUtils.NEWLINE + getDebugSubscriptionState());
 
         MessageClient client = getSubscriber(address);
-        if (client != null)
-        {
+        if (client != null) {
             client.invalidate();
         }
 
@@ -192,8 +171,7 @@ public class RemoteSubscriptionManager extends SubscriptionManager implements Re
             Log.getLogger(MessageService.LOG_CATEGORY).debug("Cluster node: " + address + " subscriptions being removed for destination:" + destination.getId() + " after: " + StringUtils.NEWLINE + getDebugSubscriptionState());
     }
 
-    protected void monitorTimeout(MessageClient client)
-    {
+    protected void monitorTimeout(MessageClient client) {
         // Remote subscriptions do not timeout
     }
 

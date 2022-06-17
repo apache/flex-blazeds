@@ -23,22 +23,20 @@ import java.io.ObjectInput;
 /**
  * This simple interface allows the MessageDeserializer to
  * handle multiple versions of AMF.
- *
+ * <p>
  * Entry point for deserializing an individual ActionMessage
  * request message for AMF, AMFX or RTMP.
  *
  * @see flex.messaging.io.amf.Amf0Input Classic Version 0 Deserializer
  * @see flex.messaging.io.amf.Amf3Input AVM+ Version 3 Deserializer
- *
  * @see flex.messaging.io.amf.ActionMessageOutput The serialization equivalent
  */
-public interface ActionMessageInput extends ObjectInput
-{
+public interface ActionMessageInput extends ObjectInput {
     // java.io.ObjectInput METHODS
 
     /**
      * Reads in an AMF formatted Object.
-     * 
+     *
      * <p>
      * The following is a guide to the ActionScript to Java type mappings:
      * <table cellpadding="2" cellspacing="2" border="1">
@@ -85,19 +83,16 @@ public interface ActionMessageInput extends ObjectInput
 
     /**
      * Internal use only.
-     *
      */
     void setInputStream(InputStream in);
 
     /**
      * Internal use only.
-     *
      */
     void setDebugTrace(AmfTrace trace);
 
     /**
      * Internal use only.
-     *
      */
     void reset();
 }

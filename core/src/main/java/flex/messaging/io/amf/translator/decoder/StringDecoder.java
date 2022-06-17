@@ -18,34 +18,21 @@ package flex.messaging.io.amf.translator.decoder;
 
 /**
  * Decode an ActionScript String, Number or Boolean to a Java String.
- *
- *
  */
-public class StringDecoder extends ActionScriptDecoder
-{
-    public StringDecoder()
-    {
+public class StringDecoder extends ActionScriptDecoder {
+    public StringDecoder() {
     }
 
-    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass)
-    {
-        if (encodedObject instanceof String)
-        {
+    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass) {
+        if (encodedObject instanceof String) {
             return encodedObject;
-        }
-        else if (encodedObject instanceof Number)
-        {
-            return String.valueOf(((Number)encodedObject).doubleValue());
-        }
-        else if (encodedObject instanceof Boolean)
-        {
-            Boolean bool = (Boolean)encodedObject;
-            if (bool.booleanValue())
-            {
+        } else if (encodedObject instanceof Number) {
+            return String.valueOf(((Number) encodedObject).doubleValue());
+        } else if (encodedObject instanceof Boolean) {
+            Boolean bool = (Boolean) encodedObject;
+            if (bool.booleanValue()) {
                 return "true";
-            }
-            else
-            {
+            } else {
                 return "false";
             }
         }

@@ -22,18 +22,16 @@ import javax.servlet.ServletContext;
  * This is a log target which uses the servlet context in order to log
  * messages.
  */
-public class ServletLogTarget extends LineFormattedTarget
-{
+public class ServletLogTarget extends LineFormattedTarget {
     static ServletContext context;
 
     /**
      * This method must be called during startup to give this target a reference
      * to the ServletContext.
-     * @param ctx the servlet context
      *
+     * @param ctx the servlet context
      */
-    public static void setServletContext(ServletContext ctx)
-    {
+    public static void setServletContext(ServletContext ctx) {
         context = ctx;
     }
 
@@ -46,8 +44,7 @@ public class ServletLogTarget extends LineFormattedTarget
     /**
      * Default constructor.
      */
-    public ServletLogTarget()
-    {
+    public ServletLogTarget() {
         super();
     }
 
@@ -55,22 +52,18 @@ public class ServletLogTarget extends LineFormattedTarget
 
     /**
      * Log a message via the servlet context.
+     *
      * @param message the message to log.
      */
     @Override
-    protected void internalLog(String message)
-    {
-        if (context == null)
-        {
-            if (!warned)
-            {
+    protected void internalLog(String message) {
+        if (context == null) {
+            if (!warned) {
                 System.out.println("**** No servlet context set in ServletLogTarget - logging disabled.");
                 warned = true;
             }
-        }
-        else
-        {
-          context.log(message);
+        } else {
+            context.log(message);
         }
     }
 }

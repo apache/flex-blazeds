@@ -17,13 +17,11 @@
 
 package macromedia.util;
 
-public class UnitTrace
-{
+public class UnitTrace {
     public static final boolean errors = (System.getProperty("trace.metrics.errors") != null);
     public static final boolean debug = (System.getProperty("trace.debug") != null);
 
-    public UnitTrace()
-    {
+    public UnitTrace() {
 
     }
 }

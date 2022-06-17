@@ -22,8 +22,7 @@ import flex.messaging.log.LogEvent;
 /**
  * Exception class used to indicate duplicate client sessions were detected.
  */
-public class DuplicateSessionException extends MessageException
-{
+public class DuplicateSessionException extends MessageException {
     /**
      *
      */
@@ -44,8 +43,7 @@ public class DuplicateSessionException extends MessageException
      * Default constructor.
      * Sets the code to a default value of <code>DUPLICATE_SESSION_DETECTED_CODE</code>.
      */
-    public DuplicateSessionException()
-    {
+    public DuplicateSessionException() {
         setCode(DUPLICATE_SESSION_DETECTED_CODE);
     }
 
@@ -62,8 +60,8 @@ public class DuplicateSessionException extends MessageException
     /**
      * Override to log at the DEBUG level.
      */
-    @Override public short getPreferredLogLevel()
-    {
+    @Override
+    public short getPreferredLogLevel() {
         return LogEvent.DEBUG;
     }
 
@@ -74,8 +72,8 @@ public class DuplicateSessionException extends MessageException
     /**
      * Override to suppress stack trace logging.
      */
-    @Override public boolean isLogStackTraceEnabled()
-    {
+    @Override
+    public boolean isLogStackTraceEnabled() {
         return false;
     }
 }

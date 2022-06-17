@@ -61,7 +61,7 @@ public class AMFDataTypeIT {
 
         customValidationServerWrapper = new TestServerWrapper();
         customValidationServerPort = customValidationServerWrapper.startServer("classpath:/WEB-INF/flex/services-config-customized-validation.xml");
-        if(customValidationServerPort == -1) {
+        if (customValidationServerPort == -1) {
             Assert.fail("Couldn't start server (custom validation) process");
         }
 

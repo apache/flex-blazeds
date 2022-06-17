@@ -23,18 +23,14 @@ import flex.messaging.MessageException;
 
 import java.util.Date;
 
-public class Confirm4e extends DeserializationConfirmation
-{
+public class Confirm4e extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm4e()
-    {
+    public Confirm4e() {
     }
 
-    public ActionMessage getExpectedMessage()
-    {
-        if (EXPECTED_VALUE == null)
-        {
+    public ActionMessage getExpectedMessage() {
+        if (EXPECTED_VALUE == null) {
             ActionMessage m = new ActionMessage();
             MessageBody body = new MessageBody();
             m.addBody(body);
@@ -51,13 +47,11 @@ public class Confirm4e extends DeserializationConfirmation
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 
-    protected boolean bodyValuesMatch(Object o1, Object o2)
-    {
+    protected boolean bodyValuesMatch(Object o1, Object o2) {
         boolean match = super.bodyValuesMatch(o1, o2);
 
         // Also check that by-reference serialization of dates restored
@@ -65,16 +59,16 @@ public class Confirm4e extends DeserializationConfirmation
         Object list1 = o1;
         Object list2 = o2;
 
-        Date d11 = (Date)getFromList(list1, 0);
-        Date d12 = (Date)getFromList(list1, 1);
-        Date d13 = (Date)getFromList(list1, 2);
+        Date d11 = (Date) getFromList(list1, 0);
+        Date d12 = (Date) getFromList(list1, 1);
+        Date d13 = (Date) getFromList(list1, 2);
 
         if (d11 != d12 || d12 != d13)
             return false;
 
-        Date d21 = (Date)getFromList(list2, 0);
-        Date d22 = (Date)getFromList(list2, 1);
-        Date d23 = (Date)getFromList(list2, 2);
+        Date d21 = (Date) getFromList(list2, 0);
+        Date d22 = (Date) getFromList(list2, 1);
+        Date d23 = (Date) getFromList(list2, 2);
 
         if (d21 != d22 || d22 != d23)
             return false;

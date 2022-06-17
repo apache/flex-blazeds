@@ -21,38 +21,32 @@ import flex.messaging.FlexContext;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- *
  * Determines whether overall access to the proxy is allowed for a request.
  */
-public class AccessFilter extends ProxyFilter
-{
+public class AccessFilter extends ProxyFilter {
     private static final int TOO_MANY_COOKIES = 10703;
 
     /**
      * Invokes the filter with the context.
-     * 
+     *
      * @param context The proxy context.
      */
-    public void invoke(ProxyContext context)
-    {
+    public void invoke(ProxyContext context) {
         HttpServletRequest clientRequest = FlexContext.getHttpRequest();
 
         // as requested by @stake, limit the number of cookies that can be sent from the endpoint to prevent
         // as denial of service attack.  It seems our processing of Flex-mangled cookies bogs down the server.
         // We set the cookie limit to 200, but it can be changed via -Dflex.cookieLimit
-        if (clientRequest != null)
-        {
+        if (clientRequest != null) {
             javax.servlet.http.Cookie[] cookies = clientRequest.getCookies();
-            if (cookies != null && cookies.length > context.getCookieLimit())
-            {
+            if (cookies != null && cookies.length > context.getCookieLimit()) {
                 ProxyException e = new ProxyException();
-                e.setMessage(TOO_MANY_COOKIES, new Object[] { "" + cookies.length });
+                e.setMessage(TOO_MANY_COOKIES, new Object[]{"" + cookies.length});
                 throw e;
             }
         }
 
-        if (next != null)
-        {
+        if (next != null) {
             next.invoke(context);
         }
     }

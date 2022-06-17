@@ -21,33 +21,28 @@ import flex.messaging.io.amf.ActionMessage;
 import flex.messaging.io.amf.MessageBody;
 import flex.messaging.MessageException;
 
-public class Confirm16a extends DeserializationConfirmation
-{
+public class Confirm16a extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm16a()
-    {
+    public Confirm16a() {
         ActionMessage m = new ActionMessage();
         MessageBody body = new MessageBody();
         m.addBody(body);
 
         byte[] bytes = new byte[17];
-        for (int i = 0; i < 17; i++)
-        {
-            bytes[i] = (byte)i;
+        for (int i = 0; i < 17; i++) {
+            bytes[i] = (byte) i;
         }
 
         body.setData(bytes);
         EXPECTED_VALUE = m;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

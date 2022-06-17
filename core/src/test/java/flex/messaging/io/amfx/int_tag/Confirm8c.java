@@ -22,12 +22,10 @@ import flex.messaging.io.amf.MessageBody;
 import flex.messaging.io.amf.ASObject;
 import flex.messaging.MessageException;
 
-public class Confirm8c extends DeserializationConfirmation
-{
+public class Confirm8c extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm8c()
-    {
+    public Confirm8c() {
         ActionMessage m = new ActionMessage();
         MessageBody body = new MessageBody();
         m.addBody(body);
@@ -43,13 +41,11 @@ public class Confirm8c extends DeserializationConfirmation
         EXPECTED_VALUE = m;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

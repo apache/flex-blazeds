@@ -23,23 +23,21 @@ import flex.messaging.io.SerializationException;
 import flex.messaging.io.TypeMarshallingContext;
 
 /**
- * Base class for Amf I/O. 
- *
+ * Base class for Amf I/O.
  */
-abstract class AmfIO
-{
+abstract class AmfIO {
     protected final SerializationContext context;
     /*
      *  DEBUG LOGGING.
      */
     protected boolean isDebug;
     protected AmfTrace trace;
-    
+
     // Nest object level, how deep the object graph is right now
     private int nestObjectLevel;
     // Nest collection level, how deep the collection nest is right now, for example 3 dimensional matrix will reach level of 3
     private int nestCollectionLevel;
-    
+
 
     /*
      *  OPTIMIZATION.
@@ -47,8 +45,7 @@ abstract class AmfIO
     private char[] tempCharArray = null;
     private byte[] tempByteArray = null;
 
-    AmfIO(SerializationContext context)
-    {
+    AmfIO(SerializationContext context) {
         this.context = context;
         nestObjectLevel = 0;
         nestCollectionLevel = 0;
@@ -56,10 +53,10 @@ abstract class AmfIO
 
     /**
      * Turns on "trace" debugging for AMF responses.
+     *
      * @param trace the trace object
      */
-    public void setDebugTrace(AmfTrace trace)
-    {
+    public void setDebugTrace(AmfTrace trace) {
         this.trace = trace;
         isDebug = this.trace != null;
     }
@@ -67,12 +64,11 @@ abstract class AmfIO
     /**
      * Clear all object reference information so that the instance
      * can be used to deserialize another data structure.
-     * 
+     * <p>
      * Reset should be called before reading a top level object,
      * such as a new header or a new body.
      */
-    public void reset()
-    {
+    public void reset() {
         nestObjectLevel = 0;
         nestCollectionLevel = 0;
         TypeMarshallingContext marshallingContext = TypeMarshallingContext.getTypeMarshallingContext();
@@ -84,14 +80,13 @@ abstract class AmfIO
      * capacity.  This method is for optimization only.  Do not use the array
      * outside the context of this method and do not call this method again
      * while the array is being used.
+     *
      * @param capacity minimum length
-     * @return a character array 
+     * @return a character array
      */
-    final char[] getTempCharArray(int capacity)
-    {
+    final char[] getTempCharArray(int capacity) {
         char[] result = this.tempCharArray;
-        if ((result == null) || (result.length < capacity))
-        {
+        if ((result == null) || (result.length < capacity)) {
             result = new char[capacity * 2];
             tempCharArray = result;
         }
@@ -103,55 +98,47 @@ abstract class AmfIO
      * capacity.  This method is for optimization only.  Do not use the array
      * outside the context of this method and do not call this method again
      * while the array is being used.
+     *
      * @param capacity minimum length
      * @return a byte array
      */
-    final byte[] getTempByteArray(int capacity)
-    {
+    final byte[] getTempByteArray(int capacity) {
         byte[] result = this.tempByteArray;
-        if ((result == null) || (result.length < capacity))
-        {
+        if ((result == null) || (result.length < capacity)) {
             result = new byte[capacity * 2];
             tempByteArray = result;
         }
         return result;
     }
-    
-    protected void increaseNestObjectLevel()
-    {
+
+    protected void increaseNestObjectLevel() {
         nestObjectLevel++;
-       
-        if (nestObjectLevel > context.maxObjectNestLevel)
-        {
+
+        if (nestObjectLevel > context.maxObjectNestLevel) {
             SerializationException se = new SerializationException();
-            se.setMessage(10315, new Object[] {context.maxObjectNestLevel});
+            se.setMessage(10315, new Object[]{context.maxObjectNestLevel});
             throw se;
         }
     }
-    
-    protected void decreaseNestObjectLevel()
-    {
+
+    protected void decreaseNestObjectLevel() {
         nestObjectLevel--;
     }
-    
-    protected void increaseNestCollectionLevel()
-    {
+
+    protected void increaseNestCollectionLevel() {
         nestCollectionLevel++;
-        if (nestCollectionLevel > context.maxCollectionNestLevel)
-        {
+        if (nestCollectionLevel > context.maxCollectionNestLevel) {
             SerializationException se = new SerializationException();
-            se.setMessage(10316, new Object[] {context.maxCollectionNestLevel});
+            se.setMessage(10316, new Object[]{context.maxCollectionNestLevel});
             throw se;
         }
     }
-    
-    protected void decreaseNestCollectionLevel()
-    {
+
+    protected void decreaseNestCollectionLevel() {
         nestCollectionLevel--;
     }
-    
-    public static boolean isCollectionClass(Object object)
-    {
+
+    public static boolean isCollectionClass(Object object) {
         if (object == null)
             return false;
         Class clazz = object.getClass();

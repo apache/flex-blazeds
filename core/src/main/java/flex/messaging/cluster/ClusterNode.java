@@ -21,16 +21,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- *
  * ClusterNode is an encapsulation for pairing a physical host and a logical
  * software group, which is in effect a mapping between a physical address used
  * by the cluster infrastructure and a service destination used by the message
  * infrastructure.
- *
+ * <p>
  * This class is specific to the <code>JGroupsCluster</code> implementation.
  */
-public class ClusterNode
-{
+public class ClusterNode {
     /**
      * The name of the host for this cluster node.
      */
@@ -42,15 +40,14 @@ public class ClusterNode
      * key = destination key (String)
      * value = Map of channel-id to endpoint-url mappings.
      */
-    private final Map<String,Map<String,String>> destKeyToChannelMap;
+    private final Map<String, Map<String, String>> destKeyToChannelMap;
 
     /**
      * Constructor.
      */
-    ClusterNode(String host)
-    {
+    ClusterNode(String host) {
         this.host = host;
-        destKeyToChannelMap = new HashMap<String,Map<String,String>>();
+        destKeyToChannelMap = new HashMap<String, Map<String, String>>();
     }
 
     /**
@@ -58,8 +55,7 @@ public class ClusterNode
      *
      * @return The name of the host.
      */
-    String getHost()
-    {
+    String getHost() {
         return host;
     }
 
@@ -68,10 +64,9 @@ public class ClusterNode
      * endpoint mappings.
      *
      * @return Map of clustered destination to clustered
-    *  endpoint mappings.
+     * endpoint mappings.
      */
-    Map<String,Map<String,String>> getDestKeyToChannelMap()
-    {
+    Map<String, Map<String, String>> getDestKeyToChannelMap() {
         return destKeyToChannelMap;
     }
 
@@ -80,23 +75,20 @@ public class ClusterNode
      * clustered destination. If there is not currently a
      * map for the destination, an empty mapping is created
      * and returned.
-     *
+     * <p>
      * The endpoint map is indexed by channel id.
      * The endpoint map contains endpoint urls.
      *
      * @param serviceType The service type of the clustered destination.
-     * @param destName The destination name of the clustered destination.
+     * @param destName    The destination name of the clustered destination.
      * @return Map of clustered endpoints.
      */
-    Map<String,String> getEndpoints(String serviceType, String destName)
-    {
+    Map<String, String> getEndpoints(String serviceType, String destName) {
         String destKey = serviceType + ":" + destName;
-        synchronized (destKeyToChannelMap)
-        {
-            Map<String,String> channelEndpoints = destKeyToChannelMap.get(destKey);
-            if (channelEndpoints == null)
-            {
-                channelEndpoints = new HashMap<String,String>();
+        synchronized (destKeyToChannelMap) {
+            Map<String, String> channelEndpoints = destKeyToChannelMap.get(destKey);
+            if (channelEndpoints == null) {
+                channelEndpoints = new HashMap<String, String>();
                 destKeyToChannelMap.put(destKey, channelEndpoints);
             }
             return channelEndpoints;
@@ -108,15 +100,13 @@ public class ClusterNode
      * destination, identified by service type and destination name.
      *
      * @param serviceType The service type of the clustered destination.
-     * @param destName The destination name of the clustered destination.
-     * @param channelId The channel id to be added to the channel endpoint mapping.
+     * @param destName    The destination name of the clustered destination.
+     * @param channelId   The channel id to be added to the channel endpoint mapping.
      * @param endpointUrl The endpoint url to be added to the endpoint url mapping.
      */
-    void addEndpoint(String serviceType, String destName, String channelId, String endpointUrl)
-    {
-        synchronized (destKeyToChannelMap)
-        {
-            Map<String,String> channelEndpoints = getEndpoints(serviceType, destName);
+    void addEndpoint(String serviceType, String destName, String channelId, String endpointUrl) {
+        synchronized (destKeyToChannelMap) {
+            Map<String, String> channelEndpoints = getEndpoints(serviceType, destName);
             channelEndpoints.put(channelId, endpointUrl);
         }
     }
@@ -126,14 +116,13 @@ public class ClusterNode
      * is included in the list of endpoints in the clustered destination.
      *
      * @param serviceType The service type of the clustered destination.
-     * @param destName The destination name of the clustered destination.
-     * @param channelId The channel id to find in the list of endpoints.
+     * @param destName    The destination name of the clustered destination.
+     * @param channelId   The channel id to find in the list of endpoints.
      * @param endpointUrl The endpoint url to find in the list of endpoints.
      * @return Whether the endpoint is included in the list for the clustered destination.
      */
-    boolean containsEndpoint(String serviceType, String destName, String channelId, String endpointUrl)
-    {
-        Map<String,String> channelEndpoints = getEndpoints(serviceType, destName);
+    boolean containsEndpoint(String serviceType, String destName, String channelId, String endpointUrl) {
+        Map<String, String> channelEndpoints = getEndpoints(serviceType, destName);
         return channelEndpoints.containsKey(channelId) && channelEndpoints.get(channelId).equals(endpointUrl);
     }
 
@@ -144,19 +133,15 @@ public class ClusterNode
      *
      * @return Description of the clustered node.
      */
-    public String toString()
-    {
+    public String toString() {
         StringBuffer sb = new StringBuffer("ClusterNode[");
-        synchronized (destKeyToChannelMap)
-        {
-            for (Map.Entry<String,Map<String,String>> entry : destKeyToChannelMap.entrySet())
-            {
+        synchronized (destKeyToChannelMap) {
+            for (Map.Entry<String, Map<String, String>> entry : destKeyToChannelMap.entrySet()) {
                 sb.append(" channels for ");
                 sb.append(entry.getKey());
                 sb.append('(');
-                for (Iterator<Map.Entry<String,String>> iter = entry.getValue().entrySet().iterator(); iter.hasNext();)
-                {
-                    Map.Entry<String,String> channelMapEntry = iter.next();
+                for (Iterator<Map.Entry<String, String>> iter = entry.getValue().entrySet().iterator(); iter.hasNext(); ) {
+                    Map.Entry<String, String> channelMapEntry = iter.next();
                     sb.append(channelMapEntry.getKey());
                     sb.append('=');
                     sb.append(channelMapEntry.getValue());

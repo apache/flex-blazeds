@@ -30,8 +30,8 @@ public interface Message
 {
     // Message header name constants
     /**
-     *  This header is used to transport the FlexClient Id value in messages
-     *  sent clients to the server.
+     * This header is used to transport the FlexClient Id value in messages
+     * sent clients to the server.
      */
     String FLEX_CLIENT_ID_HEADER = "DSId";
 
@@ -47,7 +47,6 @@ public interface Message
     String ENDPOINT_HEADER = "DSEndpoint";
 
     /**
-     *
      * Used internally to enable/disable validation of the channel endpoint that a
      * message for a destination arrived over.
      */
@@ -76,9 +75,9 @@ public interface Message
     String REMOTE_CREDENTIALS_CHARSET_HEADER = "DSRemoteCredentialsCharset";
 
     /**
-     * Messages sent with a defined request timeout use this header. 
-     * The request timeout value is set on outbound messages by services or 
-     * channels and the value controls how long the corresponding MessageResponder 
+     * Messages sent with a defined request timeout use this header.
+     * The request timeout value is set on outbound messages by services or
+     * channels and the value controls how long the corresponding MessageResponder
      * will wait for an acknowledgement, result or fault response for the message
      * before timing out the request.
      */
@@ -90,9 +89,9 @@ public interface Message
     String SYNC_HEADER = "sync";
 
     /**
-     *  A status code can provide context about the nature of a response
-     *  message. For example, messages received from an HTTP based channel may
-     *  need to report the HTTP response status code (if available).
+     * A status code can provide context about the nature of a response
+     * message. For example, messages received from an HTTP based channel may
+     * need to report the HTTP response status code (if available).
      */
     String STATUS_CODE_HEADER = "DSStatusCode";
 
@@ -213,7 +212,7 @@ public interface Message
     /**
      * Sets a header on the message.
      *
-     * @param name The name of the header to set.
+     * @param name  The name of the header to set.
      * @param value The value for the header.
      */
     void setHeader(String name, Object value);

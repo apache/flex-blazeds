@@ -86,7 +86,7 @@ public class AmfxSerializationTest {
     private void processDirectory(File dir, String resourcePath) throws IOException {
         File[] files = dir.listFiles(new XMLFilenameFilter());
 
-        if(files != null) {
+        if (files != null) {
             for (File f : files) {
                 if (f.isDirectory()) {
                     resourcePath = getResourcePath(f.getAbsolutePath());
@@ -245,11 +245,9 @@ public class AmfxSerializationTest {
 
             if (f.isDirectory() && !name.startsWith(".svn")) {
                 return true;
-            }
-            else if (name.toLowerCase().endsWith(".xml")) {
+            } else if (name.toLowerCase().endsWith(".xml")) {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         }

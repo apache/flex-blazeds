@@ -36,50 +36,41 @@ import flex.messaging.FlexContext;
  * Authenticates against WebLogic and if using an HttpServlet will store
  * the authenticated user in the request.
  */
-public class WeblogicLoginCommand extends AppServerLoginCommand implements PrincipalConverter
-{
-    /** {@inheritDoc} */
-    public Principal doAuthentication(String username, Object credentials)
-    {
+public class WeblogicLoginCommand extends AppServerLoginCommand implements PrincipalConverter {
+    /**
+     * {@inheritDoc}
+     */
+    public Principal doAuthentication(String username, Object credentials) {
         Principal principal = null;
 
         String password = extractPassword(credentials);
 
-        if (password != null)
-        {
+        if (password != null) {
             // Test for the presence of a response here (rather than request) because NIO 
             // endpoints require the alternate code path and they don't populate the response
             // in FlexContext.
             HttpServletResponse response = FlexContext.getHttpResponse();
-            if (response != null)
-            {
+            if (response != null) {
                 HttpServletRequest request = FlexContext.getHttpRequest();
                 int result = ServletAuthentication.FAILED_AUTHENTICATION;
-                try
-                {
+                try {
                     result = ServletAuthentication.login(username, password,
                             request);
-                }
-                catch (LoginException e)
-                {
-                }
-                catch (NoSuchMethodError noSuchMethodError)
-                {
+                } catch (LoginException e) {
+                } catch (NoSuchMethodError noSuchMethodError) {
                     //even though we're not supporting WebLogic 7 anymore...
                     // Weblogic 7.0.4 didn't have login(), so try weak().
                     result = ServletAuthentication.weak(username, password,
                             request);
                 }
 
-                if (result != ServletAuthentication.FAILED_AUTHENTICATION)
-                {
+                if (result != ServletAuthentication.FAILED_AUTHENTICATION) {
                     // To authorize against the Groups defined via the WL console, we need
                     // to have a SubjectPrincipal.  Because we do not need a principal to authorize
                     // against web.xml / weblogic.xml, always save the SubjectPrincipal
                     principal = getSubjectPrincipal(username, password);
                 }
-            }
-            else // Code path for NIO endpoints.
+            } else // Code path for NIO endpoints.
             {
                 principal = getSubjectPrincipal(username, password);
             }
@@ -90,21 +81,18 @@ public class WeblogicLoginCommand extends AppServerLoginCommand implements Princ
 
     /**
      * Get a SubjectPrincipal for the current user.
+     *
      * @return the generated SubjectPrincipal
      */
-    private Principal getSubjectPrincipal(String username, String password)
-    {
-        Principal principal=null;
+    private Principal getSubjectPrincipal(String username, String password) {
+        Principal principal = null;
 
         SimpleCallbackHandler handler =
-            new SimpleCallbackHandler(username, password);
-        try
-        {
+                new SimpleCallbackHandler(username, password);
+        try {
             Subject subject = Authentication.login(handler);
             principal = new SubjectPrincipal(subject);
-        }
-        catch (LoginException e)
-        {
+        } catch (LoginException e) {
             // let authentication fail if this fails
         }
 
@@ -113,33 +101,27 @@ public class WeblogicLoginCommand extends AppServerLoginCommand implements Princ
 
     /**
      * Authorize a user against the Groups defined in the WL console.
+     *
      * @param principal - Current user principal
-     * @param roles - Set of roles that allow a succesfull authorization
+     * @param roles     - Set of roles that allow a succesfull authorization
      * @return true if the authorization were succesfull
      */
-    private boolean doSubjectGroupAuthorization(Principal principal, List roles)
-    {
+    private boolean doSubjectGroupAuthorization(Principal principal, List roles) {
         boolean authorized = false;
 
         Subject subject = null;
-        if (principal instanceof SubjectPrincipal)
-        {
-            subject = ((SubjectPrincipal)principal).getSubject();
-        }
-        else
-        {
+        if (principal instanceof SubjectPrincipal) {
+            subject = ((SubjectPrincipal) principal).getSubject();
+        } else {
             subject = Security.getCurrentSubject();
         }
-        if (subject == null)
-        {
+        if (subject == null) {
             return false;
         }
         Iterator iter = roles.iterator();
-        while (iter.hasNext())
-        {
-            String role = (String)iter.next();
-            if (SubjectUtils.isUserInGroup(subject, role))
-            {
+        while (iter.hasNext()) {
+            String role = (String) iter.next();
+            if (SubjectUtils.isUserInGroup(subject, role)) {
                 authorized = true;
                 break;
             }
@@ -148,12 +130,13 @@ public class WeblogicLoginCommand extends AppServerLoginCommand implements Princ
         return authorized;
     }
 
-    /** {@inheritDoc} */
-    public boolean doAuthorization(Principal principal, List roles)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean doAuthorization(Principal principal, List roles) {
         if (principal == null)
             return false; // Avoid NPEs.
-        
+
         //NOTE: I believe that both HttpServletRequest.isUserInRole and
         //SubjectUtils.isUserInGroup returns if the user is in a Weblogic Group,
         //not necessarily the Weblogic role construct
@@ -164,73 +147,64 @@ public class WeblogicLoginCommand extends AppServerLoginCommand implements Princ
         // endpoints require the alternate code path and they don't populate the response
         // in FlexContext.
         HttpServletResponse response = FlexContext.getHttpResponse();
-        if (response != null)
-        {
+        if (response != null) {
             HttpServletRequest request = FlexContext.getHttpRequest();
-            
+
             // This will attempt to authorize the user against roles configured
             // in web.xml and weblogic.xml.
             authorized = doAuthorization(principal, roles, request);
 
             // We also want to support roles defined via the WL console
             // attempt this authorization here
-            if (!authorized)
-            {
+            if (!authorized) {
                 authorized = doSubjectGroupAuthorization(principal, roles);
             }
-        }
-        else // Code path for NIO endpoints.
-        {            
+        } else // Code path for NIO endpoints.
+        {
             authorized = doSubjectGroupAuthorization(principal, roles);
         }
 
         return authorized;
     }
 
-    /** {@inheritDoc} */
-    public boolean logout(Principal principal)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean logout(Principal principal) {
         HttpServletResponse response = FlexContext.getHttpResponse();
-        if (response != null)
-        {
+        if (response != null) {
             // Destroy the Principal maintained by the app server.
             HttpServletRequest request = FlexContext.getHttpRequest();
             ServletAuthentication.logout(request);
         }
         // else, current non-servlet session will be automatically invalidated, destroying any active Principal.
-        
+
         return true;
     }
 
-    private class SubjectPrincipal implements Principal
-    {
+    private class SubjectPrincipal implements Principal {
         private Subject subject;
 
-        public SubjectPrincipal(Subject subject)
-        {
+        public SubjectPrincipal(Subject subject) {
             this.subject = subject;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return SubjectUtils.getUserPrincipal(subject).getName();
         }
 
-        public Subject getSubject()
-        {
+        public Subject getSubject() {
             return subject;
         }
     }
-    
-    /** {@inheritDoc} */
-    public Principal convertPrincipal(Principal principal)
-    {
-        if (principal instanceof SubjectPrincipal)
-        {
+
+    /**
+     * {@inheritDoc}
+     */
+    public Principal convertPrincipal(Principal principal) {
+        if (principal instanceof SubjectPrincipal) {
             return principal;
-        }
-        else
-        {
+        } else {
             // We need to do the converting
             Subject subject = Security.getCurrentSubject();
             return new SubjectPrincipal(subject);

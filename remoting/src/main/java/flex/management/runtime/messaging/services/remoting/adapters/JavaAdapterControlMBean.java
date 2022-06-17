@@ -22,7 +22,6 @@ import flex.management.runtime.messaging.services.ServiceAdapterControlMBean;
  * Defines the runtime monitoring and management interface for managed Java
  * service adapters.
  */
-public interface JavaAdapterControlMBean extends ServiceAdapterControlMBean
-{
+public interface JavaAdapterControlMBean extends ServiceAdapterControlMBean {
     // Empty for now.
 }

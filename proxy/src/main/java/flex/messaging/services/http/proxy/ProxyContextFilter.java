@@ -35,40 +35,34 @@ import java.net.URL;
 import java.net.UnknownHostException;
 
 /**
- *
  * Fills in ProxyContext data for use by ProxyFilters within HttpProxyAdapter.
  */
-public class ProxyContextFilter extends ProxyFilter
-{
+public class ProxyContextFilter extends ProxyFilter {
     private static final int RELATIVE_NOT_SUPPORTED = 10704;
     private static final int INVALID_TARGET = 10705;
 
     private static final String STRING_LOCALHOST = "localhost";
 
-    private Protocol myhttps = new Protocol("https", (ProtocolSocketFactory)(new EasySSLProtocolSocketFactory()), 443);
+    private Protocol myhttps = new Protocol("https", (ProtocolSocketFactory) (new EasySSLProtocolSocketFactory()), 443);
 
     /**
      * Invokes the filter with the context.
      *
      * @param context The proxy context.
      */
-    public void invoke(ProxyContext context)
-    {
+    public void invoke(ProxyContext context) {
         setupInitialProperties(context);
         setupTarget(context);
         logInfo(context);
 
-        if (next != null)
-        {
+        if (next != null) {
             next.invoke(context);
         }
     }
 
-    protected void setupInitialProperties(ProxyContext context)
-    {
+    protected void setupInitialProperties(ProxyContext context) {
         HttpServletRequest clientRequest = FlexContext.getHttpRequest();
-        if (clientRequest != null)
-        {
+        if (clientRequest != null) {
             String reqURL = clientRequest.getRequestURL().toString();
             int idx = reqURL.indexOf(':');
             String reqProto = reqURL.substring(0, idx);
@@ -80,54 +74,42 @@ public class ProxyContextFilter extends ProxyFilter
         }
     }
 
-    protected void setupTarget(ProxyContext context)
-    {
+    protected void setupTarget(ProxyContext context) {
         Target target = context.getTarget();
         String source = context.getUrl();
         HttpServletRequest clientRequest = FlexContext.getHttpRequest();
 
-        try
-        {
+        try {
             target.setUrl(new URL(source));
-        }
-        catch (MalformedURLException e)
-        {
-            try
-            {
+        } catch (MalformedURLException e) {
+            try {
                 //[Pete] Enhancement Req. 80172 - relative URLs from webroot (not
                 //       webapp context root)
-                if (clientRequest != null)
-                {
+                if (clientRequest != null) {
                     String baseurl = "http" + (clientRequest.isSecure() ? "s" : "") + "://"
                             + clientRequest.getServerName() + ":" + clientRequest.getServerPort();
 
                     target.setUrl(new URL(baseurl + source));
-                }
-                else
-                {
+                } else {
                     ProxyException pe = new ProxyException();
-                    pe.setMessage(RELATIVE_NOT_SUPPORTED, new Object[] { source });
+                    pe.setMessage(RELATIVE_NOT_SUPPORTED, new Object[]{source});
                     throw pe;
                 }
-            }
-            catch (MalformedURLException ex)
-            {
+            } catch (MalformedURLException ex) {
                 target.setUrl(null);
             }
         }
 
-        if (target.getUrl() == null)
-        {
+        if (target.getUrl() == null) {
             ProxyException pe = new ProxyException();
-            pe.setMessage(INVALID_TARGET, new Object[] { source });
+            pe.setMessage(INVALID_TARGET, new Object[]{source});
             throw pe;
         }
 
         target.setHTTPS(target.getUrl().getProtocol().equalsIgnoreCase("https"));
         target.setEncodedPath(target.getUrl().getPath());
         String queryStr = target.getUrl().getQuery();
-        if (queryStr != null)
-        {
+        if (queryStr != null) {
             target.setEncodedPath(target.getEncodedPath() + ("?" + queryStr));
         }
         try {
@@ -143,39 +125,29 @@ public class ProxyContextFilter extends ProxyFilter
 
         // Check for a custom protocol
         Protocol customProtocol = context.getProtocol();
-        if (customProtocol != null)
-        {
+        if (customProtocol != null) {
             target.getHostConfig().setHost(targetHost, targetPort, customProtocol);
-        }
-        else if (target.isHTTPS() && context.allowLaxSSL())
-        {
+        } else if (target.isHTTPS() && context.allowLaxSSL()) {
             target.getHostConfig().setHost(targetHost, targetPort, myhttps);
-        }
-        else
-        {
+        } else {
             String targetProtocol = target.getUrl().getProtocol();
             target.getHostConfig().setHost(targetHost, targetPort, targetProtocol);
         }
 
-        if (context.getConnectionManager() != null)
-        {
+        if (context.getConnectionManager() != null) {
             context.setHttpClient(new HttpClient(context.getConnectionManager()));
-        }
-        else
-        {
+        } else {
             context.setHttpClient(new HttpClient());
         }
 
         // Determine if target domain matches this proxy's domain and port
         boolean localDomain = false;
         boolean localPort = false;
-        if (clientRequest != null)
-        {
-            String proxyDomain = clientRequest.getServerName().contains(STRING_LOCALHOST)?
+        if (clientRequest != null) {
+            String proxyDomain = clientRequest.getServerName().contains(STRING_LOCALHOST) ?
                     getResolvedLocalhost() : clientRequest.getServerName();
-            String resolvedTargetHost = targetHost.contains(STRING_LOCALHOST)? getResolvedLocalhost() : targetHost;
-            if (proxyDomain.equalsIgnoreCase(resolvedTargetHost))
-            {
+            String resolvedTargetHost = targetHost.contains(STRING_LOCALHOST) ? getResolvedLocalhost() : targetHost;
+            if (proxyDomain.equalsIgnoreCase(resolvedTargetHost)) {
                 localDomain = true;
                 int proxyPort = clientRequest.getServerPort();
                 localPort = proxyPort == targetPort;
@@ -185,10 +157,8 @@ public class ProxyContextFilter extends ProxyFilter
         context.setLocalPort(localPort);
     }
 
-    protected void logInfo(ProxyContext context)
-    {
-        if (Log.isInfo())
-        {
+    protected void logInfo(ProxyContext context) {
+        if (Log.isInfo()) {
             Target target = context.getTarget();
             String prefix = "-- " + context.getMethod() + " : ";
             int targetPort = target.getUrl().getPort();
@@ -204,14 +174,10 @@ public class ProxyContextFilter extends ProxyFilter
      *
      * @return The IP of the localhost.
      */
-    private String getResolvedLocalhost()
-    {
-        try
-        {
+    private String getResolvedLocalhost() {
+        try {
             return InetAddress.getLocalHost().getHostAddress();
-        }
-        catch (UnknownHostException e)
-        {
+        } catch (UnknownHostException e) {
             // NOWARN
         }
         return null;

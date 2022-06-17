@@ -25,8 +25,7 @@ import java.util.Date;
  * Defines the runtime monitoring and management interface for
  * <code>ThrottleManager</code>s.
  */
-public interface ThrottleManagerControlMBean extends BaseControlMBean
-{
+public interface ThrottleManagerControlMBean extends BaseControlMBean {
     /**
      * Returns the number of incoming client messages that have been
      * throttled.

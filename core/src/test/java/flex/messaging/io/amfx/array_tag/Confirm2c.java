@@ -23,18 +23,14 @@ import flex.messaging.MessageException;
 
 import java.util.Date;
 
-public class Confirm2c extends DeserializationConfirmation
-{
+public class Confirm2c extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm2c()
-    {
+    public Confirm2c() {
     }
 
-    public ActionMessage getExpectedMessage()
-    {
-        if (EXPECTED_VALUE == null)
-        {
+    public ActionMessage getExpectedMessage() {
+        if (EXPECTED_VALUE == null) {
             ActionMessage m = new ActionMessage();
             MessageBody body = new MessageBody();
             m.addBody(body);
@@ -55,8 +51,7 @@ public class Confirm2c extends DeserializationConfirmation
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

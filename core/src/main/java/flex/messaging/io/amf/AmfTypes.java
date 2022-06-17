@@ -19,26 +19,25 @@ package flex.messaging.io.amf;
 /**
  * The amf/rtmp data encoding format constants.
  */
-public interface AmfTypes
-{
+public interface AmfTypes {
     // AMF marker constants
-    int kNumberType        = 0;
-    int kBooleanType       = 1;
-    int kStringType        = 2;
-    int kObjectType        = 3;
-    int kMovieClipType     = 4;
-    int kNullType          = 5;
-    int kUndefinedType     = 6;
-    int kReferenceType     = 7;
-    int kECMAArrayType     = 8;
-    int kObjectEndType     = 9;
-    int kStrictArrayType   = 10;
-    int kDateType          = 11;
-    int kLongStringType    = 12;
-    int kUnsupportedType   = 13;
-    int kRecordsetType     = 14;
-    int kXMLObjectType     = 15;
-    int kTypedObjectType   = 16;
+    int kNumberType = 0;
+    int kBooleanType = 1;
+    int kStringType = 2;
+    int kObjectType = 3;
+    int kMovieClipType = 4;
+    int kNullType = 5;
+    int kUndefinedType = 6;
+    int kReferenceType = 7;
+    int kECMAArrayType = 8;
+    int kObjectEndType = 9;
+    int kStrictArrayType = 10;
+    int kDateType = 11;
+    int kLongStringType = 12;
+    int kUnsupportedType = 13;
+    int kRecordsetType = 14;
+    int kXMLObjectType = 15;
+    int kTypedObjectType = 16;
     int kAvmPlusObjectType = 17;
 }
 

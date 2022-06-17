@@ -30,70 +30,55 @@ import java.util.List;
  * If a property element has child elements the children are recursively processed
  * and added as a Map.
  * </p>
- *
- *
  */
-public abstract class PropertiesSettings
-{
+public abstract class PropertiesSettings {
     protected final ConfigMap properties;
 
-    public PropertiesSettings()
-    {
+    public PropertiesSettings() {
         properties = new ConfigMap();
     }
 
-    public final void addProperties(ConfigMap p)
-    {
+    public final void addProperties(ConfigMap p) {
         properties.addProperties(p);
     }
 
-    public ConfigMap getProperties()
-    {
+    public ConfigMap getProperties() {
         return properties;
     }
 
-    public final String getProperty(String name)
-    {
+    public final String getProperty(String name) {
         return getPropertyAsString(name, null);
     }
 
-    public final void addProperty(String name, String value)
-    {
+    public final void addProperty(String name, String value) {
         properties.addProperty(name, value);
     }
 
-    public final void addProperty(String name, ConfigMap value)
-    {
+    public final void addProperty(String name, ConfigMap value) {
         properties.addProperty(name, value);
     }
 
-    public final ConfigMap getPropertyAsMap(String name, ConfigMap defaultValue)
-    {
+    public final ConfigMap getPropertyAsMap(String name, ConfigMap defaultValue) {
         return properties.getPropertyAsMap(name, defaultValue);
     }
 
-    public final String getPropertyAsString(String name, String defaultValue)
-    {
+    public final String getPropertyAsString(String name, String defaultValue) {
         return properties.getPropertyAsString(name, defaultValue);
     }
 
-    public final List getPropertyAsList(String name, List defaultValue)
-    {
+    public final List getPropertyAsList(String name, List defaultValue) {
         return properties.getPropertyAsList(name, defaultValue);
     }
 
-    public final int getPropertyAsInt(String name, int defaultValue)
-    {
+    public final int getPropertyAsInt(String name, int defaultValue) {
         return properties.getPropertyAsInt(name, defaultValue);
     }
 
-    public final boolean getPropertyAsBoolean(String name, boolean defaultValue)
-    {
+    public final boolean getPropertyAsBoolean(String name, boolean defaultValue) {
         return properties.getPropertyAsBoolean(name, defaultValue);
     }
 
-    public final long getPropertyAsLong(String name, long defaultValue)
-    {
+    public final long getPropertyAsLong(String name, long defaultValue) {
         return properties.getPropertyAsLong(name, defaultValue);
     }
 }

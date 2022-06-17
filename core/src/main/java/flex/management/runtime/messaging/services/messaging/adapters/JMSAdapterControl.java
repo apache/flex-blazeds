@@ -25,20 +25,18 @@ import flex.messaging.services.messaging.adapters.JMSAdapter;
  * for monitoring and managing <code>JMSAdapter</code>s at runtime.
  */
 public class JMSAdapterControl extends ServiceAdapterControl implements
-        JMSAdapterControlMBean
-{
+        JMSAdapterControlMBean {
     private static final String TYPE = "JMSAdapter";
     private JMSAdapter jmsAdapter;
-    
+
     /**
      * Constructs a <code>JMSAdapterControl</code>, assigning its id, managed
      * <code>JMSAdapter</code> and parent MBean.
-     * 
+     *
      * @param serviceAdapter The <code>JMSAdapter</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent         The parent MBean in the management hierarchy.
      */
-    public JMSAdapterControl(JMSAdapter serviceAdapter, BaseControl parent)
-    {
+    public JMSAdapterControl(JMSAdapter serviceAdapter, BaseControl parent) {
         super(serviceAdapter, parent);
         jmsAdapter = serviceAdapter;
     }
@@ -47,71 +45,63 @@ public class JMSAdapterControl extends ServiceAdapterControl implements
      *  (non-Javadoc)
      * @see flex.management.BaseControlMBean#getType()
      */
-    public String getType()
-    {
+    public String getType() {
         return TYPE;
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.JMSAdapterControlMBean#getTopicProducerCount()
      */
-    public Integer getTopicProducerCount()
-    {
+    public Integer getTopicProducerCount() {
         return new Integer(jmsAdapter.getTopicProducerCount());
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.JMSAdapterControlMBean#getTopicConsumerCount()
      */
-    public Integer getTopicConsumerCount()
-    {
+    public Integer getTopicConsumerCount() {
         return new Integer(jmsAdapter.getTopicConsumerCount());
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.JMSAdapterControlMBean#getTopicConsumerIds()
      */
-    public String[] getTopicConsumerIds()
-    {
+    public String[] getTopicConsumerIds() {
         return jmsAdapter.getTopicConsumerIds();
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.JMSAdapterControlMBean#getQueueProducerCount()
      */
-    public Integer getQueueProducerCount()
-    {
+    public Integer getQueueProducerCount() {
         return new Integer(jmsAdapter.getQueueProducerCount());
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.JMSAdapterControlMBean#getQueueConsumerCount()
      */
-    public Integer getQueueConsumerCount()
-    {        
+    public Integer getQueueConsumerCount() {
         return new Integer(jmsAdapter.getQueueConsumerCount());
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.JMSAdapterControlMBean#getQueueConsumerIds()
      */
-    public String[] getQueueConsumerIds()
-    {
+    public String[] getQueueConsumerIds() {
         return jmsAdapter.getQueueConsumerIds();
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see flex.management.runtime.JMSAdapterControlMBean#removeConsumer(java.lang.String)
      */
-    public void removeConsumer(String consumerId)
-    {
+    public void removeConsumer(String consumerId) {
         jmsAdapter.removeConsumer(consumerId);
     }
 }

@@ -20,59 +20,47 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ASObject extends HashMap
-{
+public class ASObject extends HashMap {
     static final long serialVersionUID = 1613529666682805692L;
     private boolean inHashCode = false;
     private boolean inToString = false;
 
     String namedType = null;
 
-    public ASObject()
-    {
+    public ASObject() {
         super();
     }
 
-    public ASObject(String name)
-    {
+    public ASObject(String name) {
         super();
         namedType = name;
     }
 
-    public String getType()
-    {
+    public String getType() {
         return namedType;
     }
 
-    public void setType(String type)
-    {
+    public void setType(String type) {
         namedType = type;
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
         int h = 0;
-        if (!inHashCode)
-        {
+        if (!inHashCode) {
             inHashCode = true;
-            try
-            {
+            try {
                 Iterator i = entrySet().iterator();
-                while (i.hasNext())
-                {
+                while (i.hasNext()) {
                     h += i.next().hashCode();
                 }
-            }
-            finally
-            {
+            } finally {
                 inHashCode = false;
             }
         }
         return h;
     }
 
-    public String toString()
-    {
+    public String toString() {
         String className = getClass().getName();
         int dotIndex = className.lastIndexOf('.');
 
@@ -80,32 +68,24 @@ public class ASObject extends HashMap
         buffer.append(className.substring(dotIndex + 1));
         buffer.append('(').append(System.identityHashCode(this)).append(')');
         buffer.append('{');
-        if (!inToString)
-        {
+        if (!inToString) {
             inToString = true;
-            try
-            {
+            try {
                 boolean pairEmitted = false;
 
                 Iterator i = entrySet().iterator();
-                while (i.hasNext())
-                {
-                    if (pairEmitted)
-                    {
+                while (i.hasNext()) {
+                    if (pairEmitted) {
                         buffer.append(", ");
                     }
                     Map.Entry e = (Map.Entry) (i.next());
                     buffer.append(e.getKey()).append('=').append(e.getValue());
                     pairEmitted = true;
                 }
-            }
-            finally
-            {
+            } finally {
                 inToString = false;
             }
-        }
-        else
-        {
+        } else {
             buffer.append("...");
         }
         buffer.append('}');

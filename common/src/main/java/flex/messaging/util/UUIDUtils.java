@@ -19,10 +19,9 @@ package flex.messaging.util;
 import java.util.Random;
 import java.util.UUID;
 
-public class UUIDUtils
-{
+public class UUIDUtils {
     private static Random _weakRand = new Random();
-	
+
     /**
      * The spec indicates that our time value should be based on 100 nano
      * second increments but our time granularity is in milliseconds.
@@ -31,44 +30,48 @@ public class UUIDUtils
      * 100 nanos into a single millisecond.
      */
     private static final int MAX_IDS_PER_MILLI = 10000;
-	
+
     /**
-     *  Any given time-of-day value can only be used once; remember the last used
-     *  value so we don't reuse them.
-     *  <p>NOTE: this algorithm assumes the clock will not be turned back.
+     * Any given time-of-day value can only be used once; remember the last used
+     * value so we don't reuse them.
+     * <p>NOTE: this algorithm assumes the clock will not be turned back.
      */
     private static long lastUsedTOD = 0;
-    /** Counter to use when we need more than one id in the same millisecond. */
+    /**
+     * Counter to use when we need more than one id in the same millisecond.
+     */
     private static int numIdsThisMilli = 0;
-	
-    /**  Hex digits, used for padding UUID strings with random characters. */
+
+    /**
+     * Hex digits, used for padding UUID strings with random characters.
+     */
     private static final String alphaNum = "0123456789ABCDEF";
-	
-    /** 4 bits per hex character. */
+
+    /**
+     * 4 bits per hex character.
+     */
     private static final int BITS_PER_DIGIT = 4;
-	
+
     private static final int BITS_PER_INT = 32;
     private static final int BITS_PER_LONG = 64;
     private static final int DIGITS_PER_INT = BITS_PER_INT / BITS_PER_DIGIT;
     private static final int DIGITS_PER_LONG = BITS_PER_LONG / BITS_PER_DIGIT;
-	
+
     /**
-     *  @private
+     * @private
      */
-    private static char[] UPPER_DIGITS = new char[] {
-	'0', '1', '2', '3', '4', '5', '6', '7',
-	'8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+    private static char[] UPPER_DIGITS = new char[]{
+            '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
     };
-	
+
     /**
      * Private constructor to prevent instances from being created.
      */
-    private UUIDUtils()
-    {
+    private UUIDUtils() {
     }
-	
+
     /**
-     *
      * Use the createUUID function when you need a unique string that you will
      * use as a persistent identifier in a distributed environment. To a very
      * high degree of certainty, this function returns a unique value; no other
@@ -78,34 +81,32 @@ public class UUIDUtils
      * Proper Format: `XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
      * where `X' stands for a hexadecimal digit (0-9 or A-F).
      */
-    public static String createUUID()
-    {
-		return createUUID(false);
-	}
-	
-    public static String createUUID(boolean secure) throws Error
-    {
+    public static String createUUID() {
+        return createUUID(false);
+    }
+
+    public static String createUUID(boolean secure) throws Error {
         Random rand = _weakRand;
-		if (secure)
-			throw new Error("Secure UUIDs not implemented");
-		
+        if (secure)
+            throw new Error("Secure UUIDs not implemented");
+
         StringBuffer s = new StringBuffer(36);
-		
+
         appendHexString(uniqueTOD(), false, 11, s);
-		
+
         //  Just use random padding characters, but ensure that the high bit
         //  is set to eliminate chances of collision with an IEEE 802 address.
-        s.append(  alphaNum.charAt( rand.nextInt(16) | 8 ) );
-		
+        s.append(alphaNum.charAt(rand.nextInt(16) | 8));
+
         //  Add random padding characters.
         appendRandomHexChars(32 - s.length(), rand, s);
-		
+
         //insert dashes in proper position. so the format matches CF
-        s.insert(8,"-");
-        s.insert(13,"-");
-        s.insert(18,"-");
-        s.insert(23,"-");
-		
+        s.insert(8, "-");
+        s.insert(13, "-");
+        s.insert(18, "-");
+        s.insert(23, "-");
+
         return s.toString();
     }
 
@@ -115,18 +116,15 @@ public class UUIDUtils
      * is not provided, null is returned.
      *
      * @param ba byte[] 16 bytes in length representing a 128-bit UID.
-     *
      * @return String representation of the UID, or null if an invalid
      * byte[] is provided.
      */
-    public static String fromByteArray(byte[] ba)
-    {
+    public static String fromByteArray(byte[] ba) {
         if (ba == null || ba.length != 16)
             return null;
 
         StringBuffer result = new StringBuffer(36);
-        for (int i = 0; i < 16; i++)
-        {
+        for (int i = 0; i < 16; i++) {
             if (i == 4 || i == 6 || i == 8 || i == 10)
                 result.append('-');
 
@@ -136,7 +134,7 @@ public class UUIDUtils
         return result.toString();
     }
 
-	
+
     /**
      * A utility method to check whether a String value represents a
      * correctly formatted UID value. UID values are expected to be
@@ -145,28 +143,23 @@ public class UUIDUtils
      * supported.
      *
      * @param uid The value to test whether it is formatted as a UID.
-     *
      * @return Returns true if the value is formatted as a UID.
      */
-    public static boolean isUID(String uid)
-    {
+    public static boolean isUID(String uid) {
         if (uid == null || uid.length() != 36)
             return false;
 
         char[] chars = uid.toCharArray();
-        for (int i = 0; i < 36; i++)
-        {
+        for (int i = 0; i < 36; i++) {
             char c = chars[i];
 
             // Check for correctly placed hyphens
-            if (i == 8 || i == 13 || i == 18 || i == 23)
-            {
+            if (i == 8 || i == 13 || i == 18 || i == 23) {
                 if (c != '-')
                     return false;
             }
             // We allow capital alpha-numeric hex digits only
-            else if (c < 48 || c > 70 || (c > 57 && c < 65))
-            {
+            else if (c < 48 || c > 70 || (c > 57 && c < 65)) {
                 return false;
             }
         }
@@ -179,12 +172,10 @@ public class UUIDUtils
      * format generated by createUID, otherwise null is returned.
      *
      * @param uid String representing a 128-bit UID.
-     *
      * @return byte[] 16 bytes in length representing the 128-bits of the
      * UID or null if the uid could not be converted.
      */
-    public static byte[] toByteArray(String uid)
-    {
+    public static byte[] toByteArray(String uid) {
         if (!isUID(uid))
             return null;
 
@@ -192,23 +183,20 @@ public class UUIDUtils
         char[] chars = uid.toCharArray();
         int r = 0;
 
-        for (int i = 0; i < chars.length; i++)
-        {
+        for (int i = 0; i < chars.length; i++) {
             if (chars[i] == '-')
                 continue;
             int h1 = Character.digit(chars[i], 16);
             i++;
             int h2 = Character.digit(chars[i], 16);
-            result[r++] = (byte)(((h1 << 4) | h2) & 0xFF);
+            result[r++] = (byte) (((h1 << 4) | h2) & 0xFF);
         }
         return result;
     }
 
-    private static void appendRandomHexChars(int n, Random rand, StringBuffer result)
-    {
+    private static void appendRandomHexChars(int n, Random rand, StringBuffer result) {
         int digitsPerInt = DIGITS_PER_INT;
-        while (n > 0)
-        {
+        while (n > 0) {
             int digitsToUse = Math.min(n, digitsPerInt);
             n -= digitsToUse;
             appendHexString(rand.nextInt(), true, digitsToUse, result);
@@ -216,15 +204,13 @@ public class UUIDUtils
     }
 
     private static void appendHexString
-        (long value, boolean prependZeroes, int nLeastSignificantDigits,
-         StringBuffer result)
-    {
+            (long value, boolean prependZeroes, int nLeastSignificantDigits,
+             StringBuffer result) {
         int bitsPerDigit = BITS_PER_DIGIT;
 
         long mask = (1L << bitsPerDigit) - 1;
 
-        if (nLeastSignificantDigits < DIGITS_PER_LONG)
-        {
+        if (nLeastSignificantDigits < DIGITS_PER_LONG) {
             // Clear the bits that we don't care about.
             value &= (1L << (bitsPerDigit * nLeastSignificantDigits)) - 1;
         }
@@ -233,25 +219,19 @@ public class UUIDUtils
         // last set of bits.
         int i = 0;
         long reorderedValue = 0;
-        if (value == 0)
-        {
+        if (value == 0) {
             // One zero is dumped.
             i++;
-        }
-        else
-        {
-            do
-            {
+        } else {
+            do {
                 reorderedValue = (reorderedValue << bitsPerDigit) | (value & mask);
                 value >>>= bitsPerDigit;
                 i++;
             } while (value != 0);
         }
 
-        if (prependZeroes)
-        {
-            for (int j = nLeastSignificantDigits - i; j > 0; j--)
-            {
+        if (prependZeroes) {
+            for (int j = nLeastSignificantDigits - i; j > 0; j--) {
                 result.append('0');
             }
         }
@@ -259,40 +239,37 @@ public class UUIDUtils
 
         // Dump the reordered sequence, with the most significant character
         // first.
-        for (; i > 0; i--)
-        {
+        for (; i > 0; i--) {
             result.append(alphaNum.charAt((int) (reorderedValue & mask)));
             reorderedValue >>>= bitsPerDigit;
         }
     }
 
-    private static String createInsecureUUID()
-    {
+    private static String createInsecureUUID() {
         StringBuffer s = new StringBuffer(36);
 
         appendHexString(uniqueTOD(), false, 11, s);
 
         //  Just use random padding characters, but ensure that the high bit
         //  is set to eliminate chances of collision with an IEEE 802 address.
-        s.append(  alphaNum.charAt( _weakRand.nextInt(16) | 8 ) );
+        s.append(alphaNum.charAt(_weakRand.nextInt(16) | 8));
 
         //  Add random padding characters.
         appendRandomHexChars(32 - s.length(), _weakRand, s);
 
         //insert dashes in proper position. so the format matches CF
-        s.insert(8,"-");
-        s.insert(13,"-");
-        s.insert(18,"-");
-        s.insert(23,"-");
+        s.insert(8, "-");
+        s.insert(13, "-");
+        s.insert(18, "-");
+        s.insert(23, "-");
 
         return s.toString();
     }
 
     /**
-     *  @return a time value, unique for calls to this method loaded by the same classloader.
+     * @return a time value, unique for calls to this method loaded by the same classloader.
      */
-    private static synchronized long uniqueTOD()
-    {
+    private static synchronized long uniqueTOD() {
         long currentTOD = System.currentTimeMillis();
 
         // Clock was set back... do not hang in this case waiting to catch up.
@@ -300,31 +277,28 @@ public class UUIDUtils
         if (currentTOD < lastUsedTOD)
             lastUsedTOD = currentTOD;
 
-        if (currentTOD == lastUsedTOD)
-        {
+        if (currentTOD == lastUsedTOD) {
             numIdsThisMilli++;
             /*
              * Fall back to the old technique of sleeping if we allocate
              * too many ids in one time interval.
              */
-            if (numIdsThisMilli >= MAX_IDS_PER_MILLI)
-            {
-                while ( currentTOD == lastUsedTOD )
-                {
-                    try { Thread.sleep(1); } catch ( Exception interrupt ) { /* swallow, wake up */ }
+            if (numIdsThisMilli >= MAX_IDS_PER_MILLI) {
+                while (currentTOD == lastUsedTOD) {
+                    try {
+                        Thread.sleep(1);
+                    } catch (Exception interrupt) { /* swallow, wake up */ }
                     currentTOD = System.currentTimeMillis();
                 }
                 lastUsedTOD = currentTOD;
                 numIdsThisMilli = 0;
             }
-        }
-        else
-        {
+        } else {
             //  We have a new TOD, reset the counter
             lastUsedTOD = currentTOD;
             numIdsThisMilli = 0;
         }
 
-        return lastUsedTOD * MAX_IDS_PER_MILLI + (long)numIdsThisMilli;
+        return lastUsedTOD * MAX_IDS_PER_MILLI + (long) numIdsThisMilli;
     }
 }

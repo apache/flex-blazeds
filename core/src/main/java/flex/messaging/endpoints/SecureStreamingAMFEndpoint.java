@@ -19,8 +19,7 @@ package flex.messaging.endpoints;
 /**
  * Secure version of StreamingAMFEndpoint.
  */
-public class SecureStreamingAMFEndpoint extends StreamingAMFEndpoint
-{
+public class SecureStreamingAMFEndpoint extends StreamingAMFEndpoint {
     //--------------------------------------------------------------------------
     //
     // Constructor
@@ -30,8 +29,7 @@ public class SecureStreamingAMFEndpoint extends StreamingAMFEndpoint
     /**
      * Constructs an unmanaged <code>SecureStreamingAMFEndpoint</code>.
      */
-    public SecureStreamingAMFEndpoint()
-    {
+    public SecureStreamingAMFEndpoint() {
         this(false);
     }
 
@@ -39,10 +37,9 @@ public class SecureStreamingAMFEndpoint extends StreamingAMFEndpoint
      * Constructs a <code>SecureStreamingAMFEndpoint</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>SecureStreamingAMFEndpoint</code>
-     * is manageable; <code>false</code> otherwise.
+     *                         is manageable; <code>false</code> otherwise.
      */
-    public SecureStreamingAMFEndpoint(boolean enableManagement)
-    {
+    public SecureStreamingAMFEndpoint(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -57,8 +54,7 @@ public class SecureStreamingAMFEndpoint extends StreamingAMFEndpoint
      *
      * @return <code>true</code> if the endpoint is secure, <code>false</code> otherwise.
      */
-    public boolean isSecure()
-    {
+    public boolean isSecure() {
         return true;
     }
 }

@@ -23,8 +23,7 @@ import flex.management.BaseControlMBean;
 /**
  * Defines the runtime monitoring and management interface for managed flex client managers.
  */
-public interface FlexClientManagerControlMBean extends BaseControlMBean
-{
+public interface FlexClientManagerControlMBean extends BaseControlMBean {
     /**
      * Returns ids of managed clients.
      *

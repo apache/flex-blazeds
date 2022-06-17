@@ -44,33 +44,27 @@ import javax.sql.RowSet;
 
 /**
  * An Amf0 output object.
- *
  */
-public class Amf0Output extends AbstractAmfOutput implements AmfTypes
-{
+public class Amf0Output extends AbstractAmfOutput implements AmfTypes {
     /**
      * 3-byte marker for object end; used for faster serialization
      * than a combination of writeUTF("") and writeByte(kObjectEndType).
-     *
      */
     public static final byte[] OBJECT_END_MARKER = {0, 0, kObjectEndType};
 
     /**
      * A mapping of object instances to their serialization numbers
      * for storing object references on the stream.
-     *
      */
     protected IdentityHashMap serializedObjects;
 
     /**
      * Number of serialized objects.
-     *
      */
     protected int serializedObjectCount = 0;
 
     /**
      * AVM+ Encoding.
-     *
      */
     protected boolean avmPlus;
 
@@ -81,10 +75,10 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
 
     /**
      * Construct a serializer without connecting it to an output stream.
+     *
      * @param context the context to use
      */
-    public Amf0Output(SerializationContext context)
-    {
+    public Amf0Output(SerializationContext context) {
         super(context);
         context.supportDatesByReference = false;
 
@@ -97,8 +91,7 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
      *
      * @param a Whether the client is running in AVMPlus and can handle AMF3 encoding.
      */
-    public void setAvmPlus(boolean a)
-    {
+    public void setAvmPlus(boolean a) {
         avmPlus = a;
     }
 
@@ -106,8 +99,7 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
      * Reset all object reference information allowing the class to be used to
      * write a "new" data structure.
      */
-    public void reset()
-    {
+    public void reset() {
         super.reset();
 
         serializedObjects.clear();
@@ -122,8 +114,7 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
      * current SerializationContext, OutputStream and debug trace settings
      * to switch the version of the AMF protocol mid-stream.
      */
-    protected void createAMF3Output()
-    {
+    protected void createAMF3Output() {
         avmPlusOutput = new Amf3Output(context);
         avmPlusOutput.setOutputStream(out);
         avmPlusOutput.setDebugTrace(trace);
@@ -132,115 +123,80 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     //
     // java.io.ObjectOutput implementations
     //
-    
+
     /**
      * Serialize an Object using AMF 0.
      */
-    public void writeObject(Object o) throws IOException
-    {
-        if (o == null)
-        {
+    public void writeObject(Object o) throws IOException {
+        if (o == null) {
             writeAMFNull();
             return;
         }
 
-        if (o instanceof String)
-        {
-            writeAMFString((String)o);
-        }
-        else if (o instanceof Number)
-        {
+        if (o instanceof String) {
+            writeAMFString((String) o);
+        } else if (o instanceof Number) {
             if (!context.legacyBigNumbers &&
-                (o instanceof BigInteger || o instanceof BigDecimal))
-            {
+                    (o instanceof BigInteger || o instanceof BigDecimal)) {
                 // Using double to write big numbers such as BigInteger or
                 // BigDecimal can result in information loss so we write
                 // them as String by default...
                 writeAMFString((o).toString());
+            } else {
+                writeAMFDouble(((Number) o).doubleValue());
             }
-            else
-            {
-                writeAMFDouble(((Number)o).doubleValue());
-            }
-        }
-        else if (o instanceof Boolean)
-        {
-            writeAMFBoolean(((Boolean)o).booleanValue());
-        }
-        else if (o instanceof Character)
-        {
+        } else if (o instanceof Boolean) {
+            writeAMFBoolean(((Boolean) o).booleanValue());
+        } else if (o instanceof Character) {
             String s = o.toString();
             writeAMFString(s);
-        }
-        else if (o instanceof Date)
-        {
+        } else if (o instanceof Date) {
             // Note that dates are not considered complex types in AMF 0
-            writeAMFDate((Date)o);
-        }
-        else if (o instanceof Calendar)
-        {
-            writeAMFDate(((Calendar)o).getTime());
+            writeAMFDate((Date) o);
+        } else if (o instanceof Calendar) {
+            writeAMFDate(((Calendar) o).getTime());
         }
         // If there is a proxy for this,write it as a custom object so the default
         // behavior can be overriden.
-        else if (o instanceof Enum && PropertyProxyRegistry.getRegistry().getProxy(o.getClass()) == null)
-        {
-            Enum<?> enumValue = (Enum<?>)o;
+        else if (o instanceof Enum && PropertyProxyRegistry.getRegistry().getProxy(o.getClass()) == null) {
+            Enum<?> enumValue = (Enum<?>) o;
             writeAMFString(enumValue.name());
-        }
-        else
-        {
+        } else {
             // We have a complex object.
 
             // If we're using AMF 3, delegate to AVM+ encoding format
-            if (avmPlus)
-            {
-                if (avmPlusOutput == null)
-                {
+            if (avmPlus) {
+                if (avmPlusOutput == null) {
                     createAMF3Output();
                 }
 
                 out.writeByte(kAvmPlusObjectType);
                 avmPlusOutput.writeObject(o);
-            }
-            else
-            {
+            } else {
                 Class cls = o.getClass();
 
-                if (cls.isArray())
-                {
+                if (cls.isArray()) {
                     writeAMFArray(o, cls.getComponentType());
-                }
-                else if (o instanceof Map && context.legacyMap && !(o instanceof ASObject))
-                {
-                        writeMapAsECMAArray((Map)o);
-                }
-                else if (o instanceof Collection)
-                {
+                } else if (o instanceof Map && context.legacyMap && !(o instanceof ASObject)) {
+                    writeMapAsECMAArray((Map) o);
+                } else if (o instanceof Collection) {
                     if (context.legacyCollection)
-                        writeCollection((Collection)o, null);
+                        writeCollection((Collection) o, null);
                     else
-                        writeArrayCollection((Collection)o, null);
-                }
-                else if (o instanceof org.w3c.dom.Document)
-                {
+                        writeArrayCollection((Collection) o, null);
+                } else if (o instanceof org.w3c.dom.Document) {
                     out.write(kXMLObjectType);
                     String xml = documentToString(o);
                     if (isDebug)
                         trace.write(xml);
 
                     writeUTF(xml, true, false);
-                }
-                else
-                {
+                } else {
                     // Special Case: wrap RowSet in PageableRowSet for Serialization
-                    if (o instanceof RowSet)
-                    {
-                        o = new PagedRowSet((RowSet)o, Integer.MAX_VALUE, false);
-                    }
-                    else if (o instanceof Throwable && context.legacyThrowable)
-                    {
-                        o = new StatusInfoProxy((Throwable)o);
+                    if (o instanceof RowSet) {
+                        o = new PagedRowSet((RowSet) o, Integer.MAX_VALUE, false);
+                    } else if (o instanceof Throwable && context.legacyThrowable) {
+                        o = new StatusInfoProxy((Throwable) o);
                     }
 
                     writeCustomObject(o);
@@ -252,8 +208,7 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    public void writeObjectTraits(TraitsInfo traits) throws IOException
-    {
+    public void writeObjectTraits(TraitsInfo traits) throws IOException {
         String className = null;
         if (traits != null)
             className = traits.getClassName();
@@ -261,12 +216,9 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
         if (isDebug)
             trace.startAMFObject(className, serializedObjectCount - 1);
 
-        if (className == null || className.length() == 0)
-        {
+        if (className == null || className.length() == 0) {
             out.write(kObjectType);
-        }
-        else
-        {
+        } else {
             out.write(kTypedObjectType);
             out.writeUTF(className);
         }
@@ -275,8 +227,7 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    public void writeObjectProperty(String name, Object value) throws IOException
-    {
+    public void writeObjectProperty(String name, Object value) throws IOException {
         if (isDebug)
             trace.namedElement(name);
 
@@ -289,8 +240,7 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    public void writeObjectEnd() throws IOException
-    {
+    public void writeObjectEnd() throws IOException {
         out.write(OBJECT_END_MARKER, 0, OBJECT_END_MARKER.length);
 
         if (isDebug)
@@ -305,8 +255,7 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    protected void writeAMFBoolean(boolean b) throws IOException
-    {
+    protected void writeAMFBoolean(boolean b) throws IOException {
         if (isDebug)
             trace.write(b);
 
@@ -318,8 +267,7 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    protected void writeAMFDouble(double d) throws IOException
-    {
+    protected void writeAMFDouble(double d) throws IOException {
         if (isDebug)
             trace.write(d);
 
@@ -331,14 +279,13 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    protected void writeAMFDate(Date d) throws IOException
-    {
+    protected void writeAMFDate(Date d) throws IOException {
         if (isDebug)
             trace.write(d);
 
         out.write(kDateType);
         // Write the time as 64bit value in ms
-        out.writeDouble((double)d.getTime());
+        out.writeDouble((double) d.getTime());
         int nCurrentTimezoneOffset = TimeZone.getDefault().getRawOffset();
         out.writeShort(nCurrentTimezoneOffset / 60000);
     }
@@ -346,39 +293,28 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    protected void writeAMFArray(Object o, Class componentType) throws IOException
-    {
-        if (componentType.isPrimitive())
-        {
+    protected void writeAMFArray(Object o, Class componentType) throws IOException {
+        if (componentType.isPrimitive()) {
             writePrimitiveArray(o);
-        }
-        else if (componentType.equals(Character.class))
-        {
-            writeCharArrayAsString((Character[])o);
-        }
-        else
-        {
-            writeObjectArray((Object[])o, null);
+        } else if (componentType.equals(Character.class)) {
+            writeCharArrayAsString((Character[]) o);
+        } else {
+            writeObjectArray((Object[]) o, null);
         }
     }
 
     /**
      *
      */
-    protected void writeArrayCollection(Collection col, SerializationDescriptor desc) throws IOException
-    {
-        if (!serializeAsReference(col))
-        {
+    protected void writeArrayCollection(Collection col, SerializationDescriptor desc) throws IOException {
+        if (!serializeAsReference(col)) {
             ArrayCollection ac;
 
-            if (col instanceof ArrayCollection)
-            {
-                ac = (ArrayCollection)col;
+            if (col instanceof ArrayCollection) {
+                ac = (ArrayCollection) col;
                 // TODO: QUESTION: Pete ignoring the descriptor here... not sure if
                 // we should modify the user's AC as that could cause corruption?
-            }
-            else
-            {
+            } else {
                 // Wrap any Collection in an ArrayCollection
                 ac = new ArrayCollection(col);
                 if (desc != null)
@@ -394,48 +330,38 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    protected void writeCustomObject(Object o) throws IOException
-    {
+    protected void writeCustomObject(Object o) throws IOException {
         PropertyProxy proxy = null;
 
-        if (o instanceof PropertyProxy)
-        {
-            proxy = (PropertyProxy)o;
+        if (o instanceof PropertyProxy) {
+            proxy = (PropertyProxy) o;
             o = proxy.getDefaultInstance();
 
             // The proxy may wrap a null default instance, if so, short circuit here.
-            if (o == null)
-            {
+            if (o == null) {
                 writeAMFNull();
                 return;
             }
             // HACK: Short circuit and unwrap if PropertyProxy is wrapping an Array
             // or Collection type since we don't yet have the ability to proxy multiple
             // AMF types. We write an AMF Array directly instead of an AMF Object
-            else if (o instanceof Collection)
-            {
+            else if (o instanceof Collection) {
                 if (context.legacyCollection)
-                    writeCollection((Collection)o, proxy.getDescriptor());
+                    writeCollection((Collection) o, proxy.getDescriptor());
                 else
-                    writeArrayCollection((Collection)o, proxy.getDescriptor());
+                    writeArrayCollection((Collection) o, proxy.getDescriptor());
                 return;
-            }
-            else if (o.getClass().isArray())
-            {
-                writeObjectArray((Object[])o, proxy.getDescriptor());
+            } else if (o.getClass().isArray()) {
+                writeObjectArray((Object[]) o, proxy.getDescriptor());
                 return;
-            }
-            else if (context.legacyMap && o instanceof Map && !(o instanceof ASObject))
-            {
-                writeMapAsECMAArray((Map)o);
+            } else if (context.legacyMap && o instanceof Map && !(o instanceof ASObject)) {
+                writeMapAsECMAArray((Map) o);
                 return;
             }
         }
 
-        if (!serializeAsReference(o))
-        {
-            if (proxy == null)
-            {
+        if (!serializeAsReference(o)) {
+            if (proxy == null) {
                 proxy = PropertyProxyRegistry.getProxyAndRegister(o);
             }
 
@@ -446,14 +372,12 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    protected void writePropertyProxy(PropertyProxy pp, Object instance) throws IOException
-    {
+    protected void writePropertyProxy(PropertyProxy pp, Object instance) throws IOException {
         /*
          * At this point we substitute the instance we want to serialize.
          */
         Object newInst = pp.getInstanceToSerialize(instance);
-        if (newInst != instance)
-        {
+        if (newInst != instance) {
             // We can't use writeAMFNull here I think since we already added this object
             // to the object table on the server side.  The player won't have any way
             // of knowing we have this reference mapped to null.
@@ -469,15 +393,12 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
         boolean externalizable = false; //sp.isExternalizable(instance);
         List propertyNames = pp.getPropertyNames(instance);
         // filter write-only properties
-        if (pp instanceof BeanProxy)
-        {
+        if (pp instanceof BeanProxy) {
             BeanProxy bp = (BeanProxy) pp;
             Iterator it = propertyNames.iterator();
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 String propName = (String) it.next();
-                if (bp.isWriteOnly(instance, propName))
-                {   // do not serialize this, as we cannot get the value
+                if (bp.isWriteOnly(instance, propName)) {   // do not serialize this, as we cannot get the value
                     it.remove();
                 }
             }
@@ -485,12 +406,10 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
         TraitsInfo ti = new TraitsInfo(pp.getAlias(instance), pp.isDynamic(), externalizable, propertyNames);
         writeObjectTraits(ti);
 
-        if (propertyNames != null)
-        {
+        if (propertyNames != null) {
             Iterator it = propertyNames.iterator();
-            while (it.hasNext())
-            {
-                String propName = (String)it.next();
+            while (it.hasNext()) {
+                String propName = (String) it.next();
                 Object value = pp.getValue(instance, propName);
                 writeObjectProperty(propName, value);
             }
@@ -502,10 +421,8 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    protected void writeMapAsECMAArray(Map m) throws IOException
-    {
-        if (!serializeAsReference(m))
-        {
+    protected void writeMapAsECMAArray(Map m) throws IOException {
+        if (!serializeAsReference(m)) {
             if (isDebug)
                 trace.startECMAArray(serializedObjectCount - 1);
 
@@ -513,8 +430,7 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
             out.writeInt(0);
 
             Iterator it = m.keySet().iterator();
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 Object key = it.next();
                 Object value = m.get(key);
                 writeObjectProperty(key.toString(), value);
@@ -527,8 +443,7 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    protected void writeAMFNull() throws IOException
-    {
+    protected void writeAMFNull() throws IOException {
         if (isDebug)
             trace.writeNull();
 
@@ -538,8 +453,7 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    protected void writeAMFString(String str) throws IOException
-    {
+    protected void writeAMFString(String str) throws IOException {
         if (isDebug)
             trace.writeString(str);
 
@@ -549,28 +463,24 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    protected void writeObjectArray(Object[] values, SerializationDescriptor descriptor) throws IOException
-    {
-        if (!serializeAsReference(values))
-        {
+    protected void writeObjectArray(Object[] values, SerializationDescriptor descriptor) throws IOException {
+        if (!serializeAsReference(values)) {
             if (isDebug)
                 trace.startAMFArray(serializedObjectCount - 1);
 
             out.write(kStrictArrayType);
             out.writeInt(values.length);
-            for (int i = 0; i < values.length; ++i)
-            {
+            for (int i = 0; i < values.length; ++i) {
                 if (isDebug)
                     trace.arrayElement(i);
 
                 Object item = values[i];
                 if (item != null && descriptor != null && !(item instanceof String)
                         && !(item instanceof Number) && !(item instanceof Boolean)
-                        && !(item instanceof Character))
-                {
+                        && !(item instanceof Character)) {
 
                     PropertyProxy proxy = PropertyProxyRegistry.getProxy(item);
-                    proxy = (PropertyProxy)proxy.clone();
+                    proxy = (PropertyProxy) proxy.clone();
                     proxy.setDescriptor(descriptor);
                     item = proxy;
                 }
@@ -589,12 +499,9 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
      *
      * @param c Collection to be serialized as an array.
      * @throws java.io.IOException The exception can be generated by the output stream
-     *
      */
-    protected void writeCollection(Collection c, SerializationDescriptor descriptor) throws IOException
-    {
-        if (!serializeAsReference(c))
-        {
+    protected void writeCollection(Collection c, SerializationDescriptor descriptor) throws IOException {
+        if (!serializeAsReference(c)) {
             if (isDebug)
                 trace.startAMFArray(serializedObjectCount - 1);
 
@@ -602,18 +509,16 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
             out.writeInt(c.size());
             Iterator it = c.iterator();
             int i = 0;
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 if (isDebug)
                     trace.arrayElement(i++);
 
                 Object item = it.next();
                 if (item != null && descriptor != null && !(item instanceof String)
                         && !(item instanceof Number) && !(item instanceof Boolean)
-                        && !(item instanceof Character))
-                {
+                        && !(item instanceof Character)) {
                     PropertyProxy proxy = PropertyProxyRegistry.getProxy(item);
-                    proxy = (PropertyProxy)proxy.clone();
+                    proxy = (PropertyProxy) proxy.clone();
                     proxy.setDescriptor(descriptor);
                     item = proxy;
                 }
@@ -633,50 +538,38 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
      * Primitives include the following:
      * boolean, char, double, float, long, int, short, byte
      * </p>
-     * @param obj An array of primitives
      *
+     * @param obj An array of primitives
      */
-    protected void writePrimitiveArray(Object obj) throws IOException
-    {
+    protected void writePrimitiveArray(Object obj) throws IOException {
         Class aType = obj.getClass().getComponentType();
 
         //Treat char[] as a String
-        if (aType.equals(Character.TYPE))
-        {
-            char[] c = (char[])obj;
+        if (aType.equals(Character.TYPE)) {
+            char[] c = (char[]) obj;
             writeCharArrayAsString(c);
-        }
-        else if (!serializeAsReference(obj))
-        {
-            if (aType.equals(Boolean.TYPE))
-            {
+        } else if (!serializeAsReference(obj)) {
+            if (aType.equals(Boolean.TYPE)) {
                 out.write(kStrictArrayType);
 
-                boolean[] b = (boolean[])obj;
+                boolean[] b = (boolean[]) obj;
                 out.writeInt(b.length);
 
-                if (isDebug)
-                {
+                if (isDebug) {
                     trace.startAMFArray(serializedObjectCount - 1);
 
-                    for (int i = 0; i < b.length; i++)
-                    {
+                    for (int i = 0; i < b.length; i++) {
                         trace.arrayElement(i);
                         writeAMFBoolean(b[i]);
                     }
 
                     trace.endAMFArray();
-                }
-                else
-                {
-                    for (int i = 0; i < b.length; i++)
-                    {
+                } else {
+                    for (int i = 0; i < b.length; i++) {
                         writeAMFBoolean(b[i]);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 //We have a primitive number, either a double, float, long, int, short or byte.
                 //We write all of these as doubles...
                 out.write(kStrictArrayType);
@@ -684,23 +577,18 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
                 int length = Array.getLength(obj);
                 out.writeInt(length);
 
-                if (isDebug)
-                {
+                if (isDebug) {
                     trace.startAMFArray(serializedObjectCount - 1);
 
-                    for (int i = 0; i < length; i++)
-                    {
+                    for (int i = 0; i < length; i++) {
                         trace.arrayElement(i);
                         double v = Array.getDouble(obj, i);
                         writeAMFDouble(v);
                     }
 
                     trace.endAMFArray();
-                }
-                else
-                {
-                    for (int i = 0; i < length; i++)
-                    {
+                } else {
+                    for (int i = 0; i < length; i++) {
                         double v = Array.getDouble(obj, i);
                         writeAMFDouble(v);
                     }
@@ -712,13 +600,11 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    protected void writeCharArrayAsString(Character[] ca) throws IOException
-    {
+    protected void writeCharArrayAsString(Character[] ca) throws IOException {
         int length = ca.length;
         char[] chars = new char[length];
 
-        for (int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             Character c = ca[i];
             if (c == null)
                 chars[i] = 0;
@@ -731,16 +617,14 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      *
      */
-    protected void writeCharArrayAsString(char[] ca) throws IOException
-    {
+    protected void writeCharArrayAsString(char[] ca) throws IOException {
         writeAMFString(new String(ca));
     }
 
     /**
      *
      */
-    protected void writeUTF(String str, boolean forceLong, boolean writeType) throws IOException
-    {
+    protected void writeUTF(String str, boolean forceLong, boolean writeType) throws IOException {
         int strlen = str.length();
         int utflen = 0;
         int c, count = 0;
@@ -748,30 +632,21 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
         char[] charr = getTempCharArray(strlen);
         str.getChars(0, strlen, charr, 0);
 
-        for (int i = 0; i < strlen; i++)
-        {
+        for (int i = 0; i < strlen; i++) {
             c = charr[i];
-            if (c <= 0x007F)
-            {
+            if (c <= 0x007F) {
                 utflen++;
-            }
-            else if (c > 0x07FF)
-            {
+            } else if (c > 0x07FF) {
                 utflen += 3;
-            }
-            else
-            {
+            } else {
                 utflen += 2;
             }
         }
 
         int type;
-        if (forceLong)
-        {
+        if (forceLong) {
             type = kLongStringType;
-        }
-        else
-        {
+        } else {
             if (utflen <= 65535)
                 type = kStringType;
             else
@@ -779,38 +654,29 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
         }
 
         byte[] bytearr;
-        if (writeType)
-        {
+        if (writeType) {
             bytearr = getTempByteArray(utflen + (type == kStringType ? 3 : 5));
-            bytearr[count++] = (byte)(type);
-        }
-        else
+            bytearr[count++] = (byte) (type);
+        } else
             bytearr = getTempByteArray(utflen + (type == kStringType ? 2 : 4));
 
-        if (type == kLongStringType)
-        {
-            bytearr[count++] = (byte)((utflen >>> 24) & 0xFF);
-            bytearr[count++] = (byte)((utflen >>> 16) & 0xFF);
+        if (type == kLongStringType) {
+            bytearr[count++] = (byte) ((utflen >>> 24) & 0xFF);
+            bytearr[count++] = (byte) ((utflen >>> 16) & 0xFF);
         }
-        bytearr[count++] = (byte)((utflen >>> 8) & 0xFF);
-        bytearr[count++] = (byte)((utflen) & 0xFF);
-        for (int i = 0; i < strlen; i++)
-        {
+        bytearr[count++] = (byte) ((utflen >>> 8) & 0xFF);
+        bytearr[count++] = (byte) ((utflen) & 0xFF);
+        for (int i = 0; i < strlen; i++) {
             c = charr[i];
-            if (c <= 0x007F)
-            {
-                bytearr[count++] = (byte)c;
-            }
-            else if (c > 0x07FF)
-            {
-                bytearr[count++] = (byte)(0xE0 | ((c >> 12) & 0x0F));
-                bytearr[count++] = (byte)(0x80 | ((c >> 6) & 0x3F));
-                bytearr[count++] = (byte)(0x80 | ((c) & 0x3F));
-            }
-            else
-            {
-                bytearr[count++] = (byte)(0xC0 | ((c >> 6) & 0x1F));
-                bytearr[count++] = (byte)(0x80 | ((c) & 0x3F));
+            if (c <= 0x007F) {
+                bytearr[count++] = (byte) c;
+            } else if (c > 0x07FF) {
+                bytearr[count++] = (byte) (0xE0 | ((c >> 12) & 0x0F));
+                bytearr[count++] = (byte) (0x80 | ((c >> 6) & 0x3F));
+                bytearr[count++] = (byte) (0x80 | ((c) & 0x3F));
+            } else {
+                bytearr[count++] = (byte) (0xC0 | ((c >> 6) & 0x1F));
+                bytearr[count++] = (byte) (0x80 | ((c) & 0x3F));
             }
         }
         out.write(bytearr, 0, count);
@@ -819,11 +685,8 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
     /**
      * Remember the object's serialization number so that it can be referred to
      * as a reference later. Only complex ojects should be stored as references.
-     *
-     *
      */
-    protected void rememberObjectReference(Object obj)
-    {
+    protected void rememberObjectReference(Object obj) {
         serializedObjects.put(obj, new Integer(serializedObjectCount++));
     }
 
@@ -833,42 +696,34 @@ public class Amf0Output extends AbstractAmfOutput implements AmfTypes
      * in the reference collection for potential future encounter.
      *
      * @return Success/failure indicator as to whether the object could be
-     *         serialized as a reference.
-     *
+     * serialized as a reference.
      */
-    protected boolean serializeAsReference(Object obj) throws IOException
-    {
+    protected boolean serializeAsReference(Object obj) throws IOException {
         Object ref = serializedObjects.get(obj);
-        if (ref != null)
-        {
-            try
-            {
-                int refNum = ((Integer)ref).intValue();
+        if (ref != null) {
+            try {
+                int refNum = ((Integer) ref).intValue();
                 out.write(kReferenceType);
                 out.writeShort(refNum);
 
                 if (isDebug)
                     trace.writeRef(refNum);
-            }
-            catch (ClassCastException e)
-            {
+            } catch (ClassCastException e) {
                 throw new IOException("Object reference value is not an Integer");
             }
-        }
-        else
-        {
+        } else {
             rememberObjectReference(obj);
         }
         return (ref != null);
     }
 
     /**
-    protected void writeUnsupported() throws IOException
-    {
-        if (isDebug)
-            trace.write("UNSUPPORTED");
+     protected void writeUnsupported() throws IOException
+     {
+     if (isDebug)
+     trace.write("UNSUPPORTED");
 
-        out.write(kUnsupportedType);
-    }
-    */
+     out.write(kUnsupportedType);
+     }
+     */
 }
