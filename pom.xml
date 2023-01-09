@@ -80,38 +80,6 @@
 
     <build>
         <plugins>
-            <!--
-              Check the referenced dependencies for known vulnerabilities
-              and fail the build if there are critical ones in our classpath
-            -->
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>7.4.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- Fail the build on any CVE, which is not considered minor -->
-                    <failBuildOnCVSS>4</failBuildOnCVSS>
-                    <excludes>
-                        <!-- CVE-2015-1773 Affects Apache Flex < 4.10, but BlazeDS has nothing to do with the libraries of the Flex SDK -->
-                        <exclude>org.apache.flex.blazeds:flex-messaging-common</exclude>
-                        <exclude>org.apache.flex.blazeds:flex-messaging-core</exclude>
-                        <exclude>org.apache.flex.blazeds:flex-messaging-proxy</exclude>
-                        <exclude>org.apache.flex.blazeds:flex-messaging-remoting</exclude>
-                        <exclude>org.apache.flex.blazeds:blazeds-spring-boot-starter</exclude>
-                        <exclude>org.apache.flex.blazeds:flex-messaging-opt-tomcat-base</exclude>
-                        <!-- TODO: Excluding this dependency, for which there's CVEs reported as it requires refactoring quite a bit. However this should be addressed before the next release -->
-                        <exclude>commons-httpclient:commons-httpclient</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
@@ -378,6 +346,44 @@
             <modules>
                 <module>distribution</module>
             </modules>
+        </profile>
+        <profile>
+            <id>with-owasp</id>
+            <build>
+                <plugins>
+                    <!--
+                    Check the referenced dependencies for known vulnerabilities
+                    and fail the build if there are critical ones in our classpath
+                    -->
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>7.4.4</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!-- Fail the build on any CVE, which is not considered minor -->
+                            <failBuildOnCVSS>4</failBuildOnCVSS>
+                            <excludes>
+                                <!-- CVE-2015-1773 Affects Apache Flex < 4.10, but BlazeDS has nothing to do with the libraries of the Flex SDK -->
+                                <exclude>org.apache.flex.blazeds:flex-messaging-common</exclude>
+                                <exclude>org.apache.flex.blazeds:flex-messaging-core</exclude>
+                                <exclude>org.apache.flex.blazeds:flex-messaging-proxy</exclude>
+                                <exclude>org.apache.flex.blazeds:flex-messaging-remoting</exclude>
+                                <exclude>org.apache.flex.blazeds:blazeds-spring-boot-starter</exclude>
+                                <exclude>org.apache.flex.blazeds:flex-messaging-opt-tomcat-base</exclude>
+                                <!-- TODO: Excluding this dependency, for which there's CVEs reported as it requires refactoring quite a bit. However this should be addressed before the next release -->
+                                <exclude>commons-httpclient:commons-httpclient</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
