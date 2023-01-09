@@ -65,8 +65,8 @@ public class ConfigurationParserTest {
         if (files != null) {
             for (File f : files) {
                 if (f.isDirectory()) {
-                    resourcePath = getResourcePath(f.getAbsolutePath());
-                    processDirectory(f, resourcePath);
+                    String dirResourcePath = getResourcePath(f.getAbsolutePath());
+                    processDirectory(f, dirResourcePath);
                 } else {
                     String testName = getTestName(f.getName());
                     System.out.println("Running test: " + testName);
