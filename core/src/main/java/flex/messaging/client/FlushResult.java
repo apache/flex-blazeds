@@ -24,8 +24,7 @@ import flex.messaging.messages.Message;
  * Stores the messages that should be written to the network as a result of a flush
  * invocation on a FlexClient's outbound queue.
  */
-public class FlushResult
-{
+public class FlushResult {
     //--------------------------------------------------------------------------
     //
     // Constructor
@@ -39,7 +38,8 @@ public class FlushResult
      * the client as well as an optional wait time in milliseconds for when the
      * next flush should be invoked.
      */
-    public FlushResult() {}
+    public FlushResult() {
+    }
 
     //--------------------------------------------------------------------------
     //
@@ -59,8 +59,7 @@ public class FlushResult
      *
      * @return The messages to write to the network for this flush invocation.
      */
-    public List<Message> getMessages()
-    {
+    public List<Message> getMessages() {
         return messages;
     }
 
@@ -69,8 +68,7 @@ public class FlushResult
      *
      * @param value The messages to write to the network for this flush invocation.
      */
-    public void setMessages(List<Message> value)
-    {
+    public void setMessages(List<Message> value) {
         messages = value;
     }
 
@@ -90,11 +88,10 @@ public class FlushResult
      * when the next message is added to the outbound queue.
      *
      * @return The wait time in milliseconds before flush is next invoked. A value of 0, the default,
-     *         indicates that the default flush behavior for the underlying Channel/Endpoint should be
-     *         used.
+     * indicates that the default flush behavior for the underlying Channel/Endpoint should be
+     * used.
      */
-    public int getNextFlushWaitTimeMillis()
-    {
+    public int getNextFlushWaitTimeMillis() {
         return nextFlushWaitTimeMillis;
     }
 
@@ -110,8 +107,7 @@ public class FlushResult
      *
      * @param value The wait time in milliseconds before flush will be invoked.
      */
-    public void setNextFlushWaitTimeMillis(int value)
-    {
+    public void setNextFlushWaitTimeMillis(int value) {
         nextFlushWaitTimeMillis = (value < 1) ? 0 : value;
     }
 }

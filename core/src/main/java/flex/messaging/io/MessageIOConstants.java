@@ -19,8 +19,7 @@ package flex.messaging.io;
 /**
  *
  */
-public interface MessageIOConstants
-{
+public interface MessageIOConstants {
     int AMF0 = 0;
     int AMF1 = 1; // There is no AMF1 but FMS uses it for some reason, hence special casing.
     int AMF3 = 3;

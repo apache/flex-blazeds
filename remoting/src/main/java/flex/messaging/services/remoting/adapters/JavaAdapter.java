@@ -48,13 +48,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class JavaAdapter extends ServiceAdapter
-{
+public class JavaAdapter extends ServiceAdapter {
     static final String LOG_CATEGORY = LogCategories.MESSAGE_REMOTING;
 
     public static final String[] PROTECTED_PACKAGES = new String[]{"jrun", "jrunx", "macromedia",
-                                                                   "flex", "flex2", "coldfusion",
-                                                                   "allaire", "com.allaire", "com.macromedia"};
+            "flex", "flex2", "coldfusion",
+            "allaire", "com.allaire", "com.macromedia"};
 
     private static final int REMOTING_METHOD_NULL_NAME_ERRMSG = 10658;
     private static final int REMOTING_METHOD_REFS_UNDEFINED_CONSTRAINT_ERRMSG = 10659;
@@ -74,8 +73,7 @@ public class JavaAdapter extends ServiceAdapter
     /**
      * Constructs an unmanaged <code>JavaAdapter</code> instance.
      */
-    public JavaAdapter()
-    {
+    public JavaAdapter() {
         this(false);
     }
 
@@ -83,10 +81,9 @@ public class JavaAdapter extends ServiceAdapter
      * Constructs a <code>JavaAdapter</code> instance.
      *
      * @param enableManagement <code>true</code> if the <code>JavaAdapter</code> has a
-     * corresponding MBean control for management; otherwise <code>false</code>.
+     *                         corresponding MBean control for management; otherwise <code>false</code>.
      */
-    public JavaAdapter(boolean enableManagement)
-    {
+    public JavaAdapter(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -117,9 +114,9 @@ public class JavaAdapter extends ServiceAdapter
      *
      * @param destination remoting destination to associate with this adapter
      */
-    @Override public void setDestination(Destination destination)
-    {
-        Destination dest = (RemotingDestination)destination;
+    @Override
+    public void setDestination(Destination destination) {
+        Destination dest = (RemotingDestination) destination;
         super.setDestination(dest);
     }
 
@@ -134,9 +131,8 @@ public class JavaAdapter extends ServiceAdapter
      *
      * @return an <tt>Iterator</tt> over the currently registered exclude methods
      */
-    public Iterator getExcludeMethodIterator()
-    {
-        return excludeMethods == null? Collections.EMPTY_LIST.iterator() : excludeMethods.values().iterator();
+    public Iterator getExcludeMethodIterator() {
+        return excludeMethods == null ? Collections.EMPTY_LIST.iterator() : excludeMethods.values().iterator();
     }
 
     /**
@@ -145,31 +141,25 @@ public class JavaAdapter extends ServiceAdapter
      *
      * @param value method to exclude
      */
-    public void addExcludeMethod(RemotingMethod value)
-    {
+    public void addExcludeMethod(RemotingMethod value) {
         String name = value.getName();
-        if (name == null)
-        {
+        if (name == null) {
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(REMOTING_METHOD_NULL_NAME_ERRMSG, new Object[] {getDestination().getId()});
+            ce.setMessage(REMOTING_METHOD_NULL_NAME_ERRMSG, new Object[]{getDestination().getId()});
             throw ce;
         }
 
         // Validate that a method with this name is defined on the source class.
-        if (!isMethodDefinedBySource(name))
-        {
+        if (!isMethodDefinedBySource(name)) {
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(REMOTING_METHOD_NOT_DEFINED_ERRMSG, new Object[] {name, getDestination().getId()});
+            ce.setMessage(REMOTING_METHOD_NOT_DEFINED_ERRMSG, new Object[]{name, getDestination().getId()});
             throw ce;
         }
 
-        if (excludeMethods == null)
-        {
+        if (excludeMethods == null) {
             excludeMethods = new HashMap();
             excludeMethods.put(name, value);
-        }
-        else if (!excludeMethods.containsKey(name))
-        {
+        } else if (!excludeMethods.containsKey(name)) {
             excludeMethods.put(name, value);
         }
     }
@@ -179,8 +169,7 @@ public class JavaAdapter extends ServiceAdapter
      *
      * @param value method to remove from exlcuded methods list
      */
-    public void removeExcludeMethod(RemotingMethod value)
-    {
+    public void removeExcludeMethod(RemotingMethod value) {
         excludeMethods.remove(value.getName());
     }
 
@@ -195,9 +184,8 @@ public class JavaAdapter extends ServiceAdapter
      *
      * @return an <tt>Iterator</tt> over the currently registered include methods
      */
-    public Iterator getIncludeMethodIterator()
-    {
-        return includeMethods == null? Collections.EMPTY_LIST.iterator() : includeMethods.values().iterator();
+    public Iterator getIncludeMethodIterator() {
+        return includeMethods == null ? Collections.EMPTY_LIST.iterator() : includeMethods.values().iterator();
     }
 
     /**
@@ -206,31 +194,25 @@ public class JavaAdapter extends ServiceAdapter
      *
      * @param value method to include
      */
-    public void addIncludeMethod(RemotingMethod value)
-    {
+    public void addIncludeMethod(RemotingMethod value) {
         String name = value.getName();
-        if (name == null)
-        {
+        if (name == null) {
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(REMOTING_METHOD_NULL_NAME_ERRMSG, new Object[] {getDestination().getId()});
+            ce.setMessage(REMOTING_METHOD_NULL_NAME_ERRMSG, new Object[]{getDestination().getId()});
             throw ce;
         }
 
         // Validate that a method with this name is defined on the source class.
-        if (!isMethodDefinedBySource(name))
-        {
+        if (!isMethodDefinedBySource(name)) {
             ConfigurationException ce = new ConfigurationException();
-            ce.setMessage(REMOTING_METHOD_NOT_DEFINED_ERRMSG, new Object[] {name, getDestination().getId()});
+            ce.setMessage(REMOTING_METHOD_NOT_DEFINED_ERRMSG, new Object[]{name, getDestination().getId()});
             throw ce;
         }
 
-        if (includeMethods == null)
-        {
+        if (includeMethods == null) {
             includeMethods = new HashMap();
             includeMethods.put(name, value);
-        }
-        else if (!includeMethods.containsKey(name))
-        {
+        } else if (!includeMethods.containsKey(name)) {
             includeMethods.put(name, value);
         }
     }
@@ -240,8 +222,7 @@ public class JavaAdapter extends ServiceAdapter
      *
      * @param value method to remove from the included methods list
      */
-    public void removeIncludeMethod(RemotingMethod value)
-    {
+    public void removeIncludeMethod(RemotingMethod value) {
         includeMethods.remove(value.getName());
     }
 
@@ -251,35 +232,30 @@ public class JavaAdapter extends ServiceAdapter
     //
     //--------------------------------------------------------------------------
 
-    /** {@inheritDoc} */
-    @Override public void initialize(String id, ConfigMap properties)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void initialize(String id, ConfigMap properties) {
         ConfigMap methodsToInclude = properties.getPropertyAsMap(PROPERTY_INCLUDE_METHODS, null);
-        if (methodsToInclude != null)
-        {
+        if (methodsToInclude != null) {
             List methods = methodsToInclude.getPropertyAsList(METHOD_ELEMENT, null);
-            if ((methods != null) && !methods.isEmpty())
-            {
+            if ((methods != null) && !methods.isEmpty()) {
                 int n = methods.size();
-                for (int i = 0; i < n; i++)
-                {
-                    ConfigMap methodSettings = (ConfigMap)methods.get(i);
+                for (int i = 0; i < n; i++) {
+                    ConfigMap methodSettings = (ConfigMap) methods.get(i);
                     String name = methodSettings.getPropertyAsString(NAME_ELEMENT, null);
                     RemotingMethod method = new RemotingMethod();
                     method.setName(name);
                     // Check for security constraint.
                     String constraintRef = methodSettings.getPropertyAsString(ConfigurationConstants.SECURITY_CONSTRAINT_ELEMENT, null);
-                    if (constraintRef != null)
-                    {
-                        try
-                        {
+                    if (constraintRef != null) {
+                        try {
                             method.setSecurityConstraint(getDestination().getService().getMessageBroker().getSecurityConstraint(constraintRef));
-                        }
-                        catch (SecurityException se)
-                        {
+                        } catch (SecurityException se) {
                             // Rethrow with a more descriptive message.
                             ConfigurationException ce = new ConfigurationException();
-                            ce.setMessage(REMOTING_METHOD_REFS_UNDEFINED_CONSTRAINT_ERRMSG, new Object[] {name, getDestination().getId(), constraintRef});
+                            ce.setMessage(REMOTING_METHOD_REFS_UNDEFINED_CONSTRAINT_ERRMSG, new Object[]{name, getDestination().getId(), constraintRef});
                             throw ce;
                         }
                     }
@@ -288,34 +264,28 @@ public class JavaAdapter extends ServiceAdapter
             }
         }
         ConfigMap methodsToExclude = properties.getPropertyAsMap(PROPERTY_EXCLUDE_METHODS, null);
-        if (methodsToExclude != null)
-        {
+        if (methodsToExclude != null) {
             // Warn that <exclude-properties> will be ignored.
-            if (includeMethods != null)
-            {
-                RemotingDestination dest = (RemotingDestination)getDestination();
+            if (includeMethods != null) {
+                RemotingDestination dest = (RemotingDestination) getDestination();
                 if (Log.isWarn())
                     Log.getLogger(LogCategories.CONFIGURATION).warn("The remoting destination '" + dest.getId() + "' contains both <include-methods/> and <exclude-methods/> configuration. The <exclude-methods/> block will be ignored.");
             }
             // Excludes must be processed regardless of whether we add them or not to avoid 'Unused tags in <properties>' exceptions.
             List methods = methodsToExclude.getPropertyAsList(METHOD_ELEMENT, null);
-            if ((methods != null) && !methods.isEmpty())
-            {
+            if ((methods != null) && !methods.isEmpty()) {
                 int n = methods.size();
-                for (int i = 0; i < n; i++)
-                {
-                    ConfigMap methodSettings = (ConfigMap)methods.get(i);
+                for (int i = 0; i < n; i++) {
+                    ConfigMap methodSettings = (ConfigMap) methods.get(i);
                     String name = methodSettings.getPropertyAsString(NAME_ELEMENT, null);
                     RemotingMethod method = new RemotingMethod();
                     method.setName(name);
                     // Check for security constraint.
                     String constraintRef = methodSettings.getPropertyAsString(ConfigurationConstants.SECURITY_CONSTRAINT_ELEMENT, null);
                     // Conditionally add, only if include methods are not defined.
-                    if (includeMethods == null)
-                    {
-                        if (constraintRef != null)
-                        {
-                            RemotingDestination dest = (RemotingDestination)getDestination();
+                    if (includeMethods == null) {
+                        if (constraintRef != null) {
+                            RemotingDestination dest = (RemotingDestination) getDestination();
                             if (Log.isWarn())
                                 Log.getLogger(LogCategories.CONFIGURATION).warn("The method '" + name + "' for remoting destination '" + dest.getId() + "' is configured to use a security constraint, but security constraints are not applicable for excluded methods.");
                         }
@@ -326,19 +296,19 @@ public class JavaAdapter extends ServiceAdapter
         }
     }
 
-    /** {@inheritDoc} */
-    @Override public void start()
-    {
-        if (isStarted())
-        {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void start() {
+        if (isStarted()) {
             return;
         }
         super.start();
         validateInstanceSettings();
 
         RemotingDestination remotingDestination = (RemotingDestination) getDestination();
-        if (FlexFactory.SCOPE_APPLICATION.equals(remotingDestination.getScope()))
-        {
+        if (FlexFactory.SCOPE_APPLICATION.equals(remotingDestination.getScope())) {
             FactoryInstance factoryInstance = remotingDestination.getFactoryInstance();
             createInstance(factoryInstance.getInstanceClass());
         }
@@ -350,11 +320,13 @@ public class JavaAdapter extends ServiceAdapter
     //
     //--------------------------------------------------------------------------
 
-    /** {@inheritDoc} */
-    @Override public Object invoke(Message message)
-    {
-        RemotingDestination remotingDestination = (RemotingDestination)getDestination();
-        RemotingMessage remotingMessage = (RemotingMessage)message;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object invoke(Message message) {
+        RemotingDestination remotingDestination = (RemotingDestination) getDestination();
+        RemotingMessage remotingMessage = (RemotingMessage) message;
         FactoryInstance factoryInstance = remotingDestination.getFactoryInstance();
 
         // We don't allow the client to specify the source for
@@ -366,15 +338,13 @@ public class JavaAdapter extends ServiceAdapter
         List parameters = remotingMessage.getParameters();
         Object result = null;
 
-        try
-        {
+        try {
             // Test that the target method may be invoked based upon include/exclude method settings.
             validateAgainstMethodFilters(methodName);
 
             // Lookup and invoke.
             Object instance = createInstance(factoryInstance.getInstanceClass());
-            if (instance == null)
-            {
+            if (instance == null) {
                 MessageException me = new MessageException("Null instance returned from: " + factoryInstance);
                 me.setCode("Server.Processing");
                 throw me;
@@ -386,43 +356,33 @@ public class JavaAdapter extends ServiceAdapter
             result = method.invoke(instance, parameters.toArray());
 
             saveInstance(instance);
-        }
-        catch (InvocationTargetException ex)
-        {
+        } catch (InvocationTargetException ex) {
             /*
              * If the invocation exception wraps a message exception, unwrap it and
              * rethrow the nested message exception. Otherwise, build and throw a new
              * message exception.
              */
             Throwable cause = ex.getCause();
-            if ((cause != null) && (cause instanceof MessageException))
-            {
+            if ((cause != null) && (cause instanceof MessageException)) {
                 throw (MessageException) cause;
-            }
-            else if (cause != null)
-            {
+            } else if (cause != null) {
                 // Log a warning for this client's selector and continue
-                if (Log.isError())
-                {
+                if (Log.isError()) {
                     Log.getLogger(LOG_CATEGORY).error("Error processing remote invocation: " +
-                         cause.toString() + StringUtils.NEWLINE +
-                         "  incomingMessage: " + message + StringUtils.NEWLINE +
-                         ExceptionUtil.toString(cause));
+                            cause.toString() + StringUtils.NEWLINE +
+                            "  incomingMessage: " + message + StringUtils.NEWLINE +
+                            ExceptionUtil.toString(cause));
                 }
                 MessageException me = new MessageException(cause.getClass().getName() + " : " + cause.getMessage());
                 me.setCode("Server.Processing");
                 me.setRootCause(cause);
                 throw me;
-            }
-            else
-            {
+            } else {
                 MessageException me = new MessageException(ex.getMessage());
                 me.setCode("Server.Processing");
                 throw me;
             }
-        }
-        catch (IllegalAccessException ex)
-        {
+        } catch (IllegalAccessException ex) {
             MessageException me = new MessageException(ex.getMessage());
             me.setCode("Server.Processing");
             throw me;
@@ -444,11 +404,9 @@ public class JavaAdapter extends ServiceAdapter
      *
      * @throw MessageException if method is not allowed.
      */
-    protected void validateAgainstMethodFilters(String methodName)
-    {
-        if (includeMethods != null)
-        {
-            RemotingMethod method = (RemotingMethod)includeMethods.get(methodName);
+    protected void validateAgainstMethodFilters(String methodName) {
+        if (includeMethods != null) {
+            RemotingMethod method = (RemotingMethod) includeMethods.get(methodName);
             if (method == null)
                 MethodMatcher.methodNotFound(methodName, null, new Match(null));
 
@@ -456,8 +414,7 @@ public class JavaAdapter extends ServiceAdapter
             SecurityConstraint constraint = method.getSecurityConstraint();
             if (constraint != null)
                 getDestination().getService().getMessageBroker().getLoginManager().checkConstraint(constraint);
-        }
-        else if ((excludeMethods != null) && excludeMethods.containsKey(methodName))
+        } else if ((excludeMethods != null) && excludeMethods.containsKey(methodName))
             MethodMatcher.methodNotFound(methodName, null, new Match(null));
     }
 
@@ -469,8 +426,7 @@ public class JavaAdapter extends ServiceAdapter
      *
      * @see flex.messaging.FlexFactory
      */
-    protected Object createInstance(Class cl)
-    {
+    protected Object createInstance(Class cl) {
         RemotingDestination remotingDestination = (RemotingDestination) getDestination();
         // Note: this breaks the admin console right now as we use this to call
         // mbean methods.  Might have performance impact as well?
@@ -478,9 +434,8 @@ public class JavaAdapter extends ServiceAdapter
         FactoryInstance factoryInstance = remotingDestination.getFactoryInstance();
         Object instance = factoryInstance.lookup();
         if (isStarted() && instance instanceof FlexComponent
-                && !((FlexComponent)instance).isStarted())
-        {
-            ((FlexComponent)instance).start();
+                && !((FlexComponent) instance).isStarted()) {
+            ((FlexComponent) instance).start();
         }
         return instance;
     }
@@ -492,34 +447,26 @@ public class JavaAdapter extends ServiceAdapter
      * this sets the attribute in the FlexSession to trigger sesison replication
      * for this attribute.
      */
-    protected void saveInstance(Object instance)
-    {
+    protected void saveInstance(Object instance) {
         RemotingDestination remotingDestination = (RemotingDestination) getDestination();
         FactoryInstance factoryInstance = remotingDestination.getFactoryInstance();
         factoryInstance.operationComplete(instance);
     }
 
-    protected void assertAccess(String serviceClass)
-    {
+    protected void assertAccess(String serviceClass) {
         SecurityManager sm = System.getSecurityManager();
-        if (sm != null)
-        {
+        if (sm != null) {
             // if there is a SecurityManager, check for specific access privileges on this class
-            if (serviceClass.indexOf('.') != -1)
-            {
+            if (serviceClass.indexOf('.') != -1) {
                 StringBuffer permissionData = new StringBuffer("accessClassInPackage.");
                 permissionData.append(serviceClass.substring(0, serviceClass.lastIndexOf('.')));
                 RuntimePermission perm = new RuntimePermission(permissionData.toString());
                 AccessController.checkPermission(perm);
             }
-        }
-        else
-        {
+        } else {
             // even without a SecurityManager, protect server packages
-            for (int i = 0; i < PROTECTED_PACKAGES.length; i++)
-            {
-                if (serviceClass.startsWith(PROTECTED_PACKAGES[i]))
-                {
+            for (int i = 0; i < PROTECTED_PACKAGES.length; i++) {
+                if (serviceClass.startsWith(PROTECTED_PACKAGES[i])) {
                     StringBuffer permissionData = new StringBuffer("accessClassInPackage.");
                     permissionData.append(PROTECTED_PACKAGES[i].substring(0, PROTECTED_PACKAGES[i].length()));
                     RuntimePermission perm = new RuntimePermission(permissionData.toString());
@@ -529,8 +476,7 @@ public class JavaAdapter extends ServiceAdapter
         }
     }
 
-    protected void validateInstanceSettings()
-    {
+    protected void validateInstanceSettings() {
         RemotingDestination remotingDestination = (RemotingDestination) getDestination();
         // This will validate that we have a valid factory instance and accesses
         // any constructor properties needed for our factory so they do not give
@@ -543,8 +489,8 @@ public class JavaAdapter extends ServiceAdapter
      *
      * @return The log category.
      */
-    @Override protected String getLogCategory()
-    {
+    @Override
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
@@ -554,8 +500,8 @@ public class JavaAdapter extends ServiceAdapter
      *
      * @param broker The <code>Destination</code> that manages this <code>JavaAdapter</code>.
      */
-    @Override protected void setupAdapterControl(Destination destination)
-    {
+    @Override
+    protected void setupAdapterControl(Destination destination) {
         controller = new JavaAdapterControl(this, destination.getControl());
         controller.register();
         setControl(controller);
@@ -567,17 +513,15 @@ public class JavaAdapter extends ServiceAdapter
      * @param methodName The method name.
      * @return <code>true</code> if the method is defined; otherwise <code>false</code>.
      */
-    private boolean isMethodDefinedBySource(String methodName)
-    {
-        RemotingDestination remotingDestination = (RemotingDestination)getDestination();
+    private boolean isMethodDefinedBySource(String methodName) {
+        RemotingDestination remotingDestination = (RemotingDestination) getDestination();
         FactoryInstance factoryInstance = remotingDestination.getFactoryInstance();
         Class c = factoryInstance.getInstanceClass();
         if (c == null)
             return true; // No source class; ignore validation and generate an error at runtime.
         Method[] methods = c.getMethods();
         int n = methods.length;
-        for (int i = 0; i < n; i++)
-        {
+        for (int i = 0; i < n; i++) {
             if (methods[i].getName().equals(methodName))
                 return true;
         }

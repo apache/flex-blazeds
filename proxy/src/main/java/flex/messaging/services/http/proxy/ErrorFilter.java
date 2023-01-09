@@ -23,61 +23,40 @@ import flex.messaging.util.Trace;
 import flex.messaging.MessageException;
 
 /**
- *
  * Wraps filters with exception handling.
  */
-public class ErrorFilter extends ProxyFilter
-{
+public class ErrorFilter extends ProxyFilter {
     /**
      * Invokes the filter with the context.
-     * 
+     *
      * @param context The proxy context.
      */
-    public void invoke(ProxyContext context)
-    {
-        try
-        {
-            if (next != null)
-            {
+    public void invoke(ProxyContext context) {
+        try {
+            if (next != null) {
                 next.invoke(context);
             }
-        }
-        catch (MessageException ex)
-        {
+        } catch (MessageException ex) {
             throw ex;
-        }
-        catch (Throwable ex)
-        {
+        } catch (Throwable ex) {
             throw new MessageException(ex);
-        }
-        finally
-        {
-            try
-            {
-                if (context.getHttpMethod() != null)
-                {
+        } finally {
+            try {
+                if (context.getHttpMethod() != null) {
 
                     // we don't want to keep the connection open if authentication info was sent
-                    if (context.hasAuthorization())
-                    {
-                        if (context.getHttpMethod() instanceof FlexGetMethod)
-                        {
-                            ((FlexGetMethod)context.getHttpMethod()).setConnectionForced(true);
-                        }
-                        else if (context.getHttpMethod() instanceof FlexPostMethod)
-                        {
-                            ((FlexPostMethod)context.getHttpMethod()).setConnectionForced(true);
-                        }
-                        else
-                        {
+                    if (context.hasAuthorization()) {
+                        if (context.getHttpMethod() instanceof FlexGetMethod) {
+                            ((FlexGetMethod) context.getHttpMethod()).setConnectionForced(true);
+                        } else if (context.getHttpMethod() instanceof FlexPostMethod) {
+                            ((FlexPostMethod) context.getHttpMethod()).setConnectionForced(true);
+                        } else {
                             Assert.testAssertion(false, "Should have custom Flex method: " + context.getHttpMethod().getClass());
                         }
                     }
                     context.getHttpMethod().releaseConnection();
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 if (Trace.error)
                     e.printStackTrace();
             }

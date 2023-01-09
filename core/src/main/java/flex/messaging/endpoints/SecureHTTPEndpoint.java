@@ -19,8 +19,7 @@ package flex.messaging.endpoints;
 /**
  * Secure version of HTTPEndpoint.
  */
-public class SecureHTTPEndpoint extends HTTPEndpoint
-{
+public class SecureHTTPEndpoint extends HTTPEndpoint {
     //--------------------------------------------------------------------------
     //
     // Constructors
@@ -30,8 +29,7 @@ public class SecureHTTPEndpoint extends HTTPEndpoint
     /**
      * Constructs an unmanaged <code>SecureHTTPEndpoint</code>.
      */
-    public SecureHTTPEndpoint()
-    {
+    public SecureHTTPEndpoint() {
         this(false);
     }
 
@@ -39,10 +37,9 @@ public class SecureHTTPEndpoint extends HTTPEndpoint
      * Constructs a <code>SecureHTTPEndpoint</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>SecureHTTPEndpoint</code>
-     * is manageable; <code>false</code> otherwise.
+     *                         is manageable; <code>false</code> otherwise.
      */
-    public SecureHTTPEndpoint(boolean enableManagement)
-    {
+    public SecureHTTPEndpoint(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -57,8 +54,7 @@ public class SecureHTTPEndpoint extends HTTPEndpoint
      *
      * @return <code>true</code> if the endpoint is secure, <code>false</code> otherwise.
      */
-    public boolean isSecure()
-    {
+    public boolean isSecure() {
         return true;
     }
 }

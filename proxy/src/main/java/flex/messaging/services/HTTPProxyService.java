@@ -44,9 +44,10 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @see flex.messaging.messages.HTTPMessage
  */
-public class HTTPProxyService extends AbstractService
-{
-    /** Log category for <code>HTTPProxyService</code>. */
+public class HTTPProxyService extends AbstractService {
+    /**
+     * Log category for <code>HTTPProxyService</code>.
+     */
     public static final String LOG_CATEGORY = LogCategories.SERVICE_HTTP;
 
     // Errors
@@ -65,8 +66,7 @@ public class HTTPProxyService extends AbstractService
     /**
      * Constructs an unmanaged <code>HTTPProxyService</code>.
      */
-    public HTTPProxyService()
-    {
+    public HTTPProxyService() {
         this(false);
     }
 
@@ -74,10 +74,9 @@ public class HTTPProxyService extends AbstractService
      * Constructs a <code>HTTPProxyService</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>HTTPProxyService</code>
-     * is manageable; otherwise <code>false</code>.
+     *                         is manageable; otherwise <code>false</code>.
      */
-    public HTTPProxyService(boolean enableManagement)
-    {
+    public HTTPProxyService(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -97,8 +96,7 @@ public class HTTPProxyService extends AbstractService
      * @return The <code>Destination</code> instanced created.
      */
     @Override
-    public Destination createDestination(String id)
-    {
+    public Destination createDestination(String id) {
         HTTPProxyDestination destination = new HTTPProxyDestination();
         destination.setId(id);
         destination.setManaged(isManaged());
@@ -114,9 +112,8 @@ public class HTTPProxyService extends AbstractService
      * @param destination The <code>Destination</code> instance to be added.
      */
     @Override
-    public void addDestination(Destination destination)
-    {
-        HTTPProxyDestination proxyDestination = (HTTPProxyDestination)destination;
+    public void addDestination(Destination destination) {
+        HTTPProxyDestination proxyDestination = (HTTPProxyDestination) destination;
         super.addDestination(proxyDestination);
     }
 
@@ -134,31 +131,26 @@ public class HTTPProxyService extends AbstractService
      * @return The result of the service.
      */
     @Override
-    public Object serviceMessage(Message msg)
-    {
-        if (!(msg instanceof HTTPMessage))
-        {
+    public Object serviceMessage(Message msg) {
+        if (!(msg instanceof HTTPMessage)) {
             // The 'HTTPProxy' Service can only process messages of type 'HTTPMessage'.
             ServiceException e = new ServiceException();
             e.setMessage(UNKNOWN_MESSAGE_TYPE, new Object[]{"HTTPProxy", "HTTPMessage"});
             throw e;
         }
 
-        HTTPMessage message = (HTTPMessage)msg;
+        HTTPMessage message = (HTTPMessage) msg;
 
         String destination = message.getDestination();
-        HTTPProxyDestination dest = (HTTPProxyDestination)destinations.get(destination);
+        HTTPProxyDestination dest = (HTTPProxyDestination) destinations.get(destination);
 
         //use the remote settings if the message didn't specify them
         FlexRemoteCredentials remoteCredentials =
-            FlexContext.getFlexSession().getRemoteCredentials(getId(), destination);
-        if (remoteCredentials != null)
-        {
+                FlexContext.getFlexSession().getRemoteCredentials(getId(), destination);
+        if (remoteCredentials != null) {
             message.setRemoteUsername(remoteCredentials.getUsername());
-            message.setRemotePassword((String)remoteCredentials.getCredentials());
-        }
-        else if (dest.getRemoteUsername() != null && dest.getRemotePassword() != null)
-        {
+            message.setRemotePassword((String) remoteCredentials.getCredentials());
+        } else if (dest.getRemoteUsername() != null && dest.getRemotePassword() != null) {
             message.setRemoteUsername(dest.getRemoteUsername());
             message.setRemotePassword(dest.getRemotePassword());
         }
@@ -167,24 +159,20 @@ public class HTTPProxyService extends AbstractService
 
         Object result;
 
-        if (message instanceof SOAPMessage)
-        {
-            result = invokeSoap(adapter, (SOAPMessage)message, dest);
-        }
-        else
-        {
+        if (message instanceof SOAPMessage) {
+            result = invokeSoap(adapter, (SOAPMessage) message, dest);
+        } else {
             result = invokeHttp(adapter, message, dest);
         }
 
-        if (Log.isDebug())
-        {
+        if (Log.isDebug()) {
             String debugResult =
-                StringUtils.prettifyString(String.valueOf(result));
+                    StringUtils.prettifyString(String.valueOf(result));
             Log.getLogger(getLogCategory()).debug
-            ("HTTP request: " +
-                    message + StringUtils.NEWLINE +
-                    "  response: " + StringUtils.NEWLINE +
-                    debugResult + StringUtils.NEWLINE);
+                    ("HTTP request: " +
+                            message + StringUtils.NEWLINE +
+                            "  response: " + StringUtils.NEWLINE +
+                            debugResult + StringUtils.NEWLINE);
         }
 
         return result;
@@ -196,11 +184,9 @@ public class HTTPProxyService extends AbstractService
     //
     //--------------------------------------------------------------------------
 
-    protected Object invokeSoap(ServiceAdapter adapter, SOAPMessage message, HTTPProxyDestination destination)
-    {
-        if (isManaged())
-        {
-            HTTPProxyDestinationControl destinationControl = (HTTPProxyDestinationControl)destination.getControl();
+    protected Object invokeSoap(ServiceAdapter adapter, SOAPMessage message, HTTPProxyDestination destination) {
+        if (isManaged()) {
+            HTTPProxyDestinationControl destinationControl = (HTTPProxyDestinationControl) destination.getControl();
             if (destinationControl != null)
                 destinationControl.incrementInvokeSOAPCount();
         }
@@ -212,24 +198,19 @@ public class HTTPProxyService extends AbstractService
         String serverPort = null;
         String protocol = null;
         HttpServletRequest req = FlexContext.getHttpRequest();
-        if (req != null)
-        {
+        if (req != null) {
             contextPath = req.getContextPath();
             protocol = req.getScheme();
             serverName = req.getServerName();
             int port = req.getServerPort();
-            if (port != 0)
-            {
+            if (port != 0) {
                 serverPort = Integer.valueOf(req.getServerPort()).toString();
             }
         }
 
-        if (dynamicUrl != null && dynamicUrl.length() > 0)
-        {
+        if (dynamicUrl != null && dynamicUrl.length() > 0) {
             checkUrl(dynamicUrl, contextPath, destination, serverName, serverPort, protocol, message.getRemoteUsername() != null);
-        }
-        else
-        {
+        } else {
             //TODO: QUESTION: Pete Support default soap endpoints?
             //String url = settings.getParsedDefaultUrl(contextPath);
             //message.setUrl(url);
@@ -242,8 +223,7 @@ public class HTTPProxyService extends AbstractService
     }
 
     protected void checkUrl(String url, String contextPath, HTTPProxyDestination destination, String serverName,
-            String serverPort, String serverProtocol, boolean authSupplied)
-    {
+                            String serverPort, String serverProtocol, boolean authSupplied) {
         String originalUrl = url;
 
         String defaultUrl = destination.getParsedDefaultUrl(contextPath, serverName, serverPort, serverProtocol);
@@ -253,10 +233,8 @@ public class HTTPProxyService extends AbstractService
         //trying to trick us.  Ask them to do it another way if so.
 
         int i = url.indexOf("/..");
-        while (i != -1)
-        {
-            if (i == (url.length() - 3) || url.charAt(i + 3) == '/')
-            {
+        while (i != -1) {
+            if (i == (url.length() - 3) || url.charAt(i + 3) == '/') {
                 throw new ProxyException(DOT_DOT_NOT_ALLOWED);
             }
             i = url.indexOf("/..", i + 1);
@@ -274,13 +252,11 @@ public class HTTPProxyService extends AbstractService
         char[] urlChars = url.toCharArray();
 
         // Next, check that the URL matches a dynamic URL pattern
-        for (i = 0; i < dynamicUrls.size(); i++)
-        {
-            char[] pattern = (char[])dynamicUrls.get(i);
+        for (i = 0; i < dynamicUrls.size(); i++) {
+            char[] pattern = (char[]) dynamicUrls.get(i);
             boolean matches = StringUtils.findMatchWithWildcard(urlChars, pattern);
 
-            if (matches)
-            {
+            if (matches) {
                 if (!authSupplied || destination.allowsDynamicAuthentication())
                     return;
                 throw new ProxyException(MULTIPLE_DOMAIN_PORT);
@@ -289,7 +265,7 @@ public class HTTPProxyService extends AbstractService
 
         ProxyException exception = new ProxyException();
         exception.setMessage
-        (DYNAMIC_NOT_CONFIGURED, new Object[] {originalUrl, destination.getId()});
+                (DYNAMIC_NOT_CONFIGURED, new Object[]{originalUrl, destination.getId()});
         throw exception;
     }
 
@@ -299,16 +275,13 @@ public class HTTPProxyService extends AbstractService
      * @return The log category of the component.
      */
     @Override
-    protected String getLogCategory()
-    {
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
-    protected Object invokeHttp(ServiceAdapter adapter, HTTPMessage message, HTTPProxyDestination destination)
-    {
-        if (isManaged())
-        {
-            HTTPProxyDestinationControl destinationControl = (HTTPProxyDestinationControl)destination.getControl();
+    protected Object invokeHttp(ServiceAdapter adapter, HTTPMessage message, HTTPProxyDestination destination) {
+        if (isManaged()) {
+            HTTPProxyDestinationControl destinationControl = (HTTPProxyDestinationControl) destination.getControl();
             if (destinationControl != null)
                 destinationControl.incrementInvokeHTTPCount();
         }
@@ -321,24 +294,19 @@ public class HTTPProxyService extends AbstractService
         String protocol = null;
         HttpServletRequest req = FlexContext.getHttpRequest();
 
-        if (req != null)
-        {
+        if (req != null) {
             contextPath = req.getContextPath();
             protocol = req.getScheme();
             serverName = req.getServerName();
             int port = req.getServerPort();
-            if (port != 0)
-            {
+            if (port != 0) {
                 serverPort = Integer.toString(req.getServerPort());
             }
         }
 
-        if (dynamicUrl != null && !"".equals(dynamicUrl))
-        {
+        if (dynamicUrl != null && !"".equals(dynamicUrl)) {
             checkUrl(dynamicUrl, contextPath, destination, serverName, serverPort, protocol, message.getRemoteUsername() != null);
-        }
-        else
-        {
+        } else {
             String url = destination.getParsedDefaultUrl(contextPath, serverName, serverPort, protocol);
             message.setUrl(url);
         }
@@ -353,8 +321,7 @@ public class HTTPProxyService extends AbstractService
      * @param broker The <code>MessageBroker</code> to pass to the <code>HTTPProxyServiceControl</code> constructor.
      */
     @Override
-    protected void setupServiceControl(MessageBroker broker)
-    {
+    protected void setupServiceControl(MessageBroker broker) {
         controller = new HTTPProxyServiceControl(this, broker.getControl());
         controller.register();
         setControl(controller);

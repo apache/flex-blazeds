@@ -45,8 +45,8 @@
     <target name="run-depend" if="src.depend">
         <echo message="Removing class files that changed and dependent class files."/>
         <depend cache="${module.classes}" srcdir="${module.src}" destdir="${module.classes}"/>
-    </target>   
-                
+    </target>
+
     <target name="clean" description="clean">
         <delete file="${module.jar}" failonerror="false"/>
         <delete failonerror="false" includeEmptyDirs="true">
@@ -56,13 +56,13 @@
                 <exclude name=".dependency-info/**"/>
             </fileset>
         </delete>
-        <delete quiet="true" dir="${module.classes}" />
+        <delete quiet="true" dir="${module.classes}"/>
         <echo>modules/remoting clean</echo>
     </target>
 
     <target name="compile" depends="prepare" description="compile">
         <javac debug="${src.debug}" destdir="${module.classes}" srcdir="${module.src}"
-            includes="**/*.java" classpathref="classpath"/>
+               includes="**/*.java" classpathref="classpath"/>
         <echo file="${module.classes}/flex/messaging/version.properties" append="false">build=${build.number}</echo>
     </target>
 
@@ -74,8 +74,9 @@
             <exclude name=".dependency-info/**"/>
             <manifest>
                 <attribute name="Sealed" value="${manifest.sealed}"/>
-                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Community Edition - Remoting Module"/>
-                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+                <attribute name="Implementation-Title"
+                           value="${manifest.Implementation-Title} - Community Edition - Remoting Module"/>
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/>
                 <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
             </manifest>
         </jar>

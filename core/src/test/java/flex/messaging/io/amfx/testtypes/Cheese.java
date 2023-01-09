@@ -16,8 +16,7 @@
  */
 package flex.messaging.io.amfx.testtypes;
 
-public interface Cheese
-{
+public interface Cheese {
     String getName();
 
     String getMilkType();

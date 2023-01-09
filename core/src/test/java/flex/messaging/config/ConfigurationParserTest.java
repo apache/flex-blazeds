@@ -62,11 +62,11 @@ public class ConfigurationParserTest {
     private void processDirectory(File dir, String resourcePath) throws IOException {
         File[] files = dir.listFiles(new XMLFilenameFilter());
 
-        if(files != null) {
+        if (files != null) {
             for (File f : files) {
                 if (f.isDirectory()) {
-                    resourcePath = getResourcePath(f.getAbsolutePath());
-                    processDirectory(f, resourcePath);
+                    String dirResourcePath = getResourcePath(f.getAbsolutePath());
+                    processDirectory(f, dirResourcePath);
                 } else {
                     String testName = getTestName(f.getName());
                     System.out.println("Running test: " + testName);
@@ -94,7 +94,7 @@ public class ConfigurationParserTest {
 
     private void processRequest(String filename, String testName, String resourcePath) throws IOException {
         MessagingConfiguration config = new MessagingConfiguration();
-        ConfigurationParser parser = new ApacheXPathServerConfigurationParser();
+        ConfigurationParser parser = new XPathServerConfigurationParser();
         try {
             parser.parse(filename, new LocalFileResolver(), config);
 

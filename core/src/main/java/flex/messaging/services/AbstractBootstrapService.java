@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package flex.messaging.services;
 
 import java.util.List;
@@ -31,303 +31,265 @@ import flex.messaging.messages.Message;
 
 /**
  * The purpose of <code>AbstractBootstrapService</code> is to enable creation
- * of dynamic services, destinations, and adapters. <code>MessageBroker</code> 
- * creates an instance of this class and calls <code>initialize</code> after all 
- * of the server components are created but right before they are started. 
- * <code>MessageBroker</code> also calls <code>start</code> as server starts and 
- * <code>stop</code> as server stops. Subclasses should have their dynamic 
- * component creation code in one of <code>initialize</code>, <code>start</code>, 
- * and <code>stop</code> methods depending on when they want their components 
- * to be created.  
+ * of dynamic services, destinations, and adapters. <code>MessageBroker</code>
+ * creates an instance of this class and calls <code>initialize</code> after all
+ * of the server components are created but right before they are started.
+ * <code>MessageBroker</code> also calls <code>start</code> as server starts and
+ * <code>stop</code> as server stops. Subclasses should have their dynamic
+ * component creation code in one of <code>initialize</code>, <code>start</code>,
+ * and <code>stop</code> methods depending on when they want their components
+ * to be created.
  */
-public abstract class AbstractBootstrapService implements Service
-{
+public abstract class AbstractBootstrapService implements Service {
     // Errors
     private static final int NULL_COMPONENT_PROPERTY = 11116;
-    
+
     protected String id;
     protected MessageBroker broker;
-    
+
     /**
-     * Default constructor which is no-op. 
+     * Default constructor which is no-op.
      */
-    public AbstractBootstrapService()
-    {
+    public AbstractBootstrapService() {
         // No-op
     }
-    
+
     /**
      * Returns the id of the <code>AbstractBootstrapService</code>.
-     * 
+     *
      * @return The id of the <code>AbstractBootstrapService</code>.
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
-    
+
     /**
-     * Sets the id of the <code>AbstractBootstrapService</code>. If the 
-     * <code>AbstractBootstrapService</code> has a <code>MessageBroker</code> 
+     * Sets the id of the <code>AbstractBootstrapService</code>. If the
+     * <code>AbstractBootstrapService</code> has a <code>MessageBroker</code>
      * already assigned, it also updates the id in the <code>MessageBroker</code>.
      */
-    public void setId(String id)
-    {
+    public void setId(String id) {
         String oldId = getId();
-        
-        if (id == null)
-        {
+
+        if (id == null) {
             // Id of a component cannot be null.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(NULL_COMPONENT_PROPERTY, new Object[]{"id"});
             throw ce;
-        }      
-        
+        }
+
         this.id = id;
-        
+
         // Update the service id in the broker
         MessageBroker broker = getMessageBroker();
-        if (broker != null)
-        {
+        if (broker != null) {
             // broker must have the service then
             broker.removeService(oldId);
             broker.addService(this);
-        }            
+        }
     }
-    
+
     /**
      * Returns the <code>MessageBroker</code> managing this <code>AbstractBootstrapService</code>.
-     * 
+     *
      * @return MessageBroker of the <code>AbstractBootstrapService</code>.
      */
-    public MessageBroker getMessageBroker()
-    {
+    public MessageBroker getMessageBroker() {
         return broker;
     }
-    
+
     /**
      * Sets the <code>MessageBroker</code> managing this <code>AbstractBootstrapService</code>.
-     * Removes the <code>AbstractService</code> from the old broker (if there was one) 
+     * Removes the <code>AbstractService</code> from the old broker (if there was one)
      * and adds to the list of services in the new broker.
-     * 
+     *
      * @param broker <code>MessageBroker</code> of the <code>AbstractBootstrapService</code>.
      */
-    public void setMessageBroker(MessageBroker broker)
-    {
-        MessageBroker oldBroker = getMessageBroker();                                    
+    public void setMessageBroker(MessageBroker broker) {
+        MessageBroker oldBroker = getMessageBroker();
 
         this.broker = broker;
 
-        if (oldBroker != null)
-        {
+        if (oldBroker != null) {
             oldBroker.removeService(getId());
-        }       
-                
+        }
+
         // Add service to the new broker if needed
         if (broker.getService(getId()) != this)
-            broker.addService(this);        
+            broker.addService(this);
     }
-    
+
     /**
      * Always unmanaged.
-     * 
+     *
      * @return <code>false</code>.
      */
-    public boolean isManaged()
-    {
+    public boolean isManaged() {
         return false;
     }
 
     /**
      * Management is always disabled.
      */
-    public void setManaged(boolean enableManagement)
-    {         
+    public void setManaged(boolean enableManagement) {
         // No-op
     }
-    
+
     /**
-     * Called by the <code>MessageBroker</code> after all of the server 
-     * components are created but right before they are started. This is 
+     * Called by the <code>MessageBroker</code> after all of the server
+     * components are created but right before they are started. This is
      * usually the place to create dynamic components.
-     * 
-     * @param id Id of the <code>AbstractBootstrapService</code>.
-     * @param properties Properties for the <code>AbstractBootstrapService</code>. 
+     *
+     * @param id         Id of the <code>AbstractBootstrapService</code>.
+     * @param properties Properties for the <code>AbstractBootstrapService</code>.
      */
     public abstract void initialize(String id, ConfigMap properties);
-        
+
     /**
      * Called by the <code>MessageBroker</code> as server starts. Useful for
      * custom code that needs to run after all the components are initialized
-     * and the server is starting up. 
-     */  
+     * and the server is starting up.
+     */
     public abstract void start();
 
     /**
-     * Called by the <code>MessageBroker</code> as server stops. Useful for 
+     * Called by the <code>MessageBroker</code> as server stops. Useful for
      * custom code that needs to run as the server is shutting down.
      */
     public abstract void stop();
-       
 
-    public ConfigMap describeService(Endpoint endpoint)
-    {
+
+    public ConfigMap describeService(Endpoint endpoint) {
         return null;
     }
-    
 
-    public BaseControl getControl()
-    {
+
+    public BaseControl getControl() {
         throw new UnsupportedOperationException();
     }
-    
 
-    public void setControl(BaseControl control)
-    {        
+
+    public void setControl(BaseControl control) {
         throw new UnsupportedOperationException();
     }
-    
 
-    public void addDefaultChannel(String id)
-    {        
-        // No-op
-    }
-    
 
-    public void setDefaultChannels(List<String> ids)
-    {
+    public void addDefaultChannel(String id) {
         // No-op
     }
 
 
-    public boolean removeDefaultChannel(String id)
-    {
+    public void setDefaultChannels(List<String> ids) {
+        // No-op
+    }
+
+
+    public boolean removeDefaultChannel(String id) {
         return false;
     }
 
 
-    public void addDestination(Destination destination)
-    {   
+    public void addDestination(Destination destination) {
         throw new UnsupportedOperationException();
     }
 
 
-    public Destination createDestination(String destId)
-    {
+    public Destination createDestination(String destId) {
         throw new UnsupportedOperationException();
     }
 
 
-    public Destination removeDestination(String id)
-    {
-        throw new UnsupportedOperationException();
-    }
-    
-
-    public String getDefaultAdapter()
-    {
+    public Destination removeDestination(String id) {
         throw new UnsupportedOperationException();
     }
 
 
-    public void setDefaultAdapter(String id)
-    {        
-        throw new UnsupportedOperationException();
-    }
-    
-
-    public List<String> getDefaultChannels()
-    {
+    public String getDefaultAdapter() {
         throw new UnsupportedOperationException();
     }
 
 
-    public Destination getDestination(Message message)
-    {
+    public void setDefaultAdapter(String id) {
         throw new UnsupportedOperationException();
     }
 
 
-    public Destination getDestination(String id)
-    {
+    public List<String> getDefaultChannels() {
         throw new UnsupportedOperationException();
     }
 
 
-    public Map<String, Destination> getDestinations()
-    {
+    public Destination getDestination(Message message) {
         throw new UnsupportedOperationException();
     }
 
 
-    public Map<String, String> getRegisteredAdapters()
-    {
+    public Destination getDestination(String id) {
         throw new UnsupportedOperationException();
     }
 
 
-    public boolean isStarted()
-    {
-        return false;
+    public Map<String, Destination> getDestinations() {
+        throw new UnsupportedOperationException();
     }
-    
 
-    public boolean isSupportedMessage(Message message)
-    {
+
+    public Map<String, String> getRegisteredAdapters() {
+        throw new UnsupportedOperationException();
+    }
+
+
+    public boolean isStarted() {
         return false;
     }
 
 
-    public boolean isSupportedMessageType(String messageClassName)
-    {
+    public boolean isSupportedMessage(Message message) {
         return false;
     }
 
 
-    public String registerAdapter(String id, String className)
-    {
+    public boolean isSupportedMessageType(String messageClassName) {
+        return false;
+    }
+
+
+    public String registerAdapter(String id, String className) {
         throw new UnsupportedOperationException();
     }
 
 
-    public String unregisterAdapter(String id)
-    {
-        throw new UnsupportedOperationException();
-    }
-    
-
-    public Object serviceCommand(CommandMessage message)
-    {
-        throw new UnsupportedOperationException();
-    }
-    
-
-    public Object serviceMessage(Message message)
-    {
-        throw new UnsupportedOperationException();
-    }
-    
-
-    public List getMessageTypes()
-    {        
+    public String unregisterAdapter(String id) {
         throw new UnsupportedOperationException();
     }
 
 
-    public void addMessageType(String messageType)
-    {
-        throw new UnsupportedOperationException();   
+    public Object serviceCommand(CommandMessage message) {
+        throw new UnsupportedOperationException();
     }
 
 
-    public void setMessageTypes(List messageTypes)
-    {        
+    public Object serviceMessage(Message message) {
         throw new UnsupportedOperationException();
-    }   
-        
+    }
 
-    public boolean removeMessageType(String messageType)
-    {
+
+    public List getMessageTypes() {
         throw new UnsupportedOperationException();
-    }       
+    }
+
+
+    public void addMessageType(String messageType) {
+        throw new UnsupportedOperationException();
+    }
+
+
+    public void setMessageTypes(List messageTypes) {
+        throw new UnsupportedOperationException();
+    }
+
+
+    public boolean removeMessageType(String messageType) {
+        throw new UnsupportedOperationException();
+    }
 }

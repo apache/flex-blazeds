@@ -19,13 +19,12 @@ package flex.messaging.client;
 /**
  * Defines the interface to handle asynchronous poll results.
  */
-public interface AsyncPollHandler
-{
+public interface AsyncPollHandler {
     /**
      * Invoked by the <tt>FlexClient</tt> when an asynchronous poll result is available.
-     * 
+     *
      * @param flushResult The flush result containing messages to return in the poll response and
-     *         an optional wait time before the client should issue its next poll.
+     *                    an optional wait time before the client should issue its next poll.
      */
     void asyncPollComplete(FlushResult flushResult);
 }

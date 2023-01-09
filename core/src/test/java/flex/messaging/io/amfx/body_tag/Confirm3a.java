@@ -21,25 +21,21 @@ import flex.messaging.io.amf.ActionMessage;
 import flex.messaging.io.amf.MessageBody;
 import flex.messaging.MessageException;
 
-public class Confirm3a extends DeserializationConfirmation
-{
+public class Confirm3a extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm3a()
-    {
+    public Confirm3a() {
         ActionMessage m = new ActionMessage();
         MessageBody body = new MessageBody();
         m.addBody(body);
         EXPECTED_VALUE = m;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

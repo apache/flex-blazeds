@@ -23,8 +23,7 @@ import flex.messaging.io.amf.MessageHeader;
  * An AMF connection may have an AMF header processor where AMF headers can be
  * passed to as they are encountered in AMF response messages.
  */
-public interface AMFHeaderProcessor
-{
+public interface AMFHeaderProcessor {
     /**
      * The method that will be invoked by the AMF connection when an AMF header
      * is encountered.

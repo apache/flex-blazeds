@@ -27,12 +27,11 @@ import flex.messaging.config.ConfigMap;
  * destination which may be a console, log file or some other custom
  * destination.
  */
-public interface Target
-{
+public interface Target {
     /**
      * Initializes the target with id and properties.
      *
-     * @param id id for the target.
+     * @param id         id for the target.
      * @param properties ConfigMap of properties for the target.
      */
     void initialize(String id, ConfigMap properties);

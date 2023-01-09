@@ -58,14 +58,13 @@ import flex.messaging.util.XMLUtil;
  * the XML elements that occur in an AMFX request. The AmfxMessageDeserializer enforces
  * a naming convention for these handlers of xyz_start for the start handler and xyz_end
  * for the end handler of element xyz.
- *
+ * <p>
  * Note that this context MUST be reset if reused between AMFX packet parsings.
  *
  * @see AmfxMessageDeserializer
  * @see AmfxOutput
  */
-public class AmfxInput
-{
+public class AmfxInput {
     /**
      * This is the initial capacity that will be used for AMF arrays that have
      * length greater than 1024.
@@ -106,8 +105,7 @@ public class AmfxInput
      *
      * @param context the <code>SerialziationContext</code> object
      */
-    public AmfxInput(SerializationContext context)
-    {
+    public AmfxInput(SerializationContext context) {
         this.context = context;
 
         stringTable = new ArrayList(64);
@@ -128,8 +126,7 @@ public class AmfxInput
     /**
      * Reset the AmfxInput object.
      */
-    public void reset()
-    {
+    public void reset() {
         stringTable.clear();
         objectTable.clear();
         traitsTable.clear();
@@ -150,8 +147,7 @@ public class AmfxInput
      *
      * @param trace current <code>AmfTrace</code> setting
      */
-    public void setDebugTrace(AmfTrace trace)
-    {
+    public void setDebugTrace(AmfTrace trace) {
         this.trace = trace;
         isDebug = this.trace != null;
     }
@@ -161,8 +157,7 @@ public class AmfxInput
      *
      * @param msg current <code>ActionMessage</code>
      */
-    public void setActionMessage(ActionMessage msg)
-    {
+    public void setActionMessage(ActionMessage msg) {
         message = msg;
     }
 
@@ -172,8 +167,7 @@ public class AmfxInput
      * @return currently return null, not supported
      * @throws IOException when reading the object has the IOException
      */
-    public Object readObject() throws IOException
-    {
+    public Object readObject() throws IOException {
         return null;
     }
 
@@ -184,8 +178,7 @@ public class AmfxInput
      *
      * @param s the String to append
      */
-    public void text(String s)
-    {
+    public void text(String s) {
         text.append(s);
     }
 
@@ -199,18 +192,13 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_amfx(Attributes attributes)
-    {
+    public void start_amfx(Attributes attributes) {
         String ver = attributes.getValue("ver");
         int version = ActionMessage.CURRENT_VERSION;
-        if (ver != null)
-        {
-            try
-            {
+        if (ver != null) {
+            try {
                 version = Integer.parseInt(ver);
-            }
-            catch (NumberFormatException ex)
-            {
+            } catch (NumberFormatException ex) {
                 throw new MessageException("Unknown version: " + ver);
             }
         }
@@ -223,10 +211,8 @@ public class AmfxInput
 
     /**
      * End the Amfx process.
-     *
      */
-    public void end_amfx()
-    {
+    public void end_amfx() {
     }
 
     /**
@@ -234,8 +220,7 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_header(Attributes attributes)
-    {
+    public void start_header(Attributes attributes) {
         if (currentHeader != null || currentBody != null)
             throw new MessageException("Unexpected header tag.");
 
@@ -246,8 +231,7 @@ public class AmfxInput
 
         String mu = attributes.getValue("mustUnderstand");
         boolean mustUnderstand = false;
-        if (mu != null)
-        {
+        if (mu != null) {
             mustUnderstand = Boolean.valueOf(mu).booleanValue();
             currentHeader.setMustUnderstand(mustUnderstand);
         }
@@ -258,10 +242,8 @@ public class AmfxInput
 
     /**
      * End process of message headers.
-     *
      */
-    public void end_header()
-    {
+    public void end_header() {
         message.addHeader(currentHeader);
         currentHeader = null;
 
@@ -274,8 +256,7 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_body(Attributes attributes)
-    {
+    public void start_body(Attributes attributes) {
         if (currentBody != null || currentHeader != null)
             throw new MessageException("Unexpected body tag.");
 
@@ -287,10 +268,8 @@ public class AmfxInput
 
     /**
      * End process of the message body.
-     *
      */
-    public void end_body()
-    {
+    public void end_body() {
         message.addBody(currentBody);
         currentBody = null;
 
@@ -308,21 +287,16 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_array(Attributes attributes)
-    {
+    public void start_array(Attributes attributes) {
         int length = 10;
         String len = attributes.getValue("length");
-        if (len != null)
-        {
-            try
-            {
+        if (len != null) {
+            try {
                 len = len.trim();
                 length = Integer.parseInt(len);
                 if (length < 0)
                     throw new NumberFormatException();
-            }
-            catch (NumberFormatException ex)
-            {
+            } catch (NumberFormatException ex) {
                 throw new MessageException("Invalid array length: " + len);
             }
         }
@@ -333,24 +307,18 @@ public class AmfxInput
 
         Object array;
         boolean useListTemporarily = false;
-        if (isECMA)
-        {
+        if (isECMA) {
             array = ClassUtil.createDefaultInstance(HashMap.class, null, true /*validate*/);
-        }
-        else
-        {
+        } else {
             // Don't instantiate List/Array right away with the supplied size if it is more than
             // INITIAL_ARRAY_CAPACITY in case the supplied size has been tampered. This at least
             // requires the user to pass in the actual objects for the List/Array to grow beyond.
-            if (context.legacyCollection || length > INITIAL_ARRAY_CAPACITY)
-            {
+            if (context.legacyCollection || length > INITIAL_ARRAY_CAPACITY) {
                 useListTemporarily = !context.legacyCollection;
                 ClassUtil.validateCreation(ArrayList.class);
-                int initialCapacity = length < INITIAL_ARRAY_CAPACITY? length : INITIAL_ARRAY_CAPACITY;
+                int initialCapacity = length < INITIAL_ARRAY_CAPACITY ? length : INITIAL_ARRAY_CAPACITY;
                 array = new ArrayList(initialCapacity);
-            }
-            else
-            {
+            } else {
                 ClassUtil.validateCreation(Object[].class);
                 array = new Object[length];
             }
@@ -369,13 +337,10 @@ public class AmfxInput
             objectStack.push(array);
         proxyStack.push(null);
 
-        if (isECMA)
-        {
+        if (isECMA) {
             if (isDebug)
                 trace.startECMAArray(objectTable.size() - 1);
-        }
-        else
-        {
+        } else {
             if (isDebug)
                 trace.startAMFArray(objectTable.size() - 1);
         }
@@ -383,30 +348,24 @@ public class AmfxInput
 
     /**
      * End process of Action Script type Array.
-     *
      */
-    public void end_array()
-    {
-        try
-        {
+    public void end_array() {
+        try {
             Object obj = objectStack.pop();
-            if (obj instanceof ObjectPropertyValueTuple)
-            {
+            if (obj instanceof ObjectPropertyValueTuple) {
                 // Means List was being used temporarily to guard against array length tampering.
                 // Convert back to Object array and set it on the parent object using the proxy
                 // and property saved in the tuple.
-                ObjectPropertyValueTuple tuple = (ObjectPropertyValueTuple)obj;
+                ObjectPropertyValueTuple tuple = (ObjectPropertyValueTuple) obj;
                 int objectId = objectTable.indexOf(tuple.value);
-                Object newValue = ((ArrayList)tuple.value).toArray();
+                Object newValue = ((ArrayList) tuple.value).toArray();
                 objectTable.set(objectId, newValue);
                 tuple.proxy.setValue(tuple.obj, tuple.property, newValue);
             }
             proxyStack.pop();
             ecmaArrayIndexStack.pop();
             strictArrayIndexStack.pop();
-        }
-        catch (EmptyStackException ex)
-        {
+        } catch (EmptyStackException ex) {
             throw new MessageException("Unexpected end of array");
         }
 
@@ -414,26 +373,21 @@ public class AmfxInput
             trace.endAMFArray();
     }
 
-    public void start_dictionary(Attributes attributes)
-    {
+    public void start_dictionary(Attributes attributes) {
         int length = 10;
         String len = attributes.getValue("length");
-        if (len != null)
-        {
-            try
-            {
+        if (len != null) {
+            try {
                 len = len.trim();
                 length = Integer.parseInt(len);
                 if (length < 0)
                     throw new NumberFormatException();
-            }
-            catch (NumberFormatException ex)
-            {
+            } catch (NumberFormatException ex) {
                 throw new MessageException("Invalid array length: " + len);
             }
         }
 
-        Hashtable dictionary = (Hashtable)ClassUtil.createDefaultInstance(Hashtable.class, null, true /*validate*/);
+        Hashtable dictionary = (Hashtable) ClassUtil.createDefaultInstance(Hashtable.class, null, true /*validate*/);
         setValue(dictionary);
 
         objectTable.add(dictionary);
@@ -444,15 +398,11 @@ public class AmfxInput
             trace.startAMFDictionary(objectTable.size() - 1);
     }
 
-    public void end_dictionary()
-    {
-        try
-        {
+    public void end_dictionary() {
+        try {
             objectStack.pop();
             proxyStack.pop();
-        }
-        catch (EmptyStackException ex)
-        {
+        } catch (EmptyStackException ex) {
             throw new MessageException("Unexpected end of dictionary");
         }
 
@@ -467,17 +417,14 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_bytearray(Attributes attributes)
-    {
+    public void start_bytearray(Attributes attributes) {
         text.delete(0, text.length());
     }
 
     /**
      * End process of the Action Script type ByteArray.
-     *
      */
-    public void end_bytearray()
-    {
+    public void end_bytearray() {
         ClassUtil.validateCreation(byte[].class);
 
         String bs = text.toString().trim();
@@ -497,22 +444,18 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_date(Attributes attributes)
-    {
+    public void start_date(Attributes attributes) {
         text.delete(0, text.length());
     }
 
     /**
      * End process of the Action Script type Date.
-     *
      */
-    public void end_date()
-    {
+    public void end_date() {
         ClassUtil.validateCreation(Date.class);
 
         String d = text.toString().trim();
-        try
-        {
+        try {
             long l = Long.parseLong(d);
             Date date = new Date(l);
             setValue(date);
@@ -521,9 +464,7 @@ public class AmfxInput
 
             if (isDebug)
                 trace.write(date);
-        }
-        catch (NumberFormatException ex)
-        {
+        } catch (NumberFormatException ex) {
             throw new MessageException("Invalid date: " + d);
         }
     }
@@ -533,30 +474,24 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_double(Attributes attributes)
-    {
+    public void start_double(Attributes attributes) {
         text.delete(0, text.length());
     }
 
     /**
      * End process of the Action Script type Double.
-     *
      */
-    public void end_double()
-    {
+    public void end_double() {
         ClassUtil.validateCreation(Double.class);
 
         String ds = text.toString().trim();
-        try
-        {
+        try {
             Double d = Double.valueOf(ds);
             setValue(d);
 
             if (isDebug)
                 trace.write(d.doubleValue());
-        }
-        catch (NumberFormatException ex)
-        {
+        } catch (NumberFormatException ex) {
             throw new MessageException("Invalid double: " + ds);
         }
     }
@@ -566,8 +501,7 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_false(Attributes attributes)
-    {
+    public void start_false(Attributes attributes) {
         ClassUtil.validateCreation(Boolean.class);
         setValue(Boolean.FALSE);
         if (isDebug)
@@ -576,10 +510,8 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type False.
-     *
      */
-    public void end_false()
-    {
+    public void end_false() {
     }
 
     /**
@@ -587,11 +519,9 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_item(Attributes attributes)
-    {
+    public void start_item(Attributes attributes) {
         String name = attributes.getValue("name");
-        if (name != null)
-        {
+        if (name != null) {
             name = name.trim();
             if (name.length() <= 0)
                 throw new MessageException("Array item names cannot be the empty string.");
@@ -600,16 +530,13 @@ public class AmfxInput
             if (!(Character.isLetterOrDigit(c) || c == '_'))
                 throw new MessageException("Invalid item name: " + name +
                         ". Array item names must start with a letter, a digit or the underscore '_' character.");
-        }
-        else
-        {
+        } else {
             throw new MessageException("Array item must have a name attribute.");
         }
 
         //Check that we're expecting an ECMA array
         Object o = objectStackPeek();
-        if (!(o instanceof Map))
-        {
+        if (!(o instanceof Map)) {
             throw new MessageException("Unexpected array item name: " + name +
                     ". Please set the ecma attribute to 'true'.");
         }
@@ -619,10 +546,8 @@ public class AmfxInput
 
     /**
      * End process of Item.
-     *
      */
-    public void end_item()
-    {
+    public void end_item() {
         arrayPropertyStack.pop();
     }
 
@@ -631,30 +556,24 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_int(Attributes attributes)
-    {
+    public void start_int(Attributes attributes) {
         text.delete(0, text.length());
     }
 
     /**
      * End process of the Action Script type Int.
-     *
      */
-    public void end_int()
-    {
+    public void end_int() {
         ClassUtil.validateCreation(Integer.class);
 
         String is = text.toString().trim();
-        try
-        {
+        try {
             Integer i = Integer.valueOf(is);
             setValue(i);
 
             if (isDebug)
                 trace.write(i.intValue());
-        }
-        catch (NumberFormatException ex)
-        {
+        } catch (NumberFormatException ex) {
             throw new MessageException("Invalid int: " + is);
         }
     }
@@ -664,8 +583,7 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_null(Attributes attributes)
-    {
+    public void start_null(Attributes attributes) {
         setValue(null);
 
         if (isDebug)
@@ -674,10 +592,8 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type NULL.
-     *
      */
-    public void end_null()
-    {
+    public void end_null() {
     }
 
     // <object type="com.my.Class">
@@ -687,47 +603,36 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_object(Attributes attributes)
-    {
+    public void start_object(Attributes attributes) {
         PropertyProxy proxy = null;
 
         String type = attributes.getValue("type");
-        if (type != null)
-        {
+        if (type != null) {
             type = type.trim();
         }
 
         Object object;
 
-        if (type != null && type.length() > 0)
-        {
+        if (type != null && type.length() > 0) {
             // Check for any registered class aliases
             String aliasedClass = ClassAliasRegistry.getRegistry().getClassName(type);
             if (aliasedClass != null)
                 type = aliasedClass;
 
-            if (type == null || type.length() == 0)
+            if (type == null || type.length() == 0) {
+                object = ClassUtil.createDefaultInstance(ASObject.class, null, true /*validate*/);
+            } else if (type.startsWith(">")) // Handle [RemoteClass] (no server alias)
             {
                 object = ClassUtil.createDefaultInstance(ASObject.class, null, true /*validate*/);
-            }
-            else if (type.startsWith(">")) // Handle [RemoteClass] (no server alias)
-            {
-                object = ClassUtil.createDefaultInstance(ASObject.class, null, true /*validate*/);
-                ((ASObject)object).setType(type);
-            }
-            else if (context.instantiateTypes || type.startsWith("flex."))
-            {
+                ((ASObject) object).setType(type);
+            } else if (context.instantiateTypes || type.startsWith("flex.")) {
                 object = getInstantiatedObject(type, proxy);
-            }
-            else
-            {
+            } else {
                 // Just return type info with an ASObject...
                 object = ClassUtil.createDefaultInstance(ASObject.class, null, true /*validate*/);
-                ((ASObject)object).setType(type);
+                ((ASObject) object).setType(type);
             }
-        }
-        else
-        {
+        } else {
             // TODO: QUESTION: Pete, Investigate why setValue for ASObject is delayed to endObject
             ClassUtil.validateCreation(ASObject.class);
             object = new ASObject(type);
@@ -746,23 +651,20 @@ public class AmfxInput
 
 
     // </object>
+
     /**
      * End process of type Object.
-     *
      */
-    public void end_object()
-    {
+    public void end_object() {
         if (!traitsStack.empty())
             traitsStack.pop();
 
-        if (!objectStack.empty())
-        {
+        if (!objectStack.empty()) {
             Object obj = objectStack.pop();
             PropertyProxy proxy = (PropertyProxy) proxyStack.pop();
 
             Object newObj = proxy == null ? obj : proxy.instanceComplete(obj);
-            if (newObj != obj)
-            {
+            if (newObj != obj) {
                 int i;
                 // Find the index in the list of the old objct and replace it with
                 // the new one.
@@ -776,9 +678,7 @@ public class AmfxInput
                 obj = newObj;
             }
             setValue(obj);
-        }
-        else
-        {
+        } else {
             throw new MessageException("Unexpected end of object.");
         }
 
@@ -791,31 +691,22 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_ref(Attributes attributes)
-    {
+    public void start_ref(Attributes attributes) {
         String id = attributes.getValue("id");
-        if (id != null)
-        {
-            try
-            {
+        if (id != null) {
+            try {
                 int i = Integer.parseInt(id);
                 Object o = objectTable.get(i);
                 setValue(o);
 
                 if (isDebug)
                     trace.writeRef(i);
-            }
-            catch (NumberFormatException ex)
-            {
+            } catch (NumberFormatException ex) {
                 throw new MessageException("Invalid object reference: " + id);
-            }
-            catch (IndexOutOfBoundsException ex)
-            {
+            } catch (IndexOutOfBoundsException ex) {
                 throw new MessageException("Unknown object reference: " + id);
             }
-        }
-        else
-        {
+        } else {
             throw new MessageException("Unknown object reference: " + id);
         }
 
@@ -823,10 +714,8 @@ public class AmfxInput
 
     /**
      * End process of reference.
-     *
      */
-    public void end_ref()
-    {
+    public void end_ref() {
     }
 
     /**
@@ -834,39 +723,27 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_string(Attributes attributes)
-    {
+    public void start_string(Attributes attributes) {
         String id = attributes.getValue("id");
-        if (id != null)
-        {
+        if (id != null) {
             isStringReference = true;
 
-            try
-            {
+            try {
                 int i = Integer.parseInt(id);
-                String s = (String)stringTable.get(i);
-                if (isTraitProperty)
-                {
-                    TraitsContext traitsContext = (TraitsContext)traitsStack.peek();
+                String s = (String) stringTable.get(i);
+                if (isTraitProperty) {
+                    TraitsContext traitsContext = (TraitsContext) traitsStack.peek();
                     traitsContext.add(s);
-                }
-                else
-                {
+                } else {
                     ClassUtil.validateCreation(String.class);
                     setValue(s);
                 }
-            }
-            catch (NumberFormatException ex)
-            {
+            } catch (NumberFormatException ex) {
                 throw new MessageException("Invalid string reference: " + id);
-            }
-            catch (IndexOutOfBoundsException ex)
-            {
+            } catch (IndexOutOfBoundsException ex) {
                 throw new MessageException("Unknown string reference: " + id);
             }
-        }
-        else
-        {
+        } else {
             text.delete(0, text.length());
             isStringReference = false;
         }
@@ -874,18 +751,14 @@ public class AmfxInput
 
     /**
      * End process of the Action Script type String.
-     *
      */
-    public void end_string()
-    {
-        if (!isStringReference)
-        {
+    public void end_string() {
+        if (!isStringReference) {
             String s = text.toString();
 
             // Special case the empty string as it isn't counted as in
             // the string reference table
-            if (s.length() > 0)
-            {
+            if (s.length() > 0) {
                 // Traits won't contain CDATA
                 if (!isTraitProperty)
                     s = unescapeCloseCDATA(s);
@@ -893,13 +766,10 @@ public class AmfxInput
                 stringTable.add(s);
             }
 
-            if (isTraitProperty)
-            {
-                TraitsContext traitsContext = (TraitsContext)traitsStack.peek();
+            if (isTraitProperty) {
+                TraitsContext traitsContext = (TraitsContext) traitsStack.peek();
                 traitsContext.add(s);
-            }
-            else
-            {
+            } else {
                 ClassUtil.validateCreation(String.class);
                 setValue(s);
 
@@ -914,54 +784,41 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_traits(Attributes attributes)
-    {
-        if (!objectStack.empty())
-        {
+    public void start_traits(Attributes attributes) {
+        if (!objectStack.empty()) {
             List traitsList = new ArrayList();
             TraitsContext traitsContext = new TraitsContext(traitsList);
             traitsStack.push(traitsContext);
 
             String id = attributes.getValue("id");
-            if (id != null)
-            {
-                try
-                {
+            if (id != null) {
+                try {
                     int i = Integer.parseInt(id);
-                    List l = (List)traitsTable.get(i);
+                    List l = (List) traitsTable.get(i);
 
                     Iterator it = l.iterator();
-                    while (it.hasNext())
-                    {
-                        String prop = (String)it.next();
+                    while (it.hasNext()) {
+                        String prop = (String) it.next();
                         traitsList.add(prop);
                     }
-                }
-                catch (NumberFormatException ex)
-                {
+                } catch (NumberFormatException ex) {
                     throw new MessageException("Invalid traits reference: " + id);
-                }
-                catch (IndexOutOfBoundsException ex)
-                {
+                } catch (IndexOutOfBoundsException ex) {
                     throw new MessageException("Unknown traits reference: " + id);
                 }
-            }
-            else
-            {
+            } else {
                 boolean externalizable = false;
 
                 String ext = attributes.getValue("externalizable");
-                if (ext != null)
-                {
+                if (ext != null) {
                     externalizable = "true".equals(ext.trim());
                 }
 
                 Object obj = objectStackPeek();
-                if (externalizable && !(obj instanceof Externalizable))
-                {
+                if (externalizable && !(obj instanceof Externalizable)) {
                     //Class '{className}' must implement java.io.Externalizable to receive client IExternalizable instances.
                     SerializationException ex = new SerializationException();
-                    ex.setMessage(10305, new Object[] {obj.getClass().getName()});
+                    ex.setMessage(10305, new Object[]{obj.getClass().getName()});
                     throw ex;
                 }
 
@@ -969,19 +826,15 @@ public class AmfxInput
             }
 
             isTraitProperty = true;
-        }
-        else
-        {
+        } else {
             throw new MessageException("Unexpected traits");
         }
     }
 
     /**
      * End process of Traits.
-     *
      */
-    public void end_traits()
-    {
+    public void end_traits() {
         isTraitProperty = false;
     }
 
@@ -990,8 +843,7 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_true(Attributes attributes)
-    {
+    public void start_true(Attributes attributes) {
         ClassUtil.validateCreation(Boolean.class);
 
         setValue(Boolean.TRUE);
@@ -1002,10 +854,8 @@ public class AmfxInput
 
     /**
      * Start process of the Action Script type True.
-     *
      */
-    public void end_true()
-    {
+    public void end_true() {
     }
 
     /**
@@ -1013,8 +863,7 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_undefined(Attributes attributes)
-    {
+    public void start_undefined(Attributes attributes) {
         setValue(null);
 
         if (isDebug)
@@ -1023,10 +872,8 @@ public class AmfxInput
 
     /**
      * End process of the Action Script type undefined.
-     *
      */
-    public void end_undefined()
-    {
+    public void end_undefined() {
     }
 
     /**
@@ -1034,17 +881,14 @@ public class AmfxInput
      *
      * @param attributes current Attributes
      */
-    public void start_xml(Attributes attributes)
-    {
+    public void start_xml(Attributes attributes) {
         text.delete(0, text.length());
     }
 
     /**
      * End process of XML.
-     *
      */
-    public void end_xml()
-    {
+    public void end_xml() {
         String xml = text.toString();
         xml = unescapeCloseCDATA(xml);
 
@@ -1054,24 +898,20 @@ public class AmfxInput
         setValue(value);
     }
 
-    private String unescapeCloseCDATA(String s)
-    {
+    private String unescapeCloseCDATA(String s) {
         //Only check if string could possibly have an encoded closing for a CDATA "]]>"
-        if (s.length() > 5 && s.indexOf("]]&gt;") != -1)
-        {
+        if (s.length() > 5 && s.indexOf("]]&gt;") != -1) {
             s = s.replaceAll("]]&gt;", "]]>");
         }
 
         return s;
     }
 
-    private Object setValue(Object value)
-    {
-        if (objectStack.empty())
-        {
+    private Object setValue(Object value) {
+        if (objectStack.empty()) {
             if (currentHeader != null)
                 currentHeader.setData(value);
-            else if (currentBody  != null)
+            else if (currentBody != null)
                 currentBody.setData(value);
             else
                 throw new MessageException("Unexpected value: " + value);
@@ -1084,61 +924,43 @@ public class AmfxInput
         Object obj = objectStackPeek();
 
         // <object type="..."> <traits externalizable="true">
-        if (obj instanceof Externalizable)
-        {
-            if (value != null && value.getClass().isArray() && Byte.TYPE.equals(value.getClass().getComponentType()))
-            {
-                Externalizable extern = (Externalizable)obj;
+        if (obj instanceof Externalizable) {
+            if (value != null && value.getClass().isArray() && Byte.TYPE.equals(value.getClass().getComponentType())) {
+                Externalizable extern = (Externalizable) obj;
                 Amf3Input objIn = new Amf3Input(context);
-                byte[] ba = (byte[])value;
+                byte[] ba = (byte[]) value;
                 ByteArrayInputStream baIn = new ByteArrayInputStream(ba);
-                try
-                {
+                try {
                     //objIn.setDebugTrace(trace);
                     objIn.setInputStream(baIn);
                     extern.readExternal(objIn);
-                }
-                catch (ClassNotFoundException ex)
-                {
+                } catch (ClassNotFoundException ex) {
                     throw new MessageException("Error while reading Externalizable class " + extern.getClass().getName(), ex);
-                }
-                catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     throw new MessageException("Error while reading Externalizable class " + extern.getClass().getName(), ex);
-                }
-                finally
-                {
-                    try
-                    {
+                } finally {
+                    try {
                         objIn.close();
-                    }
-                    catch (IOException ex)
-                    {
+                    } catch (IOException ex) {
                     }
                 }
-            }
-            else
-            {
+            } else {
                 throw new MessageException("Error while reading Externalizable class. Value must be a byte array.");
             }
         }
 
         // <object>
-        else if (obj instanceof ASObject)
-        {
+        else if (obj instanceof ASObject) {
             String prop;
 
-            TraitsContext traitsContext = (TraitsContext)traitsStack.peek();
-            try
-            {
+            TraitsContext traitsContext = (TraitsContext) traitsStack.peek();
+            try {
                 prop = traitsContext.next();
-            }
-            catch (IndexOutOfBoundsException ex)
-            {
+            } catch (IndexOutOfBoundsException ex) {
                 throw new MessageException("Object has no trait info for value: " + value);
             }
 
-            ASObject aso = (ASObject)obj;
+            ASObject aso = (ASObject) obj;
             ClassUtil.validateAssignment(aso, prop, value);
             aso.put(prop, value);
 
@@ -1147,9 +969,8 @@ public class AmfxInput
         }
 
         // <array ecma="false"> in ArrayList form
-        else if (obj instanceof ArrayList && !(obj instanceof ArrayCollection))
-        {
-            ArrayList list = (ArrayList)obj;
+        else if (obj instanceof ArrayList && !(obj instanceof ArrayCollection)) {
+            ArrayList list = (ArrayList) obj;
             ClassUtil.validateAssignment(list, list.size(), value);
             list.add(value);
 
@@ -1158,41 +979,30 @@ public class AmfxInput
         }
 
         // <array ecma="false"> in Object[] form
-        else if (obj.getClass().isArray())
-        {
-            if (!strictArrayIndexStack.empty())
-            {
-                int[] indexObj = (int[])strictArrayIndexStack.peek();
+        else if (obj.getClass().isArray()) {
+            if (!strictArrayIndexStack.empty()) {
+                int[] indexObj = (int[]) strictArrayIndexStack.peek();
                 int index = indexObj[0];
 
-                if (Array.getLength(obj) > index)
-                {
+                if (Array.getLength(obj) > index) {
                     ClassUtil.validateAssignment(obj, index, value);
                     Array.set(obj, index, value);
-                }
-                else
-                {
+                } else {
                     throw new MessageException("Index out of bounds at: " + index + " cannot set array value: " + value + "");
                 }
                 indexObj[0]++;
             }
-        }
-
-        else if (obj instanceof Map)
-        {
+        } else if (obj instanceof Map) {
             if (obj instanceof Dictionary) // <dictionary>
             {
-                Dictionary dict = (Dictionary)obj;
+                Dictionary dict = (Dictionary) obj;
 
-                if (!dictionaryStack.empty())
-                {
+                if (!dictionaryStack.empty()) {
                     Object key = dictionaryStack.pop();
                     if (isDebug) trace.addDictionaryEquals();
                     ClassUtil.validateAssignment(dict, key.toString(), value);
                     dict.put(key, value);
-                }
-                else
-                {
+                } else {
                     if (isDebug) trace.startDictionaryElement();
                     dictionaryStack.push(value);
                 }
@@ -1200,12 +1010,11 @@ public class AmfxInput
                 return value;
             }
 
-            Map map = (Map)obj; // <array ecma="true">
+            Map map = (Map) obj; // <array ecma="true">
 
             // <item name="prop">
-            if (!arrayPropertyStack.empty())
-            {
-                String prop = (String)arrayPropertyStack.peek();
+            if (!arrayPropertyStack.empty()) {
+                String prop = (String) arrayPropertyStack.peek();
                 ClassUtil.validateAssignment(map, prop, value);
                 map.put(prop, value);
 
@@ -1216,9 +1025,8 @@ public class AmfxInput
             }
 
             // Mixed content, auto-generate string for ECMA Array index
-            if (!ecmaArrayIndexStack.empty())
-            {
-                int[] index = (int[])ecmaArrayIndexStack.peek();
+            if (!ecmaArrayIndexStack.empty()) {
+                int[] index = (int[]) ecmaArrayIndexStack.peek();
 
                 String prop = String.valueOf(index[0]);
                 index[0]++;
@@ -1232,30 +1040,24 @@ public class AmfxInput
         }
 
         // <object type="...">
-        else
-        {
+        else {
             value = setObjectValue(obj, value);
         }
 
         return value;
     }
 
-    private Object setObjectValue(Object obj, Object value)
-    {
+    private Object setObjectValue(Object obj, Object value) {
         String prop;
 
-        TraitsContext traitsContext = (TraitsContext)traitsStack.peek();
-        try
-        {
+        TraitsContext traitsContext = (TraitsContext) traitsStack.peek();
+        try {
             prop = traitsContext.next();
-        }
-        catch (IndexOutOfBoundsException ex)
-        {
+        } catch (IndexOutOfBoundsException ex) {
             throw new MessageException("Object has no trait info for value: " + value, ex);
         }
 
-        try
-        {
+        try {
             // Then check if there's a more suitable proxy now that we have an instance
             PropertyProxy proxy = (PropertyProxy) proxyStack.peek();
             if (proxy == null)
@@ -1265,22 +1067,18 @@ public class AmfxInput
             // Reset value in case it was changed by the proxy except empty lists.
             // Proxy converts empty lists to empty arrays in remoting messages.
             // Emply arrays are useless as containers and cause errors.
-            if (!(value instanceof ArrayList && ((ArrayList)value).size() == 0))
-            {
+            if (!(value instanceof ArrayList && ((ArrayList) value).size() == 0)) {
                 Object newValue = proxy.getValue(obj, prop);
                 if (value != newValue)
                     value = newValue;
             }
 
             if (value instanceof ArrayList && !(value instanceof ArrayCollection)
-                    && !context.legacyCollection)
-            {
+                    && !context.legacyCollection) {
                 // Means List is being used temporarily, see start_array method for explanation.
                 objectStack.push(new ObjectPropertyValueTuple(proxy, obj, prop, value));
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             throw new MessageException("Failed to set property '" + prop + "' with value: " + value, ex);
         }
 
@@ -1296,26 +1094,20 @@ public class AmfxInput
      *
      * @return The Object at the top of the object stack.
      */
-    private Object objectStackPeek()
-    {
+    private Object objectStackPeek() {
         Object obj = objectStack.peek();
-        return (obj instanceof ObjectPropertyValueTuple)? ((ObjectPropertyValueTuple)obj).value : obj;
+        return (obj instanceof ObjectPropertyValueTuple) ? ((ObjectPropertyValueTuple) obj).value : obj;
     }
 
-    private Object getInstantiatedObject(String className, PropertyProxy proxy)
-    {
+    private Object getInstantiatedObject(String className, PropertyProxy proxy) {
         Class<?> desiredClass = null;
-        try
-        {
+        try {
             desiredClass = AbstractProxy.getClassFromClassName(className);
-        }
-        catch (MessageException me)
-        {
+        } catch (MessageException me) {
             // Type not found but don't mind using ASObject for the missing type.
             if (me.getCode().startsWith(MessageException.CODE_SERVER_RESOURCE_UNAVAILABLE)
-                    && context.createASObjectForMissingType)
-            {
-                ASObject object = (ASObject)ClassUtil.createDefaultInstance(ASObject.class, null, true /*validate*/);
+                    && context.createASObjectForMissingType) {
+                ASObject object = (ASObject) ClassUtil.createDefaultInstance(ASObject.class, null, true /*validate*/);
                 object.setType(className);
                 return object;
             }
@@ -1324,8 +1116,8 @@ public class AmfxInput
 
         // Type exists.
         proxy = PropertyProxyRegistry.getRegistry().getProxyAndRegister(desiredClass);
-        return proxy == null? ClassUtil.createDefaultInstance(desiredClass, null, true /*validate*/) :
-                    proxy.createInstance(className); // Validation is performed in the proxy.
+        return proxy == null ? ClassUtil.createDefaultInstance(desiredClass, null, true /*validate*/) :
+                proxy.createInstance(className); // Validation is performed in the proxy.
     }
 
     /**
@@ -1337,15 +1129,13 @@ public class AmfxInput
      * pass in the actual array members for the List to grow. This helper class is needed to
      * convert the temporary List into Object[] if needed.
      */
-    private static class ObjectPropertyValueTuple
-    {
+    private static class ObjectPropertyValueTuple {
         private PropertyProxy proxy;
         private Object obj;
         private String property;
         private Object value;
 
-        private ObjectPropertyValueTuple(PropertyProxy proxy, Object obj, String property, Object value)
-        {
+        private ObjectPropertyValueTuple(PropertyProxy proxy, Object obj, String property, Object value) {
             this.proxy = proxy;
             this.obj = obj;
             this.property = property;
@@ -1353,18 +1143,15 @@ public class AmfxInput
         }
     }
 
-    private class TraitsContext
-    {
+    private class TraitsContext {
         private List traits;
         private int counter;
 
-        private TraitsContext(List traits)
-        {
+        private TraitsContext(List traits) {
             this.traits = traits;
         }
 
-        private void add(String trait)
-        {
+        private void add(String trait) {
             trait = trait.trim();
 
             if (trait.length() <= 0)
@@ -1379,9 +1166,8 @@ public class AmfxInput
             traits.add(trait);
         }
 
-        private String next()
-        {
-            String trait = (String)traits.get(counter);
+        private String next() {
+            String trait = (String) traits.get(counter);
             counter++;
             return trait;
         }

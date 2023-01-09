@@ -22,24 +22,19 @@ import flex.messaging.config.MessagingConfiguration;
 import flex.messaging.LocalizedException;
 import flex.messaging.MessageException;
 
-public class Confirm1g extends ConfigurationConfirmation
-{
-    public Confirm1g()
-    {
+public class Confirm1g extends ConfigurationConfirmation {
+    public Confirm1g() {
     }
 
-    public boolean isNegativeTest()
-    {
+    public boolean isNegativeTest() {
         return true;
     }
 
-    public MessagingConfiguration getExpectedConfiguration()
-    {
+    public MessagingConfiguration getExpectedConfiguration() {
         return null;
     }
 
-    public LocalizedException getExpectedException()
-    {
+    public LocalizedException getExpectedException() {
         return new MessageException("Invalid service id 'foo-service,'.");
     }
 }

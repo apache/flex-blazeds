@@ -23,75 +23,61 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 
-public class Project extends Persistable
-{
+public class Project extends Persistable {
     public static final String TABLE_NAME = "Project";
     public final String name;
     public String contact;
     public String email;
 
     private Map clause;
-    private String[] tables = new String[] {TABLE_NAME};
+    private String[] tables = new String[]{TABLE_NAME};
 
-    Project (String name)
-    {
+    Project(String name) {
         this.name = name;
     }
 
-    public void load(MetricsDatabase database)
-    {
+    public void load(MetricsDatabase database) {
         PreparedStatement statement = null;
         ResultSet rs = null;
 
-        try
-        {
+        try {
             statement = get(database);
             rs = statement.executeQuery();
             rs.first(); //move to first row
 
             Object i = rs.getObject("id");
-            if (i != null)
-            {
+            if (i != null) {
                 id = MetricsDatabase.getId(i);
                 contact = rs.getString("contact");
                 email = rs.getString("email");
             }
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
 
-        }
-        finally
-        {
+        } finally {
             closeResultSet(rs);
             closeStatement(statement);
         }
     }
 
-    public String getIdentity()
-    {
+    public String getIdentity() {
         return TABLE_NAME + ": " + name + ", id: " + id;
     }
 
-    public String getTableName()
-    {
+    public String getTableName() {
         return TABLE_NAME;
     }
 
-    protected String[] getTables()
-    {
+    protected String[] getTables() {
         return tables;
     }
 
-    protected Map getInserts()
-    {
+    protected Map getInserts() {
         Map inserts = getUpdates();
         inserts.put("name", name);
         return inserts;
     }
 
-    protected Map getUpdates()
-    {
+    protected Map getUpdates() {
         HashMap updates = new HashMap();
 
         if (contact != null)
@@ -103,10 +89,8 @@ public class Project extends Persistable
         return updates;
     }
 
-    protected Map getClauses()
-    {
-        if (clause == null)
-        {
+    protected Map getClauses() {
+        if (clause == null) {
             clause = new HashMap();
             clause.put("name", name);
         }

@@ -28,28 +28,26 @@ import java.util.Enumeration;
 /**
  * Static class to log HTTP request data when it is wrapped by our LoggingHttpServletRequestWrapper.
  */
-public class HTTPRequestLog
-{
+public class HTTPRequestLog {
     /**
      * Request attribute for storing error info.
      */
     public static final String HTTP_ERROR_INFO = "org.apache.flex.blazeds.internal._exception_info";
-    
+
     // Default file name
     private static String filename;
 
     /**
      * Called to set up filename for HTTP request logging.
      * If the init parameter <b>HttpErrorLog</b> is set in the servlet context, its value is set as the output filename
-     *@param context the ServletContext object
+     *
+     * @param context the ServletContext object
      * @return true if request logging is enabled.
      */
-    public static boolean init(ServletContext context)
-    {
+    public static boolean init(ServletContext context) {
         // Get the HttpRequest log file information.
         String logfile = context.getInitParameter("HttpErrorLog");
-        if (logfile == null || logfile.length() == 0)
-        {
+        if (logfile == null || logfile.length() == 0) {
             return false;
         }
         filename = logfile;
@@ -61,45 +59,40 @@ public class HTTPRequestLog
      *
      * @param fileName the file name
      */
-    public static void setFileName(String fileName)
-    {
-        if (fileName != null)
-        {
+    public static void setFileName(String fileName) {
+        if (fileName != null) {
             filename = fileName;
         }
     }
 
     /**
      * Get the file name.
+     *
      * @return String the file name
      */
-    public static String getFileName()
-    {
+    public static String getFileName() {
         return filename;
     }
 
     /**
      * Log the HTTP request if logging turned on and we have a filename.
-     * @param header the header name
+     *
+     * @param header  the header name
      * @param httpReq the HttpServletRequest
      */
-    public static synchronized void outputRequest(String header, HttpServletRequest httpReq)
-    {
+    public static synchronized void outputRequest(String header, HttpServletRequest httpReq) {
         // If things aren't set up, do nothing.
-        if (!(httpReq instanceof LoggingHttpServletRequestWrapper) || filename == null)
-        {
+        if (!(httpReq instanceof LoggingHttpServletRequestWrapper) || filename == null) {
             return;
         }
 
         LoggingHttpServletRequestWrapper req = (LoggingHttpServletRequestWrapper) httpReq;
         FileWriter fw = null;
-        try
-        {
+        try {
             // Open the file
             fw = new FileWriter(filename, true);
             fw.write("#===== Request Client Infomation =====#" + "\n");
-            if (header != null)
-            {
+            if (header != null) {
                 fw.write("Error             : " + header + "\n");
             }
             fw.write("Timestamp         : " + new Date(System.currentTimeMillis()).toString() + "\n");
@@ -114,12 +107,11 @@ public class HTTPRequestLog
             outputBody(fw, req);
 
             fw.close();
-        }
-        catch (IOException ex)
-        {
-            if (fw != null)
-            {
-                try { fw.close(); } catch (IOException e) { /* ignore */ }
+        } catch (IOException ex) {
+            if (fw != null) {
+                try {
+                    fw.close();
+                } catch (IOException e) { /* ignore */ }
             }
             System.out.println("Unable to write HTTP request data to file " + filename + ": " + ex.toString());
         }
@@ -127,46 +119,41 @@ public class HTTPRequestLog
 
     /**
      * Output 1 line message (Auto file open).
+     *
      * @param message the message to print
      */
-    public static void outputPrint(String message)
-    {
+    public static void outputPrint(String message) {
         FileWriter fw = null;
-        try
-        {
+        try {
             fw = new FileWriter(filename, true);
             fw.write(message + "\n");
             fw.close();
-        }
-        catch (IOException ex)
-        {
-            if (fw != null)
-            {
-                try { fw.close(); } catch (IOException e) { /* ignore */ }
+        } catch (IOException ex) {
+            if (fw != null) {
+                try {
+                    fw.close();
+                } catch (IOException e) { /* ignore */ }
             }
             System.out.println("Unable to log message '" + message + "' to file " + filename + " : " + ex.toString());
         }
     }
 
-    
+
     /**
      * Display the request header.
      */
-    private static void outputHeaders(FileWriter fw, LoggingHttpServletRequestWrapper req) throws IOException
-    {
+    private static void outputHeaders(FileWriter fw, LoggingHttpServletRequestWrapper req) throws IOException {
         // Get the header
         Enumeration reqHeaderNum = req.getHeaderNames();
 
         // Do nothing if there is no header
-        if (reqHeaderNum == null)
-        {
+        if (reqHeaderNum == null) {
             fw.write("No headers" + "\n");
             return;
         }
 
         // Repeat the header element
-        while (reqHeaderNum.hasMoreElements())
-        {
+        while (reqHeaderNum.hasMoreElements()) {
             // Get the key
             String key = (String) reqHeaderNum.nextElement();
 
@@ -178,14 +165,12 @@ public class HTTPRequestLog
     /**
      * Output header information.
      */
-    private static void outputHeaderElements(FileWriter fw, LoggingHttpServletRequestWrapper req, String key) throws IOException
-    {
+    private static void outputHeaderElements(FileWriter fw, LoggingHttpServletRequestWrapper req, String key) throws IOException {
         // Output the header information
         Enumeration e = req.getHeaders(key);
         String keyname = key;
 
-        while (e.hasMoreElements())
-        {
+        while (e.hasMoreElements()) {
             fw.write(keyname + " : " + e.nextElement() + "\n");
             // Output key name only for the first time
             keyname = "        ";
@@ -195,8 +180,7 @@ public class HTTPRequestLog
     /**
      * Output the body information.
      */
-    private static void outputBody(FileWriter fw, LoggingHttpServletRequestWrapper req) throws IOException
-    {
+    private static void outputBody(FileWriter fw, LoggingHttpServletRequestWrapper req) throws IOException {
         // Get the body size
         int leng = req.getContentLength();
         // Do nothing if there is no body
@@ -207,8 +191,7 @@ public class HTTPRequestLog
 
         // Put data
         InputStream in = req.getInputStream();
-        if (in.read(rbuf, 0, leng) > 0)
-        {
+        if (in.read(rbuf, 0, leng) > 0) {
             // Output data
             outputBinary(fw, rbuf);
         }
@@ -217,14 +200,12 @@ public class HTTPRequestLog
     /**
      * Output body information.
      */
-    private static void outputBinary(FileWriter fw, byte buf[]) throws IOException
-    {
+    private static void outputBinary(FileWriter fw, byte buf[]) throws IOException {
 
         int adrs = 0;
 
         // Do every 16 bytes
-        for (int j = 0; j < buf.length; j += 16)
-        {
+        for (int j = 0; j < buf.length; j += 16) {
 
             // Change the number to hex.
             String adrsStr = "00000000" + Integer.toHexString(adrs);
@@ -234,16 +215,12 @@ public class HTTPRequestLog
             adrs += 16;
 
             // Output in hex.
-            for (int i = 0; i < 16; i++)
-            {
+            for (int i = 0; i < 16; i++) {
 
                 // If it is out of the limit, display in white space
-                if (i + j >= buf.length)
-                {
+                if (i + j >= buf.length) {
                     fw.write("   ");
-                }
-                else
-                {
+                } else {
                     int n = (int) buf[i + j];
                     if (n < 0) n += 256;
                     // Change the data into hex
@@ -255,8 +232,7 @@ public class HTTPRequestLog
 
             // Output in string
             fw.write("    ");
-            for (int i = 0; i < 16; i++)
-            {
+            for (int i = 0; i < 16; i++) {
 
                 // If it is out of limit, break.
                 if (i + j >= buf.length) break;
@@ -264,13 +240,11 @@ public class HTTPRequestLog
                 // If it is a special character, output "."
                 if (buf[i + j] < 0x20 ||
                         (buf[i + j] & 0xff) > 0xde ||
-                        (buf[i + j] > 0x7e && (buf[i + j] & 0xff) < 0xa1))
-                {
+                        (buf[i + j] > 0x7e && (buf[i + j] & 0xff) < 0xa1)) {
                     fw.write(".");
                 }
                 // Output string
-                else
-                {
+                else {
                     String s = String.valueOf((char) buf[i + j]);
                     fw.write(s);
                 }

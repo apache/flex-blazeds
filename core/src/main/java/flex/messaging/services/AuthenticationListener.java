@@ -23,13 +23,12 @@ import java.util.EventListener;
  * <tt>AuthenticationListener</tt>s are registered with the <tt>AuthenticationService</tt>
  * and allow for custom post-processing of successful user login and logout events.
  */
-public interface AuthenticationListener extends EventListener
-{
+public interface AuthenticationListener extends EventListener {
     /**
      * Invoked after a user has successfully logged in.
      */
     void loginSucceeded(AuthenticationEvent event);
-    
+
     /**
      * Invoked after a user has successfully logged out.
      */

@@ -37,6 +37,7 @@ package flex.messaging.services.http.httpclient;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.HttpClientError;
 import org.apache.commons.httpclient.params.HttpConnectionParams;
@@ -51,7 +52,6 @@ import java.net.UnknownHostException;
 import flex.messaging.util.Trace;
 
 /**
- *
  * <p>
  * EasySSLProtocolSocketFactory can be used to creats SSL {@link Socket}s
  * that accept self-signed certificates.
@@ -95,48 +95,41 @@ import flex.messaging.util.Trace;
  * for use without additional customization.
  * </p>
  */
-public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
-{
+public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory {
     private SSLContext sslcontext = null;
 
     /**
      * Constructor for EasySSLProtocolSocketFactory.
      */
-    public EasySSLProtocolSocketFactory()
-    {
+    public EasySSLProtocolSocketFactory() {
         super();
     }
 
-    private static SSLContext createEasySSLContext()
-    {
-        try
-        {
+    private static SSLContext createEasySSLContext() {
+        try {
             SSLContext context = SSLContext.getInstance("SSL");
             context.init(null,
                     new TrustManager[]{new EasyX509TrustManager(null)},
                     null);
             return context;
-        }
-        catch (Exception e)
-        {
-            if (Trace.ssl)
-            {
+        } catch (Exception e) {
+            if (Trace.ssl) {
                 Trace.trace(e.getMessage());
             }
             throw new HttpClientError(e.toString());
         }
     }
 
-    private SSLContext getSSLContext()
-    {
-        if (this.sslcontext == null)
-        {
+    private SSLContext getSSLContext() {
+        if (this.sslcontext == null) {
             this.sslcontext = createEasySSLContext();
         }
         return this.sslcontext;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Socket createSocket(String host,
                                int port,
                                InetAddress clientHost,
@@ -173,30 +166,30 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
                                final InetAddress localAddress,
                                final int localPort,
                                final HttpConnectionParams params) throws IOException {
-        if (params == null)
-        {
+        if (params == null) {
             throw new IllegalArgumentException("Parameters may not be null");
         }
         int timeout = params.getConnectionTimeout();
-        if (timeout == 0)
-        {
+        if (timeout == 0) {
             return createSocket(host, port, localAddress, localPort);
-        }
-        else
-        {
+        } else {
             // To be eventually deprecated when migrated to Java 1.4 or above
             return ControllerThreadSocketFactory.createSocket(this, host, port, localAddress, localPort, timeout);
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Socket createSocket(String host, int port)
             throws IOException {
         return getSSLContext().getSocketFactory().createSocket(host,
                 port);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Socket createSocket(Socket socket,
                                String host,
                                int port,
@@ -208,18 +201,19 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
                 autoClose);
     }
 
-    /** {@inheritDoc} */
-    public boolean equals(Object obj)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(Object obj) {
         return ((obj != null) && obj.getClass().equals(EasySSLProtocolSocketFactory.class));
     }
 
     /**
      * Return hash code of this object.
+     *
      * @return int hash code of this object
      */
-    public int hashCode()
-    {
+    public int hashCode() {
         return EasySSLProtocolSocketFactory.class.hashCode();
     }
 

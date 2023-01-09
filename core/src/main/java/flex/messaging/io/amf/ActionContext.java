@@ -24,10 +24,8 @@ import java.io.Serializable;
 
 /**
  * A context for reading and writing messages.
- *
  */
-public class ActionContext implements Serializable
-{
+public class ActionContext implements Serializable {
     static final long serialVersionUID = 2300156738426801921L;
     private int messageNumber;
     private ActionMessage requestMessage;
@@ -42,195 +40,158 @@ public class ActionContext implements Serializable
     public boolean isDebug;
 
     /**
-     *
      * Performance metrics related field, keeps track of bytes deserialized using this context
      */
     private int deserializedBytes;
 
     /**
-     *
      * Performance metrics related field, keeps track of bytes serialized using this context
      */
     private int serializedBytes;
 
     /**
-     *
      * Performance metrics related field, recordMessageSizes flag
      */
     private boolean recordMessageSizes;
 
     /**
-     *
      * Performance metrics related field, recordMessageTimes flag
      */
     private boolean recordMessageTimes;
 
     /**
-     *
      * Performance metrics related field, incoming MPI object, will only be populated when one of
      * the record-message-* params is enabled
      */
     private MessagePerformanceInfo mpii;
 
     /**
-     *
      * Performance metrics related field, outgoing MPI object, will only be populated when one of
      * the record-message-* params is enabled
      */
     private MessagePerformanceInfo mpio;
 
-    public ActionContext()
-    {
+    public ActionContext() {
         status = MessageIOConstants.STATUS_OK;
     }
 
-    public boolean isLegacy()
-    {
+    public boolean isLegacy() {
         return legacy;
     }
 
-    public void setLegacy(boolean legacy)
-    {
+    public void setLegacy(boolean legacy) {
         this.legacy = legacy;
     }
 
-    public int getMessageNumber()
-    {
+    public int getMessageNumber() {
         return messageNumber;
     }
 
-    public void setMessageNumber(int messageNumber)
-    {
+    public void setMessageNumber(int messageNumber) {
         this.messageNumber = messageNumber;
     }
 
-    public MessageBody getRequestMessageBody()
-    {
+    public MessageBody getRequestMessageBody() {
         return requestMessage.getBody(messageNumber);
     }
 
-    public ActionMessage getRequestMessage()
-    {
+    public ActionMessage getRequestMessage() {
         return requestMessage;
     }
 
-    public void setRequestMessage(ActionMessage requestMessage)
-    {
+    public void setRequestMessage(ActionMessage requestMessage) {
         this.requestMessage = requestMessage;
     }
 
-    public ActionMessage getResponseMessage()
-    {
+    public ActionMessage getResponseMessage() {
         return responseMessage;
     }
 
-    public MessageBody getResponseMessageBody()
-    {
+    public MessageBody getResponseMessageBody() {
         return responseMessage.getBody(messageNumber);
     }
 
-    public void setResponseMessage(ActionMessage responseMessage)
-    {
+    public void setResponseMessage(ActionMessage responseMessage) {
         this.responseMessage = responseMessage;
     }
 
-    public void setResponseOutput(ByteArrayOutputStream out)
-    {
+    public void setResponseOutput(ByteArrayOutputStream out) {
         outBuffer = out;
     }
 
-    public ByteArrayOutputStream getResponseOutput()
-    {
+    public ByteArrayOutputStream getResponseOutput() {
         return outBuffer;
     }
 
-    public int getStatus()
-    {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(int status)
-    {
+    public void setStatus(int status) {
         this.status = status;
     }
 
-    public void setVersion(int v)
-    {
+    public void setVersion(int v) {
         version = v;
     }
 
-    public int getVersion()
-    {
+    public int getVersion() {
         return version;
     }
 
-    public void incrementMessageNumber()
-    {
+    public void incrementMessageNumber() {
         messageNumber++;
     }
 
-    public int getDeserializedBytes()
-    {
+    public int getDeserializedBytes() {
         return deserializedBytes;
     }
 
-    public void setDeserializedBytes(int deserializedBytes)
-    {
+    public void setDeserializedBytes(int deserializedBytes) {
         this.deserializedBytes = deserializedBytes;
     }
 
-    public int getSerializedBytes()
-    {
+    public int getSerializedBytes() {
         return serializedBytes;
     }
 
-    public void setSerializedBytes(int serializedBytes)
-    {
+    public void setSerializedBytes(int serializedBytes) {
         this.serializedBytes = serializedBytes;
     }
 
-    public MessagePerformanceInfo getMPII()
-    {
+    public MessagePerformanceInfo getMPII() {
         return mpii;
     }
 
-    public void setMPII(MessagePerformanceInfo mpii)
-    {
+    public void setMPII(MessagePerformanceInfo mpii) {
         this.mpii = mpii;
     }
 
-    public MessagePerformanceInfo getMPIO()
-    {
+    public MessagePerformanceInfo getMPIO() {
         return mpio;
     }
 
-    public void setMPIO(MessagePerformanceInfo mpio)
-    {
+    public void setMPIO(MessagePerformanceInfo mpio) {
         this.mpio = mpio;
     }
 
-    public boolean isRecordMessageSizes()
-    {
+    public boolean isRecordMessageSizes() {
         return recordMessageSizes;
     }
 
-    public void setRecordMessageSizes(boolean recordMessageSizes)
-    {
+    public void setRecordMessageSizes(boolean recordMessageSizes) {
         this.recordMessageSizes = recordMessageSizes;
     }
 
-    public boolean isRecordMessageTimes()
-    {
+    public boolean isRecordMessageTimes() {
         return recordMessageTimes;
     }
 
-    public boolean isMPIenabled()
-    {
+    public boolean isMPIenabled() {
         return recordMessageTimes || recordMessageSizes;
     }
 
-    public void setRecordMessageTimes(boolean recordMessageTimes)
-    {
+    public void setRecordMessageTimes(boolean recordMessageTimes) {
         this.recordMessageTimes = recordMessageTimes;
     }
 

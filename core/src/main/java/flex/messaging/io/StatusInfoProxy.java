@@ -38,8 +38,7 @@ import flex.messaging.MessageException;
  * <li>rootcause: If the exception was a ServletException, the rootcause will be included as a nested Status Info object.</li>
  * </ul>
  */
-public class StatusInfoProxy extends AbstractProxy
-{
+public class StatusInfoProxy extends AbstractProxy {
     static final long serialVersionUID = 8860353096401173320L;
 
     /**
@@ -88,185 +87,146 @@ public class StatusInfoProxy extends AbstractProxy
     public static final String ROOTCAUSE = "rootcause";
 
     public static final List propertyNameCache = new ArrayList();
-    static
-    {
+
+    static {
         propertyNameCache.add(CODE);
         propertyNameCache.add(CLASS);
         propertyNameCache.add(DESCRIPTION);
         propertyNameCache.add(DETAILS);
         propertyNameCache.add(ROOTCAUSE);
     }
-    
+
     protected boolean showStacktraces;
-    
-    public StatusInfoProxy()
-    {
+
+    public StatusInfoProxy() {
         super(null);
     }
 
-    public StatusInfoProxy(Throwable defaultInstance)
-    {
+    public StatusInfoProxy(Throwable defaultInstance) {
         super(defaultInstance);
     }
 
-    public void setShowStacktraces(boolean value)
-    {
+    public void setShowStacktraces(boolean value) {
         showStacktraces = value;
     }
-    
-    public String getAlias(Object instance)
-    {
+
+    public String getAlias(Object instance) {
         // Status Info objects are anonymous
         return null;
     }
 
-    public List getPropertyNames(Object instance)
-    {
+    public List getPropertyNames(Object instance) {
         return propertyNameCache;
     }
-    
-    public Class getType(Object instance, String propertyName)
-    {
+
+    public Class getType(Object instance, String propertyName) {
         Class type = null;
-        
-        if (CODE.equals(propertyName))
-        {
+
+        if (CODE.equals(propertyName)) {
             type = String.class;
-        }
-        else if (CLASS.equals(propertyName))
-        {
+        } else if (CLASS.equals(propertyName)) {
             type = String.class;
-        }
-        else if (DESCRIPTION.equals(propertyName))
-        {
+        } else if (DESCRIPTION.equals(propertyName)) {
             type = String.class;
-        }
-        else if (DETAILS.equals(propertyName))
-        {
+        } else if (DETAILS.equals(propertyName)) {
             type = String.class;
-        }
-        else if (ROOTCAUSE.equals(propertyName))
-        {
+        } else if (ROOTCAUSE.equals(propertyName)) {
             type = Map.class;
         }
-        
+
         return type;
     }
 
-    public Object getValue(Object instance, String propertyName)
-    {
+    public Object getValue(Object instance, String propertyName) {
         Object value = null;
-        
-        if (CODE.equals(propertyName))
-        {
+
+        if (CODE.equals(propertyName)) {
             value = getCode(instance);
-        }
-        else if (CLASS.equals(propertyName))
-        {
+        } else if (CLASS.equals(propertyName)) {
             value = getType(instance);
-        }
-        else if (DESCRIPTION.equals(propertyName))
-        {
+        } else if (DESCRIPTION.equals(propertyName)) {
             value = getDescription(instance);
-        }
-        else if (DETAILS.equals(propertyName))
-        {
+        } else if (DETAILS.equals(propertyName)) {
             value = getDetails(instance);
-        }
-        else if (ROOTCAUSE.equals(propertyName))
-        {
+        } else if (ROOTCAUSE.equals(propertyName)) {
             value = getRootCause(instance);
         }
-        
+
         return value;
     }
 
-    public void setValue(Object instance, String propertyName, Object value)
-    {
+    public void setValue(Object instance, String propertyName, Object value) {
         return; // Throwable is essentially read-only
     }
 
-    private String getCode(Object ex)
-    {
+    private String getCode(Object ex) {
         String code = null;
-        if (ex instanceof MessageException)
-        {
-            code = ((MessageException)ex).getCode();
+        if (ex instanceof MessageException) {
+            code = ((MessageException) ex).getCode();
         }
 
-        if (code == null)
-        {
+        if (code == null) {
             code = "Server.Processing";
         }
 
         return code;
     }
 
-    private String getType(Object ex)
-    {
+    private String getType(Object ex) {
         String type = "";
-        if (ex != null && showStacktraces)
-        {
+        if (ex != null && showStacktraces) {
             type = ex.getClass().getName();
         }
         return type;
     }
 
-    private String getDescription(Object ex)
-    {
+    private String getDescription(Object ex) {
         String desc = null;
-        if (ex instanceof Throwable)
-        {
-            desc = ((Throwable)ex).getMessage();
+        if (ex instanceof Throwable) {
+            desc = ((Throwable) ex).getMessage();
         }
 
         return desc;
     }
-    
-    private String getDetails(Object ex)
-    {
+
+    private String getDetails(Object ex) {
         StringBuffer details = new StringBuffer();
-        if (ex instanceof MessageException)
-        {
-            MessageException e = (MessageException)ex;
+        if (ex instanceof MessageException) {
+            MessageException e = (MessageException) ex;
             if (e.getDetails() != null)
                 details.append(e.getDetails());
         }
-        
+
         if (showStacktraces && ex instanceof Throwable)
-            details.append(getTraceback((Throwable)ex));
+            details.append(getTraceback((Throwable) ex));
 
         return details.toString();
     }
-    
-    private Throwable getRootCauseException(Object ex)
-    {
-    	if (ex == null)
-    		return null;
 
-    	if (ex instanceof ServletException)
-    	{
-    		ex = ((ServletException)ex).getRootCause();
-    	}
+    private Throwable getRootCauseException(Object ex) {
+        if (ex == null)
+            return null;
 
-    	if (ex instanceof Throwable)
-    		return ((Throwable)ex).getCause();
-    	else
-    		return null;
+        if (ex instanceof ServletException) {
+            ex = ((ServletException) ex).getRootCause();
+        }
+
+        if (ex instanceof Throwable)
+            return ((Throwable) ex).getCause();
+        else
+            return null;
     }
 
-    private Map getRootCause(Object ex)
-    {
-    	Throwable t = getRootCauseException(ex);
+    private Map getRootCause(Object ex) {
+        Throwable t = getRootCauseException(ex);
 
-    	if (t != null)
-    		return getExceptionInfo(t);
-    	else
-    		return null;
+        if (t != null)
+            return getExceptionInfo(t);
+        else
+            return null;
     }
 
-    private Map getExceptionInfo(Throwable t)
-    {
+    private Map getExceptionInfo(Throwable t) {
         Map info = new HashMap();
         info.put(CODE, getCode(t));
         info.put(CLASS, getType(t));
@@ -276,12 +236,10 @@ public class StatusInfoProxy extends AbstractProxy
         return info;
     }
 
-    private static String getTraceback(Throwable e)
-    {
+    private static String getTraceback(Throwable e) {
         String trace = "";
 
-        if (e != null)
-        {
+        if (e != null) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             PrintWriter pr = new PrintWriter(outputStream);
             pr.println();

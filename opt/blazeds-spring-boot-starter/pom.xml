@@ -16,28 +16,34 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-opt</artifactId>
-        <version>4.7.4-SNAPSHOT</version>
+        <version>4.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>blazeds-spring-boot-starter</artifactId>
+
+    <properties>
+        <spring.version>5.3.21</spring.version>
+        <spring-boot.version>2.7.0</spring-boot.version>
+    </properties>
 
     <dependencies>
         <!-- Spring-Boot dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>1.4.1.RELEASE</version>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>4.3.3.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <!--
@@ -49,7 +55,7 @@ limitations under the License.
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>1.4.1.RELEASE</version>
+            <version>${spring-boot.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -60,29 +66,29 @@ limitations under the License.
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
-            <version>1.4.1.RELEASE</version>
+            <version>${spring-boot.version}</version>
         </dependency>
 
         <!-- Add a reference to Apache Flex BlazeDS -->
         <dependency>
             <groupId>org.apache.flex.blazeds</groupId>
             <artifactId>flex-messaging-core</artifactId>
-            <version>4.7.4-SNAPSHOT</version>
+            <version>4.8.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.flex.blazeds</groupId>
             <artifactId>flex-messaging-common</artifactId>
-            <version>4.7.4-SNAPSHOT</version>
+            <version>4.8.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.flex.blazeds</groupId>
             <artifactId>flex-messaging-proxy</artifactId>
-            <version>4.7.4-SNAPSHOT</version>
+            <version>4.8.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.flex.blazeds</groupId>
             <artifactId>flex-messaging-remoting</artifactId>
-            <version>4.7.4-SNAPSHOT</version>
+            <version>4.8.0-SNAPSHOT</version>
         </dependency>
 
         <!--
@@ -113,5 +119,30 @@ limitations under the License.
             </exclusions>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>5.3.21</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-asm</artifactId>
+                <version>3.1.4.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>5.3.21</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>5.3.21</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

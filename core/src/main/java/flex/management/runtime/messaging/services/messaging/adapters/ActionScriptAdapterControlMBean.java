@@ -22,7 +22,6 @@ import flex.management.runtime.messaging.services.ServiceAdapterControlMBean;
  * Defines the runtime monitoring and management interface for managed
  * ActionScript messaging adapters.
  */
-public interface ActionScriptAdapterControlMBean extends ServiceAdapterControlMBean
-{
+public interface ActionScriptAdapterControlMBean extends ServiceAdapterControlMBean {
     // empty for now
 }

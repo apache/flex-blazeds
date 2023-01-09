@@ -24,8 +24,7 @@ import flex.messaging.endpoints.HTTPEndpoint;
  * for monitoring and managing a <code>HTTPEndpoint</code> at runtime.
  */
 public class HTTPEndpointControl extends PollingEndpointControl implements
-    HTTPEndpointControlMBean
-{
+        HTTPEndpointControlMBean {
     private static final String TYPE = "HTTPEndpoint";
 
     /**
@@ -33,16 +32,16 @@ public class HTTPEndpointControl extends PollingEndpointControl implements
      * endpoint and parent MBean.
      *
      * @param endpoint The <code>HTTPEndpoint</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent   The parent MBean in the management hierarchy.
      */
-    public HTTPEndpointControl(HTTPEndpoint endpoint, BaseControl parent)
-    {
+    public HTTPEndpointControl(HTTPEndpoint endpoint, BaseControl parent) {
         super(endpoint, parent);
     }
 
-    /** {@inheritDoc} */
-    public String getType()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public String getType() {
         return TYPE;
     }
 }

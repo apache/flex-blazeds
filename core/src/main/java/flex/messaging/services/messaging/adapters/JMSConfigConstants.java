@@ -18,11 +18,8 @@ package flex.messaging.services.messaging.adapters;
 
 /**
  * Constants for JMSAdapter and its related classes.
- *
- *
  */
-public interface JMSConfigConstants
-{
+public interface JMSConfigConstants {
     // Values used in the messaging configuration
     String ASYNC = "async";
     String ACKNOWLEDGE_MODE = "acknowledge-mode";

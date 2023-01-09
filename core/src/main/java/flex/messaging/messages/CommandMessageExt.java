@@ -25,29 +25,24 @@ import flex.messaging.io.ClassAlias;
 /**
  *
  */
-public class CommandMessageExt extends CommandMessage implements Externalizable, ClassAlias
-{
+public class CommandMessageExt extends CommandMessage implements Externalizable, ClassAlias {
     private static final long serialVersionUID = -5371460213241777011L;
     public static final String CLASS_ALIAS = "DSC";
 
-    public CommandMessageExt()
-    {
+    public CommandMessageExt() {
         super();
     }
 
-    public CommandMessageExt(CommandMessage message)
-    {
+    public CommandMessageExt(CommandMessage message) {
         super();
         _message = message;
     }
 
-    public String getAlias()
-    {
+    public String getAlias() {
         return CLASS_ALIAS;
     }
 
-    public void writeExternal(ObjectOutput output) throws IOException
-    {
+    public void writeExternal(ObjectOutput output) throws IOException {
         if (_message != null)
             _message.writeExternal(output);
         else

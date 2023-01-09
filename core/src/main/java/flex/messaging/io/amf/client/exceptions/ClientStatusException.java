@@ -25,8 +25,7 @@ import flex.messaging.io.amf.client.AMFConnection.HttpResponseInfo;
  * error is encountered such as when a connect or call attempt fails due to
  * wrong url on the client.
  */
-public class ClientStatusException extends Exception
-{
+public class ClientStatusException extends Exception {
     private static final long serialVersionUID = 1412675397183129614L;
 
     /**
@@ -41,11 +40,10 @@ public class ClientStatusException extends Exception
     /**
      * Creates a client status exception with the supplied throwable and code.
      *
-     * @param t The throwable instance used to create the exception.
+     * @param t    The throwable instance used to create the exception.
      * @param code The code of the exception.
      */
-    public ClientStatusException(Throwable t, String code)
-    {
+    public ClientStatusException(Throwable t, String code) {
         super(t);
         this.code = code;
     }
@@ -54,10 +52,9 @@ public class ClientStatusException extends Exception
      * Creates a client status exception with the supplied message and code.
      *
      * @param message The message of the exception.
-     * @param code The code of the exception.
+     * @param code    The code of the exception.
      */
-    public ClientStatusException(String message, String code)
-    {
+    public ClientStatusException(String message, String code) {
         super(message);
         this.code = code;
     }
@@ -66,13 +63,12 @@ public class ClientStatusException extends Exception
      * Creates a client status exception with the supplied message, code,
      * and http response info.
      *
-     * @param message The message of the exception.
-     * @param code The code of the exception.
+     * @param message          The message of the exception.
+     * @param code             The code of the exception.
      * @param httpResponseInfo The HTTP response info object that represents
-     * the HTTP response returned with the exception.
+     *                         the HTTP response returned with the exception.
      */
-    public ClientStatusException(String message, String code, HttpResponseInfo httpResponseInfo)
-    {
+    public ClientStatusException(String message, String code, HttpResponseInfo httpResponseInfo) {
         this(message, code);
         this.httpResponseInfo = httpResponseInfo;
     }
@@ -81,13 +77,12 @@ public class ClientStatusException extends Exception
      * Creates a client status exception with the supplied message, code,
      * and http response info.
      *
-     * @param t The throwable instance used to create the exception.
-     * @param code The code of the exception.
+     * @param t                The throwable instance used to create the exception.
+     * @param code             The code of the exception.
      * @param httpResponseInfo The HTTP response info object that represents
-     * the HTTP response returned with the exception.
+     *                         the HTTP response returned with the exception.
      */
-    public ClientStatusException(Throwable t, String code, HttpResponseInfo httpResponseInfo)
-    {
+    public ClientStatusException(Throwable t, String code, HttpResponseInfo httpResponseInfo) {
         this(t, code);
         this.httpResponseInfo = httpResponseInfo;
     }
@@ -97,8 +92,7 @@ public class ClientStatusException extends Exception
      *
      * @return The code of the exception.
      */
-    public String getCode()
-    {
+    public String getCode() {
         return code;
     }
 
@@ -107,8 +101,7 @@ public class ClientStatusException extends Exception
      *
      * @return The HTTP response info of the exception.
      */
-    public HttpResponseInfo getHttpResponseInfo()
-    {
+    public HttpResponseInfo getHttpResponseInfo() {
         return httpResponseInfo;
     }
 
@@ -118,10 +111,9 @@ public class ClientStatusException extends Exception
      * @return A String that represents the exception.
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ClientStatusException "
-        + "\n\tmessage: " + getMessage()
-        + "\n\tcode: " + code;
+                + "\n\tmessage: " + getMessage()
+                + "\n\tcode: " + code;
     }
 }

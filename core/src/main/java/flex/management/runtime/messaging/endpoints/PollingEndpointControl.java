@@ -25,22 +25,19 @@ import flex.messaging.endpoints.BasePollingHTTPEndpoint;
  * for monitoring and managing a <tt>BasePollingHTTPEndpoint</tt> at runtime.
  */
 public abstract class PollingEndpointControl extends EndpointControl implements
-        PollingEndpointControlMBean
-{
+        PollingEndpointControlMBean {
     /**
      * Constructs a <tt>PollingEndpointControl</tt>, assigning managed message
      * endpoint and parent MBean.
      *
      * @param endpoint The <code>BasePollingHTTPEndpoint</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent   The parent MBean in the management hierarchy.
      */
-    public PollingEndpointControl(BasePollingHTTPEndpoint endpoint, BaseControl parent)
-    {
+    public PollingEndpointControl(BasePollingHTTPEndpoint endpoint, BaseControl parent) {
         super(endpoint, parent);
     }
 
-    protected void onRegistrationComplete()
-    {
+    protected void onRegistrationComplete() {
         super.onRegistrationComplete();
 
         String name = this.getObjectName().getCanonicalName();
@@ -54,9 +51,8 @@ public abstract class PollingEndpointControl extends EndpointControl implements
      *  (non-Javadoc)
      * @see flex.management.runtime.messaging.endpoints.PollingEndpointControlMBean#getMaxWaitingPollRequests()
      */
-    public Integer getMaxWaitingPollRequests()
-    {
-        int maxWaitingPollRequests = ((BasePollingHTTPEndpoint)endpoint).getMaxWaitingPollRequests();
+    public Integer getMaxWaitingPollRequests() {
+        int maxWaitingPollRequests = ((BasePollingHTTPEndpoint) endpoint).getMaxWaitingPollRequests();
         return new Integer(maxWaitingPollRequests);
     }
 
@@ -64,9 +60,8 @@ public abstract class PollingEndpointControl extends EndpointControl implements
      *  (non-Javadoc)
      * @see flex.management.runtime.messaging.endpoints.PollingEndpointControlMBean#getWaitingPollRequestsCount()
      */
-    public Integer getWaitingPollRequestsCount()
-    {
-        int waitingPollRequestsCount = ((BasePollingHTTPEndpoint)endpoint).getWaitingPollRequestsCount();
+    public Integer getWaitingPollRequestsCount() {
+        int waitingPollRequestsCount = ((BasePollingHTTPEndpoint) endpoint).getWaitingPollRequestsCount();
         return new Integer(waitingPollRequestsCount);
     }
 }

@@ -33,8 +33,7 @@ import flex.messaging.log.Log;
 /**
  * A JMSProxy subclass for <code>javax.jms.MessageConsumer</code> instance.
  */
-public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
-{
+public abstract class JMSConsumer extends JMSProxy implements ExceptionListener {
     /* JMS related variables */
     protected MessageConsumer consumer;
 
@@ -71,10 +70,9 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      * Starts the <code>JMSConsumer</code>. Subclasses should call <code>super.start</code>.
      *
      * @throws NamingException The thrown naming exception.
-     * @throws JMSException The thrown JMS exception.
+     * @throws JMSException    The thrown JMS exception.
      */
-    public void start() throws NamingException, JMSException
-    {
+    public void start() throws NamingException, JMSException {
         super.start();
 
         if (Log.isInfo())
@@ -87,21 +85,17 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      * adapter and closing the underlying <code>MessageConsumer</code>. It then
      * calls <code>JMSProxy.close</code> for session and connection closure.
      */
-    public void stop()
-    {
+    public void stop() {
         if (Log.isInfo())
             Log.getLogger(JMSAdapter.LOG_CATEGORY).info("JMS consumer for JMS destination '"
                     + destinationJndiName + "' is stopping.");
 
         stopMessageReceiver();
 
-        try
-        {
+        try {
             if (consumer != null)
                 consumer.close();
-        }
-        catch (JMSException e)
-        {
+        } catch (JMSException e) {
             if (Log.isWarn())
                 Log.getLogger(JMSAdapter.LOG_CATEGORY).warn("JMS consumer for JMS destination '"
                         + destinationJndiName + "' received an error while closing its underlying MessageConsumer: "
@@ -117,10 +111,9 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      * and doesn't remove a durable subscription.
      *
      * @param unsubscribe Determines whether to unsubscribe a durable subscription
-     * if one exists, or not.
+     *                    if one exists, or not.
      */
-    public void stop(boolean unsubscribe)
-    {
+    public void stop(boolean unsubscribe) {
         stop();
     }
 
@@ -133,12 +126,10 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
     /**
      * Adds a JMS message listener.
      *
-     * @see flex.messaging.services.messaging.adapters.JMSMessageListener
-     *
      * @param listener The listener to add.
+     * @see flex.messaging.services.messaging.adapters.JMSMessageListener
      */
-    public void addJMSMessageListener(JMSMessageListener listener)
-    {
+    public void addJMSMessageListener(JMSMessageListener listener) {
         if (listener != null)
             jmsMessageListeners.addIfAbsent(listener);
     }
@@ -146,12 +137,10 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
     /**
      * Removes a JMS message listener.
      *
-     * @see flex.messaging.services.messaging.adapters.JMSMessageListener
-     *
      * @param listener The listener to remove.
+     * @see flex.messaging.services.messaging.adapters.JMSMessageListener
      */
-    public void removeJMSMessageListener(JMSMessageListener listener)
-    {
+    public void removeJMSMessageListener(JMSMessageListener listener) {
         if (listener != null)
             jmsMessageListeners.remove(listener);
     }
@@ -159,12 +148,10 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
     /**
      * Adds a JMS exception listener.
      *
-     * @see flex.messaging.services.messaging.adapters.JMSExceptionListener
-     *
      * @param listener The listener to add.
+     * @see flex.messaging.services.messaging.adapters.JMSExceptionListener
      */
-    public void addJMSExceptionListener(JMSExceptionListener listener)
-    {
+    public void addJMSExceptionListener(JMSExceptionListener listener) {
         if (listener != null)
             jmsExceptionListeners.addIfAbsent(listener);
     }
@@ -172,12 +159,10 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
     /**
      * Removes a JMS exception listener.
      *
-     * @see flex.messaging.services.messaging.adapters.JMSExceptionListener
-     *
      * @param listener The listener to remove.
+     * @see flex.messaging.services.messaging.adapters.JMSExceptionListener
      */
-    public void removeJMSExceptionListener(JMSExceptionListener listener)
-    {
+    public void removeJMSExceptionListener(JMSExceptionListener listener) {
         if (listener != null)
             jmsExceptionListeners.remove(listener);
     }
@@ -193,8 +178,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      * @return The old message listener associated with the MessageConsumer.
      * @throws JMSException The thrown JMS exception.
      */
-    public MessageListener setMessageListener(MessageListener listener) throws JMSException
-    {
+    public MessageListener setMessageListener(MessageListener listener) throws JMSException {
         MessageListener oldListener = consumer.getMessageListener();
         consumer.setMessageListener(listener);
         return oldListener;
@@ -206,8 +190,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      *
      * @return The <code>MessageReceiver</code> used.
      */
-    public MessageReceiver getMessageReceiver()
-    {
+    public MessageReceiver getMessageReceiver() {
         return messageReceiver;
     }
 
@@ -217,8 +200,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      *
      * @param messageReceiver The <code>MessageReceiver</code> used.
      */
-    public void setMessageReceiver(MessageReceiver messageReceiver)
-    {
+    public void setMessageReceiver(MessageReceiver messageReceiver) {
         this.messageReceiver = messageReceiver;
         messageReceiverManuallySet = true;
     }
@@ -229,8 +211,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      *
      * @return The selector expression.
      */
-    public String getSelectorExpression()
-    {
+    public String getSelectorExpression() {
         return selectorExpression;
     }
 
@@ -241,8 +222,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      *
      * @param selectorExpression The selector expression.
      */
-    public void setSelectorExpression(String selectorExpression)
-    {
+    public void setSelectorExpression(String selectorExpression) {
         this.selectorExpression = selectorExpression;
     }
 
@@ -252,13 +232,11 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      *
      * @param exception The thrown JMS exception.
      */
-    public void onException(JMSException exception)
-    {
-        if (!jmsExceptionListeners.isEmpty())
-        {
+    public void onException(JMSException exception) {
+        if (!jmsExceptionListeners.isEmpty()) {
             // CopyOnWriteArrayList is iteration-safe from ConcurrentModificationExceptions.
-            for (Iterator iter = jmsExceptionListeners.iterator(); iter.hasNext();)
-                ((JMSExceptionListener)iter.next()).exceptionThrown(new JMSExceptionEvent(this, exception));
+            for (Iterator iter = jmsExceptionListeners.iterator(); iter.hasNext(); )
+                ((JMSExceptionListener) iter.next()).exceptionThrown(new JMSExceptionEvent(this, exception));
         }
     }
 
@@ -268,15 +246,13 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      *
      * @param jmsMessage The new JMS message to acknowledge and dispatch.
      */
-    public void onMessage(Message jmsMessage)
-    {
+    public void onMessage(Message jmsMessage) {
         acknowledgeMessage(jmsMessage);
 
-        if (!jmsMessageListeners.isEmpty())
-        {
+        if (!jmsMessageListeners.isEmpty()) {
             // CopyOnWriteArrayList is iteration-safe from ConcurrentModificationExceptions.
-            for (Iterator iter = jmsMessageListeners.iterator(); iter.hasNext();)
-                ((JMSMessageListener)iter.next()).messageReceived(new JMSMessageEvent(this, jmsMessage));
+            for (Iterator iter = jmsMessageListeners.iterator(); iter.hasNext(); )
+                ((JMSMessageListener) iter.next()).messageReceived(new JMSMessageEvent(this, jmsMessage));
         }
     }
 
@@ -287,8 +263,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      * @return The received JMS message.
      * @throws JMSException The thrown JMS exception.
      */
-    public Message receive() throws JMSException
-    {
+    public Message receive() throws JMSException {
         if (Log.isInfo())
             Log.getLogger(JMSAdapter.LOG_CATEGORY).info(Thread.currentThread()
                     + " JMS consumer for JMS destination '" + destinationJndiName
@@ -304,8 +279,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      * @param timeout The number of milliseconds to wait for a new message.
      * @throws JMSException The thrown JMS exception.
      */
-    public Message receive(long timeout) throws JMSException
-    {
+    public Message receive(long timeout) throws JMSException {
         if (Log.isInfo())
             Log.getLogger(JMSAdapter.LOG_CATEGORY).info(Thread.currentThread()
                     + " JMS consumer for JMS destination '" + destinationJndiName
@@ -320,8 +294,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      * @return The received JMS message.
      * @throws JMSException The thrown JMS exception.
      */
-    public Message receiveNoWait() throws JMSException
-    {
+    public Message receiveNoWait() throws JMSException {
         return consumer.receiveNoWait();
     }
 
@@ -336,8 +309,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      *
      * @throws JMSException The thrown JMS exception.
      */
-    void startMessageReceiver() throws JMSException
-    {
+    void startMessageReceiver() throws JMSException {
         initializeMessageReceiver();
         messageReceiver.startReceive();
         connection.start();
@@ -346,8 +318,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
     /**
      * Stops the Message Receiver of the <code>JMSConsumer</code>.
      */
-    void stopMessageReceiver()
-    {
+    void stopMessageReceiver() {
         if (messageReceiver != null)
             messageReceiver.stopReceive();
     }
@@ -357,16 +328,11 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      *
      * @param message The JMS message to acknowledge.
      */
-    protected void acknowledgeMessage(Message message)
-    {
-        if (getAcknowledgeMode() == Session.CLIENT_ACKNOWLEDGE)
-        {
-            try
-            {
+    protected void acknowledgeMessage(Message message) {
+        if (getAcknowledgeMode() == Session.CLIENT_ACKNOWLEDGE) {
+            try {
                 message.acknowledge();
-            }
-            catch (JMSException e)
-            {
+            } catch (JMSException e) {
                 if (Log.isInfo())
                     Log.getLogger(JMSAdapter.LOG_CATEGORY).info("JMS consumer for JMS destination '"
                             + destinationJndiName + "' received an error in message acknowledgement: " + e.getMessage());
@@ -379,48 +345,39 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
      * If the message receiver has been manually set, it validates the message
      * receiver. Otherwise, it initalizes an async message receiver if it can,
      * and falls back to sync message delivery if it cannot.
-     *
+     * <p>
      * This method should be called by subclasses once there is an underlying
      * <code>javax.jms.MessageConsumer</code>.
      */
-    private void initializeMessageReceiver()
-    {
+    private void initializeMessageReceiver() {
         // If an AsyncMessageReceiver is manually set, make sure the app server
         // allows MessageListener and ExceptionListener for JMS.
-        if (messageReceiverManuallySet && messageReceiver != null)
-        {
-            if (messageReceiver instanceof AsyncMessageReceiver)
-            {
+        if (messageReceiverManuallySet && messageReceiver != null) {
+            if (messageReceiver instanceof AsyncMessageReceiver) {
                 String restrictedMethod = null;
-                try
-                {
+                try {
                     // Test if MessageListener is restricted.
                     restrictedMethod = "javax.jms.MessageConsumer.setMessageListener";
                     consumer.getMessageListener();
 
                     // Test if ExceptionListener is restricted.
                     restrictedMethod = "javax.jms.Connection.setExceptionListener";
-                    connection.setExceptionListener((AsyncMessageReceiver)messageReceiver);
+                    connection.setExceptionListener((AsyncMessageReceiver) messageReceiver);
 
                     if (Log.isInfo())
                         Log.getLogger(JMSAdapter.LOG_CATEGORY).info("JMS consumer for JMS destination '"
-                                + destinationJndiName +"' is using async message receiver.");
-                }
-                catch (JMSException jmsEx)
-                {
+                                + destinationJndiName + "' is using async message receiver.");
+                } catch (JMSException jmsEx) {
                     // JMS consumer for JMS destination ''{0}'' is configured to use async message receiver but the application server does not allow ''{1}'' call used in async message receiver. Please switch to sync message receiver.
                     MessageException me = new MessageException();
-                    me.setMessage(JMSConfigConstants.ASYNC_MESSAGE_DELIVERY_NOT_SUPPORTED, new Object[] {destinationJndiName, restrictedMethod});
+                    me.setMessage(JMSConfigConstants.ASYNC_MESSAGE_DELIVERY_NOT_SUPPORTED, new Object[]{destinationJndiName, restrictedMethod});
                     throw me;
                 }
-            }
-            else if (messageReceiver instanceof SyncMessageReceiver)
-            {
-                SyncMessageReceiver smr = (SyncMessageReceiver)messageReceiver;
-                if (Log.isInfo())
-                {
+            } else if (messageReceiver instanceof SyncMessageReceiver) {
+                SyncMessageReceiver smr = (SyncMessageReceiver) messageReceiver;
+                if (Log.isInfo()) {
                     Log.getLogger(JMSAdapter.LOG_CATEGORY).info("JMS consumer for JMS destination '"
-                            + destinationJndiName +"' is using sync message receiver"
+                            + destinationJndiName + "' is using sync message receiver"
                             + " with sync-receive-interval-millis: " + smr.getSyncReceiveIntervalMillis()
                             + ", sync-receive-wait-millis: " + smr.getSyncReceiveWaitMillis());
                 }
@@ -429,32 +386,27 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener
         // If no MessageReceiver was manually set, set a default MessageReceiver
         // with the following strategy: First try async message delivery. If the
         // app server doesn't allow it, switch to sync message delivery.
-        else
-        {
-            try
-            {
+        else {
+            try {
                 messageReceiver = new AsyncMessageReceiver(this);
 
                 // Test if MessageListener is restricted.
                 consumer.getMessageListener();
                 // Test if ExceptionListener is restricted.
-                connection.setExceptionListener((AsyncMessageReceiver)messageReceiver);
+                connection.setExceptionListener((AsyncMessageReceiver) messageReceiver);
 
                 if (Log.isInfo())
                     Log.getLogger(JMSAdapter.LOG_CATEGORY).info("JMS consumer for JMS destination '"
-                            + destinationJndiName +"' is using async message receiver.");
-            }
-            catch (JMSException e)
-            {
+                            + destinationJndiName + "' is using async message receiver.");
+            } catch (JMSException e) {
                 SyncMessageReceiver smr = new SyncMessageReceiver(this);
                 smr.setSyncReceiveIntervalMillis(1);
                 smr.setSyncReceiveWaitMillis(-1);
                 messageReceiver = smr;
 
-                if (Log.isInfo())
-                {
+                if (Log.isInfo()) {
                     Log.getLogger(JMSAdapter.LOG_CATEGORY).info("JMS consumer for JMS destination '"
-                            + destinationJndiName +"' is using sync message receiver"
+                            + destinationJndiName + "' is using sync message receiver"
                             + " with sync-receive-interval-millis: " + smr.getSyncReceiveIntervalMillis()
                             + ", sync-receive-wait-millis: " + smr.getSyncReceiveWaitMillis());
                 }

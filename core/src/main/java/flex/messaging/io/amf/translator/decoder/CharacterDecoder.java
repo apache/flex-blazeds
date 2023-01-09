@@ -23,38 +23,27 @@ package flex.messaging.io.amf.translator.decoder;
  * Note that a String must be non-zero length and only the first
  * character in the String will be used.
  * </p>
- *
- *
  */
-public class CharacterDecoder extends ActionScriptDecoder
-{
-    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass)
-    {
+public class CharacterDecoder extends ActionScriptDecoder {
+    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass) {
         Character result = null;
 
-        if (encodedObject == null)
-        {
+        if (encodedObject == null) {
             char c = 0;
             result = new Character(c);
-        }
-        else if (encodedObject instanceof String)
-        {
-            String str = (String)encodedObject;
+        } else if (encodedObject instanceof String) {
+            String str = (String) encodedObject;
 
             char[] chars = str.toCharArray();
 
-            if (chars.length > 0)
-            {
+            if (chars.length > 0) {
                 result = new Character(chars[0]);
             }
-        }
-        else if (encodedObject instanceof Character)
-        {
-            result = (Character)encodedObject;
+        } else if (encodedObject instanceof Character) {
+            result = (Character) encodedObject;
         }
 
-        if (result == null)
-        {
+        if (result == null) {
             DecoderFactory.invalidType(encodedObject, desiredClass);
         }
 

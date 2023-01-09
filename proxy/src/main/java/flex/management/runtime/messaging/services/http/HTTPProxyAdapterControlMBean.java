@@ -23,7 +23,6 @@ import flex.management.runtime.messaging.services.ServiceAdapterControlMBean;
  * proxy adapters.
  */
 public interface HTTPProxyAdapterControlMBean extends
-        ServiceAdapterControlMBean
-{
+        ServiceAdapterControlMBean {
     // Empty for now.
 }

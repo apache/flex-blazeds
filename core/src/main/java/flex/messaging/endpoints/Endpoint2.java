@@ -19,19 +19,18 @@ package flex.messaging.endpoints;
 import flex.messaging.Server;
 
 /**
- * Extension interface for <tt>Endpoint</tt> that adds support for a 
+ * Extension interface for <tt>Endpoint</tt> that adds support for a
  * referenced <tt>Server</tt> that the endpoint may use.
  */
-public interface Endpoint2 extends Endpoint
-{
-   /**
-    * Retrieves the <tt>Server</tt> that the endpoint is using; <code>null</code> if
-    * no server has been assigned.
-    */
-   Server getServer();
-   
-   /**
-    * Sets the <tt>Server</tt> that the endpoint will use.
-    */
-   void setServer(Server server);
+public interface Endpoint2 extends Endpoint {
+    /**
+     * Retrieves the <tt>Server</tt> that the endpoint is using; <code>null</code> if
+     * no server has been assigned.
+     */
+    Server getServer();
+
+    /**
+     * Sets the <tt>Server</tt> that the endpoint will use.
+     */
+    void setServer(Server server);
 }

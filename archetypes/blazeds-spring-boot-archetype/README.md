@@ -1,39 +1,49 @@
-[//]: # Licensed to the Apache Software Foundation (ASF) under one or more
-[//]: # contributor license agreements.  See the NOTICE file distributed with
-[//]: # this work for additional information regarding copyright ownership.
-[//]: # The ASF licenses this file to You under the Apache License, Version 2.0
-[//]: # (the "License"); you may not use this file except in compliance with
-[//]: # the License.  You may obtain a copy of the License at
-[//]: # 
-[//]: #     http://www.apache.org/licenses/LICENSE-2.0
-[//]: # 
-[//]: # Unless required by applicable law or agreed to in writing, software
-[//]: # distributed under the License is distributed on an "AS IS" BASIS,
-[//]: # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-[//]: # See the License for the specific language governing permissions and
-[//]: # limitations under the License.
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
 
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+  -->
 # Usage
 
 ## Create a new project using the blazeds-spring-boot-archetype
 
-Using the maven-archetype-plugin it is easy to generate a new project utilizing Spring-Boot to setup a BlazeDS server in order to get started with BlazeDS almost instantly.
+Using the maven-archetype-plugin it is easy to generate a new project utilizing Spring-Boot to setup a BlazeDS server in
+order to get started with BlazeDS almost instantly.
 
 In order to creat such a project, you nee to execute the following command:
+
 ```
 mvn archetype:generate -DarchetypeGroupId=org.apache.flex.blazeds -DarchetypeArtifactId=blazeds-spring-boot-example-archetype -DarchetypeVersion=4.7.3-SNAPSHOT
 ```
+
 The archetype-plugin will ask you for a groupId, artifactId, version and package name.
 
-The first are used to fill the maven coordinates in the generated pom and the package will be used to set the package the generated classes are located in.
+The first are used to fill the maven coordinates in the generated pom and the package will be used to set the package
+the generated classes are located in.
 
 ## Run the generated application
 
 After having generated your application, just start it by executing the following command:
+
 ```
 mvn spring-boot:run
 ```
+
 The output should be something like this:
+
 ```
 [INFO] Scanning for projects...
 [WARNING] 
@@ -117,7 +127,9 @@ The output should be something like this:
 
 ## Communicating with the BlazeDS server from a Flex client
 
-In order to communicate with the BlazeDS server, you need to define your Remote object by providing the `endpoint` and `destination` attributes.
+In order to communicate with the BlazeDS server, you need to define your Remote object by providing the `endpoint`
+and `destination` attributes.
+
 ```
 <fx:Declarations>
     <s:RemoteObject id="exampleService"
@@ -128,6 +140,10 @@ In order to communicate with the BlazeDS server, you need to define your Remote 
     </s:RemoteObject>
 </fx:Declarations>
 ```
-Take care that the `destination` attribute matches exaclty the name you gave the service using the `@Service` annotation and that the service is also annotated with `@RemotingDestination`
 
-The `@Service` annotation gives the service a name in the Spring context and would be available under that name inside the Spring context. The `@RemotingDestination` annotation explicitly registers the service with BlazeDS. This is a security measure as this way only explicitly exported services are available remotely.
+Take care that the `destination` attribute matches exaclty the name you gave the service using the `@Service` annotation
+and that the service is also annotated with `@RemotingDestination`
+
+The `@Service` annotation gives the service a name in the Spring context and would be available under that name inside
+the Spring context. The `@RemotingDestination` annotation explicitly registers the service with BlazeDS. This is a
+security measure as this way only explicitly exported services are available remotely.

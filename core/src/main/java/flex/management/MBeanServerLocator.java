@@ -21,13 +21,12 @@ import javax.management.MBeanServer;
 /**
  * Interface for classes that locate MBeanServers to register MBeans with.
  */
-public interface MBeanServerLocator
-{
+public interface MBeanServerLocator {
     /**
      * Returns the MBeanServer to register our management MBeans with.
-     * 
+     *
      * @return The MBeanServer to register our management MBeans with.
      */
     MBeanServer getMBeanServer();
-    
+
 }

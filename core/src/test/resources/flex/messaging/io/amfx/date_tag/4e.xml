@@ -21,8 +21,8 @@
     <body>
         <array length="3">
             <date>1119647239994</date>
-            <ref id="1" />
-            <ref id="1" />
+            <ref id="1"/>
+            <ref id="1"/>
         </array>
     </body>
 </amfx>

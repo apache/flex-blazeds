@@ -28,10 +28,10 @@ import flex.messaging.util.ResourceLoader;
  * number and an optional message variant that is used to look up a localized error
  * message or details string using a <code>ResourceLoader</code>. These methods also
  * set the number property of the exception instance.
- *
+ * <p>
  * The various overloads optionally support specifying a target locale as well as
  * arguments to substitute into the localized string if it is parameterized.
- *
+ * <p>
  * Localized error message and details strings are stored in the flex.messaging.errors
  * resource bundle. Entries must have the following format.
  * <ul>
@@ -41,9 +41,10 @@ import flex.messaging.util.ResourceLoader;
  *
  * @see ResourceLoader
  */
-public class LocalizedException extends RuntimeException
-{
-    /** - transient, the resourceLoader for localized strings doesn't need to serialize.  */
+public class LocalizedException extends RuntimeException {
+    /**
+     * - transient, the resourceLoader for localized strings doesn't need to serialize.
+     */
     protected transient ResourceLoader resourceLoader;
 
     protected int number;
@@ -64,8 +65,7 @@ public class LocalizedException extends RuntimeException
     /**
      * Create a LocalizedException with the default ResourceLoader.
      */
-    public LocalizedException()
-    {
+    public LocalizedException() {
         super();
     }
 
@@ -75,8 +75,7 @@ public class LocalizedException extends RuntimeException
      *
      * @param resourceLoader The resource loader to use.
      */
-    public LocalizedException(ResourceLoader resourceLoader)
-    {
+    public LocalizedException(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
@@ -85,8 +84,7 @@ public class LocalizedException extends RuntimeException
      *
      * @return The exception details.
      */
-    public String getDetails()
-    {
+    public String getDetails() {
         return details;
     }
 
@@ -95,8 +93,7 @@ public class LocalizedException extends RuntimeException
      *
      * @param details The exception details.
      */
-    public void setDetails(String details)
-    {
+    public void setDetails(String details) {
         this.details = details;
     }
 
@@ -105,8 +102,7 @@ public class LocalizedException extends RuntimeException
      *
      * @param number The error number for this exception instance.
      */
-    public void setMessage(int number)
-    {
+    public void setMessage(int number) {
         setMessage(number, null, null, null);
     }
 
@@ -116,8 +112,7 @@ public class LocalizedException extends RuntimeException
      * @param number The error number for this exception instance.
      * @param locale The target locale for error message lookup.
      */
-    public void setMessage(int number, Locale locale)
-    {
+    public void setMessage(int number, Locale locale) {
         setMessage(number, null, locale, null);
     }
 
@@ -125,22 +120,20 @@ public class LocalizedException extends RuntimeException
      * Sets the message property to a localized string based on error number.
      * The passed arguments are substituted into the parameterized error message string.
      *
-     * @param number The error number for this exception instance.
+     * @param number    The error number for this exception instance.
      * @param arguments The arguments to substitute into the error message.
      */
-    public void setMessage(int number, Object[] arguments)
-    {
+    public void setMessage(int number, Object[] arguments) {
         setMessage(number, null, null, arguments);
     }
 
     /**
      * Sets the message property to a localized string based on error number and variant.
      *
-     * @param number The error number for this exception instance.
+     * @param number  The error number for this exception instance.
      * @param variant The variant of the error message for this instance.
      */
-    public void setMessage(int number, String variant)
-    {
+    public void setMessage(int number, String variant) {
         setMessage(number, variant, null, null);
     }
 
@@ -148,12 +141,11 @@ public class LocalizedException extends RuntimeException
      * Sets the message property to a localized string based on error number, variant
      * and target locale.
      *
-     * @param number The error number for this exception instance.
+     * @param number  The error number for this exception instance.
      * @param variant The variant of the error message for this instance.
-     * @param locale The target locale for error message lookup.
+     * @param locale  The target locale for error message lookup.
      */
-    public void setMessage(int number, String variant, Locale locale)
-    {
+    public void setMessage(int number, String variant, Locale locale) {
         setMessage(number, variant, locale, null);
     }
 
@@ -161,12 +153,11 @@ public class LocalizedException extends RuntimeException
      * Sets the message property to a localized string based on error number and variant.
      * The passed arguments are substituted into the parameterized error message string.
      *
-     * @param number The error number for this exception instance.
-     * @param variant The varient of the error message for this instance.
+     * @param number    The error number for this exception instance.
+     * @param variant   The varient of the error message for this instance.
      * @param arguments The arguments to substitute into the error message.
      */
-    public void setMessage(int number, String variant, Object[] arguments)
-    {
+    public void setMessage(int number, String variant, Object[] arguments) {
         setMessage(number, variant, null, arguments);
     }
 
@@ -175,13 +166,12 @@ public class LocalizedException extends RuntimeException
      * target locale. The passed arguments are substituted into the parameterized error
      * message string.
      *
-     * @param number The error number for this exception instance.
-     * @param variant The variant of the error message for this instance.
-     * @param locale The target locale for error message lookup.
+     * @param number    The error number for this exception instance.
+     * @param variant   The variant of the error message for this instance.
+     * @param locale    The target locale for error message lookup.
      * @param arguments The arguments to substitute into the error message.
      */
-    public void setMessage(int number, String variant, Locale locale, Object[] arguments)
-    {
+    public void setMessage(int number, String variant, Locale locale, Object[] arguments) {
         setNumber(number);
         ResourceLoader resources = getResourceLoader();
         setMessage(resources.getString(generateFullKey(number, variant), locale, arguments));
@@ -192,8 +182,7 @@ public class LocalizedException extends RuntimeException
      *
      * @return The exception message.
      */
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
@@ -202,8 +191,7 @@ public class LocalizedException extends RuntimeException
      *
      * @param message The exception message.
      */
-    public void setMessage(String message)
-    {
+    public void setMessage(String message) {
         this.message = message;
     }
 
@@ -212,8 +200,7 @@ public class LocalizedException extends RuntimeException
      *
      * @param number The localized exception number.
      */
-    public void setNumber(int number)
-    {
+    public void setNumber(int number) {
         this.number = number;
     }
 
@@ -222,8 +209,7 @@ public class LocalizedException extends RuntimeException
      *
      * @return The localized exception number.
      */
-    public int getNumber()
-    {
+    public int getNumber() {
         return number;
     }
 
@@ -232,19 +218,17 @@ public class LocalizedException extends RuntimeException
      *
      * @param number The error number to lookup details for.
      */
-    public void setDetails(int number)
-    {
+    public void setDetails(int number) {
         setDetails(number, null, null, null);
     }
 
     /**
      * Sets the details property to a localized string based on error number and variant.
      *
-     * @param number The error number to lookup details for.
+     * @param number  The error number to lookup details for.
      * @param variant The variant of the details string to lookup.
      */
-    public void setDetails(int number, String variant)
-    {
+    public void setDetails(int number, String variant) {
         setDetails(number, variant, null, null);
     }
 
@@ -252,12 +236,11 @@ public class LocalizedException extends RuntimeException
      * Sets the details property to a localized string based on error number, variant
      * and target locale.
      *
-     * @param number The error number to lookup details for.
+     * @param number  The error number to lookup details for.
      * @param variant The variant of the details string to lookup.
-     * @param locale The target locale for the lookup.
+     * @param locale  The target locale for the lookup.
      */
-    public void setDetails(int number, String variant, Locale locale)
-    {
+    public void setDetails(int number, String variant, Locale locale) {
         setDetails(number, variant, locale, null);
     }
 
@@ -265,12 +248,11 @@ public class LocalizedException extends RuntimeException
      * Sets the details property to a localized string based on error number and variant.
      * The passed arguments are substituted into the parameterized error details string.
      *
-     * @param number The error number to lookup details for.
-     * @param variant The variant of the details string to lookup.
+     * @param number    The error number to lookup details for.
+     * @param variant   The variant of the details string to lookup.
      * @param arguments The arguments to substitute into the details string.
      */
-    public void setDetails(int number, String variant, Object[] arguments)
-    {
+    public void setDetails(int number, String variant, Object[] arguments) {
         setDetails(number, variant, null, arguments);
     }
 
@@ -280,13 +262,12 @@ public class LocalizedException extends RuntimeException
      * and target locale. The passed arguments are substituted into the parameterized error
      * details string.
      *
-     * @param number The error number to lookup a localized details string for.
-     * @param variant The variant of the details string to lookup.
-     * @param locale The target locale for the lookup.
+     * @param number    The error number to lookup a localized details string for.
+     * @param variant   The variant of the details string to lookup.
+     * @param locale    The target locale for the lookup.
      * @param arguments The arguments to substitute into the details string.
      */
-    public void setDetails(int number, String variant, Locale locale, Object[] arguments)
-    {
+    public void setDetails(int number, String variant, Locale locale, Object[] arguments) {
         setNumber(number);
         ResourceLoader resources = getResourceLoader();
         setDetails(resources.getString(generateDetailsKey(number, variant), locale, arguments));
@@ -297,8 +278,7 @@ public class LocalizedException extends RuntimeException
      *
      * @return The root cause for this exception.
      */
-    public Throwable getRootCause()
-    {
+    public Throwable getRootCause() {
         return rootCause;
     }
 
@@ -307,8 +287,7 @@ public class LocalizedException extends RuntimeException
      *
      * @param cause The root cause for this exception.
      */
-    public void setRootCause(Throwable cause)
-    {        
+    public void setRootCause(Throwable cause) {
         rootCause = cause;
         // Assign through to the base cause property to include it in general stack traces.
         initCause(cause);
@@ -319,8 +298,7 @@ public class LocalizedException extends RuntimeException
      *
      * @return The <code>ResourceLoader</code> used to load localized strings.
      */
-    protected ResourceLoader getResourceLoader()
-    {
+    protected ResourceLoader getResourceLoader() {
         if (resourceLoader == null)
             resourceLoader = new PropertyStringResourceLoader();
 
@@ -332,12 +310,11 @@ public class LocalizedException extends RuntimeException
      * and an optional variant followed by a "-details" suffix. If the variant is null, the
      * lookup key is the error number.
      *
-     * @param number The error number.
+     * @param number  The error number.
      * @param variant The variant of the error message.
      * @return The full lookup key for a localized error message.
      */
-    private String generateFullKey(int number, String variant)
-    {
+    private String generateFullKey(int number, String variant) {
         return (variant != null) ? (number + "-" + variant) : String.valueOf(number);
     }
 
@@ -346,12 +323,11 @@ public class LocalizedException extends RuntimeException
      * and an optional variant followed by a "-details" suffix. If the variant is null, the
      * lookup key is the error number followed by a "-details" suffix.
      *
-     * @param number The error number.
+     * @param number  The error number.
      * @param variant The variant of the details message.
      * @return The full lookup key for a localized details message.
      */
-    private String generateDetailsKey(int number, String variant)
-    {
+    private String generateDetailsKey(int number, String variant) {
         return (generateFullKey(number, variant) + "-details");
     }
 
@@ -360,14 +336,11 @@ public class LocalizedException extends RuntimeException
      *
      * @return A string representation of the exception.
      */
-    public String toString()
-    {
+    public String toString() {
         String result = super.toString();
-        if (details != null)
-        {
+        if (details != null) {
             StringBuffer buffer = new StringBuffer(result);
-            if (!result.endsWith("."))
-            {
+            if (!result.endsWith(".")) {
                 buffer.append(".");
             }
             buffer.append(' ').append(details);

@@ -20,19 +20,18 @@ package flex.messaging;
  * Interface to be notified when the object is bound or unbound from the Flex
  * session.
  */
-public interface FlexSessionBindingListener
-{
+public interface FlexSessionBindingListener {
     /**
      * Callback invoked when the object is bound to a Flex session.
-     * 
+     *
      * @param event The event containing the associated session and attribute
      *              information.
      */
     void valueBound(FlexSessionBindingEvent event);
-    
+
     /**
      * Callback invoked when the object is unbound from a Flex session.
-     * 
+     *
      * @param event The event containing the associated session and attribute
      *              information.
      */

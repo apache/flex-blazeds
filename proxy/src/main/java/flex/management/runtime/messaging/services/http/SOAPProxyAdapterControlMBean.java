@@ -22,7 +22,6 @@ package flex.management.runtime.messaging.services.http;
  * proxy adapters.
  */
 public interface SOAPProxyAdapterControlMBean extends
-        HTTPProxyAdapterControlMBean
-{
+        HTTPProxyAdapterControlMBean {
     // Empty for now.
 }

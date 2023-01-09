@@ -21,56 +21,50 @@ import flex.messaging.log.LogEvent;
 
 /**
  * Exception type for Service errors.
- *
- *
  */
-public class ServiceException extends MessageException
-{
+public class ServiceException extends MessageException {
     static final long serialVersionUID = 3349730139522030203L;
-    
+
     //--------------------------------------------------------------------------
     //
     // Properties
     //
     //--------------------------------------------------------------------------        
-    
+
     //----------------------------------
     //  defaultLogMessageIntro
     //----------------------------------            
 
     /**
-     * Overrides the intro text if the exception is a 'not subscribed' fault. 
+     * Overrides the intro text if the exception is a 'not subscribed' fault.
      */
-    public String getDefaultLogMessageIntro()
-    {
+    public String getDefaultLogMessageIntro() {
         if (code != null && code.equals(MessageService.NOT_SUBSCRIBED_CODE))
             return "Client not subscribed: ";
         else
             return super.getDefaultLogMessageIntro();
     }
-    
+
     //----------------------------------
     //  logStackTraceEnabled
     //----------------------------------            
-    
+
     /**
      * Override to disable stack trace logging if the exception is a 'not subscribed' fault. No need for
      * a stack trace in this case.
      */
-    public boolean isLogStackTraceEnabled()
-    {
+    public boolean isLogStackTraceEnabled() {
         return !(code != null && code.equals(MessageService.NOT_SUBSCRIBED_CODE));
-    }    
-    
+    }
+
     //----------------------------------
     //  peferredLogLevel
     //----------------------------------            
-    
+
     /**
-     * Override to lower the preferred log level to debug if the exception is a 'not subscribed' fault. 
+     * Override to lower the preferred log level to debug if the exception is a 'not subscribed' fault.
      */
-    public short getPreferredLogLevel()
-    {
+    public short getPreferredLogLevel() {
         String code = getCode();
         // Log not-subscribed errors at a lower level because this is a common occurance
         // following normal failover.

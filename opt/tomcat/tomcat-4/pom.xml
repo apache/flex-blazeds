@@ -16,31 +16,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.flex.blazeds</groupId>
-    <artifactId>flex-messaging-opt-tomcat</artifactId>
-    <version>4.7.4-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.flex.blazeds</groupId>
+        <artifactId>flex-messaging-opt-tomcat</artifactId>
+        <version>4.8.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>flex-messaging-opt-tomcat-4</artifactId>
+    <artifactId>flex-messaging-opt-tomcat-4</artifactId>
 
-  <dependencies>
-    <dependency>
-      <groupId>tomcat</groupId>
-      <artifactId>catalina</artifactId>
-      <version>4.0.6</version>
-      <scope>provided</scope>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>tomcat</groupId>
+            <artifactId>catalina</artifactId>
+            <version>4.1.36</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.flex.blazeds</groupId>
-      <artifactId>flex-messaging-opt-tomcat-base</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>org.apache.flex.blazeds</groupId>
+            <artifactId>flex-messaging-opt-tomcat-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

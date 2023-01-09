@@ -22,10 +22,8 @@ import flex.messaging.io.TypeMarshallingContext;
 /**
  *
  */
-public class ReferenceAwareDateDecoder extends DateDecoder
-{
-    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass)
-    {
+public class ReferenceAwareDateDecoder extends DateDecoder {
+    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass) {
         Object result = super.decodeObject(shell, encodedObject, desiredClass);
 
         // Only AMF 3 Dates can be sent by reference so we only
@@ -33,8 +31,7 @@ public class ReferenceAwareDateDecoder extends DateDecoder
         // to the encodedObject if the incoming type was a Date object.
         if (result != null
                 && SerializationContext.getSerializationContext().supportDatesByReference
-                && encodedObject instanceof java.util.Date)
-        {
+                && encodedObject instanceof java.util.Date) {
             TypeMarshallingContext context = TypeMarshallingContext.getTypeMarshallingContext();
             context.getKnownObjects().put(encodedObject, result);
         }

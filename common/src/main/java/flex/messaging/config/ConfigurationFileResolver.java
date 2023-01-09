@@ -22,10 +22,11 @@ import java.util.List;
 /**
  *
  */
-public interface ConfigurationFileResolver
-{
+public interface ConfigurationFileResolver {
     InputStream getConfigurationFile(String path);
+
     InputStream getIncludedFile(String path);
+
     void popIncludedFile();
 
     List getFiles(String dir);

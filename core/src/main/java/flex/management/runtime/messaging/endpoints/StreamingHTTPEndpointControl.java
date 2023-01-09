@@ -24,8 +24,7 @@ import flex.messaging.endpoints.StreamingHTTPEndpoint;
  * for monitoring and managing a <code>StreamingHTTPEndpoint</code> at runtime.
  */
 public class StreamingHTTPEndpointControl extends StreamingEndpointControl implements
-    StreamingHTTPEndpointControlMBean
-{
+        StreamingHTTPEndpointControlMBean {
     private static final String TYPE = "StreamingHTTPEndpoint";
 
     /**
@@ -33,16 +32,16 @@ public class StreamingHTTPEndpointControl extends StreamingEndpointControl imple
      * endpoint and parent MBean.
      *
      * @param endpoint The <code>StreamingHTTPEndpoint</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent   The parent MBean in the management hierarchy.
      */
-    public StreamingHTTPEndpointControl(StreamingHTTPEndpoint endpoint, BaseControl parent)
-    {
+    public StreamingHTTPEndpointControl(StreamingHTTPEndpoint endpoint, BaseControl parent) {
         super(endpoint, parent);
     }
 
-    /** {@inheritDoc} */
-    public String getType()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public String getType() {
         return TYPE;
     }
 }

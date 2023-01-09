@@ -34,49 +34,39 @@ import flex.messaging.MessageException;
 
 /**
  * A <code>JMSProducer</code> subclass specifically for JMS Queue senders.
- *
- *
  */
-public class JMSQueueProducer extends JMSProducer
-{
+public class JMSQueueProducer extends JMSProducer {
     /* JMS related variables */
     private QueueSender sender;
 
     /**
      * Starts <code>JMSQueueProducer</code>.
      */
-    public void start() throws NamingException, JMSException
-    {
+    public void start() throws NamingException, JMSException {
         super.start();
 
         // Establish queue
         Queue queue = null;
-        try
-        {
-            queue = (Queue)destination;
-        }
-        catch (ClassCastException cce)
-        {
+        try {
+            queue = (Queue) destination;
+        } catch (ClassCastException cce) {
             // JMS queue proxy for JMS destination ''{0}'' has a destination type of ''{1}'' which is not Queue.
             MessageException me = new MessageException();
-            me.setMessage(JMSConfigConstants.NON_QUEUE_DESTINATION, new Object[] {destinationJndiName, destination.getClass().getName()});
+            me.setMessage(JMSConfigConstants.NON_QUEUE_DESTINATION, new Object[]{destinationJndiName, destination.getClass().getName()});
             throw me;
         }
 
         // Create connection
-        try
-        {
-            QueueConnectionFactory queueFactory = (QueueConnectionFactory)connectionFactory;
+        try {
+            QueueConnectionFactory queueFactory = (QueueConnectionFactory) connectionFactory;
             if (connectionCredentials != null)
                 connection = queueFactory.createQueueConnection(connectionCredentials.getUsername(), connectionCredentials.getPassword());
             else
                 connection = queueFactory.createQueueConnection();
-        }
-        catch (ClassCastException cce)
-        {
+        } catch (ClassCastException cce) {
             // JMS queue proxy for JMS destination ''{0}'' has a connection factory type of ''{1}'' which is not QueueConnectionFactory.
             MessageException me = new MessageException();
-            me.setMessage(JMSConfigConstants.NON_QUEUE_FACTORY, new Object[] {destinationJndiName, connectionFactory.getClass().getName()});
+            me.setMessage(JMSConfigConstants.NON_QUEUE_FACTORY, new Object[]{destinationJndiName, connectionFactory.getClass().getName()});
             throw me;
         }
 
@@ -85,7 +75,7 @@ public class JMSQueueProducer extends JMSProducer
         session = queueConnection.createQueueSession(false, getAcknowledgeMode());
 
         // Create sender on the queue session
-        QueueSession queueSession = (QueueSession)session;
+        QueueSession queueSession = (QueueSession) session;
         sender = queueSession.createSender(queue);
         producer = sender;
 
@@ -94,8 +84,7 @@ public class JMSQueueProducer extends JMSProducer
     }
 
     @Override
-    void sendTextMessage(String text, Map properties) throws JMSException
-    {
+    void sendTextMessage(String text, Map properties) throws JMSException {
         if (text == null)
             return;
 
@@ -106,8 +95,7 @@ public class JMSQueueProducer extends JMSProducer
     }
 
     @Override
-    void sendObjectMessage(Serializable obj, Map properties) throws JMSException
-    {
+    void sendObjectMessage(Serializable obj, Map properties) throws JMSException {
         if (obj == null)
             return;
 
@@ -118,8 +106,7 @@ public class JMSQueueProducer extends JMSProducer
     }
 
     @Override
-    void sendMapMessage(Map<String, ?> map, Map properties) throws JMSException
-    {
+    void sendMapMessage(Map<String, ?> map, Map properties) throws JMSException {
         if (map == null)
             return;
 

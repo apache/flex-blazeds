@@ -21,32 +21,32 @@
 
     <services>
         <service id="foo-service"
-            class="flex.messaging.services.FooService"
-            messageTypes="flex.messaging.messages.FooMessage">
+                 class="flex.messaging.services.FooService"
+                 messageTypes="flex.messaging.messages.FooMessage">
 
             <adapters>
-                <adapter-definition class="flex.messaging.services.foo.FooAdapter" id="foo" />
+                <adapter-definition class="flex.messaging.services.foo.FooAdapter" id="foo"/>
             </adapters>
 
             <default-channels>
-                <channel ref="foo-channel" />
+                <channel ref="foo-channel"/>
             </default-channels>
         </service>
 
         <service id="bar-service"
-            class="flex.messaging.services.BarService"
-            messageTypes="flex.messaging.messages.BarMessage">
+                 class="flex.messaging.services.BarService"
+                 messageTypes="flex.messaging.messages.BarMessage">
 
             <adapters>
-                <adapter-definition class="flex.messaging.services.bar.BarAdapter" id="bar1" />
-                <adapter-definition class="flex.messaging.services.bar.BarAdapter" id="bar2" />
+                <adapter-definition class="flex.messaging.services.bar.BarAdapter" id="bar1"/>
+                <adapter-definition class="flex.messaging.services.bar.BarAdapter" id="bar2"/>
             </adapters>
 
             <default-channels>
-                <channel ref="bar-channel" />
-                <channel ref="foo-channel" />
+                <channel ref="bar-channel"/>
+                <channel ref="foo-channel"/>
             </default-channels>
-       </service>
+        </service>
 
     </services>
 

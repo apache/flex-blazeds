@@ -20,24 +20,19 @@ import flex.messaging.io.amfx.DeserializationConfirmation;
 import flex.messaging.io.amf.ActionMessage;
 import flex.messaging.MessageException;
 
-public class Confirm3d extends DeserializationConfirmation
-{
-    public Confirm3d()
-    {
+public class Confirm3d extends DeserializationConfirmation {
+    public Confirm3d() {
     }
 
-    public boolean isNegativeTest()
-    {
+    public boolean isNegativeTest() {
         return true;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return null;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return new MessageException("Unexpected body tag.");
     }
 }

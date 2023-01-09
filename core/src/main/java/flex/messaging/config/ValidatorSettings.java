@@ -21,8 +21,7 @@ import flex.messaging.validators.DeserializationValidator;
 /**
  * Settings class for validators.
  */
-public class ValidatorSettings extends PropertiesSettings
-{
+public class ValidatorSettings extends PropertiesSettings {
     private String className;
     private String type = DeserializationValidator.class.getName();
 
@@ -31,8 +30,7 @@ public class ValidatorSettings extends PropertiesSettings
      *
      * @return The class name.
      */
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
@@ -41,8 +39,7 @@ public class ValidatorSettings extends PropertiesSettings
      *
      * @param className The class name.
      */
-    public void setClassName(String className)
-    {
+    public void setClassName(String className) {
         this.className = className;
     }
 
@@ -51,8 +48,7 @@ public class ValidatorSettings extends PropertiesSettings
      *
      * @return The type of the validator.
      */
-    public String getType()
-    {
+    public String getType() {
         return type;
     }
 
@@ -61,8 +57,7 @@ public class ValidatorSettings extends PropertiesSettings
      *
      * @param type The type of the validator.
      */
-    public void setType(String type)
-    {
+    public void setType(String type) {
         this.type = type;
     }
 }

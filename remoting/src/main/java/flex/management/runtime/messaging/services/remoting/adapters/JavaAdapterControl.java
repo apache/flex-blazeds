@@ -25,25 +25,24 @@ import flex.messaging.services.remoting.adapters.JavaAdapter;
  * for monitoring and managing Java service adapters at runtime.
  */
 public class JavaAdapterControl extends ServiceAdapterControl implements
-        JavaAdapterControlMBean
-{
+        JavaAdapterControlMBean {
     private static final String TYPE = "JavaAdapter";
-    
+
     /**
      * Constructs a <code>JavaAdapterControl</code>, assigning its id, managed
      * Java service adapter and parent MBean.
-     * 
+     *
      * @param serviceAdapter The <code>JavaAdapter</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent         The parent MBean in the management hierarchy.
      */
-    public JavaAdapterControl(JavaAdapter serviceAdapter, BaseControl parent)
-    {
+    public JavaAdapterControl(JavaAdapter serviceAdapter, BaseControl parent) {
         super(serviceAdapter, parent);
     }
 
-    /** {@inheritDoc} */
-    public String getType()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public String getType() {
         return TYPE;
     }
 }

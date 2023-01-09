@@ -27,8 +27,7 @@ import java.util.Map;
 /**
  * A simple context to hold type marshalling specific settings.
  */
-public class TypeMarshallingContext
-{
+public class TypeMarshallingContext {
     private static ThreadLocal<TypeMarshallingContext> contexts = new ThreadLocal<TypeMarshallingContext>();
     private static ThreadLocal<TypeMarshaller> marshallers = new ThreadLocal<TypeMarshaller>();
     private IdentityHashMap knownObjects;
@@ -37,17 +36,16 @@ public class TypeMarshallingContext
     /**
      * Constructs a default type marshalling context.
      */
-    public TypeMarshallingContext()
-    {
+    public TypeMarshallingContext() {
     }
 
     /**
      * Establishes a TypeMarshallingContext for the current thread.
      * Users are not expected to call this function.
+     *
      * @param context The current TypeMarshallingContext.
      */
-    public static void setTypeMarshallingContext(TypeMarshallingContext context)
-    {
+    public static void setTypeMarshallingContext(TypeMarshallingContext context) {
         if (context == null)
             contexts.remove();
         else
@@ -56,13 +54,12 @@ public class TypeMarshallingContext
 
     /**
      * Get current TypeMarshallingContext object
+     *
      * @return The current thread's TypeMarshallingContext.
      */
-    public static TypeMarshallingContext getTypeMarshallingContext()
-    {
+    public static TypeMarshallingContext getTypeMarshallingContext() {
         TypeMarshallingContext context = contexts.get();
-        if (context == null)
-        {
+        if (context == null) {
             context = new TypeMarshallingContext();
             TypeMarshallingContext.setTypeMarshallingContext(context);
         }
@@ -72,11 +69,10 @@ public class TypeMarshallingContext
     /**
      * Establishes a TypeMarshallingContext for the current thread.
      * Users are not expected to call this function.
-     * 
+     *
      * @param marshaller The current TypeMarshaller.
      */
-    public static void setTypeMarshaller(TypeMarshaller marshaller)
-    {
+    public static void setTypeMarshaller(TypeMarshaller marshaller) {
         if (marshaller == null)
             marshallers.remove();
         else
@@ -85,36 +81,33 @@ public class TypeMarshallingContext
 
     /**
      * Get current TypeMarshaller.
+     *
      * @return The current thread's TypeMarshaller.
      */
-    public static TypeMarshaller getTypeMarshaller()
-    {
+    public static TypeMarshaller getTypeMarshaller() {
         TypeMarshaller marshaller = marshallers.get();
-        if (marshaller == null)
-        {
+        if (marshaller == null) {
             marshaller = new ASTranslator();
             setTypeMarshaller(marshaller);
         }
 
-        return marshaller; 
+        return marshaller;
     }
 
     /**
      * Returns the custom ClassLoader for this type marshalling session, or
      * defaults to the current MessageBroker's ClassLoader if none has been set.
+     *
      * @return ClassLoader the ClassLoader in use
      */
-    public ClassLoader getClassLoader()
-    {
+    public ClassLoader getClassLoader() {
         if (classLoader != null)
             return classLoader;
 
-        try
-        {
+        try {
             MessageBroker messageBroker = FlexContext.getMessageBroker();
-            return messageBroker != null? messageBroker.getClassLoader() : null;
-        }
-        catch (NoClassDefFoundError exception) // Could happen in client mode.
+            return messageBroker != null ? messageBroker.getClassLoader() : null;
+        } catch (NoClassDefFoundError exception) // Could happen in client mode.
         {
             return null;
         }
@@ -123,20 +116,20 @@ public class TypeMarshallingContext
     /**
      * Sets a custom classloader for this type marshalling session that will
      * be used to create new instances of strongly typed objects.
+     *
      * @param loader the ClassLoader to use
      */
-    public void setClassLoader(ClassLoader loader)
-    {
+    public void setClassLoader(ClassLoader loader) {
         classLoader = loader;
     }
 
     /**
      * A map of known objects already encountered in this type marshalling
      * session.
+     *
      * @return IdentityHashMap the known objects
      */
-    public IdentityHashMap getKnownObjects()
-    {
+    public IdentityHashMap getKnownObjects() {
         if (knownObjects == null)
             knownObjects = new IdentityHashMap(64);
 
@@ -146,18 +139,17 @@ public class TypeMarshallingContext
     /**
      * Sets the list of the objects already encountered for this type
      * marshalling session.
+     *
      * @param knownObjects the IdentityHashMap object
      */
-    public void setKnownObjects(IdentityHashMap knownObjects)
-    {
+    public void setKnownObjects(IdentityHashMap knownObjects) {
         this.knownObjects = knownObjects;
     }
 
     /**
      * Resets the list of known objects.
      */
-    public void reset()
-    {
+    public void reset() {
         if (knownObjects != null)
             knownObjects.clear();
     }
@@ -166,32 +158,28 @@ public class TypeMarshallingContext
      * A utility method to determine whether an anonymous type specifies
      * a strong type name, such as ASObject.getType() or the legacy Flash
      * Remoting convention of using a _remoteClass property.
+     *
      * @param obj the object to check
      * @return The name of the strong type, or null if none was specified.
      */
-    public static String getType(Object obj)
-    {
+    public static String getType(Object obj) {
         String type = null;
 
-        if (obj != null && obj instanceof Map)
-        {
-            Map map = (Map)obj;
+        if (obj != null && obj instanceof Map) {
+            Map map = (Map) obj;
 
             //Check for an Object.registerClass Typed ASObject
-            if (map instanceof ASObject)
-            {
-                ASObject aso = (ASObject)map;
+            if (map instanceof ASObject) {
+                ASObject aso = (ASObject) map;
                 type = aso.getType();
             }
 
             SerializationContext sc = SerializationContext.getSerializationContext();
-            
-            if (type == null && sc.supportRemoteClass)
-            {
+
+            if (type == null && sc.supportRemoteClass) {
                 Object registerClass = map.get(MessageIOConstants.REMOTE_CLASS_FIELD);
-                if (registerClass != null && registerClass instanceof String)
-                {
-                    type = (String)registerClass;
+                if (registerClass != null && registerClass instanceof String) {
+                    type = (String) registerClass;
                 }
             }
         }
@@ -202,37 +190,30 @@ public class TypeMarshallingContext
     /**
      * Clears out the thread local state after the request completes.
      */
-    public static void clearThreadLocalObjects()
-    {
-        if (contexts != null)
-        {
+    public static void clearThreadLocalObjects() {
+        if (contexts != null) {
             contexts.remove();
         }
-        if (marshallers != null)
-        {
+        if (marshallers != null) {
             marshallers.remove();
         }
     }
 
     /**
-     *
      * Destroy static thread local storage.
      * Call ONLY on shutdown.
      */
-    public static void releaseThreadLocalObjects()
-    {
+    public static void releaseThreadLocalObjects() {
         clearThreadLocalObjects();
-        
+
         contexts = null;
         marshallers = null;
     }
 
     /**
-     *
      * Create static thread local storage.
      */
-    public static void createThreadLocalObjects()
-    {
+    public static void createThreadLocalObjects() {
         if (contexts == null)
             contexts = new ThreadLocal();
         if (marshallers == null)

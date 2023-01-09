@@ -28,64 +28,57 @@ import javax.security.auth.login.*;
  * A Oracle specific implementation of LoginCommand to manually authenticate
  * a user with the current web-app container.
  */
-public class OracleLoginCommand extends AppServerLoginCommand
-{
-    /** {@inheritDoc} */
+public class OracleLoginCommand extends AppServerLoginCommand {
+    /**
+     * {@inheritDoc}
+     */
     public Principal doAuthentication(String username, Object credentials)
-        throws SecurityException
-    {
+            throws SecurityException {
         OracleUser user;
-        try
-        {
+        try {
             CallbackHandler callbackHandler = new JAZNCallbackHandler
-                (JAZNConfig.getJAZNConfig(), null, 
-                 username, extractPassword(credentials));
+                    (JAZNConfig.getJAZNConfig(), null,
+                            username, extractPassword(credentials));
             LoginContext context = new LoginContext
-                ("oracle.security.jazn.oc4j.JAZNUserManager", callbackHandler);
+                    ("oracle.security.jazn.oc4j.JAZNUserManager", callbackHandler);
             user = new OracleUser(context);
-        }
-        catch (LoginException loginException)
-        {
+        } catch (LoginException loginException) {
             throw wrapLoginException(loginException);
         }
         return user;
     }
 
-    /** {@inheritDoc} */
-    public boolean doAuthorization(Principal principal, List roles) 
-        throws SecurityException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean doAuthorization(Principal principal, List roles)
+            throws SecurityException {
         boolean result = false;
-        if (principal instanceof OracleUser)
-        {
+        if (principal instanceof OracleUser) {
             OracleUser user = (OracleUser) principal;
             result = user.isMemberOf(roles);
-        }        
+        }
         return result;
     }
 
-    /** {@inheritDoc} */
-    public boolean logout(Principal principal) throws SecurityException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean logout(Principal principal) throws SecurityException {
         boolean result = false;
-        if (principal instanceof OracleUser)
-        {
+        if (principal instanceof OracleUser) {
             OracleUser user = (OracleUser) principal;
-            try
-            {
+            try {
                 user.logout();
                 result = true;
-            }
-            catch (LoginException loginException)
-            {
+            } catch (LoginException loginException) {
                 throw wrapLoginException(loginException);
             }
         }
         return result;
     }
 
-    private SecurityException wrapLoginException(LoginException exception)
-    {
+    private SecurityException wrapLoginException(LoginException exception) {
         SecurityException result = new SecurityException();
         result.setRootCause(exception);
         return result;

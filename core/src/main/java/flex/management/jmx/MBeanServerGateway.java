@@ -40,12 +40,12 @@ import javax.management.RuntimeOperationsException;
 
 /**
  * Remoting gateway to the MBean server that hosts Flex MBeans.
- *
+ * <p>
  * Some base javax.management.MBeanServer methods are unimplemented due to the
  * fact that we're interacting with the MBean server from remote Flash clients.
  * Some methods have been modified to better suite remote Flash clients. Other
  * methods are additive, serving as a convenience for Flex applications.
- *
+ * <p>
  * Unimplemented methods from the base MBeanServer API:
  * <ul>
  *   <li>getDomains() - JMX 1.2</li>
@@ -58,7 +58,7 @@ import javax.management.RuntimeOperationsException;
  *   <li>getClassLoader() - meaningless to a Flash client.</li>
  *   <li>getClassLoaderRepository() - meaningless to a Flash client.</li>
  * </ul>
- *
+ * <p>
  * Modifications to the base MBeanServer API:
  * <ul>
  *   <li>* All ObjectName arguments are typed as String because serialization in either
@@ -71,7 +71,7 @@ import javax.management.RuntimeOperationsException;
  *   <li>getAttributes() returns an Array of Attributes rather than an AttributeList.</li>
  *   <li>setAttributes() accepts and returns Arrays of Attributes rather than AttributeLists.</li>
  * </ul>
- *
+ * <p>
  * Additonal Flex-specific methods:
  * <ul>
  *   <li>getFlexMBeanCount()</li>
@@ -79,8 +79,7 @@ import javax.management.RuntimeOperationsException;
  *   <li>getFlexMBeanObjectNames()</li>
  * </ul>
  */
-public class MBeanServerGateway
-{
+public class MBeanServerGateway {
     // Error string constants.
     private static final int MALFORMED_OBJECTNAME = 10400;
     private static final int GETINFO_INTROSPECTION_ERR = 10406;
@@ -103,15 +102,14 @@ public class MBeanServerGateway
     private static final int SETATTRIB_EXCEPTION = 10423;
     private static final int INVALID_ATTRIB_VALUE = 10424;
     private static final int SETATTRIBS_REFLECT_ERR = 10425;
-    
+
     private MBeanServer server;
 
     /**
      * Constructs a new MBeanServerGateway. The gateway exposes the MBean server
      * that Flex MBean are registered with in a remoting-friendly fashion.
      */
-    public MBeanServerGateway()
-    {
+    public MBeanServerGateway() {
         server = MBeanServerLocatorFactory.getMBeanServerLocator().getMBeanServer();
     }
 
@@ -124,44 +122,34 @@ public class MBeanServerGateway
     /**
      * Instantiates and registers an MBean with the MBean server.
      *
-     * @param className The class name for the MBean to instantiate.
+     * @param className  The class name for the MBean to instantiate.
      * @param objectName The object name of the MBean.
      * @return An ObjectInstance containing the ObjectName and Java class name of the new MBean.
      */
-    public ObjectInstance createMBean(String className, String objectName)
-    {
+    public ObjectInstance createMBean(String className, String objectName) {
         javax.management.ObjectName name = null;
         if (objectName != null)
             name = validateObjectName(objectName);
-        try
-        {
+        try {
             return new ObjectInstance(server.createMBean(className, name));
-        }
-        catch (ReflectionException re)
-        {
+        } catch (ReflectionException re) {
             ManagementException me = new ManagementException();
-            me.setMessage(CREATE_ERR, new Object[] {name});
+            me.setMessage(CREATE_ERR, new Object[]{name});
             me.setRootCause(re);
             throw me;
-        }
-        catch (InstanceAlreadyExistsException iaee)
-        {
+        } catch (InstanceAlreadyExistsException iaee) {
             ManagementException me = new ManagementException();
-            me.setMessage(INSTANCE_EXISTS, new Object[] {name});
+            me.setMessage(INSTANCE_EXISTS, new Object[]{name});
             me.setRootCause(iaee);
             throw me;
-        }
-        catch (MBeanException mbe)
-        {
+        } catch (MBeanException mbe) {
             ManagementException me = new ManagementException();
-            me.setMessage(CREATE_ERR, new Object[] {name});
+            me.setMessage(CREATE_ERR, new Object[]{name});
             me.setRootCause(mbe);
             throw me;
-        }
-        catch (NotCompliantMBeanException ncmbe)
-        {
+        } catch (NotCompliantMBeanException ncmbe) {
             ManagementException me = new ManagementException();
-            me.setMessage(NOT_COMPLIANT, new Object[] {className});
+            me.setMessage(NOT_COMPLIANT, new Object[]{className});
             me.setRootCause(ncmbe);
             throw me;
         }
@@ -171,55 +159,43 @@ public class MBeanServerGateway
      * Instantiates and registers an MBean with the MBean server. The class loader
      * to use to load the MBean class is identified by its ObjectName.
      *
-     * @param className The class name for the MBean to instantiate.
+     * @param className  The class name for the MBean to instantiate.
      * @param objectName The object name of the MBean.
      * @param loaderName The object name of the desired class loader.
      * @return An ObjectInstance containing the ObjectName and Java class name of the new MBean.
      */
-    public ObjectInstance createMBean(String className, String objectName, String loaderName)
-    {
+    public ObjectInstance createMBean(String className, String objectName, String loaderName) {
         javax.management.ObjectName name = null;
         javax.management.ObjectName loader = null;
         if (objectName != null)
             name = validateObjectName(objectName);
         if (loaderName != null)
             loader = validateObjectName(loaderName);
-        try
-        {
+        try {
             return new ObjectInstance(server.createMBean(className, name, loader));
-        }
-        catch (ReflectionException re)
-        {
+        } catch (ReflectionException re) {
             ManagementException me = new ManagementException();
-            me.setMessage(CREATE_ERR, new Object[] {name});
+            me.setMessage(CREATE_ERR, new Object[]{name});
             me.setRootCause(re);
             throw me;
-        }
-        catch (InstanceAlreadyExistsException iaee)
-        {
+        } catch (InstanceAlreadyExistsException iaee) {
             ManagementException me = new ManagementException();
-            me.setMessage(INSTANCE_EXISTS, new Object[] {name});
+            me.setMessage(INSTANCE_EXISTS, new Object[]{name});
             me.setRootCause(iaee);
             throw me;
-        }
-        catch (MBeanException mbe)
-        {
+        } catch (MBeanException mbe) {
             ManagementException me = new ManagementException();
-            me.setMessage(CREATE_ERR, new Object[] {name});
+            me.setMessage(CREATE_ERR, new Object[]{name});
             me.setRootCause(mbe);
             throw me;
-        }
-        catch (NotCompliantMBeanException ncmbe)
-        {
+        } catch (NotCompliantMBeanException ncmbe) {
             ManagementException me = new ManagementException();
-            me.setMessage(NOT_COMPLIANT, new Object[] {className});
+            me.setMessage(NOT_COMPLIANT, new Object[]{className});
             me.setRootCause(ncmbe);
             throw me;
-        }
-        catch (InstanceNotFoundException infe)
-        {
+        } catch (InstanceNotFoundException infe) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_NOTFOUND, new Object[] {name});
+            me.setMessage(MBEAN_NOTFOUND, new Object[]{name});
             me.setRootCause(infe);
             throw me;
         }
@@ -228,46 +204,36 @@ public class MBeanServerGateway
     /**
      * Instantiates and registers an MBean with the MBean server.
      *
-     * @param className The class name for the MBean to instantiate.
+     * @param className  The class name for the MBean to instantiate.
      * @param objectName The object name of the MBean.
-     * @param params An array of parameters to pass to the MBean constructor.
-     * @param signature An array containing the type signature for the constructor to invoke.
+     * @param params     An array of parameters to pass to the MBean constructor.
+     * @param signature  An array containing the type signature for the constructor to invoke.
      * @return An ObjectInstance containing the ObjectName and Java class name of the new MBean.
      */
-    public ObjectInstance createMBean(String className, String objectName, Object[] params, String[] signature)
-    {
+    public ObjectInstance createMBean(String className, String objectName, Object[] params, String[] signature) {
         javax.management.ObjectName name = null;
         if (objectName != null)
             name = validateObjectName(objectName);
-        try
-        {
+        try {
             return new ObjectInstance(server.createMBean(className, name, params, signature));
-        }
-        catch (ReflectionException re)
-        {
+        } catch (ReflectionException re) {
             ManagementException me = new ManagementException();
-            me.setMessage(CREATE_ERR, new Object[] {name});
+            me.setMessage(CREATE_ERR, new Object[]{name});
             me.setRootCause(re);
             throw me;
-        }
-        catch (InstanceAlreadyExistsException iaee)
-        {
+        } catch (InstanceAlreadyExistsException iaee) {
             ManagementException me = new ManagementException();
-            me.setMessage(INSTANCE_EXISTS, new Object[] {name});
+            me.setMessage(INSTANCE_EXISTS, new Object[]{name});
             me.setRootCause(iaee);
             throw me;
-        }
-        catch (MBeanException mbe)
-        {
+        } catch (MBeanException mbe) {
             ManagementException me = new ManagementException();
-            me.setMessage(CREATE_ERR, new Object[] {name});
+            me.setMessage(CREATE_ERR, new Object[]{name});
             me.setRootCause(mbe);
             throw me;
-        }
-        catch (NotCompliantMBeanException ncmbe)
-        {
+        } catch (NotCompliantMBeanException ncmbe) {
             ManagementException me = new ManagementException();
-            me.setMessage(NOT_COMPLIANT, new Object[] {className});
+            me.setMessage(NOT_COMPLIANT, new Object[]{className});
             me.setRootCause(ncmbe);
             throw me;
         }
@@ -277,57 +243,45 @@ public class MBeanServerGateway
      * Instantiates and registers an MBean with the MBean server. The class loader
      * to use to load the MBean class is identified by its ObjectName.
      *
-     * @param className The class name for the MBean to instantiate.
+     * @param className  The class name for the MBean to instantiate.
      * @param objectName The object name of the MBean.
      * @param loaderName The object name of the desired class loader.
-     * @param params An array of parameters to pass to the MBean constructor.
-     * @param signature An array containing the type signature for the constructor to invoke.
+     * @param params     An array of parameters to pass to the MBean constructor.
+     * @param signature  An array containing the type signature for the constructor to invoke.
      * @return An ObjectInstance containing the ObjectName and Java class name of the new MBean.
      */
-    public ObjectInstance createMBean(String className, String objectName, String loaderName, Object[] params, String[] signature)
-    {
+    public ObjectInstance createMBean(String className, String objectName, String loaderName, Object[] params, String[] signature) {
         javax.management.ObjectName name = null;
         javax.management.ObjectName loader = null;
         if (objectName != null)
             name = validateObjectName(objectName);
         if (loaderName != null)
             loader = validateObjectName(loaderName);
-        try
-        {
+        try {
             return new ObjectInstance(server.createMBean(className, name, loader, params, signature));
-        }
-        catch (ReflectionException re)
-        {
+        } catch (ReflectionException re) {
             ManagementException me = new ManagementException();
-            me.setMessage(CREATE_ERR, new Object[] {name});
+            me.setMessage(CREATE_ERR, new Object[]{name});
             me.setRootCause(re);
             throw me;
-        }
-        catch (InstanceAlreadyExistsException iaee)
-        {
+        } catch (InstanceAlreadyExistsException iaee) {
             ManagementException me = new ManagementException();
-            me.setMessage(INSTANCE_EXISTS, new Object[] {name});
+            me.setMessage(INSTANCE_EXISTS, new Object[]{name});
             me.setRootCause(iaee);
             throw me;
-        }
-        catch (MBeanException mbe)
-        {
+        } catch (MBeanException mbe) {
             ManagementException me = new ManagementException();
-            me.setMessage(CREATE_ERR, new Object[] {name});
+            me.setMessage(CREATE_ERR, new Object[]{name});
             me.setRootCause(mbe);
             throw me;
-        }
-        catch (NotCompliantMBeanException ncmbe)
-        {
+        } catch (NotCompliantMBeanException ncmbe) {
             ManagementException me = new ManagementException();
-            me.setMessage(NOT_COMPLIANT, new Object[] {className});
+            me.setMessage(NOT_COMPLIANT, new Object[]{className});
             me.setRootCause(ncmbe);
             throw me;
-        }
-        catch (InstanceNotFoundException infe)
-        {
+        } catch (InstanceNotFoundException infe) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_NOTFOUND, new Object[] {name});
+            me.setMessage(MBEAN_NOTFOUND, new Object[]{name});
             me.setRootCause(infe);
             throw me;
         }
@@ -336,37 +290,29 @@ public class MBeanServerGateway
     /**
      * Registers a pre-existing object as an MBean with the MBean server.
      *
-     * @param object The object to register as an MBean.
+     * @param object     The object to register as an MBean.
      * @param objectName The object name for the MBean.
      * @return An ObjectInstance containing the ObjectName and Java class name of the new MBean.
      */
-    public ObjectInstance registerMBean(Object object, String objectName)
-    {
+    public ObjectInstance registerMBean(Object object, String objectName) {
         javax.management.ObjectName name = null;
         if (objectName != null)
             name = validateObjectName(objectName);
-        try
-        {
+        try {
             return new ObjectInstance(server.registerMBean(object, name));
-        }
-        catch (InstanceAlreadyExistsException iaee)
-        {
+        } catch (InstanceAlreadyExistsException iaee) {
             ManagementException me = new ManagementException();
-            me.setMessage(INSTANCE_EXISTS, new Object[] {name});
+            me.setMessage(INSTANCE_EXISTS, new Object[]{name});
             me.setRootCause(iaee);
             throw me;
-        }
-        catch (NotCompliantMBeanException ncmbe)
-        {
+        } catch (NotCompliantMBeanException ncmbe) {
             ManagementException me = new ManagementException();
-            me.setMessage(NOT_COMPLIANT, new Object[] {object.getClass().getName()});
+            me.setMessage(NOT_COMPLIANT, new Object[]{object.getClass().getName()});
             me.setRootCause(ncmbe);
             throw me;
-        }
-        catch (MBeanRegistrationException mbre)
-        {
+        } catch (MBeanRegistrationException mbre) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_PREREG_ERR, new Object[] {name});
+            me.setMessage(MBEAN_PREREG_ERR, new Object[]{name});
             me.setRootCause(mbre);
             throw me;
         }
@@ -377,24 +323,18 @@ public class MBeanServerGateway
      *
      * @param objectName The object name of the MBean to unregister.
      */
-    public void unregisterMBean(String objectName)
-    {
+    public void unregisterMBean(String objectName) {
         javax.management.ObjectName name = validateObjectName(objectName);
-        try
-        {
+        try {
             server.unregisterMBean(name);
-        }
-        catch (InstanceNotFoundException infe)
-        {
+        } catch (InstanceNotFoundException infe) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_NOTFOUND, new Object[] {name});
+            me.setMessage(MBEAN_NOTFOUND, new Object[]{name});
             me.setRootCause(infe);
             throw me;
-        }
-        catch (MBeanRegistrationException mbre)
-        {
+        } catch (MBeanRegistrationException mbre) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_PREDEREG_ERR, new Object[] {name});
+            me.setMessage(MBEAN_PREDEREG_ERR, new Object[]{name});
             me.setRootCause(mbre);
             throw me;
         }
@@ -407,17 +347,13 @@ public class MBeanServerGateway
      * @param objectName The object name of the MBean.
      * @return An ObjectInstance containing the ObjectName and Java class name of the MBean.
      */
-    public ObjectInstance getObjectInstance(String objectName)
-    {
+    public ObjectInstance getObjectInstance(String objectName) {
         javax.management.ObjectName name = validateObjectName(objectName);
-        try
-        {
+        try {
             return new ObjectInstance(server.getObjectInstance(name));
-        }
-        catch (InstanceNotFoundException infe)
-        {
+        } catch (InstanceNotFoundException infe) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_NOTFOUND, new Object[] {name});
+            me.setMessage(MBEAN_NOTFOUND, new Object[]{name});
             me.setRootCause(infe);
             throw me;
         }
@@ -434,23 +370,18 @@ public class MBeanServerGateway
      * @param objectName The object name pattern identifying the MBeans to retrieve.
      * @return A set of ObjectInstances for the selected MBeans.
      */
-    public ObjectInstance[] queryMBeans(String objectName)
-    {
+    public ObjectInstance[] queryMBeans(String objectName) {
         javax.management.ObjectName name = validateObjectName(objectName);
         Set result = server.queryMBeans(name, null);
         int n = result.size();
-        if (n > 0)
-        {
+        if (n > 0) {
             ObjectInstance[] toReturn = new ObjectInstance[n];
             int i = 0;
-            for (Iterator iter = result.iterator(); iter.hasNext();) 
-            {
-                toReturn[i++] = new ObjectInstance((javax.management.ObjectInstance)iter.next());
+            for (Iterator iter = result.iterator(); iter.hasNext(); ) {
+                toReturn[i++] = new ObjectInstance((javax.management.ObjectInstance) iter.next());
             }
             return toReturn;
-        }
-        else
-        {
+        } else {
             return new ObjectInstance[0];
         }
     }
@@ -466,23 +397,18 @@ public class MBeanServerGateway
      * @param objectName The object name pattern identifying the MBean names to retrieve.
      * @return A set of ObjectNames for the selected MBeans.
      */
-    public ObjectName[] queryNames(String objectName)
-    {
+    public ObjectName[] queryNames(String objectName) {
         javax.management.ObjectName name = validateObjectName(objectName);
         Set result = server.queryNames(name, null);
         int n = result.size();
-        if (n > 0)
-        {
+        if (n > 0) {
             ObjectName[] toReturn = new ObjectName[n];
             int i = 0;
-            for (Iterator iter = result.iterator(); iter.hasNext();)
-            {
-                toReturn[i++] = new ObjectName((javax.management.ObjectName)iter.next());
+            for (Iterator iter = result.iterator(); iter.hasNext(); ) {
+                toReturn[i++] = new ObjectName((javax.management.ObjectName) iter.next());
             }
             return toReturn;
-        }
-        else
-        {
+        } else {
             return new ObjectName[0];
         }
     }
@@ -493,8 +419,7 @@ public class MBeanServerGateway
      * @param objectName The object name of the MBean to be checked.
      * @return True if the MBean is already registered in the MBean server, false otherwise.
      */
-    public boolean isRegistered(String objectName)
-    {
+    public boolean isRegistered(String objectName) {
         javax.management.ObjectName name = validateObjectName(objectName);
         return server.isRegistered(name);
     }
@@ -504,8 +429,7 @@ public class MBeanServerGateway
      *
      * @return The number of registered MBeans.
      */
-    public Integer getMBeanCount()
-    {
+    public Integer getMBeanCount() {
         return server.getMBeanCount();
     }
 
@@ -513,46 +437,34 @@ public class MBeanServerGateway
      * Gets the value of a specific attribute of a named MBean. The MBean is identified by its object name.
      *
      * @param objectName The object name of the MBean from which the attribute is to be retrieved.
-     * @param attribute The name of the attribute to be retrieved.
+     * @param attribute  The name of the attribute to be retrieved.
      * @return The value of the retrieved attribute.
      */
-    public Object getAttribute(String objectName, String attribute)
-    {
+    public Object getAttribute(String objectName, String attribute) {
         javax.management.ObjectName name = validateObjectName(objectName);
-        try
-        {
+        try {
             return server.getAttribute(name, attribute);
-        }
-        catch (AttributeNotFoundException anfe)
-        {
+        } catch (AttributeNotFoundException anfe) {
             ManagementException me = new ManagementException();
-            me.setMessage(ATTRIB_NOTFOUND, new Object[] {attribute, name});
+            me.setMessage(ATTRIB_NOTFOUND, new Object[]{attribute, name});
             me.setRootCause(anfe);
             throw me;
-        }
-        catch (MBeanException mbe)
-        {
+        } catch (MBeanException mbe) {
             ManagementException me = new ManagementException();
-            me.setMessage(GETATTRIB_EXCEPTION, new Object[] {attribute, name});
+            me.setMessage(GETATTRIB_EXCEPTION, new Object[]{attribute, name});
             me.setRootCause(mbe);
             throw me;
-        }
-        catch (ReflectionException re)
-        {
+        } catch (ReflectionException re) {
             ManagementException me = new ManagementException();
-            me.setMessage(GETATTRIB_REFLECT_ERR, new Object[] {attribute, name});
+            me.setMessage(GETATTRIB_REFLECT_ERR, new Object[]{attribute, name});
             me.setRootCause(re);
             throw me;
-        }
-        catch (InstanceNotFoundException infe)
-        {
+        } catch (InstanceNotFoundException infe) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_NOTFOUND, new Object[] {name});
+            me.setMessage(MBEAN_NOTFOUND, new Object[]{name});
             me.setRootCause(infe);
             throw me;
-        }
-        catch (RuntimeOperationsException roe)
-        {
+        } catch (RuntimeOperationsException roe) {
             ManagementException me = new ManagementException();
             me.setMessage(GETATTRIB_NULL_ARGUMENT);
             me.setRootCause(roe);
@@ -567,35 +479,26 @@ public class MBeanServerGateway
      * @param attributes The names of the attributes to get values for.
      * @return The attributes, each containing their name and value.
      */
-    public Attribute[] getAttributes(String objectName, String[] attributes)
-    {
+    public Attribute[] getAttributes(String objectName, String[] attributes) {
         javax.management.ObjectName name = validateObjectName(objectName);
-        try
-        {
+        try {
             AttributeList result = server.getAttributes(name, attributes);
             Attribute[] values = new Attribute[result.size()];
-            for (int i = 0; i < result.size(); i++)
-            {
-                values[i] = new Attribute((javax.management.Attribute)result.get(i));
+            for (int i = 0; i < result.size(); i++) {
+                values[i] = new Attribute((javax.management.Attribute) result.get(i));
             }
             return values;
-        }
-        catch (ReflectionException re)
-        {
+        } catch (ReflectionException re) {
             ManagementException me = new ManagementException();
-            me.setMessage(GETATTRIBS_REFLECT_ERR, new Object[] {name});
+            me.setMessage(GETATTRIBS_REFLECT_ERR, new Object[]{name});
             me.setRootCause(re);
             throw me;
-        }
-        catch (InstanceNotFoundException infe)
-        {
+        } catch (InstanceNotFoundException infe) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_NOTFOUND, new Object[] {name});
+            me.setMessage(MBEAN_NOTFOUND, new Object[]{name});
             me.setRootCause(infe);
             throw me;
-        }
-        catch (RuntimeOperationsException roe)
-        {
+        } catch (RuntimeOperationsException roe) {
             ManagementException me = new ManagementException();
             me.setMessage(GETATTRIBS_NULL_ARGUMENT);
             me.setRootCause(roe);
@@ -607,48 +510,36 @@ public class MBeanServerGateway
      * Sets the value of the attribute for the specified MBean.
      *
      * @param objectName The name of the MBean.
-     * @param attribute The attribute to set.
+     * @param attribute  The attribute to set.
      */
-    public void setAttribute(String objectName, Attribute attribute)
-    {
+    public void setAttribute(String objectName, Attribute attribute) {
         javax.management.ObjectName name = validateObjectName(objectName);
         javax.management.Attribute attrib = validateAttribute(attribute);
-        try
-        {
+        try {
             server.setAttribute(name, attrib);
-        }
-        catch (ReflectionException re)
-        {
+        } catch (ReflectionException re) {
             ManagementException me = new ManagementException();
-            me.setMessage(SETATTRIB_REFLECT_ERR, new Object[] {attrib.getName(), name});
+            me.setMessage(SETATTRIB_REFLECT_ERR, new Object[]{attrib.getName(), name});
             me.setRootCause(re);
             throw me;
-        }
-        catch (InstanceNotFoundException infe)
-        {
+        } catch (InstanceNotFoundException infe) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_NOTFOUND, new Object[] {name});
+            me.setMessage(MBEAN_NOTFOUND, new Object[]{name});
             me.setRootCause(infe);
             throw me;
-        }
-        catch (AttributeNotFoundException anfe)
-        {
+        } catch (AttributeNotFoundException anfe) {
             ManagementException me = new ManagementException();
-            me.setMessage(ATTRIB_NOTFOUND, new Object[] {attrib.getName(), name});
+            me.setMessage(ATTRIB_NOTFOUND, new Object[]{attrib.getName(), name});
             me.setRootCause(anfe);
             throw me;
-        }
-        catch (MBeanException mbe)
-        {
+        } catch (MBeanException mbe) {
             ManagementException me = new ManagementException();
-            me.setMessage(SETATTRIB_EXCEPTION, new Object[] {attrib.getName(), name});
+            me.setMessage(SETATTRIB_EXCEPTION, new Object[]{attrib.getName(), name});
             me.setRootCause(mbe);
             throw me;
-        }
-        catch (InvalidAttributeValueException iave)
-        {
+        } catch (InvalidAttributeValueException iave) {
             ManagementException me = new ManagementException();
-            me.setMessage(INVALID_ATTRIB_VALUE, new Object[] {attrib.getValue(), attrib.getName(), name});
+            me.setMessage(INVALID_ATTRIB_VALUE, new Object[]{attrib.getValue(), attrib.getName(), name});
             me.setRootCause(iave);
             throw me;
         }
@@ -661,35 +552,27 @@ public class MBeanServerGateway
      * @param attributes The attributes to set.
      * @return The attributes that were set with their new values.
      */
-    public Attribute[] setAttributes(String objectName, Attribute[] attributes)
-    {
+    public Attribute[] setAttributes(String objectName, Attribute[] attributes) {
         javax.management.ObjectName name = validateObjectName(objectName);
         AttributeList attribList = new AttributeList();
-        for (int i = 0; i < attributes.length; i++)
-        {
+        for (int i = 0; i < attributes.length; i++) {
             attribList.add(attributes[i].toAttribute());
         }
-        try
-        {
+        try {
             AttributeList result = server.setAttributes(name, attribList);
             Attribute[] values = new Attribute[result.size()];
-            for (int i = 0; i < result.size(); i++)
-            {
-                values[i] = new Attribute((javax.management.Attribute)result.get(i));
+            for (int i = 0; i < result.size(); i++) {
+                values[i] = new Attribute((javax.management.Attribute) result.get(i));
             }
             return values;
-        }
-        catch (InstanceNotFoundException infe)
-        {
+        } catch (InstanceNotFoundException infe) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_NOTFOUND, new Object[] {name});
+            me.setMessage(MBEAN_NOTFOUND, new Object[]{name});
             me.setRootCause(infe);
             throw me;
-        }
-        catch (ReflectionException re)
-        {
+        } catch (ReflectionException re) {
             ManagementException me = new ManagementException();
-            me.setMessage(SETATTRIBS_REFLECT_ERR, new Object[] {name});
+            me.setMessage(SETATTRIBS_REFLECT_ERR, new Object[]{name});
             me.setRootCause(re);
             throw me;
         }
@@ -698,37 +581,29 @@ public class MBeanServerGateway
     /**
      * Invokes an operation on an MBean.
      *
-     * @param objectName The object name of the MBean to invoke the operation on.
+     * @param objectName    The object name of the MBean to invoke the operation on.
      * @param operationName The operation to invoke.
-     * @param params The parameters for the operation invocation.
-     * @param signature The parameter signature for the operation.
+     * @param params        The parameters for the operation invocation.
+     * @param signature     The parameter signature for the operation.
      * @return The object returned by the operation invocation.
      */
-    public Object invoke(String objectName, String operationName, Object[] params, String[] signature)
-    {
+    public Object invoke(String objectName, String operationName, Object[] params, String[] signature) {
         javax.management.ObjectName name = validateObjectName(objectName);
-        try
-        {
+        try {
             return server.invoke(name, operationName, params, signature);
-        }
-        catch (ReflectionException re)
-        {
+        } catch (ReflectionException re) {
             ManagementException me = new ManagementException();
-            me.setMessage(INVOKE_REFLECT_ERR, new Object[]  {operationName, objectName});
+            me.setMessage(INVOKE_REFLECT_ERR, new Object[]{operationName, objectName});
             me.setRootCause(re);
             throw me;
-        }
-        catch (InstanceNotFoundException infe)
-        {
+        } catch (InstanceNotFoundException infe) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_NOTFOUND, new Object[] {objectName});
+            me.setMessage(MBEAN_NOTFOUND, new Object[]{objectName});
             me.setRootCause(infe);
             throw me;
-        }
-        catch (MBeanException mbe)
-        {
+        } catch (MBeanException mbe) {
             ManagementException me = new ManagementException();
-            me.setMessage(INVOKE_ERR, new Object[]  {operationName, objectName});
+            me.setMessage(INVOKE_ERR, new Object[]{operationName, objectName});
             me.setRootCause(mbe);
             throw me;
         }
@@ -739,8 +614,7 @@ public class MBeanServerGateway
      *
      * @return The default domain.
      */
-    public String getDefaultDomain()
-    {
+    public String getDefaultDomain() {
         return server.getDefaultDomain();
     }
 
@@ -751,31 +625,23 @@ public class MBeanServerGateway
      * @param objectName The name of the MBean to get metadata for.
      * @return An MBeanInfo instance that describes the MBean.
      */
-    public flex.management.jmx.MBeanInfo getMBeanInfo(String objectName)
-    {
+    public flex.management.jmx.MBeanInfo getMBeanInfo(String objectName) {
         javax.management.ObjectName name = validateObjectName(objectName);
-        try
-        {
+        try {
             return new MBeanInfo(server.getMBeanInfo(name));
-        }
-        catch (IntrospectionException ie)
-        {
+        } catch (IntrospectionException ie) {
             ManagementException me = new ManagementException();
-            me.setMessage(GETINFO_INTROSPECTION_ERR, new Object[] {objectName});
+            me.setMessage(GETINFO_INTROSPECTION_ERR, new Object[]{objectName});
             me.setRootCause(ie);
             throw me;
-        }
-        catch (InstanceNotFoundException infe)
-        {
+        } catch (InstanceNotFoundException infe) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_NOTFOUND, new Object[] {objectName});
+            me.setMessage(MBEAN_NOTFOUND, new Object[]{objectName});
             me.setRootCause(infe);
             throw me;
-        }
-        catch (ReflectionException re)
-        {
+        } catch (ReflectionException re) {
             ManagementException me = new ManagementException();
-            me.setMessage(GETINFO_REFLECT_ERR, new Object[] {objectName});
+            me.setMessage(GETINFO_REFLECT_ERR, new Object[]{objectName});
             me.setRootCause(re);
             throw me;
         }
@@ -786,20 +652,16 @@ public class MBeanServerGateway
      * Returns true if the specified MBean is an instance of the specified class; otherwise false.
      *
      * @param objectName The object name of the MBean.
-     * @param className The name of the class.
+     * @param className  The name of the class.
      * @return true if the specified MBean is an instance of the specified class; otherwise false.
      */
-    public boolean isInstanceOf(String objectName, String className)
-    {
+    public boolean isInstanceOf(String objectName, String className) {
         javax.management.ObjectName name = validateObjectName(objectName);
-        try
-        {
+        try {
             return server.isInstanceOf(name, className);
-        }
-        catch (InstanceNotFoundException infe)
-        {
+        } catch (InstanceNotFoundException infe) {
             ManagementException me = new ManagementException();
-            me.setMessage(MBEAN_NOTFOUND, new Object[] {objectName});
+            me.setMessage(MBEAN_NOTFOUND, new Object[]{objectName});
             me.setRootCause(infe);
             throw me;
         }
@@ -816,15 +678,13 @@ public class MBeanServerGateway
      *
      * @return The object names for all Flex related MBeans.
      */
-    public ObjectName[] getFlexMBeanObjectNames()
-    {
+    public ObjectName[] getFlexMBeanObjectNames() {
         javax.management.ObjectName pattern = validateObjectName(BaseControl.DOMAIN_PREFIX + "*:*");
         Set result = server.queryNames(pattern, null);
         ObjectName[] names = new ObjectName[result.size()];
         int i = 0;
-        for (Iterator iter = result.iterator(); iter.hasNext(); )
-        {
-            names[i++] = new ObjectName((javax.management.ObjectName)iter.next());
+        for (Iterator iter = result.iterator(); iter.hasNext(); ) {
+            names[i++] = new ObjectName((javax.management.ObjectName) iter.next());
         }
         return names;
     }
@@ -834,8 +694,7 @@ public class MBeanServerGateway
      *
      * @return The number of narrowed Flex MBeans registered in the MBean server.
      */
-    public Integer getFlexMBeanCount()
-    {
+    public Integer getFlexMBeanCount() {
         return new Integer(getFlexMBeanObjectNames().length);
     }
 
@@ -845,25 +704,21 @@ public class MBeanServerGateway
      *
      * @return The narrowed list of Flex domains in which any MBean is currently registered.
      */
-    public String[] getFlexDomains()
-    {
+    public String[] getFlexDomains() {
         ObjectName[] names = getFlexMBeanObjectNames();
         Set domains = new TreeSet();
         String name;
         String domain;
-        if (names.length > 0)
-        {
-            for (int i = 0; i < names.length; ++i)
-            {
+        if (names.length > 0) {
+            for (int i = 0; i < names.length; ++i) {
                 name = names[i].canonicalName;
                 domain = name.substring(0, name.indexOf(':'));
-                if (!domains.contains(domain))
-                {
+                if (!domains.contains(domain)) {
                     domains.add(domain);
                 }
             }
         }
-        return (String[])domains.toArray(new String[domains.size()]);
+        return (String[]) domains.toArray(new String[domains.size()]);
     }
 
     ///////////////////////////////
@@ -878,16 +733,12 @@ public class MBeanServerGateway
      * @param objectName The object name to validate.
      * @return The valid ObjectName.
      */
-    private javax.management.ObjectName validateObjectName(String objectName)
-    {
-        try
-        {
+    private javax.management.ObjectName validateObjectName(String objectName) {
+        try {
             return new javax.management.ObjectName(objectName);
-        }
-        catch (MalformedObjectNameException mone)
-        {
+        } catch (MalformedObjectNameException mone) {
             ManagementException me = new ManagementException();
-            me.setMessage(MALFORMED_OBJECTNAME, new Object[] {objectName});
+            me.setMessage(MALFORMED_OBJECTNAME, new Object[]{objectName});
             throw me;
         }
     }
@@ -898,8 +749,7 @@ public class MBeanServerGateway
      * @param attribute The attribute to validate.
      * @return The valid Attribute.
      */
-    private javax.management.Attribute validateAttribute(Attribute attribute)
-    {
+    private javax.management.Attribute validateAttribute(Attribute attribute) {
         return attribute.toAttribute();
     }
 

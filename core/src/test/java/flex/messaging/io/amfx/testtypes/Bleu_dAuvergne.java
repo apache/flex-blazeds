@@ -16,10 +16,8 @@
  */
 package flex.messaging.io.amfx.testtypes;
 
-public class Bleu_dAuvergne extends EweCheese
-{
-    public Bleu_dAuvergne()
-    {
+public class Bleu_dAuvergne extends EweCheese {
+    public Bleu_dAuvergne() {
         super();
     }
 
@@ -28,23 +26,19 @@ public class Bleu_dAuvergne extends EweCheese
         return 8;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return "Bleu d'Auvergne";
     }
 
-    public String getRegion()
-    {
+    public String getRegion() {
         return "Auvergne";
     }
 
-    public Cheese getParing()
-    {
+    public Cheese getParing() {
         return paring;
     }
 
-    public void setParing(Cheese c)
-    {
+    public void setParing(Cheese c) {
         paring = c;
     }
 }

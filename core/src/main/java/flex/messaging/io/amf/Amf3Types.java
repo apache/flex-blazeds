@@ -21,24 +21,23 @@ package flex.messaging.io.amf;
  *
  * @see flex.messaging.io.amf.AmfTypes for AMF 0 Type Markers.
  */
-public interface Amf3Types
-{
+public interface Amf3Types {
     // AMF marker constants
-    int kUndefinedType  = 0;
-    int kNullType       = 1;
-    int kFalseType      = 2;
-    int kTrueType       = 3;
-    int kIntegerType    = 4;
-    int kDoubleType     = 5;
-    int kStringType     = 6;
-    int kXMLType        = 7;
-    int kDateType       = 8;
-    int kArrayType      = 9;
-    int kObjectType     = 10;
+    int kUndefinedType = 0;
+    int kNullType = 1;
+    int kFalseType = 2;
+    int kTrueType = 3;
+    int kIntegerType = 4;
+    int kDoubleType = 5;
+    int kStringType = 6;
+    int kXMLType = 7;
+    int kDateType = 8;
+    int kArrayType = 9;
+    int kObjectType = 10;
     int kAvmPlusXmlType = 11;
-    int kByteArrayType  = 12;
+    int kByteArrayType = 12;
     int kTypedVectorInt = 13;
-    int kTypedVectorUint= 14;
+    int kTypedVectorUint = 14;
     int kTypedVectorDouble = 15;
     int kTypedVectorObject = 16;
     int kDictionaryType = 17;
@@ -47,7 +46,6 @@ public interface Amf3Types
 
     /**
      * Internal use only.
-     *
      */
     int UINT29_MASK = 0x1FFFFFFF; // 2^29 - 1
 

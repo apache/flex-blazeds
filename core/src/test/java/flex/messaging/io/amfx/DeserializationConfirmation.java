@@ -28,64 +28,58 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
 import java.util.ArrayList;
 import java.lang.reflect.Array;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.apache.xpath.CachedXPathAPI;
 
 /**
  * Verifies that a deserialized ActionMessage
  * from an AMFX request matches the expected value.
  */
-public abstract class DeserializationConfirmation
-{
+public abstract class DeserializationConfirmation {
     public static final int EXPECTED_VERSION = 3;
 
     private IdentityHashMap knownObjects;
 
     protected SerializationContext context;
 
-    protected DeserializationConfirmation()
-    {
+    protected DeserializationConfirmation() {
     }
 
-    private void init()
-    {
+    private void init() {
         knownObjects = new IdentityHashMap(64);
     }
 
-    public void setContext(SerializationContext context)
-    {
+    public void setContext(SerializationContext context) {
         this.context = context;
     }
 
-    public boolean isNegativeTest()
-    {
+    public boolean isNegativeTest() {
         return false;
     }
 
-    public boolean successMatches(ActionMessage m)
-    {
+    public boolean successMatches(ActionMessage m) {
         init();
 
-        try
-        {
+        try {
             boolean match = messagesMatch(m, getExpectedMessage());
             return match;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return false;
         }
     }
 
     public abstract ActionMessage getExpectedMessage();
 
-    public boolean negativeMatches(ActionMessage m)
-    {
+    public boolean negativeMatches(ActionMessage m) {
         init();
 
         MessageException ex = null;
@@ -94,7 +88,7 @@ public abstract class DeserializationConfirmation
         if ((body == null) || (body.getData() == null) || (!(body.getData() instanceof MessageException)))
             return false;
         else
-            ex = (MessageException)body.getData();
+            ex = (MessageException) body.getData();
 
         String message1 = ex.getMessage();
         String message2 = getExpectedException().getMessage();
@@ -111,8 +105,7 @@ public abstract class DeserializationConfirmation
     public abstract MessageException getExpectedException();
 
 
-    protected boolean headersMatch(MessageHeader header1, MessageHeader header2)
-    {
+    protected boolean headersMatch(MessageHeader header1, MessageHeader header2) {
         if ((header1 == null && header2 != null) || (header1 != null && header2 == null))
             return false;
 
@@ -131,13 +124,11 @@ public abstract class DeserializationConfirmation
         return true;
     }
 
-    protected boolean headerValuesMatch(Object o1, Object o2)
-    {
+    protected boolean headerValuesMatch(Object o1, Object o2) {
         return valuesMatch(o1, o2);
     }
 
-    protected boolean bodiesMatch(MessageBody body1, MessageBody body2)
-    {
+    protected boolean bodiesMatch(MessageBody body1, MessageBody body2) {
         if ((body1 == null && body2 != null) || (body1 != null && body2 == null))
             return false;
 
@@ -156,13 +147,11 @@ public abstract class DeserializationConfirmation
         return true;
     }
 
-    protected boolean bodyValuesMatch(Object o1, Object o2)
-    {
+    protected boolean bodyValuesMatch(Object o1, Object o2) {
         return valuesMatch(o1, o2);
     }
 
-    protected boolean messagesMatch(ActionMessage m1, ActionMessage m2)
-    {
+    protected boolean messagesMatch(ActionMessage m1, ActionMessage m2) {
         if ((m1 == null && m2 != null) || (m2 == null && m1 != null))
             return false;
 
@@ -175,8 +164,7 @@ public abstract class DeserializationConfirmation
         if (headerCount1 != headerCount2)
             return false;
 
-        for (int i = 0; i < headerCount1; i++)
-        {
+        for (int i = 0; i < headerCount1; i++) {
             MessageHeader header1 = m1.getHeader(i);
             MessageHeader header2 = m2.getHeader(i);
             if (!headersMatch(header1, header2))
@@ -189,8 +177,7 @@ public abstract class DeserializationConfirmation
         if (bodyCount1 != bodyCount2)
             return false;
 
-        for (int i = 0; i < bodyCount1; i++)
-        {
+        for (int i = 0; i < bodyCount1; i++) {
             MessageBody body1 = m1.getBody(i);
             MessageBody body2 = m2.getBody(i);
 
@@ -201,51 +188,35 @@ public abstract class DeserializationConfirmation
         return true;
     }
 
-    protected boolean valuesMatch(Object o1, Object o2)
-    {
+    protected boolean valuesMatch(Object o1, Object o2) {
         if (o1 == null && o2 == null)
             return true;
 
-        if (o1 instanceof ASObject)
-        {
-            return objectsMatch((ASObject)o1, (Map)o2);
-        }
-        else if (o1 instanceof Map)
-        {
-            return mapsMatch((Map)o1, (Map)o2);
-        }
-        else if (o1 instanceof List)
-        {
-            return listsMatch((List)o1, (List)o2);
-        }
-        else if (o1.getClass().isArray())
-        {
+        if (o1 instanceof ASObject) {
+            return objectsMatch((ASObject) o1, (Map) o2);
+        } else if (o1 instanceof Map) {
+            return mapsMatch((Map) o1, (Map) o2);
+        } else if (o1 instanceof List) {
+            return listsMatch((List) o1, (List) o2);
+        } else if (o1.getClass().isArray()) {
             return arraysMatch(o1, o2);
-        }
-        else if (o1 instanceof Document)
-        {
-            return documentsMatch((Document)o1, (Document)o2);
-        }
-        else if (o1 != null)
-        {
-            if (hasComplexChildren(o1))
-            {
+        } else if (o1 instanceof Document) {
+            return documentsMatch((Document) o1, (Document) o2);
+        } else if (o1 != null) {
+            if (hasComplexChildren(o1)) {
                 // We avoid checking a complex/custom types twice in
                 // case of circular dependencies
                 Object known = knownObjects.get(o1);
-                if (known != null)
-                {
+                if (known != null) {
                     return true;
-                }
-                else
-                {
+                } else {
                     knownObjects.put(o1, o2);
                 }
             }
 
             // Special case Double and Integer
             if (o1 instanceof Double && o2 instanceof Integer)
-                return new Integer(((Double)o1).intValue()).equals(o2);
+                return new Integer(((Double) o1).intValue()).equals(o2);
 
             return o1.equals(o2);
         }
@@ -253,26 +224,21 @@ public abstract class DeserializationConfirmation
         return false;
     }
 
-    protected boolean documentsMatch(Document doc1, Document doc2)
-    {
+    protected boolean documentsMatch(Document doc1, Document doc2) {
         boolean match = false;
 
-        try
-        {
-            CachedXPathAPI xpath1 = new CachedXPathAPI();
-            CachedXPathAPI xpath2 = new CachedXPathAPI();
-            Node root1 = xpath1.selectSingleNode(doc1, "/");
-            Node root2 = xpath2.selectSingleNode(doc2, "/");
+        try {
+            XPath xpath1 = XPathFactory.newInstance().newXPath();
+            XPath xpath2 = XPathFactory.newInstance().newXPath();
+            Node root1 = (Node) xpath1.evaluate("/", doc1, XPathConstants.NODE);
+            Node root2 = (Node) xpath2.evaluate("/", doc2, XPathConstants.NODE);
 
-            if (!nodesMatch(xpath1, root1, xpath2, root2))
-            {
+            if (!nodesMatch(xpath1, root1, xpath2, root2)) {
                 return false;
             }
 
             match = true;
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             throw new MessageException("Error comparing XML Documents: " + t.getMessage(), t);
         }
 
@@ -280,41 +246,33 @@ public abstract class DeserializationConfirmation
 
     }
 
-    protected boolean nodesMatch(CachedXPathAPI xpath1, Node node1, CachedXPathAPI xpath2, Node node2)
-    {
+    protected boolean nodesMatch(XPath xpath1, Node node1, XPath xpath2, Node node2) {
         boolean match = false;
 
-        try
-        {
-            NodeList list1 = xpath1.selectNodeList(node1, "*");
-            NodeList list2 = xpath2.selectNodeList(node2, "*");
+        try {
+            NodeList list1 = (NodeList) xpath1.evaluate("*", node1, XPathConstants.NODESET);
+            NodeList list2 = (NodeList) xpath2.evaluate("*", node2, XPathConstants.NODESET);
 
-            if (list1.getLength() == list2.getLength())
-            {
-                for (int i = 0; i < list1.getLength(); i++)
-                {
+            if (list1.getLength() == list2.getLength()) {
+                for (int i = 0; i < list1.getLength(); i++) {
                     Node n1 = list1.item(i);
                     Node n2 = list2.item(i);
 
-                    NodeList attributes1 = xpath1.selectNodeList(n1, "@*");
-                    NodeList attributes2 = xpath2.selectNodeList(n2, "@*");
+                    NodeList attributes1 = (NodeList) xpath1.evaluate("@*", n1, XPathConstants.NODESET);
+                    NodeList attributes2 = (NodeList) xpath2.evaluate("@*", n2, XPathConstants.NODESET);
 
-                    if (!attributesMatch(attributes1, attributes2))
-                    {
+                    if (!attributesMatch(attributes1, attributes2)) {
                         return false;
                     }
 
-                    if (!nodesMatch(xpath1, n1, xpath2, n2))
-                    {
+                    if (!nodesMatch(xpath1, n1, xpath2, n2)) {
                         return false;
                     }
                 }
 
                 match = true;
             }
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             throw new MessageException("Error comparing XML nodes: " + t.getMessage(), t);
         }
 
@@ -322,17 +280,14 @@ public abstract class DeserializationConfirmation
 
     }
 
-    protected boolean attributesMatch(NodeList attributes1, NodeList attributes2)
-    {
+    protected boolean attributesMatch(NodeList attributes1, NodeList attributes2) {
         if (attributes1 == null && attributes2 == null)
             return true;
 
         boolean match = false;
 
-        if (attributes1.getLength() == attributes2.getLength())
-        {
-            for (int i = 0; i < attributes1.getLength(); i++)
-            {
+        if (attributes1.getLength() == attributes2.getLength()) {
+            for (int i = 0; i < attributes1.getLength(); i++) {
                 Node a1 = attributes1.item(i);
                 Node a2 = attributes2.item(i);
 
@@ -350,16 +305,14 @@ public abstract class DeserializationConfirmation
     }
 
 
-    protected boolean objectsMatch(ASObject aso1, Map aso2)
-    {
+    protected boolean objectsMatch(ASObject aso1, Map aso2) {
         String type1 = aso1.getType();
 
         // We may have an anonymous ASObject and an ECMA Array
         // which get serialized in the same way, i.e. a Map,
         // so we ignore this difference
-        if (type1 != null)
-        {
-            String type2 = ((ASObject)aso2).getType();
+        if (type1 != null) {
+            String type2 = ((ASObject) aso2).getType();
 
             if (!stringValuesMatch(type1, type2))
                 return false;
@@ -368,8 +321,7 @@ public abstract class DeserializationConfirmation
         return mapsMatch(aso1, aso2);
     }
 
-    protected boolean stringValuesMatch(String str1, String str2)
-    {
+    protected boolean stringValuesMatch(String str1, String str2) {
         if (str1 == null && str2 == null)
             return true;
 
@@ -379,38 +331,30 @@ public abstract class DeserializationConfirmation
         return true;
     }
 
-    protected boolean mapsMatch(Map map1, Map map2)
-    {
+    protected boolean mapsMatch(Map map1, Map map2) {
         if (map1.size() != map2.size())
             return false;
 
         // We avoid checking a Map twice in case
         // of circular dependencies
         Object known = knownObjects.get(map1);
-        if (known != null)
-        {
+        if (known != null) {
             return true;
-        }
-        else
-        {
+        } else {
             knownObjects.put(map1, map2);
         }
 
         Iterator it = map1.keySet().iterator();
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             Object next = it.next();
-            if (next instanceof String)
-            {
-                String key = (String)next;
+            if (next instanceof String) {
+                String key = (String) next;
                 Object val1 = map1.get(key);
                 Object val2 = map2.get(key);
 
                 if (!valuesMatch(val1, val2))
                     return false;
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
@@ -418,25 +362,20 @@ public abstract class DeserializationConfirmation
         return true;
     }
 
-    protected boolean listsMatch(List list1, List list2)
-    {
+    protected boolean listsMatch(List list1, List list2) {
         if (list1.size() != list2.size())
             return false;
 
         // We avoid checking a List twice in case
         // of circular dependencies
         Object known = knownObjects.get(list1);
-        if (known != null)
-        {
+        if (known != null) {
             return true;
-        }
-        else
-        {
+        } else {
             knownObjects.put(list1, list2);
         }
 
-        for (int i = 0; i < list1.size(); i++)
-        {
+        for (int i = 0; i < list1.size(); i++) {
             Object o1 = list1.get(i);
             Object o2 = list2.get(i);
 
@@ -447,8 +386,7 @@ public abstract class DeserializationConfirmation
         return true;
     }
 
-    protected boolean arraysMatch(Object array1, Object array2)
-    {
+    protected boolean arraysMatch(Object array1, Object array2) {
         int len1 = Array.getLength(array1);
         int len2 = Array.getLength(array2);
 
@@ -458,17 +396,13 @@ public abstract class DeserializationConfirmation
         // We avoid checking an Array twice in case
         // of circular dependencies
         Object known = knownObjects.get(array1);
-        if (known != null)
-        {
+        if (known != null) {
             return true;
-        }
-        else
-        {
+        } else {
             knownObjects.put(array1, array2);
         }
 
-        for (int i = 0; i < len1; i++)
-        {
+        for (int i = 0; i < len1; i++) {
             Object o1 = Array.get(array1, i);
             Object o2 = Array.get(array2, i);
 
@@ -479,38 +413,33 @@ public abstract class DeserializationConfirmation
         return true;
     }
 
-    protected void addToList(Object list, int index, Object value)
-    {
+    protected void addToList(Object list, int index, Object value) {
         if (list instanceof List)
-            ((List)list).add(value);
+            ((List) list).add(value);
         else if (list.getClass().isArray())
             Array.set(list, index, value);
     }
 
-    protected Object getFromList(Object list, int index)
-    {
+    protected Object getFromList(Object list, int index) {
         if (list instanceof List)
-            return ((List)list).get(index);
+            return ((List) list).get(index);
         else
             return Array.get(list, index);
     }
 
-    protected Object createList(int length)
-    {
+    protected Object createList(int length) {
         if (context.legacyCollection)
             return new ArrayList(length);
         else
             return new Object[length];
     }
 
-    private static boolean hasComplexChildren(Object o)
-    {
+    private static boolean hasComplexChildren(Object o) {
         if (o instanceof String
                 || o instanceof Boolean
                 || o instanceof Number
                 || o instanceof Character
-                || o instanceof Date)
-        {
+                || o instanceof Date) {
             return false;
         }
 

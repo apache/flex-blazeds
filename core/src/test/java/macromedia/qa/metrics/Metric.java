@@ -25,8 +25,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Metric extends Persistable
-{
+public class Metric extends Persistable {
     public static final String TABLE_NAME = "Metric";
 
     public final String name;
@@ -36,70 +35,55 @@ public class Metric extends Persistable
     private Map clause;
     private String[] tables = new String[]{TABLE_NAME};
 
-    Metric(String name)
-    {
+    Metric(String name) {
         this.name = name;
     }
 
-    public void load(MetricsDatabase database)
-    {
+    public void load(MetricsDatabase database) {
         PreparedStatement statement = null;
         ResultSet rs = null;
 
-        try
-        {
+        try {
             statement = get(database);
             rs = statement.executeQuery();
             rs.first(); //move to first row
 
             Object i = rs.getObject("id");
-            if (i != null)
-            {
+            if (i != null) {
                 id = MetricsDatabase.getId(i);
                 units = rs.getString("units");
                 description = rs.getString("description");
-            }
-            else
-            {
+            } else {
                 id = -1;
             }
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             if (UnitTrace.errors)
                 System.err.println("Error loading " + getIdentity() + ". " + ex == null ? "" : ex.getMessage());
-        }
-        finally
-        {
+        } finally {
             closeResultSet(rs);
             closeStatement(statement);
         }
     }
 
-    public String getIdentity()
-    {
+    public String getIdentity() {
         return TABLE_NAME + ": " + name + ", id: " + id;
     }
 
-    public String getTableName()
-    {
+    public String getTableName() {
         return TABLE_NAME;
     }
 
-    protected String[] getTables()
-    {
+    protected String[] getTables() {
         return tables;
     }
 
-    protected Map getInserts()
-    {
+    protected Map getInserts() {
         Map inserts = getUpdates();
         inserts.put("name", name);
         return inserts;
     }
 
-    protected Map getUpdates()
-    {
+    protected Map getUpdates() {
         Map updates = new HashMap();
 
         if (units != null)
@@ -111,10 +95,8 @@ public class Metric extends Persistable
         return updates;
     }
 
-    protected Map getClauses()
-    {
-        if (clause == null)
-        {
+    protected Map getClauses() {
+        if (clause == null) {
             clause = new HashMap();
             clause.put("name", name);
         }

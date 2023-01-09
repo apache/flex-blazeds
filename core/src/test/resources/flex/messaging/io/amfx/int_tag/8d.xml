@@ -35,34 +35,35 @@
 
             <int>-1</int>
 
-            <int>2  </int>
+            <int>2</int>
 
             <!-- Both sides with spaces -->
-            <int>  -3  </int>
+            <int>-3</int>
 
             <!-- Leading new line -->
             <int>
-4</int>
+                4
+            </int>
             <!-- Trailing new line -->
             <int>-5
-</int>
+            </int>
 
             <!-- Both sides with new lines -->
-<int>
-6
-</int>
+            <int>
+                6
+            </int>
             <!-- Leading tab -->
-            <int>	-7</int>
+            <int>-7</int>
 
             <!-- Trailing tab -->
-            <int>8	</int>
+            <int>8</int>
 
             <!-- Both sides with tab -->
-            <int>	-9	</int>
+            <int>-9</int>
 
             <!-- Mixed -->
             <int>
-	      10
+                10
 
             </int>
 

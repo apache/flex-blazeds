@@ -22,16 +22,13 @@ import flex.messaging.log.LogCategories;
 
 /**
  * ConfigurationManager interface
- *
+ * <p>
  * The default implementation of the configuration manager is
  * FlexConfigurationManager.  However, this value be specified in
  * a servlet init-param &quot;services.configuration.manager&quot;
  * to the MessageBrokerServlet.
- *
- *
  */
-public interface ConfigurationManager
-{
+public interface ConfigurationManager {
     String LOG_CATEGORY = LogCategories.CONFIGURATION;
 
     MessagingConfiguration getMessagingConfiguration(ServletConfig servletConfig);

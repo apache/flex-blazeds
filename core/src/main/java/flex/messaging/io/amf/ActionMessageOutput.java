@@ -26,11 +26,9 @@ import java.io.ObjectOutput;
  *
  * @see flex.messaging.io.amf.Amf0Input Classic Version 0 Deserializer
  * @see flex.messaging.io.amf.Amf3Input AVM+ Version 3 Deserializer
- *
  * @see flex.messaging.io.amf.ActionMessageOutput The serialization equivalent
  */
-public interface ActionMessageOutput extends ObjectOutput
-{
+public interface ActionMessageOutput extends ObjectOutput {
     // java.io.ObjectOutput METHODS
 
     /**
@@ -68,25 +66,22 @@ public interface ActionMessageOutput extends ObjectOutput
      * </p>
      *
      * @param object the Object to be written
-     * @throws IOException  if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     void writeObject(Object object) throws IOException;
 
     /**
      * Internal use only.
-     *
      */
     void writeObjectTraits(TraitsInfo traits) throws IOException;
 
     /**
      * Internal use only.
-     *
      */
     void writeObjectProperty(String name, Object value) throws IOException;
 
     /**
      * Internal use only.
-     *
      */
     void writeObjectEnd() throws IOException;
 
@@ -97,19 +92,16 @@ public interface ActionMessageOutput extends ObjectOutput
 
     /**
      * Internal use only.
-     *
      */
     void setDebugTrace(AmfTrace debugBuffer);
 
     /**
      * Internal use only.
-     *
      */
     void setOutputStream(OutputStream out);
 
     /**
      * Internal use only.
-     *
      */
     void reset();
 

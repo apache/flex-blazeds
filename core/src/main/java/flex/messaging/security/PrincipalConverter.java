@@ -22,11 +22,10 @@ import java.security.Principal;
 /**
  * The principal Converter interface.
  */
-public interface PrincipalConverter
-{
+public interface PrincipalConverter {
     /**
      * Classes that implement the flex.messaging.security.PrinciplaConverter interface, to convert a J2EE Principal to a
-     * Flex Principal impl. A Flex Principal impl is specific to different Application Servers and will be used by Flex to 
+     * Flex Principal impl. A Flex Principal impl is specific to different Application Servers and will be used by Flex to
      * do security authorization check, which calls security framework API specific to Application Servers.
      */
     Principal convertPrincipal(Principal principal);

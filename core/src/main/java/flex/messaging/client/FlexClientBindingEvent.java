@@ -20,8 +20,7 @@ package flex.messaging.client;
  * Event used to notify FlexClientAttributeListeners of changes to FlexClient
  * attributes.
  */
-public class FlexClientBindingEvent 
-{
+public class FlexClientBindingEvent {
     //--------------------------------------------------------------------------
     //
     // Constructor
@@ -30,27 +29,25 @@ public class FlexClientBindingEvent
 
     /**
      * Constructs an event for an attribute that is bound or unbound from a FlexClient.
-     * 
+     *
      * @param client The FlexClient.
-     * @param name The attribute name.
+     * @param name   The attribute name.
      */
-    public FlexClientBindingEvent(FlexClient client, String name)
-    {
+    public FlexClientBindingEvent(FlexClient client, String name) {
         this.client = client;
         this.name = name;
-    }    
+    }
 
-    
+
     /**
-     * Constructs an event for an attribute that is added to a FlexClient or 
+     * Constructs an event for an attribute that is added to a FlexClient or
      * replaced by a new value.
-     * 
+     *
      * @param client The FlexClient.
-     * @param name The attribute name.
-     * @param value The attribute value.
+     * @param name   The attribute name.
+     * @param value  The attribute value.
      */
-    public FlexClientBindingEvent(FlexClient client, String name, Object value)
-    {
+    public FlexClientBindingEvent(FlexClient client, String name, Object value) {
         this.client = client;
         this.name = name;
         this.value = value;
@@ -66,50 +63,47 @@ public class FlexClientBindingEvent
      * The FlexClient that generated the event.
      */
     private FlexClient client;
-    
+
     /**
      * The name of the attribute associated with the event.
      */
     private String name;
-    
+
     /**
      * The value of the attribute associated with the event.
      */
     private Object value;
-    
+
     //--------------------------------------------------------------------------
     //
     // Methods
     //
     //--------------------------------------------------------------------------
-    
+
     /**
      * Returns the FlexClient that generated the event.
-     * 
+     *
      * @return The FlexClient that generated the event.
      */
-    public FlexClient getClient()
-    {
+    public FlexClient getClient() {
         return client;
     }
-    
+
     /**
      * Returns the name of the attribute associated with the event.
-     * 
+     *
      * @return The name of the attribute associated with the event.
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
-    
+
     /**
      * Returns the value of the attribute associated with the event.
-     * 
+     *
      * @return The value of the attribute associated with the event.
      */
-    public Object getValue()
-    {
+    public Object getValue() {
         return value;
     }
 }

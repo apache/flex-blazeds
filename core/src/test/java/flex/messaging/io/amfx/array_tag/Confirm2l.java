@@ -20,24 +20,19 @@ import flex.messaging.io.amfx.DeserializationConfirmation;
 import flex.messaging.io.amf.ActionMessage;
 import flex.messaging.MessageException;
 
-public class Confirm2l extends DeserializationConfirmation
-{
-    public Confirm2l()
-    {
+public class Confirm2l extends DeserializationConfirmation {
+    public Confirm2l() {
     }
 
-    public boolean isNegativeTest()
-    {
+    public boolean isNegativeTest() {
         return true;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return null;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         String name = "prop0";
         return new MessageException("Unexpected array item name: " + name + ". Please set the ecma attribute to 'true'.");
     }

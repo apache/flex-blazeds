@@ -20,16 +20,16 @@
 <services-config xmlns="http://www.adobe.com/2006/flex-enterprise-services">
     <services>
         <service id="foo-service"
-            class="flex.messaging.services.FooService"
-            messageTypes="flex.messaging.messages.FooMessage"/>
+                 class="flex.messaging.services.FooService"
+                 messageTypes="flex.messaging.messages.FooMessage"/>
 
         <service id="bar-service"
-            class="flex.messaging.services.BarService"
-            messageTypes="flex.messaging.messages.BarMessage">
+                 class="flex.messaging.services.BarService"
+                 messageTypes="flex.messaging.messages.BarMessage">
 
-            <adapters />
+            <adapters/>
 
-            <default-channels />
+            <default-channels/>
         </service>
 
 

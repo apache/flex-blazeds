@@ -17,15 +17,11 @@
 package flex.messaging.log;
 
 /**
- *
- *
  * This class contains all the log categories used in our classes. When adding
  * a new log category, make sure the sample configuration file is updated
  * as well.
- *
  */
-public interface LogCategories
-{
+public interface LogCategories {
     String CLIENT_FLEXCLIENT = "Client.FlexClient";
     String CLIENT_FLEXCLIENT_ADAPTIVE = "Client.FlexClient.Adaptive";
     String CLIENT_MESSAGECLIENT = "Client.MessageClient";

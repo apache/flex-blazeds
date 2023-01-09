@@ -28,10 +28,8 @@ import flex.messaging.io.amf.translator.TranslationException;
 /**
  *
  */
-public class ReferenceAwareTypedObjectDecoder extends TypedObjectDecoder
-{
-    protected Object decodeTypedObject(Object bean, Object encodedObject)
-    {
+public class ReferenceAwareTypedObjectDecoder extends TypedObjectDecoder {
+    protected Object decodeTypedObject(Object bean, Object encodedObject) {
         TypeMarshallingContext context = TypeMarshallingContext.getTypeMarshallingContext();
         context.getKnownObjects().put(encodedObject, bean);
 
@@ -39,12 +37,10 @@ public class ReferenceAwareTypedObjectDecoder extends TypedObjectDecoder
         PropertyProxy encodedProxy = PropertyProxyRegistry.getProxy(encodedObject);
 
         List propertyNames = beanProxy.getPropertyNames(bean);
-        if (propertyNames != null)
-        {
+        if (propertyNames != null) {
             Iterator it = propertyNames.iterator();
-            while (it.hasNext())
-            {
-                String propName = (String)it.next();
+            while (it.hasNext()) {
+                String propName = (String) it.next();
 
                 Class wClass = beanProxy.getType(bean, propName);
 
@@ -52,44 +48,35 @@ public class ReferenceAwareTypedObjectDecoder extends TypedObjectDecoder
                 Object value = encodedProxy.getValue(encodedObject, propName);
 
                 Object decodedObject = null;
-                try
-                {
-                    if (value != null)
-                    {
+                try {
+                    if (value != null) {
                         //Check whether we need to restore a client
                         //side reference to a known object
                         Object ref = null;
-    
+
                         if (canUseByReference(value))
                             ref = context.getKnownObjects().get(value);
-    
-                        if (ref == null)
-                        {
+
+                        if (ref == null) {
                             ActionScriptDecoder decoder = DecoderFactory.getReferenceAwareDecoder(value, wClass);
                             decodedObject = decoder.decodeObject(value, wClass);
-    
-                            if (canUseByReference(decodedObject))
-                            {
+
+                            if (canUseByReference(decodedObject)) {
                                 context.getKnownObjects().put(value, decodedObject);
                             }
-                        }
-                        else
-                        {
+                        } else {
                             decodedObject = ref;
                         }
                     }
-    
+
                     // TODO: Perhaps we could update NumberDecoder, CharacterDecoder and
                     // BooleanDecoder to do this for us?
-                    if (decodedObject == null && wClass.isPrimitive())
-                    {
+                    if (decodedObject == null && wClass.isPrimitive()) {
                         decodedObject = getDefaultPrimitiveValue(wClass);
                     }
-    
+
                     beanProxy.setValue(bean, propName, decodedObject);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     TranslationException ex = new TranslationException("Could not set object " + decodedObject + " on " + bean.getClass() + "'s " + propName);
                     ex.setCode("Server.Processing");
                     ex.setRootCause(e);

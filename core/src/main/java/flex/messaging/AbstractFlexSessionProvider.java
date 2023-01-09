@@ -19,14 +19,12 @@ package flex.messaging;
 import flex.messaging.config.ConfigMap;
 
 /**
- *
  * Base for FlexSessionProvider implementations.
  * Providers are protocol-specific factories for concrete FlexSession implementations.
  * They are registered with a FlexSessionManager, which acts as the central point of control
  * for tracking all active FlexSessions and for dispatching creation events to FlexSessionListeners.
  */
-public abstract class AbstractFlexSessionProvider implements FlexComponent
-{
+public abstract class AbstractFlexSessionProvider implements FlexComponent {
     //--------------------------------------------------------------------------
     //
     // Variables
@@ -37,7 +35,7 @@ public abstract class AbstractFlexSessionProvider implements FlexComponent
      * Instance lock.
      */
     protected final Object lock = new Object();
-    
+
     //--------------------------------------------------------------------------
     //
     // Properties
@@ -49,47 +47,43 @@ public abstract class AbstractFlexSessionProvider implements FlexComponent
     //----------------------------------
 
     private volatile FlexSessionManager flexSessionManager;
-    
+
     /**
      * Returns the <tt>FlexSessionManager</tt> this provider is currently registered to.
-     * 
+     *
      * @return The <tt>FlexSessionManager</tt> this provider is currently registered to.
      */
-    public FlexSessionManager getFlexSessionManager()
-    {
+    public FlexSessionManager getFlexSessionManager() {
         return flexSessionManager;
     }
-    
+
     /**
      * Sets the <tt>FlexSessionManager</tt> this provider is registered to.
-     * 
+     *
      * @param value The <tt>FlexSessionManager</tt> this provider is registered to.
      */
-    public void setFlexSessionManager(final FlexSessionManager value)
-    {
+    public void setFlexSessionManager(final FlexSessionManager value) {
         flexSessionManager = value;
     }
-    
+
     //----------------------------------
     //  logCategory
     //----------------------------------
 
-    private boolean started;    
-    
+    private boolean started;
+
     /**
      * Indicates whether the component is started and running.
-     * 
-     * @return <code>true</code> if the component has started; 
-     *         otherwise <code>false</code>.
+     *
+     * @return <code>true</code> if the component has started;
+     * otherwise <code>false</code>.
      */
-    public boolean isStarted()
-    {
-        synchronized (lock)
-        {
+    public boolean isStarted() {
+        synchronized (lock) {
             return started;
         }
     }
-    
+
     //--------------------------------------------------------------------------
     //
     // Public Methods
@@ -99,47 +93,41 @@ public abstract class AbstractFlexSessionProvider implements FlexComponent
     /**
      * Initializes the component with configuration information.
      *
-     * @param id The id of the component.
+     * @param id        The id of the component.
      * @param configMap The properties for configuring component.
      */
-    public void initialize(final String id, final ConfigMap configMap)
-    {
+    public void initialize(final String id, final ConfigMap configMap) {
         // No-op.
     }
-    
+
     /**
      * Removes a <tt>FlexSession</tt> created by this provider.
      * This callback is invoked by <tt>FlexSession</tt>s when they are invalidated.
      *
      * @param session The <tt>FlexSession</tt> being invalidated.
      */
-    public void removeFlexSession(final FlexSession session)
-    {
+    public void removeFlexSession(final FlexSession session) {
         FlexSessionManager manager = getFlexSessionManager();
         if (manager != null)
             manager.unregisterFlexSession(session);
     }
-    
+
     /**
      * Invoked to start the component.
      * This base implementation changes the components state such that {@link #isStarted()} returns true.
      */
-    public void start()
-    {
-        synchronized (lock)
-        {
+    public void start() {
+        synchronized (lock) {
             started = true;
         }
     }
-    
+
     /**
      * Invoked to stop the component.
      * This base implementation changes the components state such that {@link #isStarted()} returns false.
      */
-    public void stop()
-    {
-        synchronized (lock)
-        {
+    public void stop() {
+        synchronized (lock) {
             started = false;
         }
     }

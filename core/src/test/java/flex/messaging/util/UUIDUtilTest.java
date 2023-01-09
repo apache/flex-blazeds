@@ -19,11 +19,9 @@ package flex.messaging.util;
 
 import org.junit.*;
 
-public class UUIDUtilTest
-{
-   @Test
-    public void testIsUID()
-    {
+public class UUIDUtilTest {
+    @Test
+    public void testIsUID() {
         // Randomly generated
         String uid = UUIDUtils.createUUID();
         boolean result = UUIDUtils.isUID(uid);
@@ -105,8 +103,7 @@ public class UUIDUtilTest
     }
 
     @Test
-    public void testUIDToByteArray()
-    {
+    public void testUIDToByteArray() {
         // Randomly generated
         String uid = UUIDUtils.createUUID();
         byte[] result = UUIDUtils.toByteArray(uid);
@@ -126,8 +123,7 @@ public class UUIDUtilTest
     }
 
     @Test
-    public void testUIDFromByteArray()
-    {
+    public void testUIDFromByteArray() {
         // Randomly generated
         String uid1 = UUIDUtils.createUUID();
         byte[] ba = UUIDUtils.toByteArray(uid1);

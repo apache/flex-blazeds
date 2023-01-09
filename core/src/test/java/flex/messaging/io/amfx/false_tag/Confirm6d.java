@@ -21,25 +21,20 @@ import flex.messaging.io.amf.ActionMessage;
 import flex.messaging.io.amf.MessageBody;
 import flex.messaging.MessageException;
 
-public class Confirm6d extends DeserializationConfirmation
-{
+public class Confirm6d extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm6d()
-    {
+    public Confirm6d() {
     }
 
-    public ActionMessage getExpectedMessage()
-    {
-        if (EXPECTED_VALUE == null)
-        {
+    public ActionMessage getExpectedMessage() {
+        if (EXPECTED_VALUE == null) {
             ActionMessage m = new ActionMessage();
             MessageBody body = new MessageBody();
             m.addBody(body);
 
             Object list = createList(7);
-            for (int i = 0; i < 7; i++)
-            {
+            for (int i = 0; i < 7; i++) {
                 addToList(list, i, Boolean.FALSE);
             }
 
@@ -49,8 +44,7 @@ public class Confirm6d extends DeserializationConfirmation
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

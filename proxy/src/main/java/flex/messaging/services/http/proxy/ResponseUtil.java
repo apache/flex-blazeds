@@ -17,20 +17,14 @@
 package flex.messaging.services.http.proxy;
 
 /**
- *
  * Response methods shared by J2EE and .NET.
  */
-public class ResponseUtil
-{
-    public static String getCookieName(ProxyContext context, String path, String name, String domain)
-    {
+public class ResponseUtil {
+    public static String getCookieName(ProxyContext context, String path, String name, String domain) {
         String clientName;
-        if (context.isLocalDomain() && (path == null || path.equals("/")))
-        {
+        if (context.isLocalDomain() && (path == null || path.equals("/"))) {
             clientName = name;
-        }
-        else
-        {
+        } else {
             //Cookie name format: COOKIE_PREFIX[COOKIE_SEPARATOR]domain[COOKIE_SEPARATOR]path[COOKIE_SEPARATOR]name
             StringBuffer nameBuf = new StringBuffer(40); //estimated length to usually avoid the buffer needing to grow
             nameBuf.append(ProxyConstants.COOKIE_PREFIX);
@@ -46,8 +40,7 @@ public class ResponseUtil
     }
 
 
-    public static boolean ignoreHeader(String name, ProxyContext context)
-    {
+    public static boolean ignoreHeader(String name, ProxyContext context) {
         boolean ignoreHeader = false;
         if ("Content-Length".equalsIgnoreCase(name) ||
                 "Set-Cookie".equalsIgnoreCase(name) ||
@@ -60,9 +53,8 @@ public class ResponseUtil
                 "Connection".equalsIgnoreCase(name) ||
                 // ignore caching headers if we want to stop caching on this request
                 (context.disableCaching() && ("Cache-Control".equalsIgnoreCase(name) ||
-                "Expires".equalsIgnoreCase(name) || "Pragma".equalsIgnoreCase(name)))
-        )
-        {
+                        "Expires".equalsIgnoreCase(name) || "Pragma".equalsIgnoreCase(name)))
+        ) {
             ignoreHeader = true;
         }
         return ignoreHeader;

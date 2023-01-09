@@ -21,18 +21,14 @@ import flex.messaging.io.amf.ActionMessage;
 import flex.messaging.io.amf.MessageBody;
 import flex.messaging.MessageException;
 
-public class Confirm11f extends DeserializationConfirmation
-{
+public class Confirm11f extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm11f()
-    {
+    public Confirm11f() {
     }
 
-    public ActionMessage getExpectedMessage()
-    {
-        if (EXPECTED_VALUE == null)
-        {
+    public ActionMessage getExpectedMessage() {
+        if (EXPECTED_VALUE == null) {
             ActionMessage m = new ActionMessage();
             MessageBody body = new MessageBody();
             m.addBody(body);
@@ -51,13 +47,11 @@ public class Confirm11f extends DeserializationConfirmation
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 
-    protected boolean bodyValuesMatch(Object o1, Object o2)
-    {
+    protected boolean bodyValuesMatch(Object o1, Object o2) {
         boolean match = super.bodyValuesMatch(o1, o2);
 
         // Also check that by-reference serialization of dates restored
@@ -65,11 +59,11 @@ public class Confirm11f extends DeserializationConfirmation
         Object list1 = o1;
         Object list2 = o2;
 
-        String s11 = (String)getFromList(list1, 0);
-        String s12 = (String)getFromList(list1, 1);
-        String s13 = (String)getFromList(list1, 2);
-        String s14 = (String)getFromList(list1, 3);
-        String s15 = (String)getFromList(list1, 4);
+        String s11 = (String) getFromList(list1, 0);
+        String s12 = (String) getFromList(list1, 1);
+        String s13 = (String) getFromList(list1, 2);
+        String s14 = (String) getFromList(list1, 3);
+        String s15 = (String) getFromList(list1, 4);
 
         if (s11.length() > 0 || s12.length() > 0)
             return false;
@@ -77,14 +71,14 @@ public class Confirm11f extends DeserializationConfirmation
         if (s13 != s14 || s14 != s15)
             return false;
 
-        String s21 = (String)getFromList(list2, 0);
-        String s22 = (String)getFromList(list2, 1);
-        String s23 = (String)getFromList(list2, 2);
-        String s24 = (String)getFromList(list2, 3);
-        String s25 = (String)getFromList(list2, 4);
+        String s21 = (String) getFromList(list2, 0);
+        String s22 = (String) getFromList(list2, 1);
+        String s23 = (String) getFromList(list2, 2);
+        String s24 = (String) getFromList(list2, 3);
+        String s25 = (String) getFromList(list2, 4);
 
         if (s21.length() > 0 || s22.length() > 0)
-                    return false;
+            return false;
 
         if (s23 != s24 || s24 != s25)
             return false;

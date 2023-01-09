@@ -19,13 +19,11 @@ package flex.messaging;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- *
  * Abstract base class for <tt>ConnectionAwareSession</tt> implementations.
  * Provides support for registering <tt>FlexSessionConnectivityListener</tt>s
  * along with protected methods to notify registered listeners of <tt>FlexSessionConnectivityEvent</tt>s.
  */
-public abstract class AbstractConnectionAwareSession extends FlexSession implements ConnectionAwareSession
-{
+public abstract class AbstractConnectionAwareSession extends FlexSession implements ConnectionAwareSession {
     //--------------------------------------------------------------------------
     //
     // Properties
@@ -33,16 +31,14 @@ public abstract class AbstractConnectionAwareSession extends FlexSession impleme
     //--------------------------------------------------------------------------
 
     /**
-     *
      * Constructs a new instance.
      *
      * @param sessionProvider The provider that instantiated this instance.
      */
-    public AbstractConnectionAwareSession(AbstractFlexSessionProvider sessionProvider)
-    {
+    public AbstractConnectionAwareSession(AbstractFlexSessionProvider sessionProvider) {
         super(sessionProvider);
     }
-    
+
     //--------------------------------------------------------------------------
     //
     // Properties
@@ -52,7 +48,7 @@ public abstract class AbstractConnectionAwareSession extends FlexSession impleme
     //----------------------------------
     //  connected
     //----------------------------------
-    
+
     /**
      * Connected flag for the session.
      */
@@ -60,67 +56,58 @@ public abstract class AbstractConnectionAwareSession extends FlexSession impleme
 
     /**
      * Returns whether the session is connected.
-     * 
+     *
      * @return true if the session is connected; otherwise false.
      */
-    public boolean isConnected()
-    {
-        synchronized (lock)
-        {
+    public boolean isConnected() {
+        synchronized (lock) {
             return connected;
         }
     }
-    
+
     /**
      * Sets the connected state for the session.
-     * 
+     *
      * @param value true for a connected session; false for a disconnected session.
      */
-    public void setConnected(boolean value)
-    {
+    public void setConnected(boolean value) {
         boolean notify = false;
-        synchronized (lock)
-        {
-            if (connected != value)
-            {
+        synchronized (lock) {
+            if (connected != value) {
                 connected = value;
                 notify = true;
             }
         }
-        if (notify)
-        {
+        if (notify) {
             if (!value)
                 notifySessionDisconnected();
             else
                 notifySessionConnected();
         }
     }
-    
+
     //----------------------------------
     //  connectivityListeners
     //----------------------------------
-    
+
     /**
      * The list of connectivity listeners for the session.
      */
     private volatile CopyOnWriteArrayList<FlexSessionConnectivityListener> connectivityListeners;
-    
+
     /**
      * (non-JavaDoc)
+     *
      * @see flex.messaging.ConnectionAwareSession#addConnectivityListener(FlexSessionConnectivityListener)
      */
-    public void addConnectivityListener(FlexSessionConnectivityListener listener)
-    {
-        if (connectivityListeners == null)
-        {
-            synchronized (lock)
-            {
+    public void addConnectivityListener(FlexSessionConnectivityListener listener) {
+        if (connectivityListeners == null) {
+            synchronized (lock) {
                 if (connectivityListeners == null)
-                    connectivityListeners = new CopyOnWriteArrayList<FlexSessionConnectivityListener>(); 
+                    connectivityListeners = new CopyOnWriteArrayList<FlexSessionConnectivityListener>();
             }
         }
-        if (connectivityListeners.addIfAbsent(listener) && isConnected())
-        {
+        if (connectivityListeners.addIfAbsent(listener) && isConnected()) {
             // If the listener is added when the session has already connected, notify it at add time.
             FlexSessionConnectivityEvent event = new FlexSessionConnectivityEvent(this);
             listener.sessionConnected(event);
@@ -129,43 +116,39 @@ public abstract class AbstractConnectionAwareSession extends FlexSession impleme
 
     /**
      * (non-JavaDoc)
+     *
      * @see flex.messaging.ConnectionAwareSession#removeConnectivityListener(FlexSessionConnectivityListener)
      */
-    public void removeConnectivityListener(FlexSessionConnectivityListener listener)
-    {
+    public void removeConnectivityListener(FlexSessionConnectivityListener listener) {
         if (connectivityListeners == null) return;
         connectivityListeners.remove(listener);
     }
-    
+
     //--------------------------------------------------------------------------
     //
     // Protected Methods
     //
     //--------------------------------------------------------------------------    
-    
+
     /**
      * Notifies registered <tt>FlexSessionConnectivityListener</tt>s that the session has connected.
      */
-    protected void notifySessionConnected()
-    {
-        if (connectivityListeners != null)
-        {
+    protected void notifySessionConnected() {
+        if (connectivityListeners != null) {
             FlexSessionConnectivityEvent event = new FlexSessionConnectivityEvent(this);
             for (FlexSessionConnectivityListener listener : connectivityListeners)
                 listener.sessionDisconnected(event);
         }
     }
-    
+
     /**
      * Notifies registered <tt>FlexSessionConnectivityListener</tt>s that the session has disconnected.
      */
-    protected void notifySessionDisconnected()
-    {
-        if (connectivityListeners != null)
-        {
+    protected void notifySessionDisconnected() {
+        if (connectivityListeners != null) {
             FlexSessionConnectivityEvent event = new FlexSessionConnectivityEvent(this);
             for (FlexSessionConnectivityListener listener : connectivityListeners)
-                listener.sessionDisconnected(event);            
+                listener.sessionDisconnected(event);
         }
-    }    
+    }
 }

@@ -27,8 +27,7 @@ import java.util.Date;
 /**
  *
  */
-public class LineFormattedTarget extends AbstractTarget
-{
+public class LineFormattedTarget extends AbstractTarget {
     /**
      * Indicates if the date should be added to the trace.
      */
@@ -75,8 +74,7 @@ public class LineFormattedTarget extends AbstractTarget
     /**
      * Default constructor.
      */
-    public LineFormattedTarget()
-    {
+    public LineFormattedTarget() {
         super();
     }
 
@@ -89,11 +87,10 @@ public class LineFormattedTarget extends AbstractTarget
     /**
      * Initializes the target with id and properties. Subclasses can overwrite.
      *
-     * @param id id for the target which is ignored.
+     * @param id         id for the target which is ignored.
      * @param properties ConfigMap of properties for the target.
      */
-    public void initialize(String id, ConfigMap properties)
-    {
+    public void initialize(String id, ConfigMap properties) {
         super.initialize(id, properties);
 
         includeTime = properties.getPropertyAsBoolean("includeTime", false);
@@ -114,8 +111,7 @@ public class LineFormattedTarget extends AbstractTarget
      *
      * @return <code>true</code> if category is included; <code>false</code> otherwise.
      */
-    public boolean isIncludeCategory()
-    {
+    public boolean isIncludeCategory() {
         return includeCategory;
     }
 
@@ -124,8 +120,7 @@ public class LineFormattedTarget extends AbstractTarget
      *
      * @param includeCategory the include category
      */
-    public void setIncludeCategory(boolean includeCategory)
-    {
+    public void setIncludeCategory(boolean includeCategory) {
         this.includeCategory = includeCategory;
     }
 
@@ -134,18 +129,16 @@ public class LineFormattedTarget extends AbstractTarget
      *
      * @return <code>true</code> if date is included; <code>false</code> otherwise.
      */
-    public boolean isIncludeDate()
-    {
+    public boolean isIncludeDate() {
         return includeDate;
     }
 
     /**
      * Sets includeDate property.
      *
-     * @param includeDate the include date 
+     * @param includeDate the include date
      */
-    public void setIncludeDate(boolean includeDate)
-    {
+    public void setIncludeDate(boolean includeDate) {
         this.includeDate = includeDate;
     }
 
@@ -154,8 +147,7 @@ public class LineFormattedTarget extends AbstractTarget
      *
      * @return <code>true</code> if level is included; <code>false</code> otherwise.
      */
-    public boolean isIncludeLevel()
-    {
+    public boolean isIncludeLevel() {
         return includeLevel;
     }
 
@@ -164,8 +156,7 @@ public class LineFormattedTarget extends AbstractTarget
      *
      * @param includeLevel the include level
      */
-    public void setIncludeLevel(boolean includeLevel)
-    {
+    public void setIncludeLevel(boolean includeLevel) {
         this.includeLevel = includeLevel;
     }
 
@@ -174,8 +165,7 @@ public class LineFormattedTarget extends AbstractTarget
      *
      * @return <code>true</code> if time is included; <code>false</code> otherwise.
      */
-    public boolean isIncludeTime()
-    {
+    public boolean isIncludeTime() {
         return includeTime;
     }
 
@@ -184,8 +174,7 @@ public class LineFormattedTarget extends AbstractTarget
      *
      * @param includeTime the include time
      */
-    public void setIncludeTime(boolean includeTime)
-    {
+    public void setIncludeTime(boolean includeTime) {
         this.includeTime = includeTime;
     }
 
@@ -194,8 +183,7 @@ public class LineFormattedTarget extends AbstractTarget
      *
      * @return The prefix for log messages.
      */
-    public String getPrefix()
-    {
+    public String getPrefix() {
         return prefix;
     }
 
@@ -204,8 +192,7 @@ public class LineFormattedTarget extends AbstractTarget
      *
      * @param prefix the prefix string
      */
-    public void setPrefix(String prefix)
-    {
+    public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
 
@@ -215,28 +202,24 @@ public class LineFormattedTarget extends AbstractTarget
      * format for transmission, storage, or display.
      * This method will be called only if the event's level is in range of the
      * target's level.
+     *
      * @param event the log event
      */
-    public void logEvent(LogEvent event)
-    {
+    public void logEvent(LogEvent event) {
         String pre = "";
-        if (prefix != null)
-        {
+        if (prefix != null) {
             pre = prefix + " "; // any space is stripped from config
         }
 
         String date = "";
-        if (includeDate || includeTime)
-        {
+        if (includeDate || includeTime) {
             StringBuffer buffer = new StringBuffer();
             Date d = new Date();
-            if (includeDate)
-            {
+            if (includeDate) {
                 buffer.append(dateFormater.format(d));
                 buffer.append(" ");
             }
-            if (includeTime)
-            {
+            if (includeTime) {
                 buffer.append(timeFormatter.format(d));
                 buffer.append(" ");
             }
@@ -244,10 +227,9 @@ public class LineFormattedTarget extends AbstractTarget
         }
 
         String cat = includeCategory ?
-                           ("[" + event.logger.getCategory() + "] ") : "";
+                ("[" + event.logger.getCategory() + "] ") : "";
         String level = "";
-        if (includeLevel)
-        {
+        if (includeLevel) {
             StringBuffer buffer = new StringBuffer();
             buffer.append("[");
             buffer.append(LogEvent.getLevelString(event.level));
@@ -274,13 +256,12 @@ public class LineFormattedTarget extends AbstractTarget
      * Descendants of this class should override this method to direct the
      * specified message to the desired output.
      *
-     * @param  message String containing preprocessed log message which may
-     * include time, date, category, etc. based on property settings,
-     * such as <code>includeDate</code>, <code>includeCategory</code>,
-     * etc.
+     * @param message String containing preprocessed log message which may
+     *                include time, date, category, etc. based on property settings,
+     *                such as <code>includeDate</code>, <code>includeCategory</code>,
+     *                etc.
      */
-    protected void internalLog(String message)
-    {
+    protected void internalLog(String message) {
         // override this method to perform the redirection to the desired output
     }
 }

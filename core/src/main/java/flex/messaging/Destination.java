@@ -36,18 +36,22 @@ import flex.messaging.config.ConfigurationConstants;
 import flex.messaging.config.ConfigurationException;
 import flex.messaging.config.NetworkSettings;
 import flex.messaging.config.SecurityConstraint;
+
 /**
  * The <code>Destination</code> class is a source and sink for messages sent through
  * a service destination and uses an adapter to process messages.
  */
-public class Destination extends ManageableComponent implements java.io.Serializable
-{
+public class Destination extends ManageableComponent implements java.io.Serializable {
     static final long serialVersionUID = -977001797620881435L;
 
-    /** Default log category for <code>Destination</code>. */
+    /**
+     * Default log category for <code>Destination</code>.
+     */
     public static final String LOG_CATEGORY = LogCategories.SERVICE_GENERAL;
-    
-    /** Hard coded id for the push destination */
+
+    /**
+     * Hard coded id for the push destination
+     */
     public static final String PUSH_DESTINATION_ID = "_DS_PUSH_";
 
     // Errors
@@ -73,8 +77,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
     /**
      * Constructs an unmanaged <code>Destination</code> instance.
      */
-    public Destination()
-    {
+    public Destination() {
         this(false);
     }
 
@@ -82,10 +85,9 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * Constructs a <code>Destination</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>Destination</code>
-     * is manageable; otherwise <code>false</code>.
+     *                         is manageable; otherwise <code>false</code>.
      */
-    public Destination(boolean enableManagement)
-    {
+    public Destination(boolean enableManagement) {
         super(enableManagement);
 
         networkSettings = new NetworkSettings();
@@ -101,29 +103,25 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * Initializes the <code>Destination</code> with the properties.
      * If subclasses override, they must call <code>super.initialize()</code>.
      *
-     * @param id The id of the destination.
+     * @param id         The id of the destination.
      * @param properties Properties for the destination.
      */
     @Override
-    public void initialize(String id, ConfigMap properties)
-    {
+    public void initialize(String id, ConfigMap properties) {
         super.initialize(id, properties);
 
-        if (properties == null || properties.size() == 0)
-        {
+        if (properties == null || properties.size() == 0) {
             initialized = true;
             return;
         }
 
         ConfigMap network = properties.getPropertyAsMap(NetworkSettings.NETWORK_ELEMENT, null);
 
-        if (network != null)
-        {
+        if (network != null) {
             networkSettings.setReliable(network.getPropertyAsBoolean(NetworkSettings.RELIABLE_ELEMENT, false));
 
             ConfigMap clusterInfo = network.getPropertyAsMap(ClusterSettings.CLUSTER_ELEMENT, null);
-            if (clusterInfo != null)
-            {
+            if (clusterInfo != null) {
                 // Mark these as used so we do not get warnings about them.
                 network.allowProperty(ClusterSettings.CLUSTER_ELEMENT);
                 clusterInfo.allowProperty(ClusterSettings.REF_ATTR);
@@ -142,12 +140,11 @@ public class Destination extends ManageableComponent implements java.io.Serializ
     }
 
     /**
-     *  Returns whether or not the destination has been initialized.
+     * Returns whether or not the destination has been initialized.
      *
      * @return True, if the destination has been initialized.
      */
-    public boolean isInitialized()
-    {
+    public boolean isInitialized() {
         return initialized;
     }
 
@@ -156,22 +153,17 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * it is started. If subclasses override, they must call <code>super.validate()</code>.
      */
     @Override
-    protected void validate()
-    {
+    protected void validate() {
         if (isValid())
             return;
 
         super.validate();
 
-        if (getAdapter() == null)
-        {
+        if (getAdapter() == null) {
             String defaultAdapterId = getService().getDefaultAdapter();
-            if (defaultAdapterId != null)
-            {
+            if (defaultAdapterId != null) {
                 createAdapter(defaultAdapterId);
-            }
-            else
-            {
+            } else {
                 invalidate();
                 // Destination '{id}' must specify at least one adapter.
                 ConfigurationException ex = new ConfigurationException();
@@ -180,19 +172,15 @@ public class Destination extends ManageableComponent implements java.io.Serializ
             }
         }
 
-        if (channelIds != null)
-        {
+        if (channelIds != null) {
             List<String> brokerChannelIds = getService().getMessageBroker().getChannelIds();
-            for (Iterator<String> iter = channelIds.iterator(); iter.hasNext();)
-            {
+            for (Iterator<String> iter = channelIds.iterator(); iter.hasNext(); ) {
                 String id = iter.next();
-                if (brokerChannelIds == null || !brokerChannelIds.contains(id))
-                {
+                if (brokerChannelIds == null || !brokerChannelIds.contains(id)) {
                     iter.remove();
-                    if (Log.isWarn())
-                    {
+                    if (Log.isWarn()) {
                         Log.getLogger(getLogCategory()).warn("No channel with id '{0}' is known by the MessageBroker." +
-                                " Removing the channel.",
+                                        " Removing the channel.",
                                 new Object[]{id});
                     }
                 }
@@ -200,15 +188,11 @@ public class Destination extends ManageableComponent implements java.io.Serializ
         }
 
         // Set the default channels if needed
-        if (channelIds == null)
-        {
+        if (channelIds == null) {
             List<String> defaultChannelIds = getService().getDefaultChannels();
-            if (defaultChannelIds != null && defaultChannelIds.size() > 0)
-            {
+            if (defaultChannelIds != null && defaultChannelIds.size() > 0) {
                 setChannels(defaultChannelIds);
-            }
-            else
-            {
+            } else {
                 invalidate();
                 // Destination '{id}' must specify at least one channel.
                 ConfigurationException ex = new ConfigurationException();
@@ -220,8 +204,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
         MessageBroker broker = getService().getMessageBroker();
 
         // Validate the security constraint
-        if (securityConstraint == null && securityConstraintRef != null)
-        {
+        if (securityConstraint == null && securityConstraintRef != null) {
             securityConstraint = broker.getSecurityConstraint(securityConstraintRef);
             // No need to throw an error as MessageBroker automatically throws
             // an error if no such constraint exists
@@ -230,8 +213,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
         ClusterManager cm = broker.getClusterManager();
 
         // Set clustering if needed
-        if (getNetworkSettings().getClusterId() != null || cm.getDefaultClusterId() != null)
-        {
+        if (getNetworkSettings().getClusterId() != null || cm.getDefaultClusterId() != null) {
             cm.clusterDestination(this);
         }
     }
@@ -243,10 +225,8 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * override, they must call <code>super.start()</code>.
      */
     @Override
-    public void start()
-    {
-        if (isStarted())
-        {
+    public void start() {
+        if (isStarted()) {
             // Needed for adapters added after startup.
             getAdapter().start();
             return;
@@ -254,22 +234,19 @@ public class Destination extends ManageableComponent implements java.io.Serializ
 
         // Check if the Service is started
         Service service = getService();
-        if (!service.isStarted())
-        {
-            if (Log.isWarn())
-            {
+        if (!service.isStarted()) {
+            if (Log.isWarn()) {
                 Log.getLogger(getLogCategory()).warn("Destination with id '{0}' cannot be started" +
-                        " when its Service with id '{1}' is not started.",
+                                " when its Service with id '{1}' is not started.",
                         new Object[]{getId(), service.getId()});
             }
             return;
         }
 
         // Set up management
-        if (isManaged() && service.isManaged())
-        {
+        if (isManaged() && service.isManaged()) {
             setupDestinationControl(service);
-            ServiceControl controller = (ServiceControl)service.getControl();
+            ServiceControl controller = (ServiceControl) service.getControl();
             if (getControl() != null)
                 controller.addDestination(getControl().getObjectName());
         }
@@ -283,11 +260,9 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * The default implementation of this method stops all of the adapters
      * of the destination.
      * If subclasses override, they must call <code>super.stop()</code>.
-     *
      */
     @Override
-    public void stop()
-    {
+    public void stop() {
         if (!isStarted())
             return;
 
@@ -296,10 +271,8 @@ public class Destination extends ManageableComponent implements java.io.Serializ
         super.stop();
 
         // Remove management
-        if (isManaged() && getService().isManaged())
-        {
-            if (getControl() != null)
-            {
+        if (isManaged() && getService().isManaged()) {
+            if (getControl() != null) {
                 getControl().unregister();
                 setControl(null);
             }
@@ -319,8 +292,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @return The <code>ServiceAdapter</code> for the <code>Destination</code>.
      */
-    public ServiceAdapter getAdapter()
-    {
+    public ServiceAdapter getAdapter() {
         return adapter;
     }
 
@@ -329,7 +301,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * if the <code>Destination</code> that created it is manageable,
      * and set its <code>Destination</code> to the <code>Destination</code> that
      * created it.
-     *
+     * <p>
      * In order to use this method, <code>Destination</code> should have an assigned
      * <code>Service</code> and the id provided for the adapter should already
      * be registered with the <code>Service</code>.
@@ -337,18 +309,15 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * @param id The id of the <code>ServiceAdapter</code>.
      * @return The <code>ServiceAdapter</code> instanced created.
      */
-    public ServiceAdapter createAdapter(String id)
-    {
-        if (getService() == null)
-        {
+    public ServiceAdapter createAdapter(String id) {
+        if (getService() == null) {
             // Destination cannot create adapter '{0}' without its Service set.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(NO_SERVICE, new Object[]{id});
             throw ex;
         }
         Map<String, String> adapterClasses = getService().getRegisteredAdapters();
-        if (!adapterClasses.containsKey(id))
-        {
+        if (!adapterClasses.containsKey(id)) {
             // No adapter with id '{0}' is registered with the service '{1}'.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.UNREGISTERED_ADAPTER, new Object[]{id, getService().getId()});
@@ -358,9 +327,9 @@ public class Destination extends ManageableComponent implements java.io.Serializ
         String adapterClassName = adapterClasses.get(id);
         Class<?> adapterClass = ClassUtil.createClass(adapterClassName,
                 FlexContext.getMessageBroker() == null ?
-                      null : FlexContext.getMessageBroker().getClassLoader());
+                        null : FlexContext.getMessageBroker().getClassLoader());
 
-        ServiceAdapter adapter = (ServiceAdapter)ClassUtil.createDefaultInstance(adapterClass, ServiceAdapter.class);
+        ServiceAdapter adapter = (ServiceAdapter) ClassUtil.createDefaultInstance(adapterClass, ServiceAdapter.class);
         adapter.setId(id);
         adapter.setManaged(isManaged());
         adapter.setDestination(this);
@@ -376,13 +345,11 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @param adapter The adapter for the destination.
      */
-    public void setAdapter(ServiceAdapter adapter)
-    {
+    public void setAdapter(ServiceAdapter adapter) {
         if (getAdapter() == adapter) // No need to reset the adapter.
             return;
 
-        if (adapter == null)
-        {
+        if (adapter == null) {
             removeAdapter();
             return;
         }
@@ -396,8 +363,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @param adapter The adapter for the destination.
      */
-    private void addAdapter(ServiceAdapter adapter)
-    {
+    private void addAdapter(ServiceAdapter adapter) {
         removeAdapter();
 
         this.adapter = adapter;
@@ -410,11 +376,9 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * Used by setAdapter and addAdapter. It removes the current adapter
      * of the destination
      */
-    private void removeAdapter()
-    {
+    private void removeAdapter() {
         ServiceAdapter adapter = getAdapter();
-        if (adapter != null)
-        {
+        if (adapter != null) {
             adapter.stop();
         }
         this.adapter = null;
@@ -432,8 +396,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * @return <code>true</code> if the clustered <code>Destination</code> shares a common backend;
      * otherwise <code>false</code>.
      */
-    public boolean isBackendShared()
-    {
+    public boolean isBackendShared() {
         if (!isStarted())
             return false;
 
@@ -446,8 +409,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @return The list of channel ids of the <code>Destination</code>.
      */
-    public List<String> getChannels()
-    {
+    public List<String> getChannels() {
         return channelIds;
     }
 
@@ -458,22 +420,18 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @param id The id of the channel.
      */
-    public void addChannel(String id)
-    {
+    public void addChannel(String id) {
         if (channelIds == null)
             channelIds = new ArrayList<String>();
         else if (channelIds.contains(id))
             return;
 
-        if (isStarted())
-        {
+        if (isStarted()) {
             List<String> brokerChannelIds = getService().getMessageBroker().getChannelIds();
-            if (brokerChannelIds == null || !brokerChannelIds.contains(id))
-            {
-                if (Log.isWarn())
-                {
+            if (brokerChannelIds == null || !brokerChannelIds.contains(id)) {
+                if (Log.isWarn()) {
                     Log.getLogger(getLogCategory()).warn("No channel with id '{0}' is known by the MessageBroker." +
-                            " Not adding the channel.",
+                                    " Not adding the channel.",
                             new Object[]{id});
                 }
                 return;
@@ -490,8 +448,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * @param id The id of the channel.
      * @return <code>true</code> if the list contained the channel id.
      */
-    public boolean removeChannel(String id)
-    {
+    public boolean removeChannel(String id) {
         return channelIds != null && channelIds.remove(id);
     }
 
@@ -502,21 +459,16 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @param ids List of channel ids.
      */
-    public void setChannels(List<String> ids)
-    {
-        if (ids != null && isStarted())
-        {
+    public void setChannels(List<String> ids) {
+        if (ids != null && isStarted()) {
             List<String> brokerChannelIds = getService().getMessageBroker().getChannelIds();
-            for (Iterator<String> iter = ids.iterator(); iter.hasNext();)
-            {
+            for (Iterator<String> iter = ids.iterator(); iter.hasNext(); ) {
                 String id = iter.next();
-                if (brokerChannelIds == null || !brokerChannelIds.contains(id))
-                {
+                if (brokerChannelIds == null || !brokerChannelIds.contains(id)) {
                     iter.remove();
-                    if (Log.isWarn())
-                    {
+                    if (Log.isWarn()) {
                         Log.getLogger(getLogCategory()).warn("No channel with id '{0}' is known by the MessageBroker." +
-                                " Not adding the channel.",
+                                        " Not adding the channel.",
                                 new Object[]{id});
                     }
                 }
@@ -535,13 +487,11 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @return <code>true</code> if the <code>Destination</code> is clustered; otherwise <code>false</code>.
      */
-    public boolean isClustered()
-    {
+    public boolean isClustered() {
         if (!isStarted())
             return false;
 
-        if (!clusteredCalculated)
-        {
+        if (!clusteredCalculated) {
             ClusterManager clm = getService().getMessageBroker().getClusterManager();
             clustered = clm.isDestinationClustered(getService().getClass().getName(), getId());
             clusteredCalculated = true;
@@ -557,16 +507,14 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * @param id The id of the <code>Destination</code>.
      */
     @Override
-    public void setId(String id)
-    {
+    public void setId(String id) {
         String oldId = getId();
 
         super.setId(id);
 
         // Update the destination id in the service and MessageBroker
         Service service = getService();
-        if (service != null)
-        {
+        if (service != null) {
             service.removeDestination(oldId);
             service.addDestination(this);
         }
@@ -577,8 +525,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @return The <code>NetworkSettings</code> of the <code>Destination</code>.
      */
-    public NetworkSettings getNetworkSettings()
-    {
+    public NetworkSettings getNetworkSettings() {
         return networkSettings;
     }
 
@@ -587,8 +534,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @param networkSettings The <code>NetworkSettings</code> of the <code>Destination</code>.
      */
-    public void setNetworkSettings(NetworkSettings networkSettings)
-    {
+    public void setNetworkSettings(NetworkSettings networkSettings) {
         this.networkSettings = networkSettings;
     }
 
@@ -597,9 +543,8 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @return The <code>Service</code> managing this <code>Destination</code>.
      */
-    public Service getService()
-    {
-        return (Service)getParent();
+    public Service getService() {
+        return (Service) getParent();
     }
 
     /**
@@ -609,8 +554,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @param service The <code>Service</code> managing this <code>Destination</code>.
      */
-    public void setService(Service service)
-    {
+    public void setService(Service service) {
         Service oldService = getService();
 
         setParent(service);
@@ -630,10 +574,9 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @return The Java class name for the <code>Service</code> manageing this <code>Destination</code>.
      */
-    public String getServiceType()
-    {
+    public String getServiceType() {
         Service service = getService();
-        return service != null? service.getClass().getName() : null;
+        return service != null ? service.getClass().getName() : null;
     }
 
     /**
@@ -644,8 +587,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @return The <code>SecurityConstraint</code> of the <code>Destination</code>.
      */
-    public SecurityConstraint getSecurityConstraint()
-    {
+    public SecurityConstraint getSecurityConstraint() {
         return securityConstraint;
     }
 
@@ -654,8 +596,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @param securityConstraint The <code>SecurityConstraint</code> of the <code>Destination</code>.
      */
-    public void setSecurityConstraint(SecurityConstraint securityConstraint)
-    {
+    public void setSecurityConstraint(SecurityConstraint securityConstraint) {
         this.securityConstraint = securityConstraint;
     }
 
@@ -667,10 +608,8 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @param ref <code>SecurityConstraint</code> reference.
      */
-    public void setSecurityConstraint(String ref)
-    {
-        if (isStarted())
-        {
+    public void setSecurityConstraint(String ref) {
+        if (isStarted()) {
             MessageBroker msgBroker = getService().getMessageBroker();
             securityConstraint = msgBroker.getSecurityConstraint(ref);
             // No need to throw an error as MessageBroker automatically throws
@@ -691,8 +630,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * @return A <tt>ConfigMap</tt> of destination properties that the client needs.
      * @see flex.messaging.Destination#describeDestination(boolean)
      */
-    public ConfigMap describeDestination()
-    {
+    public ConfigMap describeDestination() {
         return describeDestination(true);
     }
 
@@ -704,8 +642,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * @param onlyReliable Determines whether only reliable destination configuration should be returned.
      * @return A <tt>ConfigMap</tt> of destination properties that the client needs.
      */
-    public ConfigMap describeDestination(boolean onlyReliable)
-    {
+    public ConfigMap describeDestination(boolean onlyReliable) {
         boolean reliable = networkSettings != null && networkSettings.isReliable();
         if (onlyReliable && !reliable)
             return null;
@@ -714,8 +651,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
         destinationConfig.addProperty(ConfigurationConstants.ID_ATTR, getId());
 
         // Include network settings if reliability for the destination is enabled.
-        if (reliable)
-        {
+        if (reliable) {
             ConfigMap properties = new ConfigMap();
             ConfigMap network = new ConfigMap();
 
@@ -730,8 +666,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
         }
 
         ConfigMap channelsConfig = new ConfigMap();
-        for (String id : channelIds)
-        {
+        for (String id : channelIds) {
             ConfigMap channelConfig = new ConfigMap();
             channelConfig.addProperty(ConfigurationConstants.REF_ATTR, id);
             channelsConfig.addProperty(ConfigurationConstants.CHANNEL_ELEMENT, channelConfig);
@@ -746,13 +681,11 @@ public class Destination extends ManageableComponent implements java.io.Serializ
     /**
      * Method for setting an extra property for the destination at runtime.
      *
-     * @param name The name of the property.
+     * @param name  The name of the property.
      * @param value The value of the property.
      */
-    public void addExtraProperty(String name, Object value)
-    {
-        if (extraProperties == null)
-        {
+    public void addExtraProperty(String name, Object value) {
+        if (extraProperties == null) {
             extraProperties = new HashMap<String, Object>();
         }
 
@@ -765,9 +698,8 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * @param name The name of the property.
      * @return The value of the property or null if the property does not exist.
      */
-    public Object getExtraProperty(String name)
-    {
-        return extraProperties != null? extraProperties.get(name) : null;
+    public Object getExtraProperty(String name) {
+        return extraProperties != null ? extraProperties.get(name) : null;
     }
 
     //--------------------------------------------------------------------------
@@ -783,8 +715,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      * @return The log category.
      */
     @Override
-    protected String getLogCategory()
-    {
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
@@ -794,8 +725,7 @@ public class Destination extends ManageableComponent implements java.io.Serializ
      *
      * @param service The <code>Service</code> that manages this <code>Destination</code>.
      */
-    protected void setupDestinationControl(Service service)
-    {
+    protected void setupDestinationControl(Service service) {
         // Manageable subclasses should override this template method.
         setManaged(false);
     }

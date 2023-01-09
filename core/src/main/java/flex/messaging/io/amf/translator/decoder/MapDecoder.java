@@ -25,72 +25,51 @@ import java.util.TreeMap;
 
 /**
  * Decodes an ActionScript object to a Java Map.
- *
- *
  */
-public class MapDecoder extends ActionScriptDecoder
-{
-    public boolean hasShell()
-    {
+public class MapDecoder extends ActionScriptDecoder {
+    public boolean hasShell() {
         return true;
     }
 
-    protected boolean isSuitableMap(Object encodedObject, Class desiredClass)
-    {
+    protected boolean isSuitableMap(Object encodedObject, Class desiredClass) {
         return (encodedObject != null && encodedObject instanceof Map && desiredClass.isAssignableFrom(encodedObject.getClass()));
     }
 
-    public Object createShell(Object encodedObject, Class desiredClass)
-    {
-        try
-        {
-            if (isSuitableMap(encodedObject, desiredClass))
-            {
+    public Object createShell(Object encodedObject, Class desiredClass) {
+        try {
+            if (isSuitableMap(encodedObject, desiredClass)) {
                 return encodedObject;
-            }
-            else
-            {
-                if (desiredClass.isInterface() || !Map.class.isAssignableFrom(desiredClass))
-                {
-                    if (SortedMap.class.isAssignableFrom(desiredClass))
-                    {
+            } else {
+                if (desiredClass.isInterface() || !Map.class.isAssignableFrom(desiredClass)) {
+                    if (SortedMap.class.isAssignableFrom(desiredClass)) {
                         return new TreeMap();
-                    }
-                    else
-                    {
+                    } else {
                         return new HashMap();
                     }
-                }
-                else
-                {
+                } else {
                     return desiredClass.newInstance();
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             TranslationException ex = new TranslationException("Could not create Map " + desiredClass, e);
             ex.setCode("Server.Processing");
             throw ex;
         }
     }
 
-    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass)
-    {
+    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass) {
         if (shell == null || encodedObject == null)
             return null;
 
         // Don't decode if we already have a suitable Map.
-        if (isSuitableMap(encodedObject, desiredClass))
-        {
+        if (isSuitableMap(encodedObject, desiredClass)) {
             return encodedObject;
         }
 
-        return decodeMap((Map)shell, (Map)encodedObject);
+        return decodeMap((Map) shell, (Map) encodedObject);
     }
 
-    protected Map decodeMap(Map shell, Map map)
-    {
+    protected Map decodeMap(Map shell, Map map) {
         if (shell != map)
             shell.putAll(map);
         else

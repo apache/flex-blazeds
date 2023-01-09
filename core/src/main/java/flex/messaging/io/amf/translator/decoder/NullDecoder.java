@@ -19,10 +19,8 @@ package flex.messaging.io.amf.translator.decoder;
 /**
  *
  */
-public class NullDecoder extends ActionScriptDecoder
-{
-    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass)
-    {
+public class NullDecoder extends ActionScriptDecoder {
+    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass) {
         return null;
     }
 }

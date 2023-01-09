@@ -23,8 +23,7 @@ import java.util.List;
  * Security constraints are used by the login manager to secure access to
  * destinations and endpoints.
  */
-public class SecurityConstraint
-{
+public class SecurityConstraint {
     /**
      * String constant for basic authentication.
      */
@@ -42,8 +41,7 @@ public class SecurityConstraint
     /**
      * Creates an anonymous <code>SecurityConstraint</code> instance.
      */
-    public SecurityConstraint()
-    {
+    public SecurityConstraint() {
         this(null);
     }
 
@@ -52,8 +50,7 @@ public class SecurityConstraint
      *
      * @param id The id of the <code>SecurityConstraint</code> instance.
      */
-    public SecurityConstraint(String id)
-    {
+    public SecurityConstraint(String id) {
         this.id = id;
         method = CUSTOM_AUTH_METHOD;
     }
@@ -63,8 +60,7 @@ public class SecurityConstraint
      *
      * @return List of roles.
      */
-    public List getRoles()
-    {
+    public List getRoles() {
         return roles;
     }
 
@@ -73,15 +69,14 @@ public class SecurityConstraint
      *
      * @param role New role to add to the list of roles.
      */
-    public void addRole(String role)
-    {
+    public void addRole(String role) {
         if (role == null)
             return;
 
         if (roles == null)
             roles = new ArrayList();
 
-            roles.add(role);
+        roles.add(role);
     }
 
     /**
@@ -89,8 +84,7 @@ public class SecurityConstraint
      *
      * @return The id of the <code>SecurityConstraint</code>.
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
@@ -99,8 +93,7 @@ public class SecurityConstraint
      *
      * @return Authorization method.
      */
-    public String getMethod()
-    {
+    public String getMethod() {
         return method;
     }
 
@@ -110,8 +103,7 @@ public class SecurityConstraint
      *
      * @param method The authentication method to set which can be custom or basic.
      */
-    public void setMethod(String method)
-    {
+    public void setMethod(String method) {
         if (method == null)
             return;
 

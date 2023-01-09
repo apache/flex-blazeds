@@ -29,11 +29,8 @@ import flex.messaging.io.MessageIOConstants;
 /**
  * This class implements LoginCommand and doAuthorization in way that should work by default if
  * authorization logged a user into the J2EE application server.  doAuthorization uses isUserInRole.
- *
- *
  */
-public abstract class AppServerLoginCommand implements LoginCommand
-{
+public abstract class AppServerLoginCommand implements LoginCommand {
 
     /**
      * The gateway calls this method to perform programmatic authorization.
@@ -44,34 +41,30 @@ public abstract class AppServerLoginCommand implements LoginCommand
      * </p>
      *
      * @param principal The principal being checked for authorization
-     * @param roles    A List of role names to check, all members should be strings
+     * @param roles     A List of role names to check, all members should be strings
      * @return true if the principal belongs to at least one of the roles
      * @throws SecurityException Throws SecurityException
      */
-    public boolean doAuthorization(Principal principal, List roles) throws SecurityException
-    {
+    public boolean doAuthorization(Principal principal, List roles) throws SecurityException {
         HttpServletRequest request = FlexContext.getHttpRequest();
         return (request != null) ? doAuthorization(principal, roles, request) : false;
     }
 
     protected boolean doAuthorization(Principal principal, List roles, HttpServletRequest request)
-        throws SecurityException
-    {
-        for (Object role : roles)
-        {
-            if (request.isUserInRole((String)role))
+            throws SecurityException {
+        for (Object role : roles) {
+            if (request.isUserInRole((String) role))
                 return true;
         }
 
         return false;
     }
 
-    protected String extractPassword(Object credentials)
-    {
+    protected String extractPassword(Object credentials) {
         if (credentials instanceof String)
-            return (String)credentials;
+            return (String) credentials;
         else if (credentials instanceof Map)
-            return (String)((Map)credentials).get(MessageIOConstants.SECURITY_CREDENTIALS);
+            return (String) ((Map) credentials).get(MessageIOConstants.SECURITY_CREDENTIALS);
         return null;
     }
 
@@ -82,8 +75,7 @@ public abstract class AppServerLoginCommand implements LoginCommand
      *
      * @param config The servlet configuration for MessageBrokerServlet.
      */
-    public void start(ServletConfig config)
-    {
+    public void start(ServletConfig config) {
         // No-op.
     }
 
@@ -91,8 +83,7 @@ public abstract class AppServerLoginCommand implements LoginCommand
      * Called to free up resources used by the login command. The default implementation
      * is no-op, subclasses can override to provide their own implementation.
      */
-    public void stop()
-    {
+    public void stop() {
         // No-op.
     }
 }

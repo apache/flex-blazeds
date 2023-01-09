@@ -35,11 +35,12 @@ import java.util.Set;
 /**
  * Subclass of Destination which provides HTTP Proxy-specific destination functionality.
  */
-public class HTTPProxyDestination extends Destination
-{
+public class HTTPProxyDestination extends Destination {
     static final long serialVersionUID = -5749492520894791206L;
 
-    /** Log category for <code>HTTPProxyDestination</code>. **/
+    /**
+     * Log category for <code>HTTPProxyDestination</code>.
+     **/
     public static final String LOG_CATEGORY = LogCategories.SERVICE_HTTP;
 
     // ConfigMap keys from XML based services configuration.
@@ -79,8 +80,7 @@ public class HTTPProxyDestination extends Destination
     /**
      * Constructs an unmanaged <code>HTTPProxyDestination</code> instance.
      */
-    public HTTPProxyDestination()
-    {
+    public HTTPProxyDestination() {
         this(false);
     }
 
@@ -88,10 +88,9 @@ public class HTTPProxyDestination extends Destination
      * Constructs a <code>HTTPProxyDestination</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>HTTPProxyDestination</code>
-     * is manageable; otherwise <code>false</code>.
+     *                         is manageable; otherwise <code>false</code>.
      */
-    public HTTPProxyDestination(boolean enableManagement)
-    {
+    public HTTPProxyDestination(boolean enableManagement) {
         super(enableManagement);
 
         dynamicUrls = new ArrayList();
@@ -124,11 +123,10 @@ public class HTTPProxyDestination extends Destination
      * &lt;/protocol-factory&gt;
      * </pre>
      *
-     * @param id The id of the destination.
+     * @param id         The id of the destination.
      * @param properties Properties for the <code>HTTPProxyDestination</code>.
      */
-    public void initialize(String id, ConfigMap properties)
-    {
+    public void initialize(String id, ConfigMap properties) {
         super.initialize(id, properties);
 
         if (properties == null || properties.size() == 0)
@@ -136,13 +134,11 @@ public class HTTPProxyDestination extends Destination
 
         // Custom protocol-factory
         ConfigMap factoryMap = properties.getPropertyAsMap(HostConfigurationSettings.PROTOCOL_FACFORY, null);
-        if (factoryMap != null)
-        {
+        if (factoryMap != null) {
             String className = factoryMap.getPropertyAsString(CLASS, null);
-            if (className != null)
-            {
+            if (className != null) {
                 Class factoryClass = ClassUtil.createClass(className);
-                protocolFactory = (ProtocolFactory)ClassUtil.createDefaultInstance(factoryClass, ProtocolFactory.class);
+                protocolFactory = (ProtocolFactory) ClassUtil.createDefaultInstance(factoryClass, ProtocolFactory.class);
                 String factoryId = factoryMap.getPropertyAsString(ID, getId() + "_protocol_factory");
                 ConfigMap protocolProperties = factoryMap.getPropertyAsMap(PROPERTIES, null);
                 protocolFactory.initialize(factoryId, protocolProperties);
@@ -152,25 +148,20 @@ public class HTTPProxyDestination extends Destination
         // Default URL or WSDL
         defaultUrl = properties.getPropertyAsString(URL, null);
 
-        if (defaultUrl == null)
-        {
+        if (defaultUrl == null) {
             defaultUrl = properties.getPropertyAsString(WSDL, null);
-        }
-        else
-        {
+        } else {
             properties.allowProperty(WSDL);
         }
 
         // Dynamic URL or SOAP Endpoint patterns
         List dynUrls = properties.getPropertyAsList(DYNAMIC_URL, null);
-        if (dynUrls != null)
-        {
+        if (dynUrls != null) {
             dynamicUrls.addAll(dynUrls);
         }
 
         List soapUrls = properties.getPropertyAsList(SOAP, new ArrayList());
-        if (soapUrls != null)
-        {
+        if (soapUrls != null) {
             dynamicUrls.addAll(soapUrls);
         }
 
@@ -191,8 +182,7 @@ public class HTTPProxyDestination extends Destination
      *
      * @return The <code>url</code> or <code>wsdl</code> property.
      */
-    public String getDefaultUrl()
-    {
+    public String getDefaultUrl() {
         return defaultUrl;
     }
 
@@ -201,8 +191,7 @@ public class HTTPProxyDestination extends Destination
      *
      * @param defaultUrl The <code>url</code> or <code>wsdl</code> property.
      */
-    public void setDefaultUrl(String defaultUrl)
-    {
+    public void setDefaultUrl(String defaultUrl) {
         this.defaultUrl = defaultUrl;
     }
 
@@ -213,8 +202,7 @@ public class HTTPProxyDestination extends Destination
      * @return The list of <code>dynamic-url</code> or <code>soap</code>
      * properties.
      */
-    public List getDynamicUrls()
-    {
+    public List getDynamicUrls() {
         return dynamicUrls;
     }
 
@@ -228,10 +216,8 @@ public class HTTPProxyDestination extends Destination
      *
      * @param dynamicUrl - A wildcard pattern used to match dynamic URLs
      */
-    public void addDynamicUrl(String dynamicUrl)
-    {
-        if (dynamicUrl != null)
-        {
+    public void addDynamicUrl(String dynamicUrl) {
+        if (dynamicUrl != null) {
             dynamicUrls.add(dynamicUrl);
             dynamicParsed = false;
 
@@ -257,10 +243,9 @@ public class HTTPProxyDestination extends Destination
      * to the existing list.
      *
      * @param dynamicUrls A list of <code>dynamic-url</code> or <code>soap</code>
-     * properties.
+     *                    properties.
      */
-    public void addDynamicUrls(List dynamicUrls)
-    {
+    public void addDynamicUrls(List dynamicUrls) {
         this.dynamicUrls.addAll(dynamicUrls);
         dynamicParsed = false;
     }
@@ -272,8 +257,7 @@ public class HTTPProxyDestination extends Destination
      *
      * @return The <code>protocol-factory</code> property.
      */
-    public ProtocolFactory getProtocolFactory()
-    {
+    public ProtocolFactory getProtocolFactory() {
         return protocolFactory;
     }
 
@@ -282,8 +266,7 @@ public class HTTPProxyDestination extends Destination
      *
      * @param protocolFactory The <code>protocol-factory</code> property.
      */
-    public void setProtocolFactory(ProtocolFactory protocolFactory)
-    {
+    public void setProtocolFactory(ProtocolFactory protocolFactory) {
         this.protocolFactory = protocolFactory;
     }
 
@@ -292,8 +275,7 @@ public class HTTPProxyDestination extends Destination
      *
      * @return The <code>remote-password</code> property.
      */
-    public String getRemotePassword()
-    {
+    public String getRemotePassword() {
         return remotePassword;
     }
 
@@ -302,8 +284,7 @@ public class HTTPProxyDestination extends Destination
      *
      * @param remotePassword The <code>remote-password</code> property.
      */
-    public void setRemotePassword(String remotePassword)
-    {
+    public void setRemotePassword(String remotePassword) {
         this.remotePassword = remotePassword;
     }
 
@@ -312,8 +293,7 @@ public class HTTPProxyDestination extends Destination
      *
      * @return The <code>remote-username</code> property.
      */
-    public String getRemoteUsername()
-    {
+    public String getRemoteUsername() {
         return remoteUsername;
     }
 
@@ -322,8 +302,7 @@ public class HTTPProxyDestination extends Destination
      *
      * @param remoteUsername The <code>remote-username</code> property.
      */
-    public void setRemoteUsername(String remoteUsername)
-    {
+    public void setRemoteUsername(String remoteUsername) {
         this.remoteUsername = remoteUsername;
     }
 
@@ -331,11 +310,10 @@ public class HTTPProxyDestination extends Destination
      * Casts the <code>Service</code> into <code>HTTPProxyService</code>
      * and calls super.setService.
      *
-     * @param service  The HTTP proxy service.
+     * @param service The HTTP proxy service.
      */
-    public void setService(Service service)
-    {
-        HTTPProxyService proxyService = (HTTPProxyService)service;
+    public void setService(Service service) {
+        HTTPProxyService proxyService = (HTTPProxyService) service;
         super.setService(proxyService);
     }
 
@@ -345,8 +323,7 @@ public class HTTPProxyDestination extends Destination
      * @return <code>true</code> if use-custom-auth is enabled;
      * otherwise <code>false</code>.
      */
-    public boolean isUseCustomAuthentication()
-    {
+    public boolean isUseCustomAuthentication() {
         return useCustomAuthentication;
     }
 
@@ -355,8 +332,7 @@ public class HTTPProxyDestination extends Destination
      *
      * @param useCustomAuthentication The <code>use-custom-auth</code> property.
      */
-    public void setUseCustomAuthentication(boolean useCustomAuthentication)
-    {
+    public void setUseCustomAuthentication(boolean useCustomAuthentication) {
         this.useCustomAuthentication = useCustomAuthentication;
     }
 
@@ -370,16 +346,14 @@ public class HTTPProxyDestination extends Destination
      * This method replaces the dynamic tokens of the default url with the specified
      * values and returns the resulting url.
      *
-     * @param contextPath The context path to be used in dynamic url replacement.
-     * @param serverName The server name to be used in dynamic url replacement.
-     * @param serverPort The server port to be used in dynamic url replacement.
+     * @param contextPath    The context path to be used in dynamic url replacement.
+     * @param serverName     The server name to be used in dynamic url replacement.
+     * @param serverPort     The server port to be used in dynamic url replacement.
      * @param serverProtocol The server protocol to be used in dynamic url replacement.
      * @return The fully parsed url where the dynamic tokens have been replaced.
      */
-    public String getParsedDefaultUrl(String contextPath, String serverName, String serverPort, String serverProtocol)
-    {
-        if (defaultUrl != null)
-        {
+    public String getParsedDefaultUrl(String contextPath, String serverName, String serverPort, String serverProtocol) {
+        if (defaultUrl != null) {
             parsedDefaultUrl = SettingsReplaceUtil.replaceAllTokensGivenServerName(defaultUrl, contextPath, serverName, serverPort, serverProtocol);
         }
 
@@ -393,18 +367,15 @@ public class HTTPProxyDestination extends Destination
      * @param contextPath The context path to be used in dynamic url replacement.
      * @return List List of fully parsed urls where the dynamic tokens have been replaced.
      */
-    public List getParsedDynamicUrls(String contextPath)
-    {
-        if (!dynamicParsed || parsedDynamicUrls == null)
-        {
+    public List getParsedDynamicUrls(String contextPath) {
+        if (!dynamicParsed || parsedDynamicUrls == null) {
             parseDynamicUrls(this, contextPath);
         }
 
         return parsedDynamicUrls;
     }
 
-    private static void parseDynamicUrls(HTTPProxyDestination dest, String contextPath)
-    {
+    private static void parseDynamicUrls(HTTPProxyDestination dest, String contextPath) {
         List dynamicUrls = dest.getDynamicUrls();
 
         dest.parsedDynamicUrls = new ArrayList();
@@ -414,37 +385,28 @@ public class HTTPProxyDestination extends Destination
         boolean computeAuth = true;
 
         Set parsedUrls = SettingsReplaceUtil.replaceAllTokensCalculateServerName(dynamicUrls, contextPath);
-        for (Iterator iter = parsedUrls.iterator(); iter.hasNext();)
-        {
-            String url = (String)iter.next();
+        for (Iterator iter = parsedUrls.iterator(); iter.hasNext(); ) {
+            String url = (String) iter.next();
             dest.parsedDynamicUrls.add(url.toCharArray());
-            if (computeAuth)
-            {
+            if (computeAuth) {
                 boolean fail = false;
-                try
-                {
+                try {
                     URL urlObj = new URL(url);
                     String host = urlObj.getHost();
-                    if (host.indexOf('*') > -1)
-                    {
+                    if (host.indexOf('*') > -1) {
                         fail = true;
-                    }
-                    else
-                    {
+                    } else {
                         String domainAndPort = host + ":" + urlObj.getPort();
                         if (lastDomainAndPort != null && !lastDomainAndPort.equalsIgnoreCase(domainAndPort))
                             fail = true;
                         lastDomainAndPort = domainAndPort;
                     }
-                }
-                catch (MalformedURLException e)
-                {
+                } catch (MalformedURLException e) {
                     //probably due to the port being *
                     fail = true;
                 }
 
-                if (fail)
-                {
+                if (fail) {
                     computeAuth = false;
                     dest.allowsDynamicAuthentication = false;
                 }
@@ -459,10 +421,8 @@ public class HTTPProxyDestination extends Destination
      *
      * @return Whether dynamic authentication is allowed.
      */
-    public boolean allowsDynamicAuthentication()
-    {
-        if (!dynamicParsed)
-        {
+    public boolean allowsDynamicAuthentication() {
+        if (!dynamicParsed) {
             //not using proxy exception because this is really a coding issue
             throw new RuntimeException("Cannot compute authentication if dynamic urls aren't parsed");
         }
@@ -480,8 +440,7 @@ public class HTTPProxyDestination extends Destination
      *
      * @return The log category of the component.
      */
-    protected String getLogCategory()
-    {
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
@@ -491,8 +450,7 @@ public class HTTPProxyDestination extends Destination
      *
      * @param service The <code>Service</code> that manages this <code>HTTPProxyDestination</code>.
      */
-    protected void setupDestinationControl(Service service)
-    {
+    protected void setupDestinationControl(Service service) {
         controller = new HTTPProxyDestinationControl(this, service.getControl());
         controller.register();
         setControl(controller);

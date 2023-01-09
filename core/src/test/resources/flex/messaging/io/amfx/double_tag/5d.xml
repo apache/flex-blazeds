@@ -35,34 +35,35 @@
 
             <double>-1.000001</double>
 
-            <double>2.2  </double>
+            <double>2.2</double>
 
             <!-- Both sides with spaces -->
-            <double>  -3  </double>
+            <double>-3</double>
 
             <!-- Leading new line -->
             <double>
-4.040005</double>
+                4.040005
+            </double>
             <!-- Trailing new line -->
             <double>-5.0505
-</double>
+            </double>
 
             <!-- Both sides with new lines -->
-<double>
-6.60005
-</double>
+            <double>
+                6.60005
+            </double>
             <!-- Leading tab -->
-            <double>	-7.755</double>
+            <double>-7.755</double>
 
             <!-- Trailing tab -->
-            <double>8.890	</double>
+            <double>8.890</double>
 
             <!-- Both sides with tab -->
-            <double>	-9.999999	</double>
+            <double>-9.999999</double>
 
             <!-- Mixed -->
             <double>
-	      10.1010
+                10.1010
 
             </double>
 

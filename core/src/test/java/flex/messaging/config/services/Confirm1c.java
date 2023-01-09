@@ -30,12 +30,10 @@ import flex.messaging.LocalizedException;
 import java.util.List;
 import java.util.Iterator;
 
-public class Confirm1c extends ConfigurationConfirmation
-{
+public class Confirm1c extends ConfigurationConfirmation {
     protected MessagingConfiguration EXPECTED_VALUE;
 
-    public Confirm1c()
-    {
+    public Confirm1c() {
         MessagingConfiguration config = new MessagingConfiguration();
 
         ChannelSettings fooChannel = new ChannelSettings("foo-channel");
@@ -60,16 +58,14 @@ public class Confirm1c extends ConfigurationConfirmation
         // Destination Channels (from default)
         List defaultChannels = fooService.getDefaultChannels();
         Iterator it = defaultChannels.iterator();
-        while (it.hasNext())
-        {
-            ChannelSettings c = (ChannelSettings)it.next();
+        while (it.hasNext()) {
+            ChannelSettings c = (ChannelSettings) it.next();
             fooDest.addChannelSettings(c);
         }
 
         // Destination Adapters (from default)
         AdapterSettings defaultAdapter = fooService.getDefaultAdapter();
-        if (fooDest.getAdapterSettings() == null && defaultAdapter != null)
-        {
+        if (fooDest.getAdapterSettings() == null && defaultAdapter != null) {
             fooDest.setAdapterSettings(defaultAdapter);
         }
 
@@ -86,13 +82,11 @@ public class Confirm1c extends ConfigurationConfirmation
         EXPECTED_VALUE = config;
     }
 
-    public MessagingConfiguration getExpectedConfiguration()
-    {
+    public MessagingConfiguration getExpectedConfiguration() {
         return EXPECTED_VALUE;
     }
 
-    public LocalizedException getExpectedException()
-    {
+    public LocalizedException getExpectedException() {
         return null;
     }
 }

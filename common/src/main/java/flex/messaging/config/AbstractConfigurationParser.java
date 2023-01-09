@@ -41,8 +41,7 @@ import flex.messaging.util.FileUtils;
 /**
  * Provides a common base for DOM / XPath based ConfigurationParsers.
  */
-public abstract class AbstractConfigurationParser implements ConfigurationParser, ConfigurationConstants, EntityResolver
-{
+public abstract class AbstractConfigurationParser implements ConfigurationParser, ConfigurationConstants, EntityResolver {
     protected ServicesConfiguration config;
     protected DocumentBuilder docBuilder;
     protected ConfigurationFileResolver fileResolver;
@@ -50,8 +49,7 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
 
     private Map fileByDocument = new HashMap();
 
-    protected AbstractConfigurationParser()
-    {
+    protected AbstractConfigurationParser() {
         initializeDocumentBuilder();
         tokenReplacer = new TokenReplacer();
     }
@@ -59,12 +57,11 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
     /**
      * Parse the configurations in the configuration file.
      *
-     * @param path the configuration file path
+     * @param path         the configuration file path
      * @param fileResolver the ConfigurationFileResolver object
-     * @param config the ServicesConfiguration object
+     * @param config       the ServicesConfiguration object
      **/
-    public void parse(String path, ConfigurationFileResolver fileResolver, ServicesConfiguration config)
-    {
+    public void parse(String path, ConfigurationFileResolver fileResolver, ServicesConfiguration config) {
         this.config = config;
         this.fileResolver = fileResolver;
         Document doc = loadDocument(path, fileResolver.getConfigurationFile(path));
@@ -75,24 +72,19 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
     /**
      * Report Tokens.
      **/
-    public void reportTokens()
-    {
+    public void reportTokens() {
         tokenReplacer.reportTokens();
     }
 
-    protected void initializeDocumentBuilder()
-    {
+    protected void initializeDocumentBuilder() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setIgnoringComments(true);
         factory.setIgnoringElementContentWhitespace(true);
 
-        try
-        {
+        try {
             docBuilder = factory.newDocumentBuilder();
             docBuilder.setEntityResolver(this);
-        }
-        catch (ParserConfigurationException ex)
-        {
+        } catch (ParserConfigurationException ex) {
             // Error initializing configuration parser.
             ConfigurationException e = new ConfigurationException();
             e.setMessage(PARSER_INIT_ERROR);
@@ -101,10 +93,8 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
         }
     }
 
-    protected Document loadDocument(String path, InputStream in)
-    {
-        try
-        {
+    protected Document loadDocument(String path, InputStream in) {
+        try {
             Document doc;
 
             if (!in.markSupported())
@@ -113,23 +103,18 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
             // Consume UTF-8 Byte Order Mark (BOM). The InputStream must support mark()
             // as FileUtils.consumeBOM sets a mark for 3 bytes in order to check for a BOM.
             String encoding = FileUtils.consumeBOM(in, null);
-            if (FileUtils.UTF_8.equals(encoding) || FileUtils.UTF_16.equals(encoding))
-            {
+            if (FileUtils.UTF_8.equals(encoding) || FileUtils.UTF_16.equals(encoding)) {
                 InputSource inputSource = new InputSource(in);
                 inputSource.setEncoding(encoding);
                 doc = docBuilder.parse(inputSource);
-            }
-            else
-            {
+            } else {
                 doc = docBuilder.parse(in);
             }
 
             addFileByDocument(path, doc);
             doc.getDocumentElement().normalize();
             return doc;
-        }
-        catch (SAXParseException ex)
-        {
+        } catch (SAXParseException ex) {
             Integer line = new Integer(ex.getLineNumber());
             Integer col = new Integer(ex.getColumnNumber());
             String message = ex.getMessage();
@@ -139,16 +124,12 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
             e.setMessage(XML_PARSER_ERROR, new Object[]{line, col, message});
             e.setRootCause(ex);
             throw e;
-        }
-        catch (SAXException ex)
-        {
+        } catch (SAXException ex) {
             ConfigurationException e = new ConfigurationException();
             e.setMessage(ex.getMessage());
             e.setRootCause(ex);
             throw e;
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             ConfigurationException e = new ConfigurationException();
             e.setMessage(ex.getMessage());
             e.setRootCause(ex);
@@ -156,15 +137,12 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
         }
     }
 
-    protected void addFileByDocument(String path, Node node)
-    {
+    protected void addFileByDocument(String path, Node node) {
         String shortPath = path;
-        if (shortPath != null && ((shortPath.indexOf('/') != -1) || (shortPath.indexOf("\\") != -1)) )
-        {
+        if (shortPath != null && ((shortPath.indexOf('/') != -1) || (shortPath.indexOf("\\") != -1))) {
             int start = 0;
             start = shortPath.lastIndexOf('/');
-            if (start == -1)
-            {
+            if (start == -1) {
                 start = shortPath.lastIndexOf("\\");
             }
             shortPath = path.substring(start + 1);
@@ -172,16 +150,18 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
         fileByDocument.put(node, shortPath);
     }
 
-    protected String getSourceFileOf(Node node)
-    {
-        return (String)fileByDocument.get(node.getOwnerDocument());
+    protected String getSourceFileOf(Node node) {
+        return (String) fileByDocument.get(node.getOwnerDocument());
     }
 
     protected abstract void parseTopLevelConfig(Document doc);
 
     protected abstract void initializeExpressionQuery();
+
     protected abstract Node selectSingleNode(Node source, String expression);
+
     protected abstract NodeList selectNodeList(Node source, String expression);
+
     protected abstract Object evaluateExpression(Node source, String expression);
 
     /**
@@ -201,11 +181,11 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
      * The sourceFileName argument is used as a parameter for token replacement in order
      * to generate a meaningful error message when a token is failed to be replaced.
      * </p>
+     *
      * @param properties the NodeList object
      * @return ConfigMap the ConfigMap object
      */
-    public ConfigMap properties(NodeList properties)
-    {
+    public ConfigMap properties(NodeList properties) {
         return properties(properties, ConfigurationConstants.UNKNOWN_SOURCE_FILE);
     }
 
@@ -213,29 +193,24 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
      * Recursively processes all child elements for each of the properties in the provided
      * node list.
      *
-     * @param properties the NodeList object
+     * @param properties     the NodeList object
      * @param sourceFileName the source file name
      * @return ConfigMap the ConfigMap object
      */
-    public ConfigMap properties(NodeList properties, String sourceFileName)
-    {
+    public ConfigMap properties(NodeList properties, String sourceFileName) {
         int length = properties.getLength();
         ConfigMap map = new ConfigMap(length);
 
-        for (int p = 0; p < length; p++)
-        {
+        for (int p = 0; p < length; p++) {
             Node prop = properties.item(p);
             String propName = prop.getNodeName();
 
-            if (propName != null)
-            {
+            if (propName != null) {
                 propName = propName.trim();
-                if (prop.getNodeType() == Node.ELEMENT_NODE)
-                {
+                if (prop.getNodeType() == Node.ELEMENT_NODE) {
                     NodeList attributes = selectNodeList(prop, "@*");
                     NodeList children = selectNodeList(prop, "*");
-                    if (children.getLength() > 0 || attributes.getLength() > 0)
-                    {
+                    if (children.getLength() > 0 || attributes.getLength() > 0) {
                         ConfigMap childMap = new ConfigMap();
 
                         if (children.getLength() > 0)
@@ -245,17 +220,13 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
                             childMap.addProperties(properties(attributes, sourceFileName));
 
                         map.addProperty(propName, childMap);
-                    }
-                    else
-                    {
+                    } else {
                         // replace tokens before setting property
                         tokenReplacer.replaceToken(prop, sourceFileName);
                         String propValue = evaluateExpression(prop, ".").toString();
                         map.addProperty(propName, propValue);
                     }
-                }
-                else
-                {
+                } else {
                     // replace tokens before setting property
                     tokenReplacer.replaceToken(prop, sourceFileName);
                     map.addProperty(propName, prop.getNodeValue());
@@ -265,37 +236,33 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
 
         return map;
     }
-    
+
     /**
-     * Get the item value by name if the item is present in the current node as attribute or child element. 
+     * Get the item value by name if the item is present in the current node as attribute or child element.
      *
      * @param node the current Node object
      * @param name item name
      * @return String the value of item
      **/
-    public String getAttributeOrChildElement(Node node, String name)
-    {
+    public String getAttributeOrChildElement(Node node, String name) {
         String attr = evaluateExpression(node, "@" + name).toString().trim();
-        if (attr.length() == 0)
-        {
+        if (attr.length() == 0) {
             attr = evaluateExpression(node, name).toString().trim();
         }
         return attr;
     }
-    
+
     /**
-     * Check whether the required items are present in the current node as child elements. 
+     * Check whether the required items are present in the current node as child elements.
      *
-     * @param node the current Node object
+     * @param node    the current Node object
      * @param allowed the String array of the allowed items
      **/
-    public void allowedChildElements(Node node, String[] allowed)
-    {
+    public void allowedChildElements(Node node, String[] allowed) {
         NodeList children = selectNodeList(node, "*");
 
         String unexpected = unexpected(children, allowed);
-        if (unexpected != null)
-        {
+        if (unexpected != null) {
             // Unexpected child element '{0}' found in '{1}'.
             ConfigurationException ex = new ConfigurationException();
             Object[] args = {unexpected, node.getNodeName(), getSourceFilename(node)};
@@ -304,11 +271,9 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
         }
 
         NodeList textNodes = selectNodeList(node, "text()");
-        for (int i = 0; i < textNodes.getLength(); i++)
-        {
+        for (int i = 0; i < textNodes.getLength(); i++) {
             String text = evaluateExpression(textNodes.item(i), ".").toString().trim();
-            if (text.length() > 0)
-            {
+            if (text.length() > 0) {
                 //Unexpected text '{0}' found in '{1}'.
                 ConfigurationException ex = new ConfigurationException();
                 Object[] args = {text, node.getNodeName(), getSourceFilename(node)};
@@ -317,78 +282,67 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
             }
         }
     }
-    
+
     /**
-     * Check whether the required items are present in the current node as attributes. 
+     * Check whether the required items are present in the current node as attributes.
      *
-     * @param node the current Node object
+     * @param node    the current Node object
      * @param allowed the String array of the allowed items
      **/
 
-    public void allowedAttributes(Node node, String[] allowed)
-    {
+    public void allowedAttributes(Node node, String[] allowed) {
         NodeList attributes = selectNodeList(node, "@*");
         String unexpectedAttribute = unexpected(attributes, allowed);
-        if (unexpectedAttribute != null)
-        {
+        if (unexpectedAttribute != null) {
             //Unexpected attribute '{0}' found in '{1}'.
             ConfigurationException ex = new ConfigurationException();
             Object[] args =
-                {unexpectedAttribute, node.getNodeName(), getSourceFilename(node)};
+                    {unexpectedAttribute, node.getNodeName(), getSourceFilename(node)};
             ex.setMessage(UNEXPECTED_ATTRIBUTE, args);
             throw ex;
         }
     }
 
-    private String getSourceFilename(Node node)
-    {
+    private String getSourceFilename(Node node) {
         return getSourceFileOf(node);
     }
-    
+
     /**
-     * Check whether the allowed items are present in the current node as elements or attributes. 
+     * Check whether the allowed items are present in the current node as elements or attributes.
      *
-     * @param node the current Node object
+     * @param node    the current Node object
      * @param allowed the String array of the allowed items
      **/
 
-    public void allowedAttributesOrElements(Node node, String[] allowed)
-    {
+    public void allowedAttributesOrElements(Node node, String[] allowed) {
         allowedAttributes(node, allowed);
         allowedChildElements(node, allowed);
     }
 
     /**
-     * Check whether the required items are present in the current node as elements or attributes. 
+     * Check whether the required items are present in the current node as elements or attributes.
      *
-     * @param node the current Node object
+     * @param node     the current Node object
      * @param required the String array of the required items
      **/
-    public void requiredAttributesOrElements(Node node, String[] required)
-    {
+    public void requiredAttributesOrElements(Node node, String[] required) {
         String nodeName = node.getNodeName();
         NodeList attributes = selectNodeList(node, "@*");
 
         List list = new ArrayList();
-        for (int i = 0; i < required.length; i++)
-        {
+        for (int i = 0; i < required.length; i++) {
             list.add(required[i]);
         }
 
         String missingAttribute = null;
 
-        do
-        {
+        do {
             missingAttribute = required(attributes, list);
-            if (missingAttribute != null)
-            {
+            if (missingAttribute != null) {
                 Node child = selectSingleNode(node, missingAttribute);
-                if (child != null)
-                {
+                if (child != null) {
                     list.remove(missingAttribute);
-                }
-                else
-                {
+                } else {
                     // Attribute '{0}' must be specified for element '{1}'
                     ConfigurationException ex = new ConfigurationException();
                     ex.setMessage(MISSING_ATTRIBUTE, new Object[]{missingAttribute, nodeName});
@@ -400,25 +354,22 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
     }
 
     /**
-     * Check whether the required items are present in the current node (Child elements). 
+     * Check whether the required items are present in the current node (Child elements).
      *
-     * @param node the current Node object
+     * @param node     the current Node object
      * @param required the String array of the required items
      **/
-    public void requiredChildElements(Node node, String[] required)
-    {
+    public void requiredChildElements(Node node, String[] required) {
         String nodeName = node.getNodeName();
         NodeList children = selectNodeList(node, "*");
 
         List list = new ArrayList();
-        for (int i = 0; i < required.length; i++)
-        {
+        for (int i = 0; i < required.length; i++) {
             list.add(required[i]);
         }
 
         String missing = required(children, list);
-        if (missing != null)
-        {
+        if (missing != null) {
             // Child element '{0}' must be specified for element '{1}'
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(MISSING_ELEMENT, new Object[]{missing, nodeName});
@@ -430,30 +381,25 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
      * Check whether there is any unexpected item in the node list object.
      *
      * @param attributes the current NodeList object
-     * @param allowed, the String array of allowed items
+     * @param allowed,   the String array of allowed items
      * @return Name of the first unexpected item from the list of allowed attributes, or null if all
-     *         items present were allowed.
+     * items present were allowed.
      **/
-    public String unexpected(NodeList attributes, String[] allowed)
-    {
-        for (int i = 0; i < attributes.getLength(); i++)
-        {
+    public String unexpected(NodeList attributes, String[] allowed) {
+        for (int i = 0; i < attributes.getLength(); i++) {
             Node attrib = attributes.item(i);
             String attribName = attrib.getNodeName();
             boolean match = false;
 
-            for (int j = 0; j < allowed.length; j++)
-            {
+            for (int j = 0; j < allowed.length; j++) {
                 String a = allowed[j];
-                if (a.equals(attribName))
-                {
+                if (a.equals(attribName)) {
                     match = true;
                     break;
                 }
             }
 
-            if (!match)
-            {
+            if (!match) {
                 return attribName;
             }
 
@@ -466,33 +412,29 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
 
     /**
      * Check whether all the required items are present in the node list.
+     *
      * @param attributes the NodeList object
-     * @param required a list of required items
+     * @param required   a list of required items
      * @return Name of the first missing item from the list of required attributes, or null if all required
-     *         items were present.
+     * items were present.
      **/
-    public String required(NodeList attributes, List required)
-    {
-        for (int i = 0; i < required.size(); i++)
-        {
+    public String required(NodeList attributes, List required) {
+        for (int i = 0; i < required.size(); i++) {
             boolean found = false;
-            String req = (String)required.get(i);
+            String req = (String) required.get(i);
 
             Node attrib = null;
-            for (int j = 0; j < attributes.getLength(); j++)
-            {
+            for (int j = 0; j < attributes.getLength(); j++) {
                 attrib = attributes.item(j);
                 String attribName = attrib.getNodeName();
 
-                if (req.equals(attribName))
-                {
+                if (req.equals(attribName)) {
                     found = true;
                     break;
                 }
             }
 
-            if (!found)
-            {
+            if (!found) {
                 return req;
             }
 
@@ -511,20 +453,17 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
      * greater than 0 characters in length and not contain
      * any of the list delimiter characters, i.e. commas,
      * semi-colons or colons.
+     *
      * @param id the Id String
      * @return boolean true if the id string is valid identification
      * @see ConfigurationConstants#LIST_DELIMITERS
      */
-    public static boolean isValidID(String id)
-    {
-        if (id != null && id.length() > 0 && id.length() < 256)
-        {
+    public static boolean isValidID(String id) {
+        if (id != null && id.length() > 0 && id.length() < 256) {
             char[] chars = id.toCharArray();
-            for (int i = 0; i < chars.length; i++)
-            {
+            for (int i = 0; i < chars.length; i++) {
                 char c = chars[i];
-                if (LIST_DELIMITERS.indexOf(c) != -1)
-                {
+                if (LIST_DELIMITERS.indexOf(c) != -1) {
                     return false;
                 }
             }
@@ -534,23 +473,23 @@ public abstract class AbstractConfigurationParser implements ConfigurationParser
 
         return false;
     }
-    
+
     /**
      * Implement {@link org.xml.sax.EntityResolver#resolveEntity(String, String)}.
-     * 
+     * <p>
      * Flex Configuration does not need or use external entities, so disallow external entities
-     * to prevent external entity injection attacks. 
+     * to prevent external entity injection attacks.
+     *
      * @param publicId the public Id
      * @param systemId the system Id
      * @return InputSource the InputSource object
      * @throws SAXException when the parsing process failed with exceptions
-     * @throws IOException when the parsing process failed with exceptions
+     * @throws IOException  when the parsing process failed with exceptions
      */
-    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
-    {
+    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
         // Flex Configuration does not allow external entity defined by publicId {0} and SystemId {1}
         ConfigurationException ex = new ConfigurationException();
-        ex.setMessage(EXTERNAL_ENTITY_NOT_ALLOW, new Object[] { publicId, systemId });
+        ex.setMessage(EXTERNAL_ENTITY_NOT_ALLOW, new Object[]{publicId, systemId});
         throw ex;
     }
 }

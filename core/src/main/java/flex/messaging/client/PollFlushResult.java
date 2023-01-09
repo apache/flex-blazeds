@@ -17,11 +17,10 @@
 package flex.messaging.client;
 
 /**
- * Extends <tt>FlushResult</tt> and adds additional properties for controlling 
+ * Extends <tt>FlushResult</tt> and adds additional properties for controlling
  * client polling behavior.
  */
-public class PollFlushResult extends FlushResult
-{
+public class PollFlushResult extends FlushResult {
     //--------------------------------------------------------------------------
     //
     // Properties
@@ -33,65 +32,61 @@ public class PollFlushResult extends FlushResult
     //----------------------------------
 
     private boolean avoidBusyPolling;
-    
+
     /**
      * Indicates whether the handling of this result should attempt to avoid
      * potential busy-polling cycles.
      * This will be set to <code>true</code> in the case of two clients that are both
      * long-polling the server over the same session.
-     * 
+     *
      * @return <code>true</code> if the handling of this result should attempt to avoid potential
-     *         busy-polling cycles.
+     * busy-polling cycles.
      */
-    public boolean isAvoidBusyPolling()
-    {
+    public boolean isAvoidBusyPolling() {
         return avoidBusyPolling;
     }
-    
+
     /**
      * Set to <code>true</code> to signal that handling for this result should attempt to avoid
      * potential busy-polling cycles.
-     * 
-     * @param value <code>true</code> to signal that handling for this result should attempt to 
-     *        avoid potential busy-polling cycles.
+     *
+     * @param value <code>true</code> to signal that handling for this result should attempt to
+     *              avoid potential busy-polling cycles.
      */
-    public void setAvoidBusyPolling(boolean value)
-    {
+    public void setAvoidBusyPolling(boolean value) {
         avoidBusyPolling = value;
     }
-    
+
     //----------------------------------
     //  clientProcessingSuppressed
     //----------------------------------
 
     private boolean clientProcessingSuppressed;
-    
+
     /**
      * Indicates whether client processing of this result should be
      * suppressed.
      * This should be <code>true</code> for results generated for poll requests
      * that arrive while a long-poll request from the same client is being serviced
      * to avoid a busy polling cycle.
-     * 
+     *
      * @return <code>true</code> if client processing of this result should be suppressed;
-     *         otherwise <code>false</code>.
+     * otherwise <code>false</code>.
      */
-    public boolean isClientProcessingSuppressed()
-    {
+    public boolean isClientProcessingSuppressed() {
         return clientProcessingSuppressed;
     }
-    
+
     /**
      * Set to <code>true</code> to suppress client processing of this result.
      * Default is <code>false</code>.
      * This should be set to <code>true</code> for results generated for poll requests
      * that arrive while a long-poll request from the same client is being serviced
      * to avoid a busy polling cycle.
-     * 
+     *
      * @param value <code>true</code> to suppress client processing of the result.
      */
-    public void setClientProcessingSuppressed(boolean value)
-    {
+    public void setClientProcessingSuppressed(boolean value) {
         clientProcessingSuppressed = value;
     }
 }

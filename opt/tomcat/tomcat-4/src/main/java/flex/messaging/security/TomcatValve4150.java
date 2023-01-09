@@ -48,40 +48,33 @@ import java.util.List;
  * normally to a servlet, and allows login to the current realm.  The pieces interacting with Tomcat are taken from
  * org.apache.catalina.authenticator.AuthenticatorBase.  It would be nice if we could just extend that class or
  * call some of its methods, but things aren't set up in that class in such a way that this is possible
- *
+ * <p>
  * FIXME: doesn't support Tomcat's SingleSignOn idea.  This is a way to write custom valves that associate
  * the principal to different web apps or locations.  See AuthenticatorBase for details
- *
+ * <p>
  * JAR NOTE: this class is not in flex-messaging.jar but rather flex-tomcat-server.jar
- *
- *
  */
-public class TomcatValve4150 extends ValveBase implements Lifecycle
-{
+public class TomcatValve4150 extends ValveBase implements Lifecycle {
 
     private static String AMF_MATCH = "/amfgateway";
     private static String GATEWAY_MATCH = "/flashgateway";
     private static String MESSAGEBROKER_MATCH = "/messagebroker";
     private static String CUSTOM_MATCH = System.getProperty("flex.tomcatValveMatch");
 
-    public void addLifecycleListener(LifecycleListener listener)
-    {
+    public void addLifecycleListener(LifecycleListener listener) {
         // ignore
     }
 
-    public LifecycleListener[] findLifecycleListeners()
-    {
+    public LifecycleListener[] findLifecycleListeners() {
         // ignore
         return null;
     }
 
-    public void removeLifecycleListener(LifecycleListener listener)
-    {
+    public void removeLifecycleListener(LifecycleListener listener) {
         // ignore
     }
 
-    public void start() throws LifecycleException
-    {
+    public void start() throws LifecycleException {
 
         // RTMP may not go through invoke so we need to put at least one TomcatLoginImpl in the holder.
         TomcatLogin login = new TomcatLoginImpl(getContainer(), null);
@@ -91,55 +84,45 @@ public class TomcatValve4150 extends ValveBase implements Lifecycle
         TomcatLoginHolder.setNioBasedLogin(login);
     }
 
-    public void stop() throws LifecycleException
-    {
+    public void stop() throws LifecycleException {
         // ignore
     }
 
     public void invoke(Request request, Response response, ValveContext context)
-            throws IOException, ServletException
-    {
+            throws IOException, ServletException {
         ServletRequest servRequest = request.getRequest();
-        if (servRequest instanceof HttpServletRequest)
-        {
+        if (servRequest instanceof HttpServletRequest) {
             // we only set the TomcatLoginImpl for gateway paths
 
-            HttpServletRequest hrequest = ((HttpServletRequest)servRequest);
+            HttpServletRequest hrequest = ((HttpServletRequest) servRequest);
             String path = hrequest.getServletPath();
             boolean match = false;
-            if (path == null)
-            {
+            if (path == null) {
                 // We need to use a slighly-weaker uri match for 4.1
                 String uri = hrequest.getRequestURI();
                 match = (uri != null &&
-                    (uri.indexOf(MESSAGEBROKER_MATCH) != -1 ||
-                    uri.indexOf(AMF_MATCH) != -1 ||
-                    uri.indexOf(GATEWAY_MATCH) != -1 ||
-                    (CUSTOM_MATCH != null && uri.indexOf(CUSTOM_MATCH) != -1)));
-            }
-            else
-            {
-                 match = (path.startsWith(MESSAGEBROKER_MATCH) ||
-                         path.startsWith(AMF_MATCH) ||
-                         path.startsWith(GATEWAY_MATCH) ||
-                         (CUSTOM_MATCH != null && path.startsWith(CUSTOM_MATCH)));
+                        (uri.indexOf(MESSAGEBROKER_MATCH) != -1 ||
+                                uri.indexOf(AMF_MATCH) != -1 ||
+                                uri.indexOf(GATEWAY_MATCH) != -1 ||
+                                (CUSTOM_MATCH != null && uri.indexOf(CUSTOM_MATCH) != -1)));
+            } else {
+                match = (path.startsWith(MESSAGEBROKER_MATCH) ||
+                        path.startsWith(AMF_MATCH) ||
+                        path.startsWith(GATEWAY_MATCH) ||
+                        (CUSTOM_MATCH != null && path.startsWith(CUSTOM_MATCH)));
             }
 
-            if (match)
-            {
-                HttpRequest httpRequest = (HttpRequest)request;
+            if (match) {
+                HttpRequest httpRequest = (HttpRequest) request;
                 TomcatLoginHolder.setLogin(new TomcatLoginImpl(getContainer(), httpRequest));
 
                 // copy over user princicpal and auth type values, just like in AuthenticatorBase.invoke()
                 Principal principal = hrequest.getUserPrincipal();
-                if (principal == null) 
-                {
+                if (principal == null) {
                     Session session = getSession(httpRequest, false);
-                    if (session != null) 
-                    {
+                    if (session != null) {
                         principal = session.getPrincipal();
-                        if (principal != null) 
-                        {
+                        if (principal != null) {
                             httpRequest.setAuthType(session.getAuthType());
                             httpRequest.setUserPrincipal(principal);
                         }
@@ -151,11 +134,10 @@ public class TomcatValve4150 extends ValveBase implements Lifecycle
     }
 
     // from AuthenticatorBase.getSession()
-    static Session getSession(HttpRequest request, boolean create) 
-    {
+    static Session getSession(HttpRequest request, boolean create) {
 
         HttpServletRequest hreq =
-            (HttpServletRequest) request.getRequest();
+                (HttpServletRequest) request.getRequest();
 
         HttpSession hses = hreq.getSession(create);
 
@@ -165,51 +147,42 @@ public class TomcatValve4150 extends ValveBase implements Lifecycle
 
         if (manager == null)
             return (null);
-        else 
-        {
-            try 
-            {
+        else {
+            try {
                 return (manager.findSession(hses.getId()));
-            } catch (IOException e) 
-            {
+            } catch (IOException e) {
                 Log.getLogger(LogCategories.SECURITY).error("Error in TomcatValve getting session id " + hses.getId() + " : " + ExceptionUtil.toString(e));
                 return (null);
             }
         }
     }
 
-    class TomcatLoginImpl implements TomcatLogin
-    {
+    class TomcatLoginImpl implements TomcatLogin {
         private Container container;
         private HttpRequest request;
 
-        TomcatLoginImpl(Container container, HttpRequest request)
-        {
+        TomcatLoginImpl(Container container, HttpRequest request) {
             this.container = container;
             this.request = request;
         }
 
         // authenticate the user and associate with the current session.  This is taken
         // from AuthenticatorBase.register()
-        public Principal login(String username, String password, HttpServletRequest servletRequest)
-        {
+        public Principal login(String username, String password, HttpServletRequest servletRequest) {
             Realm realm = container.getRealm();
             if (realm == null)
                 return null;
             Principal principal = realm.authenticate(username, password);
 
-            if (principal != null) 
-            {
-                if (this.request != null && this.request.getRequest() == servletRequest)
-                {
+            if (principal != null) {
+                if (this.request != null && this.request.getRequest() == servletRequest) {
                     request.setAuthType("flexmessaging"); //was "flashgateway"
                     request.setUserPrincipal(principal);
 
                     Session session = getSession(request, true);
 
                     // Cache the authentication information in our session, if any
-                    if (session != null) 
-                    {
+                    if (session != null) {
                         session.setAuthType("flexmessaging"); //was "flashgateway"
                         session.setPrincipal(principal);
                         if (username != null)
@@ -227,27 +200,22 @@ public class TomcatValve4150 extends ValveBase implements Lifecycle
             return principal;
         }
 
-        public boolean authorize(Principal principal, List roles)
-        {
+        public boolean authorize(Principal principal, List roles) {
 
             Realm realm = container.getRealm();
             Iterator iter = roles.iterator();
-            while (iter.hasNext())
-            {
-                String role = (String)iter.next();
+            while (iter.hasNext()) {
+                String role = (String) iter.next();
                 if (realm.hasRole(principal, role))
                     return true;
             }
             return false;
         }
 
-        public boolean logout(HttpServletRequest request)
-        {
-            if (this.request != null && this.request.getRequest() == request)
-            {
+        public boolean logout(HttpServletRequest request) {
+            if (this.request != null && this.request.getRequest() == request) {
                 Session session = getSession(this.request, false);
-                if (session != null)
-                {
+                if (session != null) {
                     session.setPrincipal(null);
                     session.setAuthType(null);
                     session.removeNote(Constants.SESS_USERNAME_NOTE);
@@ -257,10 +225,11 @@ public class TomcatValve4150 extends ValveBase implements Lifecycle
             }
             return false;
         }
-        
-        /** {@inheritDoc} */
-        public Principal convertPrincipal(Principal principal)
-        {
+
+        /**
+         * {@inheritDoc}
+         */
+        public Principal convertPrincipal(Principal principal) {
             return principal;
         }
     }

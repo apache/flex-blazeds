@@ -22,24 +22,19 @@ import flex.messaging.config.MessagingConfiguration;
 import flex.messaging.LocalizedException;
 import flex.messaging.MessageException;
 
-public class Confirm1h extends ConfigurationConfirmation
-{
-    public Confirm1h()
-    {
+public class Confirm1h extends ConfigurationConfirmation {
+    public Confirm1h() {
     }
 
-    public boolean isNegativeTest()
-    {
+    public boolean isNegativeTest() {
         return true;
     }
 
-    public MessagingConfiguration getExpectedConfiguration()
-    {
+    public MessagingConfiguration getExpectedConfiguration() {
         return null;
     }
 
-    public LocalizedException getExpectedException()
-    {
+    public LocalizedException getExpectedException() {
         return new MessageException("Unexpected attribute 'security' found in 'destination' from file: 1h.xml.");
     }
 }

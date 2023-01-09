@@ -49,8 +49,7 @@ import flex.messaging.messages.Message;
  * This endpoint does not support polling clients and will fault any poll requests
  * that are received. To support polling clients use HTTPEndpoint instead.
  */
-public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint
-{
+public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint {
     //--------------------------------------------------------------------------
     //
     // Public Constants
@@ -71,8 +70,7 @@ public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint
     /**
      * Constructs an unmanaged <code>StreamingHTTPEndpoint</code>.
      */
-    public StreamingHTTPEndpoint()
-    {
+    public StreamingHTTPEndpoint() {
         this(false);
     }
 
@@ -80,10 +78,9 @@ public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint
      * Constructs a <code>StreamingHTTPEndpoint</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>StreamingHTTPEndpoint</code>
-     * is manageable; <code>false</code> otherwise.
+     *                         is manageable; <code>false</code> otherwise.
      */
-    public StreamingHTTPEndpoint(boolean enableManagement)
-    {
+    public StreamingHTTPEndpoint(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -96,21 +93,18 @@ public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint
     /**
      * Create default filter chain or return current one if already present.
      */
-    @Override protected AMFFilter createFilterChain()
-    {
+    @Override
+    protected AMFFilter createFilterChain() {
         AMFFilter serializationFilter = new SerializationFilter(getLogCategory());
         AMFFilter batchFilter = new BatchProcessFilter();
-        AMFFilter sessionFilter = sessionRewritingEnabled? new SessionFilter() : null;
+        AMFFilter sessionFilter = sessionRewritingEnabled ? new SessionFilter() : null;
         AMFFilter messageBrokerFilter = new MessageBrokerFilter(this);
 
         serializationFilter.setNext(batchFilter);
-        if (sessionFilter != null)
-        {
+        if (sessionFilter != null) {
             batchFilter.setNext(sessionFilter);
             sessionFilter.setNext(messageBrokerFilter);
-        }
-        else
-        {
+        } else {
             batchFilter.setNext(messageBrokerFilter);
         }
 
@@ -120,8 +114,8 @@ public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint
     /**
      * Returns MessageIOConstants.XML_CONTENT_TYPE.
      */
-    @Override protected String getResponseContentType()
-    {
+    @Override
+    protected String getResponseContentType() {
         return MessageIOConstants.XML_CONTENT_TYPE;
     }
 
@@ -130,8 +124,8 @@ public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint
      *
      * @return The log category of the endpoint.
      */
-    @Override protected String getLogCategory()
-    {
+    @Override
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
@@ -141,21 +135,17 @@ public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint
      * of the serialized message.
      *
      * @param message Message to get the size for.
-     *
      * @return The size of the message after message is serialized.
      */
-    @Override protected long getMessageSizeForPerformanceInfo(Message message)
-    {
+    @Override
+    protected long getMessageSizeForPerformanceInfo(Message message) {
         AmfxOutput amfxOut = new AmfxOutput(serializationContext);
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         DataOutputStream dataOutStream = new DataOutputStream(outStream);
         amfxOut.setOutputStream(dataOutStream);
-        try
-        {
+        try {
             amfxOut.writeObject(message);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             if (Log.isDebug())
                 log.debug("MPI exception while retrieving the size of the serialized message: " + e.toString());
         }
@@ -167,8 +157,8 @@ public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint
      *
      * @return The deserializer class name used by the endpoint.
      */
-    @Override protected String getDeserializerClassName()
-    {
+    @Override
+    protected String getDeserializerClassName() {
         return "flex.messaging.io.amfx.AmfxMessageDeserializer";
     }
 
@@ -177,8 +167,8 @@ public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint
      *
      * @return The serializer class name used by the endpoint.
      */
-    @Override protected String getSerializerClassName()
-    {
+    @Override
+    protected String getSerializerClassName() {
         return "flex.messaging.io.amfx.AmfxMessageSerializer";
     }
 
@@ -187,10 +177,10 @@ public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint
      * corresponding MBean control.
      *
      * @param broker The <code>MessageBroker</code> that manages this
-     * <code>StreamingHTTPEndpoint</code>.
+     *               <code>StreamingHTTPEndpoint</code>.
      */
-    @Override protected void setupEndpointControl(MessageBroker broker)
-    {
+    @Override
+    protected void setupEndpointControl(MessageBroker broker) {
         controller = new StreamingHTTPEndpointControl(this, broker.getControl());
         controller.register();
         setControl(controller);
@@ -201,19 +191,18 @@ public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint
      * Serializes messages and streams each to the client as a response chunk using streamChunk().
      *
      * @param messages The messages to serialize and push to the client.
-     * @param os The output stream the chunk will be written to.
+     * @param os       The output stream the chunk will be written to.
      * @param response The HttpServletResponse, used to flush the chunk to the client.
      */
-    @Override protected void streamMessages(List messages, ServletOutputStream os, HttpServletResponse response) throws IOException
-    {
+    @Override
+    protected void streamMessages(List messages, ServletOutputStream os, HttpServletResponse response) throws IOException {
         if (messages == null || messages.isEmpty())
             return;
 
         // Serialize each message as a separate chunk of bytes.
         TypeMarshallingContext.setTypeMarshaller(getTypeMarshaller());
-        for (Iterator iter = messages.iterator(); iter.hasNext();)
-        {
-            Message message = (Message)iter.next();
+        for (Iterator iter = messages.iterator(); iter.hasNext(); ) {
+            Message message = (Message) iter.next();
             addPerformanceInfo(message);
 
             message = convertPushMessageToSmall(message);
@@ -232,7 +221,7 @@ public class StreamingHTTPEndpoint extends BaseStreamingHTTPEndpoint
             streamChunk(messageBytes, os, response);
 
             if (isManaged())
-                ((StreamingHTTPEndpointControl)controller).incrementPushCount();
+                ((StreamingHTTPEndpointControl) controller).incrementPushCount();
         }
         TypeMarshallingContext.setTypeMarshaller(null);
     }

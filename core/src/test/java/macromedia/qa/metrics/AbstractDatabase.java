@@ -27,23 +27,18 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Calendar;
 
-public abstract class AbstractDatabase
-{
-    protected AbstractDatabase()
-    {
+public abstract class AbstractDatabase {
+    protected AbstractDatabase() {
     }
 
     protected Connection connection;
 
-    public PreparedStatement select(String[] columns, String[] tables, Map clauses, String other) throws SQLException
-    {
+    public PreparedStatement select(String[] columns, String[] tables, Map clauses, String other) throws SQLException {
         StringBuffer sb = new StringBuffer(256);
         sb.append("SELECT ");
 
-        if (columns != null && columns.length > 0)
-        {
-            for (int i = 0; i < columns.length; i++)
-            {
+        if (columns != null && columns.length > 0) {
+            for (int i = 0; i < columns.length; i++) {
                 sb.append(" ").append(columns[i]);
 
                 if (i < columns.length - 1)
@@ -51,18 +46,14 @@ public abstract class AbstractDatabase
             }
 
             sb.append("\r\n");
-        }
-        else
-        {
+        } else {
             sb.append(" * \r\n");
         }
 
-        if (tables != null && tables.length > 0)
-        {
+        if (tables != null && tables.length > 0) {
             sb.append("\tFROM ");
 
-            for (int i = 0; i < tables.length; i++)
-            {
+            for (int i = 0; i < tables.length; i++) {
                 sb.append(" \"").append(tables[i]).append("\"");
 
                 if (i < tables.length - 1)
@@ -72,17 +63,15 @@ public abstract class AbstractDatabase
             sb.append("\r\n");
         }
 
-        if (clauses != null && clauses.size() > 0)
-        {
+        if (clauses != null && clauses.size() > 0) {
             sb.append("\tWHERE \r\n");
 
             Set keys = clauses.keySet();
             Iterator kit = keys.iterator();
             int i = 0;
 
-            while (kit.hasNext())
-            {
-                String key = (String)kit.next();
+            while (kit.hasNext()) {
+                String key = (String) kit.next();
 
                 if (i > 0)
                     sb.append("\t\tAND ");
@@ -101,15 +90,13 @@ public abstract class AbstractDatabase
         PreparedStatement statement = connection.prepareStatement(sb.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
         //WHERE (VALUES)
-        if (clauses != null && clauses.size() > 0)
-        {
+        if (clauses != null && clauses.size() > 0) {
             Set keys = clauses.keySet();
             Iterator kit = keys.iterator();
             int i = 1;
 
-            while (kit.hasNext())
-            {
-                String key = (String)kit.next();
+            while (kit.hasNext()) {
+                String key = (String) kit.next();
                 Object value = clauses.get(key);
                 addParameter(statement, i, value);
                 i++;
@@ -122,7 +109,7 @@ public abstract class AbstractDatabase
 
     /**
      * Creates a <code>PreparedStatement</code> for a SQL INSERT.
-     *
+     * <p>
      * e.g.
      * <pre>
      * INSERT INTO myTable ( field1, field2 )
@@ -132,13 +119,12 @@ public abstract class AbstractDatabase
      * </pre>
      *
      * @param table   The table name to insert
-     * @param values A collection of key-value pairs to insert, with column aliases appropriately formatted
+     * @param values  A collection of key-value pairs to insert, with column aliases appropriately formatted
      * @param clauses A collection of key-value pairs for the WHERE clause; the key must be a string and the value can be any valid ODBC object
      * @return A PreparedStatement that can be subsequently executed.
      * @throws SQLException
      */
-    public PreparedStatement insert(String table, Map values, Map clauses, String other) throws SQLException
-    {
+    public PreparedStatement insert(String table, Map values, Map clauses, String other) throws SQLException {
         StringBuffer sb = new StringBuffer(256);
         sb.append("INSERT INTO ");
 
@@ -146,14 +132,12 @@ public abstract class AbstractDatabase
         sb.append(table).append(" ( ");
 
         //COLUMNS (can include aliases if correctly formatted)
-        if (values != null && values.size() > 0)
-        {
+        if (values != null && values.size() > 0) {
             Set keys = values.keySet();
             Iterator kit = keys.iterator();
             int i = 0;
 
-            while (kit.hasNext())
-            {
+            while (kit.hasNext()) {
                 sb.append(" ").append(kit.next());
 
                 if (i < values.size() - 1)
@@ -169,16 +153,14 @@ public abstract class AbstractDatabase
 
 
         //VALUES
-        if (values != null && values.size() > 0)
-        {
+        if (values != null && values.size() > 0) {
             sb.append("\tVALUES ( ");
 
             Set keys = values.keySet();
             Iterator kit = keys.iterator();
             int i = 0;
 
-            while (kit.hasNext())
-            {
+            while (kit.hasNext()) {
                 kit.next();
                 sb.append(" ? ");
 
@@ -192,17 +174,15 @@ public abstract class AbstractDatabase
         }
 
         //WHERE (KEYS)
-        if (clauses != null && clauses.size() > 0)
-        {
+        if (clauses != null && clauses.size() > 0) {
             sb.append("\tWHERE \r\n");
 
             Set keys = clauses.keySet();
             Iterator kit = keys.iterator();
             int i = 0;
 
-            while (kit.hasNext())
-            {
-                String key = (String)kit.next();
+            while (kit.hasNext()) {
+                String key = (String) kit.next();
 
                 if (i > 0)
                     sb.append("\t\tAND ");
@@ -222,15 +202,13 @@ public abstract class AbstractDatabase
         PreparedStatement statement = connection.prepareStatement(sb.toString());
 
         //VALUES (AS SQL PARAMETERS)
-        if (values != null && values.size() > 0)
-        {
+        if (values != null && values.size() > 0) {
             Set keys = values.keySet();
             Iterator kit = keys.iterator();
             int i = 1;
 
-            while (kit.hasNext())
-            {
-                String key = (String)kit.next();
+            while (kit.hasNext()) {
+                String key = (String) kit.next();
                 Object value = values.get(key);
                 addParameter(statement, i, value);
                 i++;
@@ -238,15 +216,13 @@ public abstract class AbstractDatabase
         }
 
         //WHERE (VALUES)
-        if (clauses != null && clauses.size() > 0)
-        {
+        if (clauses != null && clauses.size() > 0) {
             Set keys = clauses.keySet();
             Iterator kit = keys.iterator();
             int i = 1;
 
-            while (kit.hasNext())
-            {
-                String key = (String)kit.next();
+            while (kit.hasNext()) {
+                String key = (String) kit.next();
                 Object value = clauses.get(key);
                 addParameter(statement, i, value);
                 i++;
@@ -258,7 +234,7 @@ public abstract class AbstractDatabase
 
     /**
      * Creates a <code>PreparedStatement</code> for a SQL UPDATE.
-     *
+     * <p>
      * e.g.
      * <pre>
      * UPDATE Job
@@ -273,8 +249,7 @@ public abstract class AbstractDatabase
      * @return A PreparedStatement that can be subsequently executed.
      * @throws SQLException
      */
-    public PreparedStatement update(String table, Map updates, Map clauses, String other) throws SQLException
-    {
+    public PreparedStatement update(String table, Map updates, Map clauses, String other) throws SQLException {
         StringBuffer sb = new StringBuffer(256);
         sb.append("UPDATE ");
 
@@ -282,17 +257,15 @@ public abstract class AbstractDatabase
         sb.append(table).append(" \r\n");
 
         //SET (KEYS)
-        if (updates != null && updates.size() > 0)
-        {
+        if (updates != null && updates.size() > 0) {
             sb.append("\tSET \r\n");
 
             Set keys = updates.keySet();
             Iterator kit = keys.iterator();
             int i = 0;
 
-            while (kit.hasNext())
-            {
-                String key = (String)kit.next();
+            while (kit.hasNext()) {
+                String key = (String) kit.next();
 
                 if (i > 0)
                     sb.append("\t\tAND ");
@@ -306,17 +279,15 @@ public abstract class AbstractDatabase
         }
 
         //WHERE (KEYS)
-        if (clauses != null && clauses.size() > 0)
-        {
+        if (clauses != null && clauses.size() > 0) {
             sb.append("\tWHERE \r\n");
 
             Set keys = clauses.keySet();
             Iterator kit = keys.iterator();
             int i = 0;
 
-            while (kit.hasNext())
-            {
-                String key = (String)kit.next();
+            while (kit.hasNext()) {
+                String key = (String) kit.next();
 
                 if (i > 0)
                     sb.append("\t\tAND ");
@@ -337,15 +308,13 @@ public abstract class AbstractDatabase
         PreparedStatement statement = connection.prepareStatement(sb.toString());
 
         //SET (VALUES)
-        if (updates != null && updates.size() > 0)
-        {
+        if (updates != null && updates.size() > 0) {
             Set keys = updates.keySet();
             Iterator kit = keys.iterator();
             int i = 1;
 
-            while (kit.hasNext())
-            {
-                String key = (String)kit.next();
+            while (kit.hasNext()) {
+                String key = (String) kit.next();
                 Object value = updates.get(key);
                 addParameter(statement, i, value);
                 i++;
@@ -353,15 +322,13 @@ public abstract class AbstractDatabase
         }
 
         //WHERE (VALUES)
-        if (clauses != null && clauses.size() > 0)
-        {
+        if (clauses != null && clauses.size() > 0) {
             Set keys = clauses.keySet();
             Iterator kit = keys.iterator();
             int i = 1;
 
-            while (kit.hasNext())
-            {
-                String key = (String)kit.next();
+            while (kit.hasNext()) {
+                String key = (String) kit.next();
                 Object value = clauses.get(key);
                 addParameter(statement, i, value);
                 i++;
@@ -373,7 +340,7 @@ public abstract class AbstractDatabase
 
     /**
      * Creates a <code>PreparedStatement</code> for a SQL DELETE.
-     *
+     * <p>
      * e.g.
      * <pre>
      * DELETE FROM Employee
@@ -386,8 +353,7 @@ public abstract class AbstractDatabase
      * @return A PreparedStatement that can be subsequently executed.
      * @throws SQLException
      */
-    public PreparedStatement delete(String table, Map clauses, String other) throws SQLException
-    {
+    public PreparedStatement delete(String table, Map clauses, String other) throws SQLException {
         StringBuffer sb = new StringBuffer(256);
         sb.append("DELETE FROM ");
 
@@ -395,17 +361,15 @@ public abstract class AbstractDatabase
         sb.append(table).append(" \r\n");
 
         //WHERE (KEYS)
-        if (clauses != null && clauses.size() > 0)
-        {
+        if (clauses != null && clauses.size() > 0) {
             sb.append("\tWHERE \r\n");
 
             Set keys = clauses.keySet();
             Iterator kit = keys.iterator();
             int i = 0;
 
-            while (kit.hasNext())
-            {
-                String key = (String)kit.next();
+            while (kit.hasNext()) {
+                String key = (String) kit.next();
 
                 if (i > 0)
                     sb.append("\t\tAND ");
@@ -426,15 +390,13 @@ public abstract class AbstractDatabase
         PreparedStatement statement = connection.prepareStatement(sb.toString());
 
         //WHERE (VALUES)
-        if (clauses != null && clauses.size() > 0)
-        {
+        if (clauses != null && clauses.size() > 0) {
             Set keys = clauses.keySet();
             Iterator kit = keys.iterator();
             int i = 1;
 
-            while (kit.hasNext())
-            {
-                String key = (String)kit.next();
+            while (kit.hasNext()) {
+                String key = (String) kit.next();
                 Object value = clauses.get(key);
                 addParameter(statement, i, value);
                 i++;
@@ -444,18 +406,13 @@ public abstract class AbstractDatabase
         return statement;
     }
 
-    public static long getId(Object val)
-    {
+    public static long getId(Object val) {
         long id = -1;
 
-        if (val != null)
-        {
-            if (val instanceof Number)
-            {
-                id = ((Number)val).longValue();
-            }
-            else
-            {
+        if (val != null) {
+            if (val instanceof Number) {
+                id = ((Number) val).longValue();
+            } else {
                 id = Long.parseLong(val.toString());
             }
         }
@@ -464,42 +421,30 @@ public abstract class AbstractDatabase
     }
 
 
-    public static int countRecords(ResultSet resultSet)
-    {
+    public static int countRecords(ResultSet resultSet) {
         int rowCount = 0;
 
         //Determine rs size
-        if (resultSet != null)
-        {
-            try
-            {
+        if (resultSet != null) {
+            try {
                 int currentIndex = resultSet.getRow();
 
                 //Go to the end and get that row number
-                if (resultSet.last())
-                {
+                if (resultSet.last()) {
                     rowCount = resultSet.getRow();
                 }
 
                 //Put the cursor back
-                if (currentIndex > 0)
-                {
+                if (currentIndex > 0) {
                     resultSet.absolute(currentIndex);
-                }
-                else
-                {
+                } else {
                     resultSet.beforeFirst();
                 }
-            }
-            catch (SQLException ex)
-            {
+            } catch (SQLException ex) {
                 //TODO: Decide whether if absolute() not be supported, try first() as a last resort??
-                try
-                {
+                try {
                     resultSet.first();
-                }
-                catch (SQLException se)
-                {
+                } catch (SQLException se) {
                     //we won't try anymore.
                 }
             }
@@ -508,36 +453,35 @@ public abstract class AbstractDatabase
         return rowCount;
     }
 
-    private void addParameter(PreparedStatement statement, int i, Object value) throws SQLException
-    {
+    private void addParameter(PreparedStatement statement, int i, Object value) throws SQLException {
         if (value == null)
             statement.setObject(i, value);
         else if (value instanceof String)
             statement.setString(i, value.toString());
         else if (value instanceof Persistable)
-            statement.setLong(i, ((Persistable)value).id);
+            statement.setLong(i, ((Persistable) value).id);
         else if (value instanceof Boolean)
-            statement.setBoolean(i, ((Boolean)value).booleanValue());
+            statement.setBoolean(i, ((Boolean) value).booleanValue());
         else if (value instanceof Integer)
-            statement.setInt(i, ((Integer)value).intValue());
+            statement.setInt(i, ((Integer) value).intValue());
         else if (value instanceof Double)
-            statement.setDouble(i, ((Double)value).doubleValue());
+            statement.setDouble(i, ((Double) value).doubleValue());
         else if (value instanceof Float)
-            statement.setFloat(i, ((Float)value).floatValue());
+            statement.setFloat(i, ((Float) value).floatValue());
         else if (value instanceof Short)
-            statement.setShort(i, ((Short)value).shortValue());
+            statement.setShort(i, ((Short) value).shortValue());
         else if (value instanceof Long)
-            statement.setLong(i, ((Long)value).longValue());
+            statement.setLong(i, ((Long) value).longValue());
         else if (value instanceof Calendar)
-            statement.setDate(i, new java.sql.Date(((Calendar)value).getTime().getTime()));
+            statement.setDate(i, new java.sql.Date(((Calendar) value).getTime().getTime()));
         else if (value instanceof java.util.Date)
-            statement.setDate(i, new java.sql.Date(((java.util.Date)value).getTime()));
+            statement.setDate(i, new java.sql.Date(((java.util.Date) value).getTime()));
         else if (value instanceof java.sql.Date)
-            statement.setDate(i, ((java.sql.Date)value));
+            statement.setDate(i, ((java.sql.Date) value));
         else if (value instanceof java.sql.Timestamp)
-            statement.setTimestamp(i, ((java.sql.Timestamp)value));
+            statement.setTimestamp(i, ((java.sql.Timestamp) value));
         else if (value instanceof java.sql.Time)
-            statement.setTime(i, ((java.sql.Time)value));
+            statement.setTime(i, ((java.sql.Time) value));
         else
             statement.setObject(i, value);
     }

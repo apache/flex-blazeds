@@ -28,36 +28,30 @@ import javax.management.ObjectName;
  * Helper class for managing MBean lifecycles externally from the core server
  * components where necessary.
  */
-public class MBeanLifecycleManager
-{
+public class MBeanLifecycleManager {
     /**
-     * Unregisters all runtime MBeans that are registered in the same domain as the 
-     * MessageBrokerControl for the target MessageBroker. 
-     *  
+     * Unregisters all runtime MBeans that are registered in the same domain as the
+     * MessageBrokerControl for the target MessageBroker.
+     *
      * @param broker The MessageBroker component that has been stopped.
      */
-    public static void unregisterRuntimeMBeans(MessageBroker broker)
-    {        
+    public static void unregisterRuntimeMBeans(MessageBroker broker) {
         MBeanServer server = MBeanServerLocatorFactory.getMBeanServerLocator().getMBeanServer();
         ObjectName brokerMBean = broker.getControl().getObjectName();
         String domain = brokerMBean.getDomain();
-        try
-        {
+        try {
             ObjectName pattern = new ObjectName(domain + ":*");
             Set names = server.queryNames(pattern, null);
             Iterator iter = names.iterator();
-            while (iter.hasNext())
-            {
-                ObjectName on = (ObjectName)iter.next();
+            while (iter.hasNext()) {
+                ObjectName on = (ObjectName) iter.next();
                 server.unregisterMBean(on);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // We're generally unregistering these during shutdown (possibly JVM shutdown)
             // so there's nothing to really do here because we aren't guaranteed access to
             // resources like system log files, localized messaging, etc.
         }
     }
-    
+
 }

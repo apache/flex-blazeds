@@ -18,55 +18,51 @@ package flex.management.jmx;
 
 /**
  * Remotable MBeanParameterInfo class that complies with Flash serialization requirements.
-
  */
-public class MBeanParameterInfo
-{
+public class MBeanParameterInfo {
     /**
      * The name of the parameter.
      */
     public String name;
-    
+
     /**
      * The Java type for the parameter.
      */
     public String type;
-    
+
     /**
      * The description for the parameter.
      */
     public String description;
-    
+
     /**
      * Constructs an empty <code>MBeanParameterInfo</code> instance.
      */
-    public MBeanParameterInfo()
-    {}
-    
+    public MBeanParameterInfo() {
+    }
+
     /**
      * Constructs a <code>MBeanParameterInfo</code> instance based upon a
      * <code>javax.management.MBeanParameterInfo</code> instance.
-     * 
+     *
      * @param mbeanParameterInfo The JMX <code>MBeanParameterInfo</code> instance to base this instance on.
      */
-    public MBeanParameterInfo(javax.management.MBeanParameterInfo mbeanParameterInfo)
-    {
+    public MBeanParameterInfo(javax.management.MBeanParameterInfo mbeanParameterInfo) {
         name = mbeanParameterInfo.getName();
         type = mbeanParameterInfo.getType();
         description = mbeanParameterInfo.getDescription();
     }
-    
+
     /**
      * Utility method to convert this <code>MBeanParameterInfo</code> to a
      * <code>javax.management.MBeanParameterInfo</code> instance.
-     * 
+     *
      * @return A JMX <code>MBeanParameterInfo</code> based upon this instance.
      */
-    public javax.management.MBeanParameterInfo toMBeanParameterInfo()
-    {
+    public javax.management.MBeanParameterInfo toMBeanParameterInfo() {
         return new javax.management.MBeanParameterInfo(name,
-                                                       type,
-                                                       description);
+                type,
+                description);
     }
 
 }

@@ -21,18 +21,14 @@ import flex.messaging.io.amf.ActionMessage;
 import flex.messaging.io.amf.MessageBody;
 import flex.messaging.MessageException;
 
-public class Confirm2e extends DeserializationConfirmation
-{
+public class Confirm2e extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm2e()
-    {
+    public Confirm2e() {
     }
 
-    public ActionMessage getExpectedMessage()
-    {
-        if (EXPECTED_VALUE == null)
-        {
+    public ActionMessage getExpectedMessage() {
+        if (EXPECTED_VALUE == null) {
             ActionMessage m = new ActionMessage();
             MessageBody body = new MessageBody();
             m.addBody(body);
@@ -47,19 +43,16 @@ public class Confirm2e extends DeserializationConfirmation
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 
-    protected boolean bodyValuesMatch(Object o1, Object o2)
-    {
+    protected boolean bodyValuesMatch(Object o1, Object o2) {
         boolean match = super.bodyValuesMatch(o1, o2);
 
         // Also check that by-reference serialization of the array restored
         // the pointers to the original array...
-        if (match)
-        {
+        if (match) {
             Object list1 = getFromList(o1, 0);
 
             if (o1 != list1)

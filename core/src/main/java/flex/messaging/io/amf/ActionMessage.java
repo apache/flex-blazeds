@@ -20,8 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class ActionMessage implements Serializable
-{
+public class ActionMessage implements Serializable {
     static final long serialVersionUID = 7970778672727624188L;
 
     public static final int CURRENT_VERSION = 3;
@@ -33,74 +32,62 @@ public class ActionMessage implements Serializable
     private ArrayList bodies = null;
 
 
-    public ActionMessage()
-    {
+    public ActionMessage() {
         version = CURRENT_VERSION;
         headers = new ArrayList();
         bodies = new ArrayList();
     }
 
 
-    public ActionMessage(int version)
-    {
+    public ActionMessage(int version) {
         this.version = version;
         headers = new ArrayList();
         bodies = new ArrayList();
     }
 
 
-    public int getVersion()
-    {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(int version)
-    {
+    public void setVersion(int version) {
         this.version = version;
     }
 
 
-    public int getHeaderCount()
-    {
+    public int getHeaderCount() {
         return headers.size();
     }
 
 
-    public MessageHeader getHeader(int pos)
-    {
-        return (MessageHeader)headers.get(pos);
+    public MessageHeader getHeader(int pos) {
+        return (MessageHeader) headers.get(pos);
     }
 
-    public ArrayList getHeaders()
-    {
+    public ArrayList getHeaders() {
         return headers;
     }
 
-    public void addHeader(MessageHeader h)
-    {
+    public void addHeader(MessageHeader h) {
         headers.add(h);
     }
 
 
-    public int getBodyCount()
-    {
+    public int getBodyCount() {
         return bodies.size();
     }
 
 
-    public MessageBody getBody(int pos)
-    {
-        return (MessageBody)bodies.get(pos);
+    public MessageBody getBody(int pos) {
+        return (MessageBody) bodies.get(pos);
     }
 
 
-    public ArrayList getBodies()
-    {
+    public ArrayList getBodies() {
         return bodies;
     }
 
-    public void addBody(MessageBody b)
-    {
+    public void addBody(MessageBody b) {
         bodies.add(b);
     }
 }

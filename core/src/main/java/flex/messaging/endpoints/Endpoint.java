@@ -31,55 +31,53 @@ import flex.messaging.config.SecurityConstraint;
  * Endpoints are specific to a message format and network transport,
  * and are defined by the named URI path on which they are located.
  */
-public interface Endpoint extends Manageable
-{
+public interface Endpoint extends Manageable {
     /**
-     * Initializes the endpoint with an ID and properties. 
-     * 
-     * @param id The ID of the endpoint. 
-     * @param properties Properties of the endpoint. 
+     * Initializes the endpoint with an ID and properties.
+     *
+     * @param id         The ID of the endpoint.
+     * @param properties Properties of the endpoint.
      */
     void initialize(String id, ConfigMap properties);
-    
+
     /**
      * Start the endpoint. The MethodBroker invokes this
      * method in order to set the endpoint up for sending and receiving
      * messages from Flash clients.
-     *
      */
     void start();
-    
+
     /**
-     * Determines whether the endpoint is started. 
-     * 
-     * @return <code>true</code> if the endpoint is started;  <code>false</code> otherwise. 
+     * Determines whether the endpoint is started.
+     *
+     * @return <code>true</code> if the endpoint is started;  <code>false</code> otherwise.
      */
     boolean isStarted();
-    
+
     /**
      * Stop and destroy the endpoint. The MethodBroker invokes
      * this method in order to stop the endpoint from sending
      * and receiving messages from Flash clients.
-     * 
      */
     void stop();
-       
+
     /**
-     * Retrieves the corresponding client channel type for the endpoint. 
-     * 
-     * @return The corresponding client channel type for the endpoint. 
+     * Retrieves the corresponding client channel type for the endpoint.
+     *
+     * @return The corresponding client channel type for the endpoint.
      */
     String getClientType();
-    
+
     /**
-     * Sets the corresponding client channel type for the endpoint. 
-     * 
-     * @param clientType The corresponding client channel type for the endpoint.  
+     * Sets the corresponding client channel type for the endpoint.
+     *
+     * @param clientType The corresponding client channel type for the endpoint.
      */
     void setClientType(String clientType);
-      
+
     /**
      * Retrieves the endpoint properties the client needs.
+     *
      * @return The endpoint properties the client needs.
      */
     ConfigMap describeEndpoint();
@@ -87,10 +85,11 @@ public interface Endpoint extends Manageable
     /**
      * All endpoints are referenceable by an ID that is unique among
      * all the endpoints registered to a single broker instance.
+     *
      * @return The endpoint ID.
      */
     String getId();
-    
+
     /**
      * All endpoints are referenceable by an ID that is unique among
      * all the endpoints registered to a single broker instance. The id
@@ -99,57 +98,59 @@ public interface Endpoint extends Manageable
      * @param id The endpoint ID.
      */
     void setId(String id);
-    
+
     /**
      * All endpoints must be managed by a single MessageBroker,
      * and must be capable of returning a reference to that broker.
-     * This broker reference is used when the endpoint wishes to 
+     * This broker reference is used when the endpoint wishes to
      * send a message to one of the broker's services.
-     * 
+     *
      * @return broker The MessageBroker instance which manages this endpoint.
      */
     MessageBroker getMessageBroker();
-    
+
     /**
-     * Sets the <code>MessageBroker</code> of the endpoint. 
-     * 
+     * Sets the <code>MessageBroker</code> of the endpoint.
+     *
      * @param broker the message broker object
      */
     void setMessageBroker(MessageBroker broker);
 
     /**
      * Retrieves the highest messaging version currently available via this
-     * endpoint.  
+     * endpoint.
+     *
      * @return The messaging version number.
      */
     double getMessagingVersion();
-    
+
 
     String getParsedUrl(String contextPath);
-    
+
     /**
-     * Retrieves the port of the URL of the endpoint. 
-     * 
-     * @return The port of the URL of the endpoint. 
+     * Retrieves the port of the URL of the endpoint.
+     *
+     * @return The port of the URL of the endpoint.
      */
     int getPort();
-       
+
     /**
-     * Specifies whether this protocol requires the secure HTTPS protocol. 
+     * Specifies whether this protocol requires the secure HTTPS protocol.
+     *
      * @return <code>true</code> if the endpoint is a secure endpoint, <code>false</code> otherwise.
      */
     boolean isSecure();
 
     /**
-     * Retrieves the security constraint of the endpoint. 
-     * 
+     * Retrieves the security constraint of the endpoint.
+     *
      * @return The security constraint of the endpoint.
      */
     SecurityConstraint getSecurityConstraint();
-    
+
     /**
-     * Sets the security constraint of the endpoint. 
-     * 
+     * Sets the security constraint of the endpoint.
+     *
      * @param constraint The security constraint of the endpoint.
      */
     void setSecurityConstraint(SecurityConstraint constraint);
@@ -163,25 +164,24 @@ public interface Endpoint extends Manageable
      * @param res The HttpServletResponse object.
      */
     void service(HttpServletRequest req, HttpServletResponse res);
-        
+
     /**
-     * Retrieves the URL of the endpoint. 
-     * 
-     * @return The URL of the endpoint. 
+     * Retrieves the URL of the endpoint.
+     *
+     * @return The URL of the endpoint.
      */
     String getUrl();
-    
+
     /**
-     * Sets the URL of the endpoint. 
-     * 
+     * Sets the URL of the endpoint.
+     *
      * @param url The URL of the endpoint.
      */
-    void setUrl(String url);  
-    
+    void setUrl(String url);
+
     /**
+     * Returns the url of the endpoint parsed for the client.
      *
-     * Returns the url of the endpoint parsed for the client. 
-     *  
      * @return The url of the endpoint parsed for the client.
      */
     String getUrlForClient();

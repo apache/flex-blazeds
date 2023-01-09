@@ -20,13 +20,11 @@ import flex.management.BaseControl;
 import flex.messaging.services.HTTPProxyService;
 
 /**
- *
  * The <code>HTTPProxyServiceControl</code> class is the MBean implementation
  * for monitoring and managing a <code>HTTPProxyService</code> at runtime.
  */
 public class HTTPProxyServiceControl extends ServiceControl implements
-        HTTPProxyServiceControlMBean
-{
+        HTTPProxyServiceControlMBean {
     private static final String TYPE = "HTTPProxyService";
 
     /**
@@ -34,21 +32,19 @@ public class HTTPProxyServiceControl extends ServiceControl implements
      * HTTP proxy service and parent MBean.
      *
      * @param service The <code>HTTPProxyService</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent  The parent MBean in the management hierarchy.
      */
-    public HTTPProxyServiceControl(HTTPProxyService service, BaseControl parent)
-    {
+    public HTTPProxyServiceControl(HTTPProxyService service, BaseControl parent) {
         super(service, parent);
     }
 
 
     /**
+     * (non-Javadoc)
      *
-     *  (non-Javadoc)
      * @see flex.management.BaseControlMBean#getType()
      */
-    public String getType()
-    {
+    public String getType() {
         return TYPE;
     }
 }

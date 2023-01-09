@@ -58,10 +58,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * does not occur for non-http endpoints, such as the rtmp endpoint.
  *
  * @see flex.messaging.MessageBroker
- *
  */
-public class MessageBrokerServlet extends HttpServlet
-{
+public class MessageBrokerServlet extends HttpServlet {
     static final long serialVersionUID = -5293855229461612246L;
 
     public static final String LOG_CATEGORY_STARTUP_BROKER = LogCategories.STARTUP_MESSAGEBROKER;
@@ -78,8 +76,7 @@ public class MessageBrokerServlet extends HttpServlet
      * This servlet may keep a reference to an endpoint if it needs to
      * delegate to it in the <code>service</code> method.
      */
-    public void init(ServletConfig servletConfig) throws ServletException
-    {
+    public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);
 
         // allocate thread local variables
@@ -92,8 +89,7 @@ public class MessageBrokerServlet extends HttpServlet
 
         ClassLoader loader = getClassLoader();
 
-        if ("true".equals(servletConfig.getInitParameter("useContextClassLoader")))
-        {
+        if ("true".equals(servletConfig.getInitParameter("useContextClassLoader"))) {
             loader = Thread.currentThread().getContextClassLoader();
         }
 
@@ -101,8 +97,7 @@ public class MessageBrokerServlet extends HttpServlet
         log_errors = HTTPRequestLog.init(getServletContext());
 
         // Start the broker
-        try
-        {
+        try {
             // Get the configuration manager
             ConfigurationManager configManager = loadMessagingConfiguration(servletConfig);
 
@@ -124,8 +119,7 @@ public class MessageBrokerServlet extends HttpServlet
             broker.setServletContext(servletConfig.getServletContext());
 
             Logger logger = Log.getLogger(ConfigurationManager.LOG_CATEGORY);
-            if (Log.isInfo())
-            {
+            if (Log.isInfo()) {
                 logger.info(VersionInfo.buildMessage());
             }
 
@@ -133,24 +127,21 @@ public class MessageBrokerServlet extends HttpServlet
             config.configureBroker(broker);
 
             long timeBeforeStartup = 0;
-            if (Log.isDebug())
-            {
+            if (Log.isDebug()) {
                 timeBeforeStartup = System.currentTimeMillis();
                 Log.getLogger(LOG_CATEGORY_STARTUP_BROKER).debug("MessageBroker with id '{0}' is starting.",
                         new Object[]{broker.getId()});
             }
 
             //initialize the httpSessionToFlexSessionMap
-            synchronized(HttpFlexSession.mapLock)
-            {
+            synchronized (HttpFlexSession.mapLock) {
                 if (servletConfig.getServletContext().getAttribute(HttpFlexSession.SESSION_MAP) == null)
                     servletConfig.getServletContext().setAttribute(HttpFlexSession.SESSION_MAP, new ConcurrentHashMap());
             }
 
             broker.start();
 
-            if (Log.isDebug())
-            {
+            if (Log.isDebug()) {
                 long timeAfterStartup = System.currentTimeMillis();
                 Long diffMillis = timeAfterStartup - timeBeforeStartup;
                 Log.getLogger(LOG_CATEGORY_STARTUP_BROKER).debug("MessageBroker with id '{0}' is ready (startup time: '{1}' ms)",
@@ -169,9 +160,7 @@ public class MessageBrokerServlet extends HttpServlet
 
             // clear the broker and servlet config as this thread is done
             FlexContext.clearThreadLocalObjects();
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             // On any unhandled exception destroy the broker, log it and rethrow.
             String applicationName = servletConfig.getServletContext().getServletContextName();
             if (applicationName == null)
@@ -186,66 +175,52 @@ public class MessageBrokerServlet extends HttpServlet
         }
     }
 
-    private void setupPathResolvers()
-    {
+    private void setupPathResolvers() {
         setupExternalPathResolver();
         setupInternalPathResolver();
     }
 
-    private void setupExternalPathResolver()
-    {
+    private void setupExternalPathResolver() {
         broker.setExternalPathResolver(
-                new MessageBroker.PathResolver()
-                {
-                    public InputStream resolve(String filename) throws FileNotFoundException
-                    {
+                new MessageBroker.PathResolver() {
+                    public InputStream resolve(String filename) throws FileNotFoundException {
                         return new FileInputStream(new File(filename));
                     }
                 }
         );
     }
 
-    private void setupInternalPathResolver()
-    {
+    private void setupInternalPathResolver() {
         broker.setInternalPathResolver(
-                new MessageBroker.InternalPathResolver()
-                {
-                    public InputStream resolve(String filename)
-                    {
+                new MessageBroker.InternalPathResolver() {
+                    public InputStream resolve(String filename) {
                         return getServletContext().getResourceAsStream(FLEXDIR + filename);
                     }
                 }
         );
     }
 
-    private static ConfigurationManager loadMessagingConfiguration(ServletConfig servletConfig)
-    {
+    private static ConfigurationManager loadMessagingConfiguration(ServletConfig servletConfig) {
         ConfigurationManager manager = null;
         Class managerClass;
         String className;
 
         // Check for Custom Configuration Manager Specification
-        if (servletConfig != null)
-        {
+        if (servletConfig != null) {
             String p = servletConfig.getInitParameter("services.configuration.manager");
-            if (p != null)
-            {
+            if (p != null) {
                 className = p.trim();
-                try
-                {
+                try {
                     managerClass = ClassUtil.createClass(className);
-                    manager = (ConfigurationManager)managerClass.newInstance();
-                }
-                catch (Throwable t)
-                {
+                    manager = (ConfigurationManager) managerClass.newInstance();
+                } catch (Throwable t) {
                     if (Trace.config) // Log is not initialized yet.
                         Trace.trace("Could not load configuration manager as: " + className);
                 }
             }
         }
 
-        if (manager == null)
-        {
+        if (manager == null) {
             manager = new FlexConfigurationManager();
         }
 
@@ -256,13 +231,10 @@ public class MessageBrokerServlet extends HttpServlet
      * Stops all endpoints in the MessageBroker, giving them a chance
      * to perform any endpoint-specific clean up.
      */
-    public void destroy()
-    {
-        if (broker != null)
-        {
+    public void destroy() {
+        if (broker != null) {
             broker.stop();
-            if (broker.isManaged())
-            {
+            if (broker.isManaged()) {
                 MBeanLifecycleManager.unregisterRuntimeMBeans(broker);
             }
             // release static thread locals
@@ -276,27 +248,21 @@ public class MessageBrokerServlet extends HttpServlet
      * are not externally configurable, and currently the AmfEndpoint
      * is the only delegate.
      */
-    public void service(HttpServletRequest req, HttpServletResponse res)
-    {
-        if (log_errors)
-        {
+    public void service(HttpServletRequest req, HttpServletResponse res) {
+        if (log_errors) {
             // Create a wrapper for the request object so we can save the body content
             LoggingHttpServletRequestWrapper wrapper = new LoggingHttpServletRequestWrapper(req);
             req = wrapper;
 
-            try
-            {
+            try {
                 // Read the body content
                 wrapper.doReadBody();
-            }
-            catch (IOException ignore)
-            {
+            } catch (IOException ignore) {
                 // ignore, the wrapper will preserve what content we were able to read.
             }
         }
 
-        try
-        {
+        try {
             // Update thread locals
             broker.initThreadLocals();
             // Set this first so it is in place for the session creation event.  The
@@ -307,27 +273,19 @@ public class MessageBrokerServlet extends HttpServlet
 
             HttpFlexSession fs = httpFlexSessionProvider.getOrCreateSession(req);
             Principal principal;
-            if(FlexContext.isPerClientAuthentication())
-            {
+            if (FlexContext.isPerClientAuthentication()) {
                 principal = FlexContext.getUserPrincipal();
-            }
-            else
-            {
+            } else {
                 principal = fs.getUserPrincipal();
             }
 
-            if (principal == null && req.getHeader("Authorization") != null)
-            {
+            if (principal == null && req.getHeader("Authorization") != null) {
                 String encoded = req.getHeader("Authorization");
-                if (encoded.indexOf("Basic") > -1)
-                {
+                if (encoded.indexOf("Basic") > -1) {
                     encoded = encoded.substring(6); //Basic.length()+1
-                    try
-                    {
-                        ((AuthenticationService)broker.getService(AuthenticationService.ID)).decodeAndLogin(encoded, broker.getLoginManager());
-                    }
-                    catch (Exception e)
-                    {
+                    try {
+                        ((AuthenticationService) broker.getService(AuthenticationService.ID)).decodeAndLogin(encoded, broker.getLoginManager());
+                    } catch (Exception e) {
                         if (Log.isDebug())
                             Log.getLogger(LogCategories.SECURITY).info("Authentication service could not decode and login: " + e.getMessage());
                     }
@@ -341,78 +299,55 @@ public class MessageBrokerServlet extends HttpServlet
                 endpointPath = endpointPath + pathInfo;
 
             Endpoint endpoint;
-            try
-            {
+            try {
                 endpoint = broker.getEndpoint(endpointPath, contextPath);
-            }
-            catch (MessageException me)
-            {
+            } catch (MessageException me) {
                 if (Log.isInfo())
-                    Log.getLogger(LogCategories.ENDPOINT_GENERAL).info("Received invalid request for endpoint path '{0}'.", new Object[] {endpointPath});
+                    Log.getLogger(LogCategories.ENDPOINT_GENERAL).info("Received invalid request for endpoint path '{0}'.", new Object[]{endpointPath});
 
-                if (!res.isCommitted())
-                {
-                    try
-                    {
+                if (!res.isCommitted()) {
+                    try {
                         res.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    } catch (IOException ignore) {
                     }
-                    catch (IOException ignore)
-                    {}
                 }
 
                 return;
             }
 
-            try
-            {
-                if (Log.isInfo())
-                {
+            try {
+                if (Log.isInfo()) {
                     Log.getLogger(LogCategories.ENDPOINT_GENERAL).info("Channel endpoint {0} received request.",
-                                                                       new Object[] {endpoint.getId()});
+                            new Object[]{endpoint.getId()});
                 }
                 endpoint.service(req, res);
-            }
-            catch (UnsupportedOperationException ue)
-            {
-                if (Log.isInfo())
-                {
+            } catch (UnsupportedOperationException ue) {
+                if (Log.isInfo()) {
                     Log.getLogger(LogCategories.ENDPOINT_GENERAL).info("Channel endpoint {0} received request for an unsupported operation.",
-                                                                       new Object[] {endpoint.getId()},
-                                                                       ue);
+                            new Object[]{endpoint.getId()},
+                            ue);
                 }
 
-                if (!res.isCommitted())
-                {
-                    try
-                    {
+                if (!res.isCommitted()) {
+                    try {
                         res.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                    } catch (IOException ignore) {
                     }
-                    catch (IOException ignore)
-                    {}
                 }
             }
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             // Final resort catch block as recommended by Fortify as a potential System info leak
-            try
-            {
+            try {
                 Log.getLogger(LogCategories.ENDPOINT_GENERAL).error("Unexpected error encountered in Message Broker servlet", t);
                 res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
-            catch (IOException ignore)
-            {
+            } catch (IOException ignore) {
                 // ignore
             }
 
-        }
-        finally
-        {
-            if (log_errors)
-            {
+        } finally {
+            if (log_errors) {
                 String info = (String) req.getAttribute(HTTPRequestLog.HTTP_ERROR_INFO);
-                if (info != null)
-                {
+                if (info != null) {
                     // Log the HttpRequest data
                     System.out.println("Exception occurred while processing HTTP request: " + info + ", request details logged in " + HTTPRequestLog.getFileName());
                     HTTPRequestLog.outputRequest(info, req);
@@ -428,15 +363,13 @@ public class MessageBrokerServlet extends HttpServlet
      *
      * @return the class loader for this class
      */
-    protected ClassLoader getClassLoader()
-    {
+    protected ClassLoader getClassLoader() {
         return this.getClass().getClassLoader();
     }
 
 
     // Call ONLY on servlet startup
-    public static void createThreadLocals()
-    {
+    public static void createThreadLocals() {
         // allocate static thread local objects
         FlexContext.createThreadLocalObjects();
         SerializationContext.createThreadLocalObjects();
@@ -445,8 +378,7 @@ public class MessageBrokerServlet extends HttpServlet
 
 
     // Call ONLY on servlet shutdown
-    protected static void destroyThreadLocals()
-    {
+    protected static void destroyThreadLocals() {
         // clear static member variables
         Log.clear();
         MBeanServerLocatorFactory.clear();

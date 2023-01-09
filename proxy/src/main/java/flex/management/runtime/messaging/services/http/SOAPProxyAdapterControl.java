@@ -20,34 +20,30 @@ import flex.management.BaseControl;
 import flex.messaging.services.http.SOAPProxyAdapter;
 
 /**
- *
  * The <code>SOAPProxyAdapterControl</code> class is the MBean implementation
  * for monitoring and managing <code>SOAPProxyAdapter</code>s at runtime.
  */
 public class SOAPProxyAdapterControl extends HTTPProxyAdapterControl implements
-        SOAPProxyAdapterControlMBean
-{
+        SOAPProxyAdapterControlMBean {
     private static final String TYPE = "SOAPProxyAdapter";
-    
+
     /**
      * Constructs a <code>SOAPProxyAdapterControl</code>, assigning its id, managed
      * <code>SOAPProxyAdapter</code> and parent MBean.
-     * 
+     *
      * @param serviceAdapter The <code>SOAPProxyAdapter</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent         The parent MBean in the management hierarchy.
      */
-    public SOAPProxyAdapterControl(SOAPProxyAdapter serviceAdapter, BaseControl parent)
-    {
+    public SOAPProxyAdapterControl(SOAPProxyAdapter serviceAdapter, BaseControl parent) {
         super(serviceAdapter, parent);
     }
 
     /**
+     * (non-Javadoc)
      *
-     *  (non-Javadoc)
      * @see flex.management.BaseControlMBean#getType()
      */
-    public String getType()
-    {
+    public String getType() {
         return TYPE;
     }
 }

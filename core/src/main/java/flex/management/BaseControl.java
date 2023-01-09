@@ -53,8 +53,7 @@ import javax.servlet.ServletConfig;
  * <code>ObjectName</code>s for all MBean instances.</p>
  */
 public abstract class BaseControl implements BaseControlMBean,
-        MBeanRegistration
-{
+        MBeanRegistration {
     /**
      * The prefix used for the domain part of control MBean names.
      */
@@ -65,7 +64,7 @@ public abstract class BaseControl implements BaseControlMBean,
     private static final int REG_EXCEPTION = 10403;
     private static final int REG_ALREADYEXISTS = 10404;
     private static final int REG_NOTCOMPLIANT = 10405;
-    private static final int DISABLE_MANAGEMENT = 10426;    
+    private static final int DISABLE_MANAGEMENT = 10426;
 
     protected Date startTimestamp;
     private BaseControl parent;
@@ -86,8 +85,7 @@ public abstract class BaseControl implements BaseControlMBean,
 
     // Implements flex.management.BaseControlMBean.getParent; inherits javadoc
     // specification.
-    public final ObjectName getParent()
-    {
+    public final ObjectName getParent() {
         return (parent != null) ? parent.getObjectName() : null;
     }
 
@@ -96,38 +94,35 @@ public abstract class BaseControl implements BaseControlMBean,
      * this control manages.
      *
      * @return An identifier for the application that hosts the component this
-     *         control manages.
+     * control manages.
      */
-    public String getApplicationId()
-    {
+    public String getApplicationId() {
         String id = null;
         // Our base implementation attempts to use the current servlet context
         // name as our application identifier.
         ServletConfig config = FlexContext.getServletConfig();
-        if (config != null)
-        {
+        if (config != null) {
             id = config.getServletContext().getServletContextName();
         }
         return (id != null) ? id.replace(":", "") : "";
     }
 
     /**
-     * Set the register object. 
+     * Set the register object.
+     *
      * @param registrar the registrar to set
      */
-    protected void setRegistrar(AdminConsoleDisplayRegistrar registrar)
-    {
+    protected void setRegistrar(AdminConsoleDisplayRegistrar registrar) {
         this.registrar = registrar;
     }
 
     /**
      * Return the registar object.
+     *
      * @return the registrar
      */
-    public AdminConsoleDisplayRegistrar getRegistrar()
-    {
-        if ((parent == null) && (this.registrar == null))
-        {
+    public AdminConsoleDisplayRegistrar getRegistrar() {
+        if ((parent == null) && (this.registrar == null)) {
             return new AdminConsoleDisplayRegistrar(null);
         }
 
@@ -139,10 +134,9 @@ public abstract class BaseControl implements BaseControlMBean,
      * parent; the parent may be null for root control MBeans.
      *
      * @param parent The parent <code>BaseControl</code> for this instance or
-     *        null if this instance is the root of a control hierarchy.
+     *               null if this instance is the root of a control hierarchy.
      */
-    public BaseControl(BaseControl parent)
-    {
+    public BaseControl(BaseControl parent) {
         this.parent = parent;
     }
 
@@ -151,8 +145,7 @@ public abstract class BaseControl implements BaseControlMBean,
      *
      * @return The parent <code>BaseControl</code>.
      */
-    public final BaseControl getParentControl()
-    {
+    public final BaseControl getParentControl() {
         return parent;
     }
 
@@ -162,31 +155,26 @@ public abstract class BaseControl implements BaseControlMBean,
      * <code>null</code>.
      *
      * @return The <code>MBeanServer</code> that this instance is registered
-     *         with.
+     * with.
      */
-    public final MBeanServer getMBeanServer()
-    {
+    public final MBeanServer getMBeanServer() {
         return server;
     }
 
     /**
      * Registers this instance with the MBean server.
-     *
+     * <p>
      * It may throw ManagementException If an <code>MBeanRegistrationException</code>
-     *         or <code>InstanceAlreadyExistsException</code> is thrown while
-     *         registering this MBean, the typed exception is wrapped in a
-     *         runtime <code>ManagementException</code> and rethrown.
+     * or <code>InstanceAlreadyExistsException</code> is thrown while
+     * registering this MBean, the typed exception is wrapped in a
+     * runtime <code>ManagementException</code> and rethrown.
      */
-    public final void register()
-    {
-        if (!registered)
-        {
+    public final void register() {
+        if (!registered) {
             MBeanServer server = MBeanServerLocatorFactory.getMBeanServerLocator().getMBeanServer();
             ObjectName name = getObjectName();
-            try
-            {
-                if (server.isRegistered(name))
-                {
+            try {
+                if (server.isRegistered(name)) {
                     server.unregisterMBean(name);
                 }
 
@@ -194,51 +182,38 @@ public abstract class BaseControl implements BaseControlMBean,
                 registered = true;
                 onRegistrationComplete();
 
-            }
-            catch (ManagementException me)
-            {
+            } catch (ManagementException me) {
                 throw me;
-            }
-            catch (MBeanRegistrationException mre)
-            {
+            } catch (MBeanRegistrationException mre) {
                 // Rethrow with useful message if this ever happens.
                 ManagementException me = new ManagementException();
-                me.setMessage(REG_EXCEPTION, new Object[] {name.toString()});
+                me.setMessage(REG_EXCEPTION, new Object[]{name.toString()});
                 me.setRootCause(mre);
                 throw me;
-            }
-            catch (InstanceAlreadyExistsException iaee)
-            {
+            } catch (InstanceAlreadyExistsException iaee) {
                 // If registration is not working at all, inform the user that
                 // they may
                 // work around the issue by disabling management (no MBeans will
                 // be registered).
-                if (!server.isRegistered(name))
-                {
+                if (!server.isRegistered(name)) {
                     ManagementException me = new ManagementException();
-                    me.setMessage(DISABLE_MANAGEMENT, new Object[] {name.toString()});
+                    me.setMessage(DISABLE_MANAGEMENT, new Object[]{name.toString()});
                     throw me;
-                }
-                else
-                {
+                } else {
                     // Rethrow with useful message if this ever happens.
                     ManagementException me = new ManagementException();
-                    me.setMessage(REG_ALREADYEXISTS, new Object[] {name.toString()});
+                    me.setMessage(REG_ALREADYEXISTS, new Object[]{name.toString()});
                     throw me;
                 }
-            }
-            catch (NotCompliantMBeanException ncme)
-            {
+            } catch (NotCompliantMBeanException ncme) {
                 // Rethrow with useful message if this ever happens.
                 ManagementException me = new ManagementException();
-                me.setMessage(REG_NOTCOMPLIANT, new Object[] {name.toString()});
+                me.setMessage(REG_NOTCOMPLIANT, new Object[]{name.toString()});
                 throw me;
-            }
-            catch (InstanceNotFoundException infe)
-            {
+            } catch (InstanceNotFoundException infe) {
                 // Rethrow with useful message if this ever happens.
                 ManagementException me = new ManagementException();
-                me.setMessage(UNREG_NOTFOUND, new Object[] {name.toString()});
+                me.setMessage(UNREG_NOTFOUND, new Object[]{name.toString()});
                 throw me;
             }
         }
@@ -250,8 +225,7 @@ public abstract class BaseControl implements BaseControlMBean,
      * access to the actual Object name should override this method rather than
      * the postRegister method.
      */
-    protected void onRegistrationComplete()
-    {
+    protected void onRegistrationComplete() {
 
     }
 
@@ -259,48 +233,36 @@ public abstract class BaseControl implements BaseControlMBean,
      * Unregisters this instance from the MBean server if it has been registered
      * previously.
      */
-    public final void unregister()
-    {
-        if (registered)
-        {
+    public final void unregister() {
+        if (registered) {
             // This method may be called when the JVM is being unloaded, so if
             // our
             // external error strings are loaded as missing, fall back to
             // hard-coded
             // strings.
-            try
-            {
-                if (server.isRegistered(registeredObjectName))
-                {
+            try {
+                if (server.isRegistered(registeredObjectName)) {
                     server.unregisterMBean(registeredObjectName);
                 }
 
                 registeredObjectName = null;
                 registered = false;
-            }
-            catch (ManagementException me)
-            {
+            } catch (ManagementException me) {
                 throw me;
-            }
-            catch (MBeanRegistrationException mre)
-            {
+            } catch (MBeanRegistrationException mre) {
                 // Rethrow with useful message if this ever happens.
                 ManagementException me = new ManagementException();
-                me.setMessage(UNREG_EXCEPTION, new Object[] {registeredObjectName.toString()});
-                if (me.getMessage().indexOf(Integer.toString(UNREG_EXCEPTION)) != -1)
-                {
+                me.setMessage(UNREG_EXCEPTION, new Object[]{registeredObjectName.toString()});
+                if (me.getMessage().indexOf(Integer.toString(UNREG_EXCEPTION)) != -1) {
                     me.setMessage("The MBean named, '" + registeredObjectName.toString() + "', could not be unregistered because its preDeregister() method threw an exception.");
                 }
                 me.setRootCause(mre);
                 throw me;
-            }
-            catch (InstanceNotFoundException infe)
-            {
+            } catch (InstanceNotFoundException infe) {
                 // Rethrow with useful message if this ever happens.
                 ManagementException me = new ManagementException();
-                me.setMessage(UNREG_NOTFOUND, new Object[] {registeredObjectName.toString()});
-                if (me.getMessage().indexOf(Integer.toString(UNREG_NOTFOUND)) != -1)
-                {
+                me.setMessage(UNREG_NOTFOUND, new Object[]{registeredObjectName.toString()});
+                if (me.getMessage().indexOf(Integer.toString(UNREG_NOTFOUND)) != -1) {
                     me.setMessage("The MBean named, '" + registeredObjectName.toString() + "', could not be unregistered because it is not currently registered.");
                 }
                 throw me;
@@ -329,18 +291,18 @@ public abstract class BaseControl implements BaseControlMBean,
      * <li>* optional containment keys</li>
      * </ul>
      * The runtime MBean model is hierarchical, with all MBeans ultimately
-     * contained by the root <code>MessageBrokerControlMBean</code>. The 
+     * contained by the root <code>MessageBrokerControlMBean</code>. The
      * <code>ObjectName</code>s used for these MBeans describe this
      * containment in the following fashion. First, the 'type' key for a
      * contained MBean indicates the containment hierarchy for the bean. So, the
      * <code>ObjectName</code> for an <code>RTMPEndpointControlMBean</code>
      * would be: <code>type=MessageBroker.RTMPEndpoint</code>
-     *
+     * <p>
      * In addition to the hierarchical 'type' key, the full
      * <code>ObjectName</code> for this <code>RTMPEndpointControlMBean</code>
      * also contains a containment key:
      * <code>MessageBroker=MessageBroker1</code>
-     *
+     * <p>
      * Optional containment keys have the format:
      * <em>{parent type}={parent name}</em>. A containment key is added for
      * each ancestor up to the root of the hierarchy and these keys allow the
@@ -358,18 +320,15 @@ public abstract class BaseControl implements BaseControlMBean,
      *
      * @return The <code>ObjectName</code> for this instance.
      */
-    public final ObjectName getObjectName()
-    {
+    public final ObjectName getObjectName() {
         if (registered)
             return registeredObjectName;
 
-        if (objectName == null)
-        {
+        if (objectName == null) {
             StringBuffer buffer = new StringBuffer();
             buffer.append(DOMAIN_PREFIX);
             String appId = getApplicationId();
-            if (appId != null && appId.length() > 0)
-            {
+            if (appId != null && appId.length() > 0) {
                 buffer.append('.');
                 buffer.append(appId);
             }
@@ -380,27 +339,23 @@ public abstract class BaseControl implements BaseControlMBean,
             types.add(getType());
             ids.add(getId());
             BaseControl ancestor = parent;
-            while (ancestor != null)
-            {
+            while (ancestor != null) {
                 types.add(ancestor.getType());
                 ids.add(ancestor.getId());
                 ancestor = ancestor.getParentControl();
             }
-            for (int i = types.size() - 1; i >= 0; --i)
-            {
-                buffer.append((String)types.get(i));
-                if (i > 0)
-                {
+            for (int i = types.size() - 1; i >= 0; --i) {
+                buffer.append((String) types.get(i));
+                if (i > 0) {
                     buffer.append('.');
                 }
             }
             buffer.append(',');
             // Add containment keys.
-            for (int i = ids.size() - 1; i >= 1; --i)
-            {
-                buffer.append((String)types.get(i));
+            for (int i = ids.size() - 1; i >= 1; --i) {
+                buffer.append((String) types.get(i));
                 buffer.append('=');
-                buffer.append((String)ids.get(i));
+                buffer.append((String) ids.get(i));
                 buffer.append(',');
             }
             buffer.append("id=");
@@ -408,15 +363,12 @@ public abstract class BaseControl implements BaseControlMBean,
             String name = buffer.toString();
             // TODO: Seth: add server identifier key if we're running in a
             // cluster?
-            try
-            {
+            try {
                 objectName = new ObjectName(name);
-            }
-            catch (MalformedObjectNameException mone)
-            {
+            } catch (MalformedObjectNameException mone) {
                 // Rethrow with useful message if this ever happens.
                 ManagementException me = new ManagementException();
-                me.setMessage(MALFORMED_OBJECTNAME, new Object[] {name});
+                me.setMessage(MALFORMED_OBJECTNAME, new Object[]{name});
                 throw me;
             }
         }
@@ -432,13 +384,12 @@ public abstract class BaseControl implements BaseControlMBean,
      * <code>super.preRegister()</code>.
      *
      * @param server The Mbean server in which the MBean will be registered.
-     * @param name The object name of the MBean.
+     * @param name   The object name of the MBean.
      * @return The name the MBean will be registered under.
      * @throws Exception when the process failed
      */
     public ObjectName preRegister(MBeanServer server, ObjectName name)
-            throws Exception
-    {
+            throws Exception {
         this.server = server;
         return (name == null) ? getObjectName() : name;
     }
@@ -450,10 +401,9 @@ public abstract class BaseControl implements BaseControlMBean,
      * base implementation is a no-op that may be overridden.
      *
      * @param registrationDone Indicates whether or not the MBean was
-     *        successfully registered in the MBean server.
+     *                         successfully registered in the MBean server.
      */
-    public void postRegister(Boolean registrationDone)
-    {
+    public void postRegister(Boolean registrationDone) {
         // No-op.
     }
 
@@ -462,10 +412,10 @@ public abstract class BaseControl implements BaseControlMBean,
      * Allows the MBean to perform any operations needed after having been
      * unregistered in the MBean server. This base implementation is a no-op
      * that may be overridden.
+     *
      * @throws Exception when the process failed
      */
-    public void preDeregister() throws Exception
-    {
+    public void preDeregister() throws Exception {
         // No-op.
     }
 
@@ -475,8 +425,7 @@ public abstract class BaseControl implements BaseControlMBean,
      * unregistered by the MBean server. This base implementation is a no-op
      * that may be overridden.
      */
-    public void postDeregister()
-    {
+    public void postDeregister() {
         // No-op.
     }
 
@@ -485,29 +434,25 @@ public abstract class BaseControl implements BaseControlMBean,
      *
      * @param value The start timestamp for the managed component.
      */
-    public void setStartTimestamp(Date value)
-    {
+    public void setStartTimestamp(Date value) {
         startTimestamp = value;
     }
 
     /**
      * Returns the difference between a start and end timestamps in
-     *          minutes. Differences of less than one minute are rounded up to
-     *          one minute to avoid frequency calculations reporting infinite
-     *          message frequencies.
+     * minutes. Differences of less than one minute are rounded up to
+     * one minute to avoid frequency calculations reporting infinite
+     * message frequencies.
+     *
      * @param startTime The start timestamp in milliseconds.
-     * @param endTime The end timestamp in milliseconds.
+     * @param endTime   The end timestamp in milliseconds.
      * @return The difference between a start and end timestamps in minutes.
      */
-    protected double differenceInMinutes(long startTime, long endTime)
-    {
+    protected double differenceInMinutes(long startTime, long endTime) {
         double minutes = (endTime - startTime) / 60000d;
-        if (minutes > 1d)
-        {
+        if (minutes > 1d) {
             return minutes;
-        }
-        else
-        {
+        } else {
             return 1d;
         }
     }

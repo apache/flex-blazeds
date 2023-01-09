@@ -19,8 +19,7 @@ package flex.messaging.config;
 /**
  *
  */
-public class FlexClientSettings extends PropertiesSettings
-{
+public class FlexClientSettings extends PropertiesSettings {
     //--------------------------------------------------------------------------
     //
     // Constructor
@@ -30,8 +29,7 @@ public class FlexClientSettings extends PropertiesSettings
     /**
      * Constructs a FlexClientSettings instance.
      */
-    public FlexClientSettings()
-    {
+    public FlexClientSettings() {
         // Empty for now.
     }
 
@@ -48,8 +46,7 @@ public class FlexClientSettings extends PropertiesSettings
      *
      * @return The number of minutes before an idle FlexClient is timed out.
      */
-    public long getTimeoutMinutes()
-    {
+    public long getTimeoutMinutes() {
         return timeoutMinutes;
     }
 
@@ -58,8 +55,7 @@ public class FlexClientSettings extends PropertiesSettings
      *
      * @param value The number of minutes before an idle FlexClient is timed out.
      */
-    public void setTimeoutMinutes(long value)
-    {
+    public void setTimeoutMinutes(long value) {
         timeoutMinutes = value;
     }
 
@@ -70,8 +66,7 @@ public class FlexClientSettings extends PropertiesSettings
      *
      * @return The the name of the  default <code>FlexClientOutboundQueueProcessorClass</code>.
      */
-    public String getFlexClientOutboundQueueProcessorClassName()
-    {
+    public String getFlexClientOutboundQueueProcessorClassName() {
         return flexClientOutboundQueueProcessorClassName;
     }
 
@@ -80,8 +75,7 @@ public class FlexClientSettings extends PropertiesSettings
      *
      * @param flexClientOutboundQueueProcessorClassName The name of the default <code>FlexClientOutboundQueueProcessor</code>.
      */
-    public void setFlexClientOutboundQueueProcessorClassName(String flexClientOutboundQueueProcessorClassName)
-    {
+    public void setFlexClientOutboundQueueProcessorClassName(String flexClientOutboundQueueProcessorClassName) {
         this.flexClientOutboundQueueProcessorClassName = flexClientOutboundQueueProcessorClassName;
     }
 
@@ -92,8 +86,7 @@ public class FlexClientSettings extends PropertiesSettings
      *
      * @return The properties for the default <code>FlexClientOutboundQueueProcessor</code>.
      */
-    public ConfigMap getFlexClientOutboundQueueProcessorProperties()
-    {
+    public ConfigMap getFlexClientOutboundQueueProcessorProperties() {
         return flexClientOutboundQueueProcessorProperties;
     }
 
@@ -103,32 +96,27 @@ public class FlexClientSettings extends PropertiesSettings
      * @param flexClientOutboundQueueProcessorProperties properties for the default
      *                                                   <code>FlexClientOutboundQueueProcessor</code>
      */
-    public void setFlexClientOutboundQueueProcessorProperties(ConfigMap flexClientOutboundQueueProcessorProperties)
-    {
+    public void setFlexClientOutboundQueueProcessorProperties(ConfigMap flexClientOutboundQueueProcessorProperties) {
         this.flexClientOutboundQueueProcessorProperties = flexClientOutboundQueueProcessorProperties;
     }
-    
+
     private int reliableReconnectDurationMillis;
-    
-    public int getReliableReconnectDurationMillis()
-    {
-        return reliableReconnectDurationMillis;    
+
+    public int getReliableReconnectDurationMillis() {
+        return reliableReconnectDurationMillis;
     }
-    
-    public void setReliableReconnectDurationMillis(int value)
-    {
+
+    public void setReliableReconnectDurationMillis(int value) {
         reliableReconnectDurationMillis = value;
     }
-    
+
     private int heartbeatIntervalMillis;
-    
-    public int getHeartbeatIntervalMillis()
-    {
+
+    public int getHeartbeatIntervalMillis() {
         return heartbeatIntervalMillis;
     }
-    
-    public void setHeartbeatIntervalMillis(int value)
-    {
+
+    public void setHeartbeatIntervalMillis(int value) {
         heartbeatIntervalMillis = value;
     }
 }

@@ -22,25 +22,19 @@ import java.util.ArrayList;
 /**
  * A log maintains a series of Loggers for each logging category and
  * Targets are established that listen for LogEvents on those Loggers.
- *
- *
  */
-public class LoggingSettings extends PropertiesSettings
-{
+public class LoggingSettings extends PropertiesSettings {
     private final List targets;
 
-    public LoggingSettings()
-    {
+    public LoggingSettings() {
         targets = new ArrayList();
     }
 
-    public void addTarget(TargetSettings t)
-    {
+    public void addTarget(TargetSettings t) {
         targets.add(t);
     }
 
-    public List getTargets()
-    {
+    public List getTargets() {
         return targets;
     }
 }

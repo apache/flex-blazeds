@@ -34,8 +34,7 @@ import flex.messaging.log.Log;
  * on both topics and queues. This class contains shared behavior
  * between producers and consumers.
  */
-public abstract class JMSProxy
-{
+public abstract class JMSProxy {
     /* JMS related variables */
     protected Connection connection;
     protected ConnectionCredentials connectionCredentials;
@@ -59,8 +58,7 @@ public abstract class JMSProxy
      * Creates a new <code>JMSProxy</code> default default acknowledge mode of
      * <code>javax.jms.Session.AUTO_ACKNOWLEDGE</code>.
      */
-    public JMSProxy()
-    {
+    public JMSProxy() {
         acknowledgeMode = javax.jms.Session.AUTO_ACKNOWLEDGE;
     }
 
@@ -75,8 +73,7 @@ public abstract class JMSProxy
      *
      * @param settings JMS settings to use for initialization.
      */
-    public void initialize(JMSSettings settings)
-    {
+    public void initialize(JMSSettings settings) {
         String ackString = settings.getAcknowledgeMode();
         if (ackString.equals(JMSConfigConstants.AUTO_ACKNOWLEDGE))
             acknowledgeMode = Session.AUTO_ACKNOWLEDGE;
@@ -88,8 +85,7 @@ public abstract class JMSProxy
         connectionFactoryName = settings.getConnectionFactory();
         String username = settings.getConnectionUsername();
         String password = settings.getConnectionPassword();
-        if (username != null || password != null)
-        {
+        if (username != null || password != null) {
             connectionCredentials = new ConnectionCredentials(username, password);
         }
         destinationJndiName = settings.getDestinationJNDIName();
@@ -101,18 +97,15 @@ public abstract class JMSProxy
      * it is started. For <code>JMSProxy</code> to be in valid state, it needs
      * to have a connection factory name and destination jndi name assigned.
      */
-    protected void validate()
-    {
-        if (connectionFactoryName == null)
-        {
+    protected void validate() {
+        if (connectionFactoryName == null) {
             // JMS connection factory of message destinations with JMS Adapters must be specified.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(JMSConfigConstants.MISSING_CONNECTION_FACTORY);
             throw ce;
         }
 
-        if (destinationJndiName == null)
-        {
+        if (destinationJndiName == null) {
             // JNDI names for message destinations with JMS Adapters must be specified.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(JMSConfigConstants.MISSING_DESTINATION_JNDI_NAME);
@@ -127,10 +120,9 @@ public abstract class JMSProxy
      * should call <code>super.start</code>.
      *
      * @throws NamingException The thrown naming exception.
-     * @throws JMSException The thrown JMS exception.
+     * @throws JMSException    The thrown JMS exception.
      */
-    public void start() throws NamingException, JMSException
-    {
+    public void start() throws NamingException, JMSException {
         validate();
         initializeJndiContext();
         initializeConnectionFactory();
@@ -141,41 +133,31 @@ public abstract class JMSProxy
      * Stops the <code>JMSProxy</code> by stopping its associated session
      * and connection.
      */
-    public void stop()
-    {
-        try
-        {
+    public void stop() {
+        try {
             if (session != null)
                 session.close();
-        }
-        catch (JMSException e)
-        {
+        } catch (JMSException e) {
             if (Log.isWarn())
                 Log.getLogger(JMSAdapter.LOG_CATEGORY).warn("JMS proxy for JMS destination '"
                         + destinationJndiName + "' received an error while closing"
                         + " its underlying Session: " + e.getMessage());
         }
 
-        try
-        {
+        try {
             if (connection != null)
                 connection.close();
-        }
-        catch (JMSException e)
-        {
+        } catch (JMSException e) {
             if (Log.isWarn())
                 Log.getLogger(JMSAdapter.LOG_CATEGORY).warn("JMS proxy for JMS destination '"
                         + destinationJndiName + "' received an error while closing"
                         + " its underlying Connection: " + e.getMessage());
         }
 
-        try
-        {
+        try {
             if (jndiContext != null)
                 jndiContext.close();
-        }
-        catch (NamingException e)
-        {
+        } catch (NamingException e) {
             if (Log.isWarn())
                 Log.getLogger(JMSAdapter.LOG_CATEGORY).warn("JMS proxy for JMS destination '"
                         + destinationJndiName + "' received an error while closing"
@@ -194,8 +176,7 @@ public abstract class JMSProxy
      *
      * @return The acknowledge mode used by the <code>JMSProxy</code>.
      */
-    public int getAcknowledgeMode()
-    {
+    public int getAcknowledgeMode() {
         return acknowledgeMode;
     }
 
@@ -207,8 +188,7 @@ public abstract class JMSProxy
      *
      * @param acknowledgeMode An int representing the acknowledge mode used.
      */
-    public void setAcknowledgeMode(int acknowledgeMode)
-    {
+    public void setAcknowledgeMode(int acknowledgeMode) {
         if (acknowledgeMode == Session.AUTO_ACKNOWLEDGE
                 || acknowledgeMode == Session.CLIENT_ACKNOWLEDGE
                 || acknowledgeMode == Session.DUPS_OK_ACKNOWLEDGE)
@@ -220,8 +200,7 @@ public abstract class JMSProxy
      *
      * @return The connection factory name.
      */
-    public String getConnectionFactoryName()
-    {
+    public String getConnectionFactoryName() {
         return connectionFactoryName;
     }
 
@@ -231,8 +210,7 @@ public abstract class JMSProxy
      *
      * @param connectionFactoryName The connection factory name.
      */
-    public void setConnectionFactoryName(String connectionFactoryName)
-    {
+    public void setConnectionFactoryName(String connectionFactoryName) {
         this.connectionFactoryName = connectionFactoryName;
     }
 
@@ -241,8 +219,7 @@ public abstract class JMSProxy
      *
      * @return The connection credentials used while creating JMS connections.
      */
-    public ConnectionCredentials getConnectionCredentials()
-    {
+    public ConnectionCredentials getConnectionCredentials() {
         return connectionCredentials;
     }
 
@@ -252,8 +229,7 @@ public abstract class JMSProxy
      *
      * @param connectionCredentials The connection credentials.
      */
-    public void setConnectionCredentials(ConnectionCredentials connectionCredentials)
-    {
+    public void setConnectionCredentials(ConnectionCredentials connectionCredentials) {
         this.connectionCredentials = connectionCredentials;
     }
 
@@ -262,8 +238,7 @@ public abstract class JMSProxy
      *
      * @return The JNDI name of the JMS destination.
      */
-    public String getDestinationJndiName()
-    {
+    public String getDestinationJndiName() {
         return destinationJndiName;
     }
 
@@ -272,8 +247,7 @@ public abstract class JMSProxy
      *
      * @param destinationJndiName The JNDI name of the JMS destination.
      */
-    public void setDestinationJndiName(String destinationJndiName)
-    {
+    public void setDestinationJndiName(String destinationJndiName) {
         this.destinationJndiName = destinationJndiName;
     }
 
@@ -282,8 +256,7 @@ public abstract class JMSProxy
      *
      * @return a Hashtable of the <code>initial-context-environment</code>.
      */
-    public Hashtable getInitialContextEnvironment()
-    {
+    public Hashtable getInitialContextEnvironment() {
         return initialContextEnvironment;
     }
 
@@ -293,8 +266,7 @@ public abstract class JMSProxy
      *
      * @param env A Hashtable of the <code>initial-context-environment</code>.
      */
-    public void setInitialContextEnvironment(Hashtable env)
-    {
+    public void setInitialContextEnvironment(Hashtable env) {
         initialContextEnvironment = env;
     }
 
@@ -307,10 +279,9 @@ public abstract class JMSProxy
     /**
      * Initializes the connection factory needed for JMS.
      */
-    protected ConnectionFactory initializeConnectionFactory() throws NamingException
-    {
+    protected ConnectionFactory initializeConnectionFactory() throws NamingException {
         if (connectionFactory == null)
-            connectionFactory = (ConnectionFactory)jndiContext.lookup(connectionFactoryName);
+            connectionFactory = (ConnectionFactory) jndiContext.lookup(connectionFactoryName);
 
         return connectionFactory;
     }
@@ -318,10 +289,9 @@ public abstract class JMSProxy
     /**
      * Initializes the destination (topic and queue) used by JMS.
      */
-    protected Destination initializeDestination() throws NamingException
-    {
+    protected Destination initializeDestination() throws NamingException {
         if (destination == null)
-            destination = (Destination)jndiContext.lookup(destinationJndiName);
+            destination = (Destination) jndiContext.lookup(destinationJndiName);
 
         return destination;
     }
@@ -330,8 +300,7 @@ public abstract class JMSProxy
      * Initializes the JNDI context needed by JMS. This should be called before
      * any other initialize methods.
      */
-    protected Context initializeJndiContext() throws NamingException
-    {
+    protected Context initializeJndiContext() throws NamingException {
         if (jndiContext != null)
             stop();
 
@@ -353,8 +322,7 @@ public abstract class JMSProxy
      * A static inner class for connection credentials that is passed to JMS
      * connection factory when a JMS connection is created.
      */
-    public static class ConnectionCredentials
-    {
+    public static class ConnectionCredentials {
         private String username;
         private String password;
 
@@ -365,8 +333,7 @@ public abstract class JMSProxy
          * @param username Username of the credential.
          * @param password Password of the credential.
          */
-        public ConnectionCredentials(String username, String password)
-        {
+        public ConnectionCredentials(String username, String password) {
             this.username = username;
             this.password = password;
         }
@@ -376,8 +343,7 @@ public abstract class JMSProxy
          *
          * @return The username being used.
          */
-        public String getUsername()
-        {
+        public String getUsername() {
             return username;
         }
 
@@ -386,8 +352,7 @@ public abstract class JMSProxy
          *
          * @return The password being used.
          */
-        public String getPassword()
-        {
+        public String getPassword() {
             return password;
         }
     }

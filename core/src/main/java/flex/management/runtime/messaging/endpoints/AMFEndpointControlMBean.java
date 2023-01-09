@@ -20,7 +20,6 @@ package flex.management.runtime.messaging.endpoints;
 /**
  * Defines the runtime monitoring and management interface for managed AMF endpoints.
  */
-public interface AMFEndpointControlMBean extends PollingEndpointControlMBean
-{
+public interface AMFEndpointControlMBean extends PollingEndpointControlMBean {
     // Empty for now.
 }

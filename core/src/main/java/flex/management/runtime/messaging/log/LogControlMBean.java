@@ -22,8 +22,7 @@ import flex.management.BaseControlMBean;
 /**
  * Defines the exposed properties and operations of the LogControl.
  */
-public interface LogControlMBean extends BaseControlMBean
-{
+public interface LogControlMBean extends BaseControlMBean {
     /**
      * Returns the array of log targets.
      *
@@ -58,14 +57,14 @@ public interface LogControlMBean extends BaseControlMBean
      * Changes the target level.
      *
      * @param targetId The target id.
-     * @param level The target level.
+     * @param level    The target level.
      */
     void changeTargetLevel(String targetId, String level);
 
     /**
      * Adds a filter for the target.
      *
-     * @param filter The filter.
+     * @param filter   The filter.
      * @param targetId The target id.
      */
     void addFilterForTarget(String filter, String targetId);
@@ -73,7 +72,7 @@ public interface LogControlMBean extends BaseControlMBean
     /**
      * Removes a filter from the target.
      *
-     * @param filter The filter.
+     * @param filter   The filter.
      * @param targetId The target id.
      */
     void removeFilterForTarget(String filter, String targetId);

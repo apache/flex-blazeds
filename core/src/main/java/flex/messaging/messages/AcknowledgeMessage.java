@@ -23,13 +23,11 @@ import java.io.ObjectOutput;
 import flex.messaging.util.UUIDUtils;
 
 /**
- *
  * This is the type of message returned by the MessageBroker
  * to endpoints after the broker has routed an endpoint's message
  * to a service.
  */
-public class AcknowledgeMessage extends AsyncMessage
-{
+public class AcknowledgeMessage extends AsyncMessage {
     /**
      * This number was generated using the 'serialver' command line tool.
      * This number should remain consistent with the version used by
@@ -40,8 +38,7 @@ public class AcknowledgeMessage extends AsyncMessage
     /**
      * Default constructor.
      */
-    public AcknowledgeMessage()
-    {
+    public AcknowledgeMessage() {
         this.messageId = UUIDUtils.createUUID(false);
         this.timestamp = System.currentTimeMillis();
     }
@@ -49,24 +46,19 @@ public class AcknowledgeMessage extends AsyncMessage
     /**
      *
      */
-    public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException
-    {
+    public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
         super.readExternal(input);
 
         short[] flagsArray = readFlags(input);
-        for (int i = 0; i < flagsArray.length; i++)
-        {
+        for (int i = 0; i < flagsArray.length; i++) {
             short flags = flagsArray[i];
             short reservedPosition = 0;
 
             // For forwards compatibility, read in any other flagged objects
             // to preserve the integrity of the input stream...
-            if ((flags >> reservedPosition) != 0)
-            {
-                for (short j = reservedPosition; j < 6; j++)
-                {
-                    if (((flags >> j) & 1) != 0)
-                    {
+            if ((flags >> reservedPosition) != 0) {
+                for (short j = reservedPosition; j < 6; j++) {
+                    if (((flags >> j) & 1) != 0) {
                         input.readObject();
                     }
                 }
@@ -77,8 +69,7 @@ public class AcknowledgeMessage extends AsyncMessage
     /**
      *
      */
-    public Message getSmallMessage()
-    {
+    public Message getSmallMessage() {
         if (getClass() == AcknowledgeMessage.class)
             return new AcknowledgeMessageExt(this);
         return null;
@@ -87,8 +78,7 @@ public class AcknowledgeMessage extends AsyncMessage
     /**
      *
      */
-    public void writeExternal(ObjectOutput output) throws IOException
-    {
+    public void writeExternal(ObjectOutput output) throws IOException {
         super.writeExternal(output);
 
         short flags = 0;

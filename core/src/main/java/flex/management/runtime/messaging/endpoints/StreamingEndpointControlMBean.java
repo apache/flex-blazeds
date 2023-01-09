@@ -23,8 +23,7 @@ import java.util.Date;
  * Defines the runtime monitoring and management interface for managed streaming
  * endpoints.
  */
-public interface StreamingEndpointControlMBean extends EndpointControlMBean
-{
+public interface StreamingEndpointControlMBean extends EndpointControlMBean {
     /**
      * Returns the maximum number of clients that will be allowed to establish
      * a streaming HTTP connection with the endpoint.

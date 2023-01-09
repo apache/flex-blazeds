@@ -33,10 +33,9 @@ import flex.messaging.util.ExceptionUtil;
 /**
  * This is the default implementation of Message, which
  * provides a convenient base for behavior and associations
- * common to all endpoints. 
+ * common to all endpoints.
  */
-public abstract class AbstractMessage implements Message, Cloneable
-{
+public abstract class AbstractMessage implements Message, Cloneable {
     /**
      * This number was generated using the 'serialver' command line tool.
      * This number should remain consistent with the version used by
@@ -61,7 +60,7 @@ public abstract class AbstractMessage implements Message, Cloneable
     protected String messageId;
     protected long timestamp;
     protected long timeToLive;
-    
+
     protected Map headers;
     protected Object body;
 
@@ -70,136 +69,122 @@ public abstract class AbstractMessage implements Message, Cloneable
 
     /**
      * Returns the client id.
-     * 
+     *
      * @return The client id.
      */
-    public Object getClientId()
-    {
+    public Object getClientId() {
         return clientId;
     }
 
     /**
      * Sets the client id.
-     * 
+     *
      * @param clientId The client id.
      */
-    public void setClientId(Object clientId)
-    {
+    public void setClientId(Object clientId) {
         this.clientId = clientId;
         clientIdBytes = null;
-    }    
+    }
 
     /**
      * Returns the message id.
-     * 
+     *
      * @return The message id.
      */
-    public String getMessageId()
-    {
+    public String getMessageId() {
         return messageId;
     }
 
     /**
      * Sets the message id.
-     * 
+     *
      * @param messageId The message id.
      */
-    public void setMessageId(String messageId)
-    {
+    public void setMessageId(String messageId) {
         this.messageId = messageId;
         messageIdBytes = null;
     }
 
     /**
      * Returns the timestamp.
-     * 
+     *
      * @return The timestamp.
      */
-    public long getTimestamp()
-    {
+    public long getTimestamp() {
         return timestamp;
     }
 
     /**
      * Sets the timestamp.
-     * 
+     *
      * @param timestamp The timestamp.
      */
-    public void setTimestamp(long timestamp)
-    {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
     /**
      * Returns the time to live.
-     * 
+     *
      * @return The time to live.
      */
-    public long getTimeToLive()
-    {
+    public long getTimeToLive() {
         return timeToLive;
     }
 
     /**
      * Sets the time to live.
-     * 
+     *
      * @param timeToLive The time to live.
      */
-    public void setTimeToLive(long timeToLive)
-    {
+    public void setTimeToLive(long timeToLive) {
         this.timeToLive = timeToLive;
     }
 
     /**
      * Returns the body.
-     * 
+     *
      * @return the body.
      */
-    public Object getBody()
-    {
+    public Object getBody() {
         return body;
     }
-    
+
 
     /**
      * Sets the body.
-     * 
+     *
      * @param body The body.
      */
-    public void setBody(Object body)
-    {
+    public void setBody(Object body) {
         this.body = body;
     }
 
     /**
      * Returns the destination id.
-     * 
+     *
      * @return The destination id.
      */
-    public String getDestination()
-    {
+    public String getDestination() {
         return destination;
     }
 
     /**
      * Sets the destination id.
-     * 
+     *
      * @param destination The destination id.
      */
-    public void setDestination(String destination)
-    {
+    public void setDestination(String destination) {
         this.destination = destination;
     }
 
     /**
      * Returns the headers.
-     * 
+     *
      * @return The headers.
      */
-    public Map getHeaders()
-    {
-        if (headers == null)
-        {
+    public Map getHeaders() {
+        if (headers == null) {
             headers = new HashMap();
         }
         return headers;
@@ -207,13 +192,11 @@ public abstract class AbstractMessage implements Message, Cloneable
 
     /**
      * Sets the headers.
-     * 
+     *
      * @param newHeaders The new headers to set.
      */
-    public void setHeaders(Map newHeaders)
-    {
-        for (Iterator iter = newHeaders.entrySet().iterator(); iter.hasNext(); )
-        {
+    public void setHeaders(Map newHeaders) {
+        for (Iterator iter = newHeaders.entrySet().iterator(); iter.hasNext(); ) {
             Map.Entry entry = (Map.Entry) iter.next();
             String propName = (String) entry.getKey();
             setHeader(propName, entry.getValue());
@@ -222,22 +205,21 @@ public abstract class AbstractMessage implements Message, Cloneable
 
     /**
      * Returns the header value associated with the header name, or null.
+     *
      * @param headerName the header name
      * @return The header value associaged with the header name.
      */
-    public Object getHeader(String headerName)
-    {
-        return headers != null? headers.get(headerName) : null;
+    public Object getHeader(String headerName) {
+        return headers != null ? headers.get(headerName) : null;
     }
 
     /**
      * Sets the header name and value.
-     * 
+     *
      * @param headerName The header name.
-     * @param value The header value.
+     * @param value      The header value.
      */
-    public void setHeader(String headerName, Object value)
-    {
+    public void setHeader(String headerName, Object value) {
         if (headers == null)
             headers = new HashMap();
 
@@ -249,32 +231,28 @@ public abstract class AbstractMessage implements Message, Cloneable
 
     /**
      * Determines whether the header exists.
+     *
      * @param headerName the header name
      * @return True if the header exists.
      */
-    public boolean headerExists(String headerName)
-    {
+    public boolean headerExists(String headerName) {
         return (headers != null && headers.containsKey(headerName));
     }
 
-    public boolean equals(Object o)
-    {
-        if (o instanceof Message)
-        {
+    public boolean equals(Object o) {
+        if (o instanceof Message) {
             if (messageId == null)
                 return this == o;
 
             Message m = (Message) o;
-            if (m.getMessageId().equals(this.getMessageId()))
-            {
+            if (m.getMessageId().equals(this.getMessageId())) {
                 return true;
             }
         }
-        return false;        
+        return false;
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
         if (messageId == null)
             return super.hashCode();
         return messageId.hashCode();
@@ -282,77 +260,66 @@ public abstract class AbstractMessage implements Message, Cloneable
 
     /**
      * Returns a category to use when logging against this message type.
+     *
      * @return String the log category
      */
-    public String logCategory() 
-    {
-       return LogCategories.MESSAGE_GENERAL;
+    public String logCategory() {
+        return LogCategories.MESSAGE_GENERAL;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return toString(1);
     }
 
-    public String toString(int indent)
-    {
-        return toStringHeader(indent) + toStringFields(indent+1);
+    public String toString(int indent) {
+        return toStringHeader(indent) + toStringFields(indent + 1);
     }
 
     /**
-     *
-     * 
      * While this class itself does not implement java.io.Externalizable,
      * SmallMessage implementations will typically use Externalizable to
      * serialize themselves in a smaller form. This method supports this
      * functionality by implementing Externalizable.readExternal(ObjectInput) to
      * deserialize the properties for this abstract base class.
      */
-    public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException
-    {
+    public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
         short[] flagsArray = readFlags(input);
 
-        for (int i = 0; i < flagsArray.length; i++)
-        {
+        for (int i = 0; i < flagsArray.length; i++) {
             short flags = flagsArray[i];
             short reservedPosition = 0;
 
-            if (i == 0)
-            {
+            if (i == 0) {
                 if ((flags & BODY_FLAG) != 0)
                     readExternalBody(input);
-        
+
                 if ((flags & CLIENT_ID_FLAG) != 0)
                     clientId = input.readObject();
-        
+
                 if ((flags & DESTINATION_FLAG) != 0)
-                    destination = (String)input.readObject();
-        
+                    destination = (String) input.readObject();
+
                 if ((flags & HEADERS_FLAG) != 0)
-                    headers = (Map)input.readObject();
-        
+                    headers = (Map) input.readObject();
+
                 if ((flags & MESSAGE_ID_FLAG) != 0)
-                    messageId = (String)input.readObject();
-        
+                    messageId = (String) input.readObject();
+
                 if ((flags & TIMESTAMP_FLAG) != 0)
-                    timestamp = ((Number)input.readObject()).longValue();
-        
+                    timestamp = ((Number) input.readObject()).longValue();
+
                 if ((flags & TIME_TO_LIVE_FLAG) != 0)
-                    timeToLive = ((Number)input.readObject()).longValue();
+                    timeToLive = ((Number) input.readObject()).longValue();
 
                 reservedPosition = 7;
-            }
-            else if (i == 1)
-            {
-                if ((flags & CLIENT_ID_BYTES_FLAG) != 0)
-                {
-                    clientIdBytes = (byte[])input.readObject();
+            } else if (i == 1) {
+                if ((flags & CLIENT_ID_BYTES_FLAG) != 0) {
+                    clientIdBytes = (byte[]) input.readObject();
                     clientId = UUIDUtils.fromByteArray(clientIdBytes);
                 }
-        
-                if ((flags & MESSAGE_ID_BYTES_FLAG) != 0)
-                {
-                    messageIdBytes = (byte[])input.readObject();
+
+                if ((flags & MESSAGE_ID_BYTES_FLAG) != 0) {
+                    messageIdBytes = (byte[]) input.readObject();
                     messageId = UUIDUtils.fromByteArray(messageIdBytes);
                 }
 
@@ -361,12 +328,9 @@ public abstract class AbstractMessage implements Message, Cloneable
 
             // For forwards compatibility, read in any other flagged objects to
             // preserve the integrity of the input stream...
-            if ((flags >> reservedPosition) != 0)
-            {
-                for (short j = reservedPosition; j < 6; j++)
-                {
-                    if (((flags >> j) & 1) != 0)
-                    {
+            if ((flags >> reservedPosition) != 0) {
+                for (short j = reservedPosition; j < 6; j++) {
+                    if (((flags >> j) & 1) != 0) {
                         input.readObject();
                     }
                 }
@@ -375,20 +339,17 @@ public abstract class AbstractMessage implements Message, Cloneable
     }
 
     /**
-     *
-     * 
      * While this class itself does not implement java.io.Externalizable,
      * SmallMessage implementations will typically use Externalizable to
      * serialize themselves in a smaller form. This method supports this
      * functionality by implementing Externalizable.writeExternal(ObjectOutput)
      * to efficiently serialize the properties for this abstract base class.
      */
-    public void writeExternal(ObjectOutput output) throws IOException
-    {
+    public void writeExternal(ObjectOutput output) throws IOException {
         short flags = 0;
 
         if (clientIdBytes == null && clientId != null && clientId instanceof String)
-            clientIdBytes = UUIDUtils.toByteArray((String)clientId);
+            clientIdBytes = UUIDUtils.toByteArray((String) clientId);
 
         if (messageIdBytes == null && messageId != null)
             messageIdBytes = UUIDUtils.toByteArray(messageId);
@@ -458,19 +419,15 @@ public abstract class AbstractMessage implements Message, Cloneable
             output.writeObject(messageIdBytes);
     }
 
-    public Object clone() 
-    {
+    public Object clone() {
         AbstractMessage m = null;
-        try 
-        {
+        try {
             m = (AbstractMessage) super.clone();
 
             /* NOTE: this is not cloning the body - just the headers */
             if (headers != null)
                 m.headers = (HashMap) ((HashMap) headers).clone();
-        }
-        catch (CloneNotSupportedException exc) 
-        {
+        } catch (CloneNotSupportedException exc) {
             // can't happen..
         }
         return m;
@@ -478,66 +435,60 @@ public abstract class AbstractMessage implements Message, Cloneable
 
     /**
      * Implements Comparable. Compares this message with the other message,
-     * according to the message priority header value (if one exists). 
+     * according to the message priority header value (if one exists).
+     *
      * @param otherMessage the message to compare with
      * @return int return 1 if the priority is lower than the other message, 0 if equal and -1 if higher
      */
-    public int compareTo(Message otherMessage) 
-    {
+    public int compareTo(Message otherMessage) {
         Object priorityHeader = getHeader(PRIORITY_HEADER);
-        int thisPriority = priorityHeader == null? DEFAULT_PRIORITY : ((Integer)priorityHeader).intValue();
+        int thisPriority = priorityHeader == null ? DEFAULT_PRIORITY : ((Integer) priorityHeader).intValue();
         priorityHeader = otherMessage.getHeader(PRIORITY_HEADER);
-        int otherPriority = priorityHeader == null? DEFAULT_PRIORITY : ((Integer)priorityHeader).intValue();
+        int otherPriority = priorityHeader == null ? DEFAULT_PRIORITY : ((Integer) priorityHeader).intValue();
         // Note that lower priority goes last.
-        return (thisPriority < otherPriority? 1 : (thisPriority == otherPriority? 0 : -1));
+        return (thisPriority < otherPriority ? 1 : (thisPriority == otherPriority ? 0 : -1));
     }
 
-    static final String [] indentLevels = 
-        {"", "  ", "    ", "      ", "        ","          "};
+    static final String[] indentLevels =
+            {"", "  ", "    ", "      ", "        ", "          "};
 
-    protected String getIndent(int indentLevel) 
-    {
+    protected String getIndent(int indentLevel) {
         if (indentLevel < indentLevels.length) return indentLevels[indentLevel];
         StringBuffer sb = new StringBuffer();
-        sb.append(indentLevels[indentLevels.length-1]);
+        sb.append(indentLevels[indentLevels.length - 1]);
         indentLevel -= indentLevels.length - 1;
         for (int i = 0; i < indentLevel; i++)
             sb.append("  ");
         return sb.toString();
     }
 
-    protected String getFieldSeparator(int indentLevel) 
-    {
+    protected String getFieldSeparator(int indentLevel) {
         String indStr = getIndent(indentLevel);
-        if (indentLevel > 0) 
+        if (indentLevel > 0)
             indStr = StringUtils.NEWLINE + indStr;
-        else 
+        else
             indStr = " ";
         return indStr;
     }
 
-    protected String toStringHeader(int indentLevel) 
-    {
+    protected String toStringHeader(int indentLevel) {
         String s = "Flex Message";
         s += " (" + getClass().getName() + ") ";
         return s;
     }
 
-    protected String toStringFields(int indentLevel)
-    {
-        if (headers != null)
-        {
-            String sep = getFieldSeparator(indentLevel); 
+    protected String toStringFields(int indentLevel) {
+        if (headers != null) {
+            String sep = getFieldSeparator(indentLevel);
             StringBuilder sb = new StringBuilder();
-            for (Iterator i = headers.entrySet().iterator(); i.hasNext();)
-            {
+            for (Iterator i = headers.entrySet().iterator(); i.hasNext(); ) {
                 Map.Entry e = (Map.Entry) i.next();
                 String key = e.getKey().toString();
                 sb.append(sep).append("hdr(").append(key).append(") = ");
                 if (Log.isExcludedProperty(key))
                     sb.append(Log.VALUE_SUPRESSED);
                 else
-                    sb.append(bodyToString(e.getValue(), indentLevel+1));
+                    sb.append(bodyToString(e.getValue(), indentLevel + 1));
             }
             return sb.toString();
         }
@@ -545,76 +496,64 @@ public abstract class AbstractMessage implements Message, Cloneable
     }
 
     /**
-     * This is usually an array so might as well format it nicely in 
+     * This is usually an array so might as well format it nicely in
      * this case.
      */
-    protected final String bodyToString(Object body, int indentLevel) 
-    {
+    protected final String bodyToString(Object body, int indentLevel) {
         return bodyToString(body, indentLevel, null);
     }
 
     /**
-     * This is usually an array so might as well format it nicely in 
+     * This is usually an array so might as well format it nicely in
      * this case.
      */
-    protected final String bodyToString(Object body, int indentLevel, Map visited) 
-    {
-        try 
-        {
+    protected final String bodyToString(Object body, int indentLevel, Map visited) {
+        try {
             indentLevel = indentLevel + 1;
             if (visited == null && indentLevel > 18)
                 return StringUtils.NEWLINE + getFieldSeparator(indentLevel) + "<..max-depth-reached..>";
             return internalBodyToString(body, indentLevel, visited);
-        }
-        catch (RuntimeException exc) 
-        {
+        } catch (RuntimeException exc) {
             return "Exception in body toString: " + ExceptionUtil.toString(exc);
         }
     }
 
-    protected String internalBodyToString(Object body, int indentLevel)     
-    {
+    protected String internalBodyToString(Object body, int indentLevel) {
         return internalBodyToString(body, indentLevel, null);
     }
 
-    protected String internalBodyToString(Object body, int indentLevel, Map visited)
-    {
-        if (body instanceof Object[]) 
-        {
+    protected String internalBodyToString(Object body, int indentLevel, Map visited) {
+        if (body instanceof Object[]) {
             if ((visited = checkVisited(visited, body)) == null)
                 return "<--";
 
             String sep = getFieldSeparator(indentLevel);
             StringBuffer sb = new StringBuffer();
-            Object [] arr = (Object[]) body;
-            sb.append(getFieldSeparator(indentLevel-1));
+            Object[] arr = (Object[]) body;
+            sb.append(getFieldSeparator(indentLevel - 1));
             sb.append("[");
             sb.append(sep);
-            for (int i = 0; i < arr.length; i++)
-            {
-                if (i != 0) 
-                {
+            for (int i = 0; i < arr.length; i++) {
+                if (i != 0) {
                     sb.append(",");
                     sb.append(sep);
                 }
-                sb.append(bodyToString(arr[i],indentLevel,visited));
+                sb.append(bodyToString(arr[i], indentLevel, visited));
             }
-            sb.append(getFieldSeparator(indentLevel-1));
+            sb.append(getFieldSeparator(indentLevel - 1));
             sb.append("]");
             return sb.toString();
         }
         // This is here so we can format maps with Object[] as values properly
         // and with the proper indent
-        else if (body instanceof Map)
-        {
+        else if (body instanceof Map) {
             if ((visited = checkVisited(visited, body)) == null)
                 return "<--";
             Map bodyMap = (Map) body;
             StringBuffer buf = new StringBuffer();
             buf.append("{");
             Iterator it = bodyMap.entrySet().iterator();
-            while(it.hasNext())
-            {
+            while (it.hasNext()) {
                 Map.Entry e = (Map.Entry) it.next();
                 Object key = e.getKey();
                 Object value = e.getValue();
@@ -632,51 +571,42 @@ public abstract class AbstractMessage implements Message, Cloneable
             }
             buf.append("}");
             return buf.toString();
-        }
-        else if (body instanceof AbstractMessage) 
-        {
-            return ((AbstractMessage)body).toString(indentLevel);
-        }
-        else if (body != null)
+        } else if (body instanceof AbstractMessage) {
+            return ((AbstractMessage) body).toString(indentLevel);
+        } else if (body != null)
             return body.toString();
         else return "null";
     }
 
     /**
-     *
      * Used by the readExtenral method to read the body.
-     *  
+     *
      * @param input Object input.
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    protected void readExternalBody(ObjectInput input) throws IOException, ClassNotFoundException
-    {
+    protected void readExternalBody(ObjectInput input) throws IOException, ClassNotFoundException {
         body = input.readObject();
     }
 
     /**
-     *
      * To support efficient serialization for SmallMessage implementations,
      * this utility method reads in the property flags from an ObjectInput
      * stream. Flags are read in one byte at a time. Flags make use of
      * sign-extension so that if the high-bit is set to 1 this indicates that
      * another set of flags follows.
-     * 
-     * @return The array of property flags. 
+     *
+     * @return The array of property flags.
      */
-    protected short[] readFlags(ObjectInput input) throws IOException
-    {
+    protected short[] readFlags(ObjectInput input) throws IOException {
         boolean hasNextFlag = true;
         short[] flagsArray = new short[2];
         int i = 0;
 
-        while (hasNextFlag)
-        {
-            short flags = (short)input.readUnsignedByte();
-            if (i == flagsArray.length)
-            {
-                short[] tempArray = new short[i*2];
+        while (hasNextFlag) {
+            short flags = (short) input.readUnsignedByte();
+            if (i == flagsArray.length) {
+                short[] tempArray = new short[i * 2];
                 System.arraycopy(flagsArray, 0, tempArray, 0, flagsArray.length);
                 flagsArray = tempArray;
             }
@@ -692,19 +622,16 @@ public abstract class AbstractMessage implements Message, Cloneable
     }
 
     /**
-     *
      * Used by writeExternal method to write the body.
-     * 
+     *
      * @param output The object output.
      * @throws IOException
      */
-    protected void writeExternalBody(ObjectOutput output) throws IOException
-    {
+    protected void writeExternalBody(ObjectOutput output) throws IOException {
         output.writeObject(body);
     }
 
-    private Map checkVisited(Map visited, Object obj)
-    {
+    private Map checkVisited(Map visited, Object obj) {
         if (visited == null)
             visited = new IdentityHashMap();
         else if (visited.get(obj) != null)

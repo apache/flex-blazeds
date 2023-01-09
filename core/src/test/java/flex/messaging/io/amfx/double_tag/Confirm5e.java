@@ -20,24 +20,19 @@ import flex.messaging.io.amfx.DeserializationConfirmation;
 import flex.messaging.io.amf.ActionMessage;
 import flex.messaging.MessageException;
 
-public class Confirm5e extends DeserializationConfirmation
-{
-    public Confirm5e()
-    {
+public class Confirm5e extends DeserializationConfirmation {
+    public Confirm5e() {
     }
 
-    public boolean isNegativeTest()
-    {
+    public boolean isNegativeTest() {
         return true;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return null;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return new MessageException("Invalid double: THIS IS AN INVALID DOUBLE");
     }
 }

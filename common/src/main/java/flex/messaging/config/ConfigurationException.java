@@ -25,8 +25,7 @@ import flex.messaging.LocalizedException;
  * in the event that the configuration settings used to
  * initialize the component was invalid.
  */
-public class ConfigurationException extends LocalizedException
-{
+public class ConfigurationException extends LocalizedException {
     /**
      * This number was generated using the 'serialver' command line tool.
      * This number should remain consistent with the version used by

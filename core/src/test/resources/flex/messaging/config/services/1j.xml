@@ -27,7 +27,7 @@ instead of a file
 
     <services>
 
-        <service-include directory-path="services" />
+        <service-include directory-path="services"/>
 
     </services>
 

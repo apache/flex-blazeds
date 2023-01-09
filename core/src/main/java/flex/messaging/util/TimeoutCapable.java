@@ -22,11 +22,8 @@ import java.util.concurrent.Future;
  * This interface defines the contract for an object that can time
  * out, where the timeout mechanism is provided by the TimeoutManager
  * class.
- *
- *
  */
-public interface TimeoutCapable
-{
+public interface TimeoutCapable {
     /**
      * Revoke the timeout task, removing it from future evaluation and execution.
      */
@@ -35,7 +32,7 @@ public interface TimeoutCapable
     /**
      * Determine the timestamp of this object's last use, where "last use" should
      * denote all tasks that eliminate idleness.
-     * 
+     *
      * @return last used time
      */
     long getLastUse();
@@ -43,7 +40,7 @@ public interface TimeoutCapable
     /**
      * Determine the time, in milliseconds, that this object is allowed to idle
      * before having its timeout method invoked.
-     * 
+     *
      * @return timeout period
      */
     long getTimeoutPeriod();
@@ -52,7 +49,7 @@ public interface TimeoutCapable
      * Set the Future used to provide access to the Runnable task that invokes
      * the timeout method. A Future is used instead of a Runnable so that it may
      * be canceled according to the Java concurrency standard.
-     * 
+     *
      * @param future Future used to provide access to the Runnable task that invokes the timeout method.
      */
     void setTimeoutFuture(Future future);

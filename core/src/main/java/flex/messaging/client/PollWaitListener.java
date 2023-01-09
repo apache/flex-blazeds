@@ -22,18 +22,17 @@ package flex.messaging.client;
  * state. This can be used to break the threads out of their wait state separately from the
  * internal waited poll handling within <code>FlexClient</code>.
  */
-public interface PollWaitListener
-{
+public interface PollWaitListener {
     /**
      * Hook method invoked directly before a wait begins.
-     * 
+     *
      * @param notifier The <tt>Object</tt> being used to <code>wait()/notify()</code>.
      */
     void waitStart(Object notifier);
-    
+
     /**
      * Hook method invoked directly after a wait completes.
-     * 
+     *
      * @param notifier The <tt>Object</tt> being used to <code>wait()/notify()</code>.
      */
     void waitEnd(Object notifier);

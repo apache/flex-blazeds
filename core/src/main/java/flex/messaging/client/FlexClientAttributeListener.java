@@ -19,27 +19,26 @@ package flex.messaging.client;
 /**
  * Interface for FlexClient attribute listeners.
  */
-public interface FlexClientAttributeListener 
-{
+public interface FlexClientAttributeListener {
     /**
      * Callback invoked after an attribute is added to the FlexClient.
-     * 
+     *
      * @param event The event containing the associated FlexClient and attribute
      *              information.
      */
     void attributeAdded(FlexClientBindingEvent event);
-    
+
     /**
      * Callback invoked after an attribute is removed from the FlexClient.
-     * 
+     *
      * @param event The event containing the associated FlexClient and attribute
      *              information.
      */
     void attributeReplaced(FlexClientBindingEvent event);
-    
+
     /**
      * Callback invoked after an attribute has been replaced with a new value.
-     * 
+     *
      * @param event The event containing the associated FlexClient and attribute
      *              information.
      */

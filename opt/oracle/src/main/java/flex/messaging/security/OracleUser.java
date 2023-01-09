@@ -31,88 +31,71 @@ import oracle.security.jazn.realm.RealmUser;
 
 /**
  * An Oracle specific implementation of java.security.Principal.
- * 
- *
  */
-public class OracleUser implements Principal
-{
+public class OracleUser implements Principal {
     private LoginContext context;
     private Subject subject;
 
-    public OracleUser(LoginContext context) throws LoginException
-    {
+    public OracleUser(LoginContext context) throws LoginException {
         this.context = context;
         context.logout();
         context.login();
         this.subject = context.getSubject();
     }
 
-    public void logout() throws LoginException
-    {
+    public void logout() throws LoginException {
         context.logout();
     }
 
-    private Principal userPrincipal()
-    {
+    private Principal userPrincipal() {
         Set possibleUsers = subject.getPrincipals(RealmUser.class);
         return (Principal) possibleUsers.iterator().next();
     }
 
-    public boolean isMemberOf(List roleNames)
-    {
+    public boolean isMemberOf(List roleNames) {
         boolean result = false;
         Set possibleUsers = subject.getPrincipals(RealmRole.class);
         Iterator itr = possibleUsers.iterator();
-        while (itr.hasNext())
-        {
+        while (itr.hasNext()) {
             RealmRole role = (RealmRole) itr.next();
             Realm realm = role.getRealm();
             String realmFullName = realm.getFullName();
             String roleSimpleName = role.getName();
             if ((realmFullName.length() > 0) &&
-                roleSimpleName.startsWith(realmFullName))
-            {
+                    roleSimpleName.startsWith(realmFullName)) {
                 // Format is "<realm full name>\<role name>"
                 roleSimpleName = roleSimpleName.substring
-                    (realmFullName.length() + 1);
+                        (realmFullName.length() + 1);
             }
-            
-            if (roleNames.contains(roleSimpleName))
-            {
+
+            if (roleNames.contains(roleSimpleName)) {
                 result = true;
                 break;
             }
         }
         return result;
     }
-   
-    public boolean equals(Object object)
-    {
+
+    public boolean equals(Object object) {
         boolean result = false;
-        if (object == this)
-        {
+        if (object == this) {
             result = true;
-        }
-        else if (object instanceof OracleUser)
-        {
+        } else if (object instanceof OracleUser) {
             OracleUser other = (OracleUser) object;
             result = this.subject.equals(other.subject);
         }
         return result;
     }
 
-    public String getName() 
-    {
+    public String getName() {
         return userPrincipal().getName();
     }
 
-    public int hashCode() 
-    {
+    public int hashCode() {
         return this.subject.hashCode();
     }
 
-    public String toString()
-    {
+    public String toString() {
         return this.subject.toString();
     }
 }

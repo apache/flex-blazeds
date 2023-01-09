@@ -20,12 +20,11 @@ package flex.messaging.io;
  * A utility to convert between data types, useful for mapping
  * loosely typed client classes to more strongly typed server classes.
  */
-public interface TypeMarshaller
-{
+public interface TypeMarshaller {
     /**
      * Creates an instance of the desired class without populating the type.
-     * 
-     * @param source The raw <tt>Object</tt> to be converted into an instance of the desired class.
+     *
+     * @param source       The raw <tt>Object</tt> to be converted into an instance of the desired class.
      * @param desiredClass The type to which the source needs to be converted.
      * @return An instance of the desired class.
      */
@@ -33,8 +32,8 @@ public interface TypeMarshaller
 
     /**
      * Converts the supplied source instance to an instance of the desired <tt>Class</tt>.
-     * 
-     * @param source The source instance.
+     *
+     * @param source       The source instance.
      * @param desiredClass The type to which the source needs to be converted.
      * @return The converted instance of the desired class.
      */

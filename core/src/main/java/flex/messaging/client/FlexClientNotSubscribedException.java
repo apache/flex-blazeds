@@ -22,8 +22,7 @@ import flex.messaging.log.LogEvent;
 /**
  *
  */
-public class FlexClientNotSubscribedException extends MessageException
-{
+public class FlexClientNotSubscribedException extends MessageException {
     /**
      *
      */
@@ -34,40 +33,37 @@ public class FlexClientNotSubscribedException extends MessageException
     // Properties
     //
     //--------------------------------------------------------------------------        
-    
+
     //----------------------------------
     //  defaultLogMessageIntro
     //----------------------------------            
 
     /**
-     * Overrides the intro text for the log message. 
+     * Overrides the intro text for the log message.
      */
-    public String getDefaultLogMessageIntro()
-    {
-        return "FlexClient not subscribed: ";        
+    public String getDefaultLogMessageIntro() {
+        return "FlexClient not subscribed: ";
     }
-    
+
     //----------------------------------
     //  logStackTraceEnabled
     //----------------------------------            
-    
+
     /**
      * Override to disable stack trace logging.
      */
-    public boolean isLogStackTraceEnabled()
-    {
-        return false;        
-    }    
-    
+    public boolean isLogStackTraceEnabled() {
+        return false;
+    }
+
     //----------------------------------
     //  peferredLogLevel
     //----------------------------------            
-    
+
     /**
-     * Override to lower the preferred log level to debug. 
+     * Override to lower the preferred log level to debug.
      */
-    public short getPreferredLogLevel()
-    {
-        return LogEvent.DEBUG;        
+    public short getPreferredLogLevel() {
+        return LogEvent.DEBUG;
     }
 }

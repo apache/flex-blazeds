@@ -20,20 +20,16 @@ package flex.messaging.config.services;
 import flex.messaging.LocalizedException;
 import flex.messaging.config.MessagingConfiguration;
 
-public class Confirm1j extends Confirm1c
-{
-    public Confirm1j()
-    {
+public class Confirm1j extends Confirm1c {
+    public Confirm1j() {
         super();
     }
 
-    public MessagingConfiguration getExpectedConfiguration()
-    {
+    public MessagingConfiguration getExpectedConfiguration() {
         return EXPECTED_VALUE;
     }
 
-    public LocalizedException getExpectedException()
-    {
+    public LocalizedException getExpectedException() {
         return null;
     }
 }

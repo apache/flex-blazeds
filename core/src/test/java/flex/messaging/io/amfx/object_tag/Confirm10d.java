@@ -24,12 +24,10 @@ import flex.messaging.io.amf.ActionMessage;
 import flex.messaging.io.amf.MessageBody;
 import flex.messaging.MessageException;
 
-public class Confirm10d extends DeserializationConfirmation
-{
+public class Confirm10d extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm10d()
-    {
+    public Confirm10d() {
         ActionMessage m = new ActionMessage();
         MessageBody body = new MessageBody();
         m.addBody(body);
@@ -47,25 +45,21 @@ public class Confirm10d extends DeserializationConfirmation
         EXPECTED_VALUE = m;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 
-    protected boolean bodyValuesMatch(Object o1, Object o2)
-    {
-        if (!(o1 instanceof Bleu_dAuvergne) || !(o2 instanceof Bleu_dAuvergne))
-        {
+    protected boolean bodyValuesMatch(Object o1, Object o2) {
+        if (!(o1 instanceof Bleu_dAuvergne) || !(o2 instanceof Bleu_dAuvergne)) {
             return false;
         }
 
-        Bleu_dAuvergne b1 = (Bleu_dAuvergne)o1;
-        Bleu_dAuvergne b2 = (Bleu_dAuvergne)o2;
+        Bleu_dAuvergne b1 = (Bleu_dAuvergne) o1;
+        Bleu_dAuvergne b2 = (Bleu_dAuvergne) o2;
 
         if (!b1.getName().equals(b2.getName()))
             return false;
@@ -82,8 +76,8 @@ public class Confirm10d extends DeserializationConfirmation
         if (!(p1 instanceof Roquefort) || !(p2 instanceof Roquefort))
             return false;
 
-        Roquefort r1 = (Roquefort)p1;
-        Roquefort r2 = (Roquefort)p2;
+        Roquefort r1 = (Roquefort) p1;
+        Roquefort r2 = (Roquefort) p2;
 
         if (r1.getParing() != b1 || r2.getParing() != b2)
             return false;

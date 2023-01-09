@@ -22,41 +22,34 @@ package flex.messaging.util;
  * general streaming as they don't let you
  * drain less than everything that is currently
  * available.
- * 
- *
  */
-public class Hex
-{
+public class Hex {
     private static final char digits[] =
             {
-                '0', '1', '2', '3', '4', '5', '6', '7',
-                '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+                    '0', '1', '2', '3', '4', '5', '6', '7',
+                    '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
             };
+
     /**
-    *
-    */
-    public static class Decoder
-    {
+     *
+     */
+    public static class Decoder {
         private int filled = 0;
         private byte data[];
         private int work[] = {0, 0};
 
 
-        public Decoder()
-        {
+        public Decoder() {
             data = new byte[256];
         }
 
-        public void decode(String encoded)
-        {
+        public void decode(String encoded) {
 
             int estimate = 1 + encoded.length() / 2;
 
-            if (filled + estimate > data.length)
-            {
+            if (filled + estimate > data.length) {
                 int length = data.length * 2;
-                while (length < filled + estimate)
-                {
+                while (length < filled + estimate) {
                     length *= 2;
                 }
                 byte[] newdata = new byte[length];
@@ -65,8 +58,7 @@ public class Hex
                 data = newdata;
             }
 
-            for (int i = 0; i < encoded.length(); ++i)
-            {
+            for (int i = 0; i < encoded.length(); ++i) {
                 work[0] = Character.digit(encoded.charAt(i), 16);
                 i++;
                 work[1] = Character.digit(encoded.charAt(i), 16);
@@ -74,69 +66,58 @@ public class Hex
             }
         }
 
-        public byte[] drain()
-        {
+        public byte[] drain() {
             byte[] r = new byte[filled];
             System.arraycopy(data, 0, r, 0, filled);
             filled = 0;
             return r;
         }
 
-        public byte[] flush() throws IllegalStateException
-        {
+        public byte[] flush() throws IllegalStateException {
             return drain();
         }
 
-        public void reset()
-        {
+        public void reset() {
             filled = 0;
         }
 
     }
 
     /**
-    *
-    */
-    public static class Encoder
-    {
+     *
+     */
+    public static class Encoder {
         private StringBuffer output;
 
-        public Encoder(int size)
-        {
+        public Encoder(int size) {
             output = new StringBuffer(size * 2);
         }
 
-        private void encodeBlock(byte work)
-        {
+        private void encodeBlock(byte work) {
             output.append(digits[(work & 0xF0) >>> 4]);
             output.append(digits[(work & 0x0F)]);
         }
 
-        public void encode(byte[] data)
-        {
+        public void encode(byte[] data) {
             encode(data, 0, data.length);
         }
 
-        public void encode(byte[] data, int offset, int length)
-        {
+        public void encode(byte[] data, int offset, int length) {
             int plainIndex = offset;
 
-            while (plainIndex < (offset + length))
-            {
+            while (plainIndex < (offset + length)) {
                 encodeBlock(data[plainIndex]);
                 plainIndex++;
             }
         }
 
-        public String drain()
-        {
+        public String drain() {
             String r = output.toString();
             output.setLength(0);
             return r;
         }
 
-        public String flush()
-        {
+        public String flush() {
             return drain();
         }
     }

@@ -26,11 +26,9 @@ import flex.messaging.config.ConfigMap;
 import flex.messaging.log.LogCategories;
 
 /**
- *
  * Base interface for cluster implementations.
  */
-public abstract class Cluster
-{
+public abstract class Cluster {
     /**
      * Default log category for clustering.
      */
@@ -61,12 +59,11 @@ public abstract class Cluster
      * are identified by a unique name composed in the format
      * "serviceType:destinationId".
      *
-     * @return The unique name for the clustered destination.
-     * @param serviceType The name of the service for this destination.
+     * @param serviceType     The name of the service for this destination.
      * @param destinationName The original name of the destination.
+     * @return The unique name for the clustered destination.
      */
-    static String getClusterDestinationKey(String serviceType, String destinationName)
-    {
+    static String getClusterDestinationKey(String serviceType, String destinationName) {
         StringBuffer sb = new StringBuffer();
         sb.append(serviceType);
         sb.append(':');
@@ -79,8 +76,7 @@ public abstract class Cluster
      *
      * @param listener the RemoveNodeListener to add
      */
-    public void addRemoveNodeListener(RemoveNodeListener listener)
-    {
+    public void addRemoveNodeListener(RemoveNodeListener listener) {
         removeNodeListeners.add(listener);
     }
 
@@ -90,44 +86,39 @@ public abstract class Cluster
      *
      * @param address The node that was removed from the cluster.
      */
-    protected void sendRemoveNodeListener(Object address)
-    {
-        synchronized (removeNodeListeners)
-        {
+    protected void sendRemoveNodeListener(Object address) {
+        synchronized (removeNodeListeners) {
             for (int i = 0; i < removeNodeListeners.size(); i++)
-                ((RemoveNodeListener)removeNodeListeners.get(i)).removeClusterNode(address);
+                ((RemoveNodeListener) removeNodeListeners.get(i)).removeClusterNode(address);
         }
     }
 
     /**
      * Initializes the Cluster with id and the map of properties. The default
      * implementation is no-op.
-     * 
-     * @param id The cluster id.
+     *
+     * @param id         The cluster id.
      * @param properties The map of properties.
      */
-    public void initialize(String id, ConfigMap properties)
-    {
+    public void initialize(String id, ConfigMap properties) {
         // No-op.
     }
 
     /**
      * Returns the cluster properties file.
-     * 
+     *
      * @return The cluster properties file.
      */
-    public Element clusterPropertiesFile()
-    {
+    public Element clusterPropertiesFile() {
         return clusterPropertiesFile;
     }
 
     /**
      * Sets the cluster properties file.
-     * 
+     *
      * @param value The cluster properties file.
      */
-    public void setClusterPropertiesFile(Element value)
-    {
+    public void setClusterPropertiesFile(Element value) {
         this.clusterPropertiesFile = value;
     }
 
@@ -137,8 +128,7 @@ public abstract class Cluster
      *
      * @return Returns true if this is the default cluster.
      */
-    public boolean isDefault()
-    {
+    public boolean isDefault() {
         return def;
     }
 
@@ -148,8 +138,7 @@ public abstract class Cluster
      *
      * @param d true if this is the default cluster
      */
-    public void setDefault(boolean d)
-    {
+    public void setDefault(boolean d) {
         this.def = d;
     }
 
@@ -158,8 +147,7 @@ public abstract class Cluster
      *
      * @return true if this cluster enabled for load balancing.
      */
-    public boolean getURLLoadBalancing()
-    {
+    public boolean getURLLoadBalancing() {
         return urlLoadBalancing;
     }
 
@@ -168,8 +156,7 @@ public abstract class Cluster
      *
      * @param u the flag to enable the URL load balancing
      */
-    public void setURLLoadBalancing(boolean u)
-    {
+    public void setURLLoadBalancing(boolean u) {
         urlLoadBalancing = u;
     }
 
@@ -184,21 +171,24 @@ public abstract class Cluster
      * There is exactly one endpoint URL for each
      * channel id. This List represents all of the known endpoint URLs
      * for all of the channels in the Cluster.
-     * @param serviceType the service type 
-     * @param destName the destination name
+     *
+     * @param serviceType the service type
+     * @param destName    the destination name
      * @return List of maps of channel ids to endpoint URLs for each node in
-     *         the cluster.
+     * the cluster.
      */
     public abstract List getAllEndpoints(String serviceType, String destName);
 
     /**
      * Returns a list of all of the nodes of this cluster.
+     *
      * @return List a list of member IP addresses in the cluster
      */
     public abstract List getMemberAddresses();
 
     /**
      * Returns the local cluster node.
+     *
      * @return Object the Local Address object
      */
     public abstract Object getLocalAddress();
@@ -209,7 +199,7 @@ public abstract class Cluster
      * so that they may perform the same processing.
      *
      * @param serviceOperation The operation to broadcast.
-     * @param params Parameters for the operation.
+     * @param params           Parameters for the operation.
      */
     public abstract void broadcastServiceOperation(String serviceOperation, Object[] params);
 
@@ -219,8 +209,8 @@ public abstract class Cluster
      * node among the cluster members that does not have the local node's address.
      *
      * @param serviceOperation The operation to send.
-     * @param params Parameters for the operation.
-     * @param targetAddress the target address of a remote node in the cluster
+     * @param params           Parameters for the operation.
+     * @param targetAddress    the target address of a remote node in the cluster
      */
     public abstract void sendPointToPointServiceOperation(String serviceOperation, Object[] params, Object targetAddress);
 
@@ -228,12 +218,12 @@ public abstract class Cluster
      * Add a local endpoint URL for a local channel. After doing so, broadcast the information to
      * peers so that they will be aware of the URL.
      *
-     * @param serviceType the service type of the endpoint
-     * @param destName the destination name
-     * @param channelId the Channel ID
-     * @param endpointUrl the endpoint URL
+     * @param serviceType  the service type of the endpoint
+     * @param destName     the destination name
+     * @param channelId    the Channel ID
+     * @param endpointUrl  the endpoint URL
      * @param endpointPort the endpoint port
      */
     public abstract void addLocalEndpointForChannel(String serviceType, String destName,
-                                             String channelId, String endpointUrl, int endpointPort);
+                                                    String channelId, String endpointUrl, int endpointPort);
 }

@@ -31,25 +31,20 @@ import javax.servlet.http.HttpServletResponse;
  * in the event that the client does not support cookies. In that case, an AppendToGatewayUrl
  * header with jsessionid as its value is added to the response message.
  */
-public class SessionFilter extends AMFFilter
-{
-    public SessionFilter()
-    {
+public class SessionFilter extends AMFFilter {
+    public SessionFilter() {
     }
 
-    public void invoke(final ActionContext context) throws IOException
-    {
+    public void invoke(final ActionContext context) throws IOException {
         next.invoke(context);
 
-        try
-        {
+        try {
             HttpServletRequest request = FlexContext.getHttpRequest();
             HttpServletResponse response = FlexContext.getHttpResponse();
 
             StringBuffer reqURL = request.getRequestURL();
 
-            if (reqURL != null)
-            {
+            if (reqURL != null) {
                 if (request.getQueryString() != null)
                     reqURL.append('?').append(request.getQueryString());
 
@@ -60,21 +55,17 @@ public class SessionFilter extends AMFFilter
 
                 // It's ok to lower case here as URLs must be in ASCII
                 int pos = encFullURL.toLowerCase().indexOf(";jsessionid");
-                if (pos > 0)
-                {
+                if (pos > 0) {
                     StringBuffer sb = new StringBuffer();
                     sb.append(encFullURL.substring(pos));
                     sessionSuffix = sb.toString();
                 }
 
-                if (sessionSuffix != null && oldFullURL.indexOf(sessionSuffix) < 0)
-                {
+                if (sessionSuffix != null && oldFullURL.indexOf(sessionSuffix) < 0) {
                     context.getResponseMessage().addHeader(new MessageHeader(MessageIOConstants.URL_APPEND_HEADER, true /*mustUnderstand*/, sessionSuffix));
                 }
             }
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             //Nothing more we can do... don't send 'URL Append' AMF header.
         }
     }

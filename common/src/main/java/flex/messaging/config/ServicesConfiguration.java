@@ -21,14 +21,11 @@ import java.util.Map;
 
 /**
  * Base interface for Flex Data Services configuration.
- *
+ * <p>
  * Implementations may have different levels of detail
  * based on how much of the configuration is supported.
- *
- *
  */
-public interface ServicesConfiguration
-{
+public interface ServicesConfiguration {
     /*
      * CHANNEL CONFIGURATION
      */

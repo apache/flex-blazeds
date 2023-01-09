@@ -24,30 +24,19 @@ package flex.messaging.io.amf.translator.decoder;
  * will be (case insensitively) converted to a true Boolean value. All other
  * values will be interpreted as false.
  * </p>
- *
- *
  */
-public class BooleanDecoder extends ActionScriptDecoder
-{
-    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass)
-    {
+public class BooleanDecoder extends ActionScriptDecoder {
+    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass) {
         Object result = null;
 
-        if (encodedObject == null)
-        {
+        if (encodedObject == null) {
             result = Boolean.FALSE;
-        }
-        else if (encodedObject instanceof Boolean)
-        {
+        } else if (encodedObject instanceof Boolean) {
             result = encodedObject;
-        }
-        else if (encodedObject instanceof String)
-        {
-            String str = (String)encodedObject;
+        } else if (encodedObject instanceof String) {
+            String str = (String) encodedObject;
             result = Boolean.valueOf(str);
-        }
-        else
-        {
+        } else {
             DecoderFactory.invalidType(encodedObject, desiredClass);
         }
 

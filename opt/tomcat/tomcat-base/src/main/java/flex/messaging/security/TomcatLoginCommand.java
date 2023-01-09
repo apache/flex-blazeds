@@ -28,52 +28,47 @@ import flex.messaging.util.PropertyStringResourceLoader;
 /**
  * A Tomcat specific implementation of LoginCommand.
  */
-public class TomcatLoginCommand extends AppServerLoginCommand implements PrincipalConverter
-{
+public class TomcatLoginCommand extends AppServerLoginCommand implements PrincipalConverter {
     private static final int NO_VALVE = 20000;
 
-    /** {@inheritDoc} */
-    public Principal doAuthentication(String username, Object credentials) throws SecurityException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Principal doAuthentication(String username, Object credentials) throws SecurityException {
         TomcatLogin login = TomcatLoginHolder.getLogin();
-        if (login == null)
-        {
+        if (login == null) {
             SecurityException se = new SecurityException(new PropertyStringResourceLoader(PropertyStringResourceLoader.VENDORS_BUNDLE));
             se.setMessage(NO_VALVE);
             throw se;
         }
 
         String password = extractPassword(credentials);
-        if (password != null)
-        {
-            HttpServletRequest request = (HttpServletRequest)FlexContext.getHttpRequest();
+        if (password != null) {
+            HttpServletRequest request = (HttpServletRequest) FlexContext.getHttpRequest();
             return login.login(username, password, request);
         }
 
         return null;
     }
 
-    /** {@inheritDoc} */
-    public boolean doAuthorization(Principal principal, List roles) throws SecurityException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean doAuthorization(Principal principal, List roles) throws SecurityException {
         boolean authorized = false;
 
         HttpServletRequest request = FlexContext.getHttpRequest();
         // Response is null for NIO endpoints.
         HttpServletResponse response = FlexContext.getHttpResponse();
 
-        if (responseAndRequestNotNull(response, request) 
-                && principalMatchesWithRequest(principal, request))
-        {
+        if (responseAndRequestNotNull(response, request)
+                && principalMatchesWithRequest(principal, request)) {
             authorized = doAuthorization(principal, roles, request);
-        }
-        else
-        {
+        } else {
             TomcatLogin login = TomcatLoginHolder.getLogin();
-            if (login == null)
-            {
+            if (login == null) {
                 SecurityException se =
-                    new SecurityException(new PropertyStringResourceLoader(PropertyStringResourceLoader.VENDORS_BUNDLE));
+                        new SecurityException(new PropertyStringResourceLoader(PropertyStringResourceLoader.VENDORS_BUNDLE));
                 se.setMessage(NO_VALVE);
                 throw se;
             }
@@ -83,21 +78,18 @@ public class TomcatLoginCommand extends AppServerLoginCommand implements Princip
         return authorized;
     }
 
-    /** {@inheritDoc} */
-    public boolean logout(Principal principal) throws SecurityException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean logout(Principal principal) throws SecurityException {
         HttpServletRequest request = FlexContext.getHttpRequest();
         // Response is null for NIO endpoints.
         HttpServletResponse response = FlexContext.getHttpResponse();
-        if (responseAndRequestNotNull(response, request))
-        {
+        if (responseAndRequestNotNull(response, request)) {
             TomcatLogin login = TomcatLoginHolder.getLogin();
-            if (login != null)
-            {
+            if (login != null) {
                 return login.logout(request);
-            }
-            else
-            {
+            } else {
                 //TODO should we do this?
                 //request.getSession(false).invalidate();
             }
@@ -105,19 +97,18 @@ public class TomcatLoginCommand extends AppServerLoginCommand implements Princip
         return true;
     }
 
-    private boolean principalMatchesWithRequest(Principal principal, HttpServletRequest request)
-    {
+    private boolean principalMatchesWithRequest(Principal principal, HttpServletRequest request) {
         return principal != null && principal.equals(request.getUserPrincipal());
     }
 
-    private boolean responseAndRequestNotNull(HttpServletResponse response, HttpServletRequest request)
-    {
+    private boolean responseAndRequestNotNull(HttpServletResponse response, HttpServletRequest request) {
         return response != null && request != null;
     }
-    
-    /** {@inheritDoc} */
-    public Principal convertPrincipal(Principal principal)
-    {
+
+    /**
+     * {@inheritDoc}
+     */
+    public Principal convertPrincipal(Principal principal) {
         TomcatLogin login = TomcatLoginHolder.getLogin();
         return login.convertPrincipal(principal);
     }

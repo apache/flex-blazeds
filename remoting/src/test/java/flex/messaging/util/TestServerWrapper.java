@@ -33,7 +33,7 @@ public class TestServerWrapper {
 
     public int startServer(String configPath) {
         // We can only start one server per instance of TestServer.
-        if(serverProcess != null) {
+        if (serverProcess != null) {
             return -1;
         }
 
@@ -58,8 +58,8 @@ public class TestServerWrapper {
             BufferedReader in = new BufferedReader(new InputStreamReader(serverProcess.getInputStream()));
 
             String line;
-            while((line = in.readLine()) != null) {
-                if(line.startsWith("Port:")) {
+            while ((line = in.readLine()) != null) {
+                if (line.startsWith("Port:")) {
                     // Read the process output and extract the port
                     // number the server started on.
                     int port = Integer.parseInt(line.substring(5));
@@ -76,7 +76,7 @@ public class TestServerWrapper {
     }
 
     public void stopServer() {
-        if(serverProcess != null) {
+        if (serverProcess != null) {
             System.out.print("Stopping test-server ... ");
             // Send a signal to the server process to make itself shut down.
             serverProcess.destroy();

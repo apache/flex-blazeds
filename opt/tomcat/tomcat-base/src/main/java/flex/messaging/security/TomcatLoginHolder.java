@@ -19,45 +19,40 @@ package flex.messaging.security;
 /**
  * Contains the last good TomcatLogin for use by the TomcatLoginCommand.
  */
-public class TomcatLoginHolder
-{
+public class TomcatLoginHolder {
     private static ThreadLocal logins = new ThreadLocal();
-    
+
     // We should really make this one as a singleton instead of resetting it every time we call setLogin()
     private static TomcatLogin nioBasedLogin;
 
-    private TomcatLoginHolder()
-    {
+    private TomcatLoginHolder() {
         // No-op.
     }
 
     /**
      * Saves the last valid login.
-     * 
+     *
      * @param login last valid login
      */
-    public static void setLogin(TomcatLogin login)
-    {
+    public static void setLogin(TomcatLogin login) {
         logins.set(login);
     }
 
     /**
      * Retrieves the last valid login.
-     * 
+     *
      * @return last valid login.
      */
-    public static TomcatLogin getLogin()
-    {
-        return logins.get() != null? (TomcatLogin)logins.get() : nioBasedLogin;
+    public static TomcatLogin getLogin() {
+        return logins.get() != null ? (TomcatLogin) logins.get() : nioBasedLogin;
     }
-    
+
     /**
      * Saves the nio based login.
-     * 
+     *
      * @param login the valid login that nio based endpoints should use
      */
-    public static void setNioBasedLogin(TomcatLogin login)
-    {
+    public static void setNioBasedLogin(TomcatLogin login) {
         nioBasedLogin = login;
     }
 }

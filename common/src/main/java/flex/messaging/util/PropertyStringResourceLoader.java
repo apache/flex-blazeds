@@ -40,17 +40,15 @@ import flex.messaging.log.LogCategories;
  * </p>
  *
  * @see MessageFormat
- *
  */
-public class PropertyStringResourceLoader implements ResourceLoader
-{
+public class PropertyStringResourceLoader implements ResourceLoader {
     // The property file bundle that contains localized error strings for BlazeDS.
     public static final String PROPERTY_BUNDLE = "flex/messaging/errors";
 
     // The property file bundle that contains localized error strings for BlazeDS 
     // code specific to vendors (eg. LoginCommands for specific application serves)
     public static final String VENDORS_BUNDLE = "flex/messaging/vendors";
-    
+
     // The property file bundle that contains localized error strings for LCDS.
     public static final String LCDS_PROPERTY_BUNDLE = "flex/data/errors";
 
@@ -77,9 +75,8 @@ public class PropertyStringResourceLoader implements ResourceLoader
      * property bundles specified by the <code>PROPERTY_BUNDLE</code> and
      * <code>LCDS_PROPERTY_BUNDLE</code> fields.
      */
-    public PropertyStringResourceLoader()
-    {
-        this(new String[] {PROPERTY_BUNDLE, LCDS_PROPERTY_BUNDLE});
+    public PropertyStringResourceLoader() {
+        this(new String[]{PROPERTY_BUNDLE, LCDS_PROPERTY_BUNDLE});
     }
 
     /**
@@ -88,9 +85,8 @@ public class PropertyStringResourceLoader implements ResourceLoader
      *
      * @param propertyBundle The property bundles to use for lookups.
      */
-    public PropertyStringResourceLoader(String propertyBundle)
-    {
-        this(new String[] {propertyBundle});
+    public PropertyStringResourceLoader(String propertyBundle) {
+        this(new String[]{propertyBundle});
     }
 
     /**
@@ -99,49 +95,42 @@ public class PropertyStringResourceLoader implements ResourceLoader
      *
      * @param propertyBundles The list of the property bundles to use for lookups.
      */
-    public PropertyStringResourceLoader(String[] propertyBundles)
-    {
+    public PropertyStringResourceLoader(String[] propertyBundles) {
         this.propertyBundles = propertyBundles;
         logger = Log.getLogger(LOG_CATEGORY);
     }
 
     // Implements flex.messaging.util.ResourceLoader.init; inherits javadoc specification.
-    public void init(Map properties)
-    {}
+    public void init(Map properties) {
+    }
 
     // Implements flex.messaging.util.ResourceLoader.getString; inherits javadoc specification.
-    public String getString(String key)
-    {
+    public String getString(String key) {
         return getString(key, null, null);
     }
 
     // Implements flex.messaging.util.ResourceLoader.getString; inherits javadoc specification.
-    public String getString(String key, Object[] arguments)
-    {
+    public String getString(String key, Object[] arguments) {
         return getString(key, null, arguments);
     }
 
     // Implements flex.messaging.util.ResourceLoader.getString; inherits javadoc specification.
-    public String getString(String key, Locale locale)
-    {
+    public String getString(String key, Locale locale) {
         return getString(key, locale, null);
     }
 
     // Implements flex.messaging.util.ResourceLoader.getString; inherits javadoc specification.
-    public String getString(String key, Locale locale, Object[] arguments)
-    {
-        synchronized(strings)
-        {
-            if (defaultLocale == null)
-            {
+    public String getString(String key, Locale locale, Object[] arguments) {
+        synchronized (strings) {
+            if (defaultLocale == null) {
                 defaultLocale = getDefaultLocale();
             }
         }
         String value = null;
         String stringKey = null;
         String localeKey = (locale != null) ?
-                           generateLocaleKey(locale) :
-                           generateLocaleKey(defaultLocale);
+                generateLocaleKey(locale) :
+                generateLocaleKey(defaultLocale);
         String originalStringKey = generateStringKey(key, localeKey);
         int trimIndex = 0;
 
@@ -149,29 +138,22 @@ public class PropertyStringResourceLoader implements ResourceLoader
          * Attempt to get a string for the target locale - fail back to less specific
          * versions of the locale.
          */
-        while (true)
-        {
+        while (true) {
             loadStrings(localeKey);
             stringKey = generateStringKey(key, localeKey);
-            synchronized(strings)
-            {
+            synchronized (strings) {
                 value = (String) strings.get(stringKey);
-                if (value != null)
-                {
-                    if (!stringKey.equals(originalStringKey))
-                    {
+                if (value != null) {
+                    if (!stringKey.equals(originalStringKey)) {
                         strings.put(originalStringKey, value);
                     }
                     return substituteArguments(value, arguments);
                 }
             }
             trimIndex = localeKey.lastIndexOf('_');
-            if (trimIndex != -1)
-            {
+            if (trimIndex != -1) {
                 localeKey = localeKey.substring(0, trimIndex);
-            }
-            else
-            {
+            } else {
                 break;
             }
         }
@@ -180,15 +162,12 @@ public class PropertyStringResourceLoader implements ResourceLoader
          * Attempt to get the string in our default locale if it is
          * different than the requested locale.
          */
-        if ((locale != null) && (!locale.equals(defaultLocale)))
-        {
+        if ((locale != null) && (!locale.equals(defaultLocale))) {
             localeKey = generateLocaleKey(defaultLocale);
             stringKey = generateStringKey(key, localeKey);
-            synchronized(strings)
-            {
+            synchronized (strings) {
                 value = (String) strings.get(stringKey);
-                if (value != null)
-                {
+                if (value != null) {
                     strings.put(originalStringKey, value);
                     return substituteArguments(value, arguments);
                 }
@@ -198,11 +177,9 @@ public class PropertyStringResourceLoader implements ResourceLoader
         // As a last resort, try to get a non-locale-specific string.
         loadStrings("");
         stringKey = generateStringKey(key, "");
-        synchronized(strings)
-        {
+        synchronized (strings) {
             value = (String) strings.get(stringKey);
-            if (value != null)
-            {
+            if (value != null) {
                 strings.put(originalStringKey, value);
                 return substituteArguments(value, arguments);
             }
@@ -218,8 +195,7 @@ public class PropertyStringResourceLoader implements ResourceLoader
      *
      * @param locale The default locale to be used.
      */
-    public void setDefaultLocale(String locale)
-    {
+    public void setDefaultLocale(String locale) {
         defaultLocale = LocaleUtils.buildLocale(locale);
     }
 
@@ -228,17 +204,16 @@ public class PropertyStringResourceLoader implements ResourceLoader
      *
      * @param locale The default locale to be used.
      */
-    public void setDefaultLocale(Locale locale)
-    {
+    public void setDefaultLocale(Locale locale) {
         defaultLocale = locale;
     }
 
     /**
      * The default locale to be used when locating resources.
+     *
      * @return Locale the default Locale object
      */
-    public Locale getDefaultLocale()
-    {
+    public Locale getDefaultLocale() {
         if (defaultLocale == null)
             defaultLocale = Locale.getDefault();
 
@@ -250,89 +225,65 @@ public class PropertyStringResourceLoader implements ResourceLoader
      *
      * @param localeKey The locale to load strings for.
      */
-    protected synchronized void loadStrings(String localeKey)
-    {
-        if (loadedLocales.contains(localeKey))
-        {
+    protected synchronized void loadStrings(String localeKey) {
+        if (loadedLocales.contains(localeKey)) {
             return;
         }
 
-        if (propertyBundles != null)
-        {
-            for (int i = 0; i < propertyBundles.length; i++)
-            {
+        if (propertyBundles != null) {
+            for (int i = 0; i < propertyBundles.length; i++) {
                 String propertyBundle = propertyBundles[i];
                 loadProperties(localeKey, propertyBundle);
             }
         }
     }
 
-    protected InputStream loadFile(String filename)
-    {
+    protected InputStream loadFile(String filename) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream stream = loader.getResourceAsStream(filename);
-        
+
         // Try the properties file in our classloader too - just in case
-        if (stream == null)
-        {
+        if (stream == null) {
             stream = PropertyStringResourceLoader.class.getClassLoader().getResourceAsStream(filename);
         }
-        
+
         return stream;
     }
-    
+
     // Helper method for loadStrings.
-    protected void loadProperties(String localeKey, String propertyBundle)
-    {
+    protected void loadProperties(String localeKey, String propertyBundle) {
         // Build the path to the target property file.
         String filename = propertyBundle;
-        if (localeKey.length() > 0)
-        {
+        if (localeKey.length() > 0) {
             filename += "_" + localeKey;
         }
         filename += ".properties";
         // Load the property file.
-        InputStream stream = loadFile(filename); 
-            
+        InputStream stream = loadFile(filename);
+
         Properties props = new Properties();
-        if (stream != null)
-        {
-            try
-            {
+        if (stream != null) {
+            try {
                 props.load(stream);
-            }
-            catch (IOException ioe)
-            {
+            } catch (IOException ioe) {
                 logger.warn("There was a problem reading the string resource property file '" + filename + "' stream.", ioe);
-            }
-            catch (IllegalArgumentException iae)
-            {
+            } catch (IllegalArgumentException iae) {
                 logger.warn("The string resource property file '" + filename + "' contains a malformed Unicode escape sequence.", iae);
-            }
-            finally
-            {
-                try
-                {
+            } finally {
+                try {
                     stream.close();
-                }
-                catch (IOException ioe)
-                {
+                } catch (IOException ioe) {
                     logger.warn("The string resource property file '" + filename + "' stream failed to close.", ioe);
                 }
             }
-        }
-        else
-        {
+        } else {
             logger.warn("The class loader could not locate the string resource property file '" + filename + "'. This may not be an issue if a property file is available for a less specific locale or the default locale.");
         }
         // Move strings into string cache.
-        if (props.size() > 0)
-        {
-            synchronized(strings)
-            {
+        if (props.size() > 0) {
+            synchronized (strings) {
                 Iterator iter = props.keySet().iterator();
-                while (iter.hasNext())
-                {
+                while (iter.hasNext()) {
                     String key = (String) iter.next();
                     strings.put(generateStringKey(key, localeKey), props.getProperty(key));
                 }
@@ -346,20 +297,18 @@ public class PropertyStringResourceLoader implements ResourceLoader
      * @param locale The locale to generate a cache key for.
      * @return The generated cache key.
      */
-    private String generateLocaleKey(Locale locale)
-    {
+    private String generateLocaleKey(Locale locale) {
         return (locale == null) ? "" : locale.toString();
     }
 
     /**
      * Generates a cache key for a string resource.
      *
-     * @param key The string to generate a cache key for.
+     * @param key    The string to generate a cache key for.
      * @param locale The locale to retrieve the string for.
      * @return The generated cache key for the string resource.
      */
-    private String generateStringKey(String key, String locale)
-    {
+    private String generateStringKey(String key, String locale) {
         return (key + "-" + locale);
     }
 
@@ -367,11 +316,10 @@ public class PropertyStringResourceLoader implements ResourceLoader
      * Substitutes the specified arguments into a parameterized string.
      *
      * @param parameterized The string containing parameter tokens for substitution.
-     * @param arguments The arguments to substitute into the parameterized string.
+     * @param arguments     The arguments to substitute into the parameterized string.
      * @return The resulting substituted string.
      */
-    private String substituteArguments(String parameterized, Object[] arguments)
-    {
+    private String substituteArguments(String parameterized, Object[] arguments) {
         return MessageFormat.format(parameterized, arguments).trim();
     }
 

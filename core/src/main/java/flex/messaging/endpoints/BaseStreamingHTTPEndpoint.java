@@ -58,8 +58,7 @@ import java.util.concurrent.ThreadFactory;
  * that are received. To support polling clients use subclasses of
  * BaseHTTPEndpoint instead.
  */
-public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
-{
+public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint {
     //--------------------------------------------------------------------------
     //
     // Private Static Constants
@@ -69,17 +68,17 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
     /**
      * This token is used in chunked HTTP responses frequently so initialize it statically for general use.
      */
-    private static final byte[] CRLF_BYTES = {(byte)13, (byte)10};
+    private static final byte[] CRLF_BYTES = {(byte) 13, (byte) 10};
 
     /**
      * This token is used for the terminal chunk within a chunked response.
      */
-    private static final byte ZERO_BYTE = (byte)48;
+    private static final byte ZERO_BYTE = (byte) 48;
 
     /**
      * This token is used to signal that a chunk of data should be skipped by the client.
      */
-    private static final byte NULL_BYTE = (byte)0;
+    private static final byte NULL_BYTE = (byte) 0;
 
     /**
      * Parameter name for 'command' passed in a request for a new streaming connection.
@@ -100,7 +99,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
     private static final String CLOSE_COMMAND = "close";
 
     /**
-     *  Parameter name for the stream ID; passed with commands for an existing streaming connection.
+     * Parameter name for the stream ID; passed with commands for an existing streaming connection.
      */
     private static final String STREAM_ID_PARAM_NAME = "streamId";
 
@@ -146,8 +145,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
     /**
      * Constructs an unmanaged <code>BaseStreamingHTTPEndpoint</code>.
      */
-    public BaseStreamingHTTPEndpoint()
-    {
+    public BaseStreamingHTTPEndpoint() {
         this(false);
     }
 
@@ -155,10 +153,9 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * Constructs an <code>BaseStreamingHTTPEndpoint</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>BaseStreamingHTTPEndpoint</code>
-     * is manageable; <code>false</code> otherwise.
+     *                         is manageable; <code>false</code> otherwise.
      */
-    public BaseStreamingHTTPEndpoint(boolean enableManagement)
-    {
+    public BaseStreamingHTTPEndpoint(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -172,16 +169,14 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * Initializes the <code>Endpoint</code> with the properties.
      * If subclasses override this method, they must call <code>super.initialize()</code>.
      *
-     * @param id The ID of the <code>Endpoint</code>.
+     * @param id         The ID of the <code>Endpoint</code>.
      * @param properties Properties for the <code>Endpoint</code>.
      */
     @Override
-    public void initialize(String id, ConfigMap properties)
-    {
+    public void initialize(String id, ConfigMap properties) {
         super.initialize(id, properties);
 
-        if (properties == null || properties.size() == 0)
-        {
+        if (properties == null || properties.size() == 0) {
             // Initialize default user agent manager settings.
             UserAgentManager.setupUserAgentManager(null, userAgentManager);
 
@@ -196,12 +191,9 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
 
         // Number of minutes a client can remain idle before the server times the connection out.
         int connectionIdleTimeoutMinutes = properties.getPropertyAsInt(PROPERTY_CONNECTION_IDLE_TIMEOUT_MINUTES, getConnectionIdleTimeoutMinutes());
-        if (connectionIdleTimeoutMinutes != 0)
-        {
+        if (connectionIdleTimeoutMinutes != 0) {
             setConnectionIdleTimeoutMinutes(connectionIdleTimeoutMinutes);
-        }
-        else
-        {
+        } else {
             connectionIdleTimeoutMinutes = properties.getPropertyAsInt(PROPERTY_LEGACY_CONNECTION_IDLE_TIMEOUT_MINUTES, getConnectionIdleTimeoutMinutes());
             if (connectionIdleTimeoutMinutes != 0)
                 setConnectionIdleTimeoutMinutes(connectionIdleTimeoutMinutes);
@@ -219,25 +211,22 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
 
 
     @Override
-    public void start()
-    {
+    public void start() {
         if (isStarted())
             return;
 
         super.start();
 
-        if (connectionIdleTimeoutMinutes > 0)
-        {
-            pushNotifierTimeoutManager = new TimeoutManager(new ThreadFactory()
-                                                            {
-                                                                int counter = 1;
-                                                                public synchronized Thread newThread(Runnable runnable)
-                                                                {
-                                                                    Thread t = new Thread(runnable);
-                                                                    t.setName(getId() + "-StreamingConnectionTimeoutThread-" + counter++);
-                                                                    return t;
-                                                                }
-                                                            });
+        if (connectionIdleTimeoutMinutes > 0) {
+            pushNotifierTimeoutManager = new TimeoutManager(new ThreadFactory() {
+                int counter = 1;
+
+                public synchronized Thread newThread(Runnable runnable) {
+                    Thread t = new Thread(runnable);
+                    t.setName(getId() + "-StreamingConnectionTimeoutThread-" + counter++);
+                    return t;
+                }
+            });
         }
 
         currentStreamingRequests = new ConcurrentHashMap<String, EndpointPushNotifier>();
@@ -245,17 +234,16 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
 
     /**
      * (non-JavaDoc)
+     *
      * @see flex.messaging.endpoints.AbstractEndpoint#stop()
      */
     @Override
-    public void stop()
-    {
+    public void stop() {
         if (!isStarted())
             return;
 
         // Shutdown the timeout manager for streaming connections cleanly.
-        if (pushNotifierTimeoutManager != null)
-        {
+        if (pushNotifierTimeoutManager != null) {
             pushNotifierTimeoutManager.shutdown();
             pushNotifierTimeoutManager = null;
         }
@@ -323,8 +311,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      *
      * @return <code>true</code> if the invalidate-messageclient-on-streaming-close is enabled, <code>false</code> otherwise.
      */
-    public boolean isInvalidateMessageClientOnStreamingClose()
-    {
+    public boolean isInvalidateMessageClientOnStreamingClose() {
         return invalidateMessageClientOnStreamingClose;
     }
 
@@ -342,8 +329,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      *
      * @param value The property value.
      */
-    public void setInvalidateMessageClientOnStreamingClose(boolean value)
-    {
+    public void setInvalidateMessageClientOnStreamingClose(boolean value) {
         invalidateMessageClientOnStreamingClose = value;
     }
 
@@ -357,10 +343,10 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * Retrieves the number of milliseconds the server will wait before writing a
      * single <code>null</code> byte to the streaming connection, to ensure the client is
      * still available.
+     *
      * @return The server-to-client heartbeat time in milliseconds.
      */
-    public long getServerToClientHeartbeatMillis()
-    {
+    public long getServerToClientHeartbeatMillis() {
         return serverToClientHeartbeatMillis;
     }
 
@@ -370,10 +356,10 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * still available when there are no new messages for the client.
      * A non-positive value means the server will wait forever for new messages and
      * it will not write the <code>null</code> byte to determine if the client is available.
+     *
      * @param serverToClientHeartbeatMillis The server-to-client heartbeat time in milliseconds.
      */
-    public void setServerToClientHeartbeatMillis(long serverToClientHeartbeatMillis)
-    {
+    public void setServerToClientHeartbeatMillis(long serverToClientHeartbeatMillis) {
         if (serverToClientHeartbeatMillis < 0)
             serverToClientHeartbeatMillis = 0;
         this.serverToClientHeartbeatMillis = serverToClientHeartbeatMillis;
@@ -394,8 +380,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * @return The number of minutes a client can remain idle before the server
      * times the connection out.
      */
-    public int getConnectionIdleTimeoutMinutes()
-    {
+    public int getConnectionIdleTimeoutMinutes() {
         return connectionIdleTimeoutMinutes;
     }
 
@@ -405,10 +390,9 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * connections will not be timed out.
      *
      * @param value The number of minutes a client can remain idle
-     * before the server times the connection out.
+     *              before the server times the connection out.
      */
-    public void setConnectionIdleTimeoutMinutes(int value)
-    {
+    public void setConnectionIdleTimeoutMinutes(int value) {
         if (value < 0)
             value = 0;
 
@@ -417,19 +401,19 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
 
     /**
      * (non-JavaDoc)
+     *
      * @deprecated Use {@link BaseStreamingHTTPEndpoint#getConnectionIdleTimeoutMinutes()} instead.
      */
-    public int getIdleTimeoutMinutes()
-    {
+    public int getIdleTimeoutMinutes() {
         return getConnectionIdleTimeoutMinutes();
     }
 
     /**
      * (non-JavaDoc)
+     *
      * @deprecated Use {@link BaseStreamingHTTPEndpoint#setConnectionIdleTimeoutMinutes(int)} instead.
      */
-    public void setIdleTimeoutMinutes(int value)
-    {
+    public void setIdleTimeoutMinutes(int value) {
         setConnectionIdleTimeoutMinutes(value);
     }
 
@@ -446,8 +430,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * @return The maximum number of clients that will be allowed to establish
      * a streaming HTTP connection with the endpoint.
      */
-    public int getMaxStreamingClients()
-    {
+    public int getMaxStreamingClients() {
         return maxStreamingClients;
     }
 
@@ -456,10 +439,9 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * a streaming HTTP connection with the server.
      *
      * @param maxStreamingClients The maximum number of clients that will be allowed
-     * to establish a streaming HTTP connection with the server.
+     *                            to establish a streaming HTTP connection with the server.
      */
-    public void setMaxStreamingClients(int maxStreamingClients)
-    {
+    public void setMaxStreamingClients(int maxStreamingClients) {
         this.maxStreamingClients = maxStreamingClients;
         canStream = (streamingClientsCount < maxStreamingClients);
     }
@@ -475,8 +457,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      *
      * @return The number of clients that are currently in the streaming state.
      */
-    public int getStreamingClientsCount()
-    {
+    public int getStreamingClientsCount() {
         return streamingClientsCount;
     }
 
@@ -498,8 +479,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * @param res The active servlet response.
      */
     @Override
-    public void service(HttpServletRequest req, HttpServletResponse res)
-    {
+    public void service(HttpServletRequest req, HttpServletResponse res) {
         String command = req.getParameter(COMMAND_PARAM_NAME);
         if (command != null)
             serviceStreamingRequest(req, res);
@@ -519,29 +499,24 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      *
      * @param message Message to add performance headers to.
      */
-    protected void addPerformanceInfo(Message message)
-    {
+    protected void addPerformanceInfo(Message message) {
         MessagePerformanceInfo mpiOriginal = getMPI(message);
         if (mpiOriginal == null)
             return;
 
-        MessagePerformanceInfo mpip = (MessagePerformanceInfo)mpiOriginal.clone();
-        try
-        {
+        MessagePerformanceInfo mpip = (MessagePerformanceInfo) mpiOriginal.clone();
+        try {
             // Set the original message info as the pushed causer info.
             MessagePerformanceUtils.setMPIP(message, mpip);
             MessagePerformanceUtils.setMPII(message, null);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             if (Log.isDebug())
                 log.debug("MPI exception while streaming the message: " + e.toString());
         }
 
         // Overhead only used when MPI is enabled for sizing
         MessagePerformanceInfo mpio = new MessagePerformanceInfo();
-        if (mpip.recordMessageTimes)
-        {
+        if (mpip.recordMessageTimes) {
             mpio.sendTime = System.currentTimeMillis();
             mpio.infoType = "OUT";
         }
@@ -549,26 +524,21 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
         MessagePerformanceUtils.setMPIO(message, mpio);
 
         // If MPI sizing information is enabled serialize again so that we know size
-        if (mpip.recordMessageSizes)
-        {
-            try
-            {
+        if (mpip.recordMessageSizes) {
+            try {
                 // Each subclass serializes the message in their own format to
                 // get the message size for the MPIO.
                 long serializationOverhead = System.currentTimeMillis();
                 mpio.messageSize = getMessageSizeForPerformanceInfo(message);
 
                 // Set serialization overhead to the time calculated during serialization above
-                if (mpip.recordMessageTimes)
-                {
+                if (mpip.recordMessageTimes) {
                     serializationOverhead = System.currentTimeMillis() - serializationOverhead;
                     mpip.addToOverhead(serializationOverhead);
                     mpiOriginal.addToOverhead(serializationOverhead);
                     mpio.sendTime = System.currentTimeMillis();
                 }
-            }
-            catch(Exception e)
-            {
+            } catch (Exception e) {
                 log.debug("MPI exception while streaming the message: " + e.toString());
             }
         }
@@ -582,8 +552,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * @return The small message if the message has a small version, or regular message
      * if it doesn't .
      */
-    protected Message convertPushMessageToSmall(Message message)
-    {
+    protected Message convertPushMessageToSmall(Message message) {
         FlexSession session = FlexContext.getFlexSession();
         if (session != null && session.useSmallMessages())
             return convertToSmallMessage(message);
@@ -597,24 +566,21 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * size information in performance information gathering.
      *
      * @param message Message to get the size for.
-     *
      * @return The size of the message after message is serialized.
      */
-    protected long getMessageSizeForPerformanceInfo(Message message)
-    {
+    protected long getMessageSizeForPerformanceInfo(Message message) {
         return 0;
     }
 
     /**
      * This streaming endpoint does not support polling clients.
      *
-     * @param flexClient The FlexClient that issued the poll request.
+     * @param flexClient  The FlexClient that issued the poll request.
      * @param pollCommand The poll command from the client.
      * @return The flush info used to build the poll response.
      */
     @Override
-    protected FlushResult handleFlexClientPoll(FlexClient flexClient, CommandMessage pollCommand)
-    {
+    protected FlushResult handleFlexClientPoll(FlexClient flexClient, CommandMessage pollCommand) {
         MessageException me = new MessageException();
         me.setMessage(POLL_NOT_SUPPORTED_MESSAGE);
         me.setDetails(POLL_NOT_SUPPORTED_MESSAGE);
@@ -625,16 +591,14 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
     /**
      * Handles streaming connection open command sent by the FlexClient.
      *
-     * @param req The <code>HttpServletRequest</code> to service.
-     * @param res The <code>HttpServletResponse</code> to be used in case an error
-     * has to be sent back.
+     * @param req        The <code>HttpServletRequest</code> to service.
+     * @param res        The <code>HttpServletResponse</code> to be used in case an error
+     *                   has to be sent back.
      * @param flexClient FlexClient that requested the streaming connection.
      */
-    protected void handleFlexClientStreamingOpenRequest(HttpServletRequest req, HttpServletResponse res, FlexClient flexClient)
-    {
+    protected void handleFlexClientStreamingOpenRequest(HttpServletRequest req, HttpServletResponse res, FlexClient flexClient) {
         FlexSession session = FlexContext.getFlexSession();
-        if (canStream && session.canStream)
-        {
+        if (canStream && session.canStream) {
             // If canStream/session.canStream is true it means we currently have
             // less than the max number of allowed streaming threads, per endpoint/session.
 
@@ -642,21 +606,15 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
             // Also, we have to be careful to handle the case where two threads get to this point when only
             // one streaming spot remains; one thread will win and the other needs to fault.
             boolean thisThreadCanStream;
-            synchronized (lock)
-            {
+            synchronized (lock) {
                 ++streamingClientsCount;
-                if (streamingClientsCount == maxStreamingClients)
-                {
+                if (streamingClientsCount == maxStreamingClients) {
                     thisThreadCanStream = true; // This thread got the last spot.
                     canStream = false;
-                }
-                else if (streamingClientsCount > maxStreamingClients)
-                {
+                } else if (streamingClientsCount > maxStreamingClients) {
                     thisThreadCanStream = false; // This thread was beaten out for the last spot.
                     --streamingClientsCount; // Decrement the count because we're not going to grant the streaming right to the client.
-                }
-                else
-                {
+                } else {
                     // We haven't hit the limit yet, allow this thread to stream.
                     thisThreadCanStream = true;
                 }
@@ -664,21 +622,18 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
 
             // If the thread cannot wait due to endpoint streaming connection
             // limit, inform the client and return.
-            if (!thisThreadCanStream)
-            {
+            if (!thisThreadCanStream) {
                 String errorMessage = "Endpoint with id '" + getId() + "' cannot grant streaming connection to FlexClient with id '"
                         + flexClient.getId() + "' because " + MAX_STREAMING_CLIENTS + " limit of '"
                         + maxStreamingClients + "' has been reached.";
                 if (Log.isError())
                     log.error(errorMessage);
-                try
-                {
+                try {
                     errorMessage = "Endpoint with id '" + getId() + "' cannot grant streaming connection to FlexClient with id '"
-                    + flexClient.getId() + "' because " + MAX_STREAMING_CLIENTS + " limit has been reached.";
+                            + flexClient.getId() + "' because " + MAX_STREAMING_CLIENTS + " limit has been reached.";
                     res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, errorMessage);
+                } catch (IOException ignore) {
                 }
-                catch (IOException ignore)
-                {}
                 return;
             }
 
@@ -686,28 +641,22 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
             byte[] kickStartBytesToStream = null;
             String userAgentValue = req.getHeader(UserAgentManager.USER_AGENT_HEADER_NAME);
             UserAgentSettings agentSettings = userAgentManager.match(userAgentValue);
-            if (agentSettings != null)
-            {
-                synchronized (session)
-                {
+            if (agentSettings != null) {
+                synchronized (session) {
                     session.maxConnectionsPerSession = agentSettings.getMaxPersistentConnectionsPerSession();
                 }
 
                 int kickStartBytes = agentSettings.getKickstartBytes();
-                if (kickStartBytes > 0)
-                {
+                if (kickStartBytes > 0) {
                     // Determine the minimum number of actual bytes that need to be sent to
                     // kickstart, taking into account transfer-encoding overhead.
-                    try
-                    {
+                    try {
                         int chunkLengthHeaderSize = Integer.toHexString(kickStartBytes).getBytes("ASCII").length;
                         int chunkOverhead = chunkLengthHeaderSize + 4; // 4 for the 2 wrapping CRLF tokens.
                         int minimumKickstartBytes = kickStartBytes - chunkOverhead;
                         kickStartBytesToStream = new byte[(minimumKickstartBytes > 0) ? minimumKickstartBytes :
                                 kickStartBytes];
-                    }
-                    catch (UnsupportedEncodingException ignore)
-                    {
+                    } catch (UnsupportedEncodingException ignore) {
                         kickStartBytesToStream = new byte[kickStartBytes];
                     }
                     Arrays.fill(kickStartBytesToStream, NULL_BYTE);
@@ -715,30 +664,21 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
             }
 
             // Now, check with the session before granting the streaming connection.
-            synchronized(session)
-            {
+            synchronized (session) {
                 ++session.streamingConnectionsCount;
-                if (session.maxConnectionsPerSession == FlexSession.MAX_CONNECTIONS_PER_SESSION_UNLIMITED)
-                {
+                if (session.maxConnectionsPerSession == FlexSession.MAX_CONNECTIONS_PER_SESSION_UNLIMITED) {
                     thisThreadCanStream = true;
-                }
-                else if (session.streamingConnectionsCount == session.maxConnectionsPerSession)
-                {
+                } else if (session.streamingConnectionsCount == session.maxConnectionsPerSession) {
                     thisThreadCanStream = true; // This thread got the last spot in the session.
                     session.canStream = false;
-                }
-                else if (session.streamingConnectionsCount > session.maxConnectionsPerSession)
-                {
+                } else if (session.streamingConnectionsCount > session.maxConnectionsPerSession) {
                     thisThreadCanStream = false; // This thread was beaten out for the last spot.
                     --session.streamingConnectionsCount;
-                    synchronized(lock)
-                    {
+                    synchronized (lock) {
                         // Decrement the endpoint count because we're not going to grant the streaming right to the client.
                         --streamingClientsCount;
                     }
-                }
-                else
-                {
+                } else {
                     // We haven't hit the limit yet, allow this thread to stream.
                     thisThreadCanStream = true;
                 }
@@ -746,20 +686,16 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
 
             // If the thread cannot wait due to session streaming connection
             // limit, inform the client and return.
-            if (!thisThreadCanStream)
-            {
+            if (!thisThreadCanStream) {
                 if (Log.isError())
                     log.error("Endpoint with id '" + getId() + "' cannot grant streaming connection to FlexClient with id '"
                             + flexClient.getId() + "' because " + UserAgentManager.MAX_PERSISTENT_CONNECTIONS_PER_SESSION + " limit of '" + session.maxConnectionsPerSession
-                            + ((agentSettings != null) ? "' for user-agent '" + agentSettings.getMatchOn() + "'" : "") +  " has been reached." );
-                try
-                {
+                            + ((agentSettings != null) ? "' for user-agent '" + agentSettings.getMatchOn() + "'" : "") + " has been reached.");
+                try {
                     // Return an HTTP status code 400.
                     String errorMessage = "The server cannot grant streaming connection to this client because limit has been reached.";
                     res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, errorMessage);
-                }
-                catch (IOException ignore)
-                {
+                } catch (IOException ignore) {
                     // NOWARN
                 }
                 return;
@@ -769,8 +705,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
             String threadName = currentThread.getName();
             EndpointPushNotifier notifier = null;
             boolean suppressIOExceptionLogging = false; // Used to suppress logging for IO exception.
-            try
-            {
+            try {
                 currentThread.setName(threadName + STREAMING_THREAD_NAME_EXTENSION);
 
                 // Open and commit response headers and get output stream.
@@ -783,8 +718,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
                 res.flushBuffer();
 
                 // If kickstart-bytes are specified, stream them.
-                if (kickStartBytesToStream != null)
-                {
+                if (kickStartBytesToStream != null) {
                     if (Log.isDebug())
                         log.debug("Endpoint with id '" + getId() + "' is streaming " + kickStartBytesToStream.length
                                 + " bytes (not counting chunk encoding overhead) to kick-start the streaming connection for FlexClient with id '"
@@ -798,12 +732,9 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
 
                 // Activate streaming helper for this connection.
                 // Watch out for duplicate stream issues.
-                try
-                {
+                try {
                     notifier = new EndpointPushNotifier(this, flexClient);
-                }
-                catch (MessageException me)
-                {
+                } catch (MessageException me) {
                     if (me.getNumber() == 10033) // It's a duplicate stream request from the same FlexClient. Leave the current stream in place and fault this.
                     {
                         if (Log.isWarn())
@@ -811,23 +742,18 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
                                     + flexClient.getId() + "'. Faulting request.");
 
                         // Rollback counters and send an error response.
-                        synchronized (lock)
-                        {
+                        synchronized (lock) {
                             --streamingClientsCount;
                             canStream = (streamingClientsCount < maxStreamingClients);
-                            synchronized (session)
-                            {
+                            synchronized (session) {
                                 --session.streamingConnectionsCount;
                                 session.canStream = (session.maxConnectionsPerSession == FlexSession.MAX_CONNECTIONS_PER_SESSION_UNLIMITED
                                         || session.streamingConnectionsCount < session.maxConnectionsPerSession);
                             }
                         }
-                        try
-                        {
+                        try {
                             res.sendError(HttpServletResponse.SC_BAD_REQUEST);
-                        }
-                        catch (IOException ignore)
-                        {
+                        } catch (IOException ignore) {
                             // NOWARN
                         }
                         return; // Exit early.
@@ -849,44 +775,36 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
 
                 // Output session level streaming count.
                 if (Log.isDebug())
-                    Log.getLogger(FlexSession.FLEX_SESSION_LOG_CATEGORY).info("Number of streaming clients for FlexSession with id '"+ session.getId() +"' is " + session.streamingConnectionsCount + ".");
+                    Log.getLogger(FlexSession.FLEX_SESSION_LOG_CATEGORY).info("Number of streaming clients for FlexSession with id '" + session.getId() + "' is " + session.streamingConnectionsCount + ".");
 
                 // Output endpoint level streaming count.
                 if (Log.isDebug())
-                    log.debug("Number of streaming clients for endpoint with id '"+ getId() +"' is " + streamingClientsCount + ".");
+                    log.debug("Number of streaming clients for endpoint with id '" + getId() + "' is " + streamingClientsCount + ".");
 
                 // And cycle in a wait-notify loop with the aid of the helper until it
                 // is closed, we're interrupted or the act of streaming data to the client fails.
-                while (!notifier.isClosed())
-                {
-                    try
-                    {
+                while (!notifier.isClosed()) {
+                    try {
                         // Drain any messages that might have been accumulated
                         // while the previous drain was being processed.
                         List<AsyncMessage> messages = null;
-                        synchronized (notifier.pushNeeded)
-                        {
+                        synchronized (notifier.pushNeeded) {
                             messages = notifier.drainMessages();
                         }
                         streamMessages(messages, os, res);
 
-                        synchronized (notifier.pushNeeded)
-                        {
+                        synchronized (notifier.pushNeeded) {
                             notifier.pushNeeded.wait(serverToClientHeartbeatMillis);
-                        
+
                             messages = notifier.drainMessages();
                         }
                         // If there are no messages to send to the client, send an null
                         // byte as a heartbeat to make sure the client is still valid.
-                        if (messages == null && serverToClientHeartbeatMillis > 0)
-                        {
-                            try
-                            {
+                        if (messages == null && serverToClientHeartbeatMillis > 0) {
+                            try {
                                 os.write(NULL_BYTE);
                                 res.flushBuffer();
-                            }
-                            catch (IOException e)
-                            {
+                            } catch (IOException e) {
                                 if (Log.isWarn())
                                     log.warn("Endpoint with id '" + getId() + "' is closing the streaming connection to FlexClient with id '"
                                             + flexClient.getId() + "' because endpoint encountered a socket write error" +
@@ -895,17 +813,14 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
                             }
                         }
                         // Otherwise stream the messages to the client.
-                        else
-                        {
+                        else {
                             // Update the last time notifier was used to drain messages.
                             // Important for idle timeout detection.
                             notifier.updateLastUse();
 
                             streamMessages(messages, os, res);
                         }
-                    }
-                    catch (InterruptedException e)
-                    {
+                    } catch (InterruptedException e) {
                         if (Log.isWarn())
                             log.warn("Streaming thread '" + threadName + "' for endpoint with id '" + getId() + "' has been interrupted and the streaming connection will be closed.");
                         os.close();
@@ -923,102 +838,83 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
                 suppressIOExceptionLogging = true;
                 // Terminate the response.
                 streamChunk(null, os, res);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 if (Log.isWarn() && !suppressIOExceptionLogging)
                     log.warn("Streaming thread '" + threadName + "' for endpoint with id '" + getId() + "' is closing connection due to an IO error.", e);
-            }
-            finally
-            {
+            } finally {
                 currentThread.setName(threadName);
 
                 // We're done so decrement the counts for streaming threads,
                 // and update the canStream flag if necessary.
-                synchronized (lock)
-                {
+                synchronized (lock) {
                     --streamingClientsCount;
                     canStream = (streamingClientsCount < maxStreamingClients);
-                    synchronized (session)
-                    {
+                    synchronized (session) {
                         --session.streamingConnectionsCount;
                         session.canStream = (session.maxConnectionsPerSession == FlexSession.MAX_CONNECTIONS_PER_SESSION_UNLIMITED
                                 || session.streamingConnectionsCount < session.maxConnectionsPerSession);
                     }
                 }
 
-                if (notifier != null && currentStreamingRequests != null)
-                {
+                if (notifier != null && currentStreamingRequests != null) {
                     currentStreamingRequests.remove(notifier.getNotifierId());
                     notifier.close();
                 }
 
                 // Output session level streaming count.
                 if (Log.isDebug())
-                    Log.getLogger(FlexSession.FLEX_SESSION_LOG_CATEGORY).info("Number of streaming clients for FlexSession with id '"+ session.getId() +"' is " + session.streamingConnectionsCount + ".");
+                    Log.getLogger(FlexSession.FLEX_SESSION_LOG_CATEGORY).info("Number of streaming clients for FlexSession with id '" + session.getId() + "' is " + session.streamingConnectionsCount + ".");
 
                 // Output endpoint level streaming count.
                 if (Log.isDebug())
-                    log.debug("Number of streaming clients for endpoint with id '"+ getId() +"' is " + streamingClientsCount + ".");
+                    log.debug("Number of streaming clients for endpoint with id '" + getId() + "' is " + streamingClientsCount + ".");
             }
         }
         // Otherwise, client's streaming connection open request could not be granted.
-        else
-        {
-            if (Log.isError())
-            {
+        else {
+            if (Log.isError()) {
                 String logString = null;
-                if (!canStream)
-                {
+                if (!canStream) {
                     logString = "Endpoint with id '" + getId() + "' cannot grant streaming connection to FlexClient with id '"
-                    + flexClient.getId() + "' because " + MAX_STREAMING_CLIENTS + " limit of '"
-                    + maxStreamingClients + "' has been reached.";
-                }
-                else if (!session.canStream)
-                {
+                            + flexClient.getId() + "' because " + MAX_STREAMING_CLIENTS + " limit of '"
+                            + maxStreamingClients + "' has been reached.";
+                } else if (!session.canStream) {
                     logString = "Endpoint with id '" + getId() + "' cannot grant streaming connection to FlexClient with id '"
-                    + flexClient.getId() + "' because " + UserAgentManager.MAX_STREAMING_CONNECTIONS_PER_SESSION + " limit of '"
-                    + session.maxConnectionsPerSession + "' has been reached.";
+                            + flexClient.getId() + "' because " + UserAgentManager.MAX_STREAMING_CONNECTIONS_PER_SESSION + " limit of '"
+                            + session.maxConnectionsPerSession + "' has been reached.";
                 }
                 if (logString != null)
                     log.error(logString);
             }
 
-            try
-            {
+            try {
                 // Return an HTTP status code 400 to indicate that client request can't be processed.
                 String errorMessage = null;
-                if (!canStream)
-                {
+                if (!canStream) {
                     errorMessage = "Endpoint with id '" + getId() + "' cannot grant streaming connection to FlexClient with id '"
-                    + flexClient.getId() + "' because " + MAX_STREAMING_CLIENTS + " limit has been reached.";
-                }
-                else if (!session.canStream)
-                {
+                            + flexClient.getId() + "' because " + MAX_STREAMING_CLIENTS + " limit has been reached.";
+                } else if (!session.canStream) {
                     errorMessage = "Endpoint with id '" + getId() + "' cannot grant streaming connection to FlexClient with id '"
-                    + flexClient.getId() + "' because " + UserAgentManager.MAX_STREAMING_CONNECTIONS_PER_SESSION + " limit has been reached.";
+                            + flexClient.getId() + "' because " + UserAgentManager.MAX_STREAMING_CONNECTIONS_PER_SESSION + " limit has been reached.";
                 }
                 res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, errorMessage);
+            } catch (IOException ignore) {
             }
-            catch (IOException ignore)
-            {}
         }
     }
 
     /**
      * Handles streaming connection close command sent by the FlexClient.
      *
-     * @param req The <code>HttpServletRequest</code> to service.
-     * @param res The <code>HttpServletResponse</code> to be used in case an error
-     * has to be sent back.
+     * @param req        The <code>HttpServletRequest</code> to service.
+     * @param res        The <code>HttpServletResponse</code> to be used in case an error
+     *                   has to be sent back.
      * @param flexClient FlexClient that requested the streaming connection.
-     * @param streamId The id for the stream to close.
+     * @param streamId   The id for the stream to close.
      */
-    protected void handleFlexClientStreamingCloseRequest(HttpServletRequest req, HttpServletResponse res, FlexClient flexClient, String streamId)
-    {
-        if (streamId != null)
-        {
-            EndpointPushNotifier notifier = (EndpointPushNotifier)flexClient.getEndpointPushHandler(getId());
+    protected void handleFlexClientStreamingCloseRequest(HttpServletRequest req, HttpServletResponse res, FlexClient flexClient, String streamId) {
+        if (streamId != null) {
+            EndpointPushNotifier notifier = (EndpointPushNotifier) flexClient.getEndpointPushHandler(getId());
             if ((notifier != null) && notifier.getNotifierId().equals(streamId))
                 notifier.close();
         }
@@ -1029,10 +925,9 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      *
      * @param req The <code>HttpServletRequest</code> to service.
      * @param res The <code>HttpServletResponse</code> to be used in case an error
-     * has to be sent back.
+     *            has to be sent back.
      */
-    protected void serviceStreamingRequest(HttpServletRequest req, HttpServletResponse res)
-    {
+    protected void serviceStreamingRequest(HttpServletRequest req, HttpServletResponse res) {
         // If this is a request for a streaming connection, make sure it's for a valid FlexClient
         // and that the FlexSession doesn't already have a streaming connection open.
         // Streaming requests are POSTs (to help prevent the possibility of caching) that carry the
@@ -1046,52 +941,43 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
         String command = req.getParameter(COMMAND_PARAM_NAME);
 
         // Only HTTP 1.1 is supported, disallow HTTP 1.0.
-        if (req.getProtocol().equals(HTTP_1_0))
-        {
+        if (req.getProtocol().equals(HTTP_1_0)) {
             if (Log.isError())
                 log.error("Endpoint with id '" + getId() + "' cannot service the streaming request made with " +
-                " HTTP 1.0. Only HTTP 1.1 is supported.");
+                        " HTTP 1.0. Only HTTP 1.1 is supported.");
 
-            try
-            {
+            try {
                 // Return an HTTP status code 400 to indicate that the client's request was syntactically invalid (bad command).
                 res.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            } catch (IOException ignore) {
             }
-            catch (IOException ignore)
-            {}
             return; // Abort further server processing.
         }
 
-        if (!(command.equals(OPEN_COMMAND) || command.equals(CLOSE_COMMAND)))
-        {
+        if (!(command.equals(OPEN_COMMAND) || command.equals(CLOSE_COMMAND))) {
             if (Log.isError())
                 log.error("Endpoint with id '" + getId() + "' cannot service the streaming request as the supplied command '"
                         + command + "' is invalid.");
 
-            try
-            {
+            try {
                 // Return an HTTP status code 400 to indicate that the client's request was syntactically invalid (bad command).
                 res.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            } catch (IOException ignore) {
             }
-            catch (IOException ignore)
-            {}
             return; // Abort further server processing.
         }
 
         String flexClientId = req.getParameter(Message.FLEX_CLIENT_ID_HEADER);
-        if (flexClientId == null)
-        {
+        if (flexClientId == null) {
             if (Log.isError())
                 log.error("Endpoint with id '" + getId() + "' cannot service the streaming request as no FlexClient id"
                         + " has been supplied in the request.");
 
-            try
-            {
+            try {
                 // Return an HTTP status code 400 to indicate that the client's request was syntactically invalid (missing id).
                 res.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            } catch (IOException ignore) {
             }
-            catch (IOException ignore)
-            {}
             return; // Abort further server processing.
         }
 
@@ -1104,46 +990,38 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
         FlexClient flexClient = null;
         List<FlexClient> flexClients = FlexContext.getFlexSession().getFlexClients();
         boolean validFlexClientId = false;
-        for (Iterator<FlexClient> iter = flexClients.iterator(); iter.hasNext();)
-        {
+        for (Iterator<FlexClient> iter = flexClients.iterator(); iter.hasNext(); ) {
             flexClient = iter.next();
-            if (flexClient.getId().equals(flexClientId) && flexClient.isValid())
-            {
+            if (flexClient.getId().equals(flexClientId) && flexClient.isValid()) {
                 validFlexClientId = true;
                 break;
             }
         }
-        if (!command.equals(CLOSE_COMMAND) && !validFlexClientId)
-        {
+        if (!command.equals(CLOSE_COMMAND) && !validFlexClientId) {
             if (Log.isError())
                 log.error("Endpoint with id '" + getId() + "' cannot service the streaming request as either the supplied"
                         + " FlexClient id '" + flexClientId + " is not valid, or the FlexClient with that id is not valid.");
 
-            try
-            {
+            try {
                 // Return an HTTP status code 400 to indicate that the client's request was syntactically invalid (invalid id).
                 res.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            } catch (IOException ignore) {
             }
-            catch (IOException ignore)
-            {}
             return; // Abort further server processing.
         }
 
         // If a close command is received and we don't have any flex clients registered simply invalidate 
         // the Flex Session. This will take care of the Flex Session that got created when the MB servlet 
         // was processing the CLOSE request.
-        if (command.equals(CLOSE_COMMAND) && flexClients.size() == 0)
-        {
+        if (command.equals(CLOSE_COMMAND) && flexClients.size() == 0) {
             FlexSession flexSession = FlexContext.getFlexSession();
-            if (flexSession instanceof HttpFlexSession)
-            {
-                ((HttpFlexSession)flexSession).invalidate(false);
+            if (flexSession instanceof HttpFlexSession) {
+                ((HttpFlexSession) flexSession).invalidate(false);
             }
             return;
         }
 
-        if (flexClient != null)
-        {
+        if (flexClient != null) {
             if (command.equals(OPEN_COMMAND))
                 handleFlexClientStreamingOpenRequest(req, res, flexClient);
             else if (command.equals(CLOSE_COMMAND))
@@ -1158,24 +1036,20 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * signal the end of the response.
      * Once the chunk is written to the output stream, the stream will be flushed immediately (no buffering).
      *
-     * @param bytes The array of bytes to write as a chunk in the response; or if null, the signal to write the final chunk to complete the response.
-     * @param os The output stream the chunk will be written to.
+     * @param bytes    The array of bytes to write as a chunk in the response; or if null, the signal to write the final chunk to complete the response.
+     * @param os       The output stream the chunk will be written to.
      * @param response The HttpServletResponse, used to flush the chunk to the client.
-     *
      * @throws IOException if writing the chunk to the output stream fails.
      */
-    protected void streamChunk(byte[] bytes, ServletOutputStream os, HttpServletResponse response) throws IOException
-    {
-        if ((bytes != null) && (bytes.length > 0))
-        {
+    protected void streamChunk(byte[] bytes, ServletOutputStream os, HttpServletResponse response) throws IOException {
+        if ((bytes != null) && (bytes.length > 0)) {
             byte[] chunkLength = Integer.toHexString(bytes.length).getBytes("ASCII");
             os.write(chunkLength);
             os.write(CRLF_BYTES);
             os.write(bytes);
             os.write(CRLF_BYTES);
             response.flushBuffer();
-        }
-        else // Send final 'EOF' chunk for the response.
+        } else // Send final 'EOF' chunk for the response.
         {
             os.write(ZERO_BYTE);
             os.write(CRLF_BYTES);
@@ -1188,7 +1062,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * Serializes messages and streams each to the client as a response chunk using streamChunk().
      *
      * @param messages The messages to serialize and push to the client.
-     * @param os The output stream the chunk will be written to.
+     * @param os       The output stream the chunk will be written to.
      * @param response The HttpServletResponse, used to flush the chunk to the client.
      */
     protected abstract void streamMessages(List messages, ServletOutputStream os, HttpServletResponse response) throws IOException;
@@ -1201,9 +1075,8 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      * @return MessagePerformanceInfo if the message performance gathering is enabled,
      * null otherwise.
      */
-    protected MessagePerformanceInfo getMPI(Message message)
-    {
-        return (isRecordMessageSizes() || isRecordMessageTimes())?
+    protected MessagePerformanceInfo getMPI(Message message) {
+        return (isRecordMessageSizes() || isRecordMessageTimes()) ?
                 MessagePerformanceUtils.getMPII(message) : null;
     }
 
@@ -1218,8 +1091,7 @@ public abstract class BaseStreamingHTTPEndpoint extends BaseHTTPEndpoint
      *
      * @param notifier The EndpointPushNotifier to monitor.
      */
-    private void monitorTimeout(EndpointPushNotifier notifier)
-    {
+    private void monitorTimeout(EndpointPushNotifier notifier) {
         if (pushNotifierTimeoutManager != null)
             pushNotifierTimeoutManager.scheduleTimeout(notifier);
     }

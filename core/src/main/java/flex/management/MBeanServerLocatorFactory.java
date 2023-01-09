@@ -23,14 +23,13 @@ import flex.messaging.util.ClassUtil;
 /**
  * Factory to get a <code>MBeanServerLocator</code>.
  */
-public class MBeanServerLocatorFactory
-{
+public class MBeanServerLocatorFactory {
     //--------------------------------------------------------------------------
     //
     // Private Static Variables
     //
     //--------------------------------------------------------------------------
-    
+
     /**
      * The MBeanServerLocator impl to use; lazily init'ed on first access.
      */
@@ -41,83 +40,76 @@ public class MBeanServerLocatorFactory
     // Public Static Methods
     //
     //--------------------------------------------------------------------------
-    
+
     /**
      * Returns a <code>MBeanServerLocator</code> that exposes the <code>MBeanServer</code> to register MBeans with.
-     * 
+     *
      * @return The <code>MBeanServerLocator</code> that exposes the <code>MBeanServer</code> to register MBeans with.
      */
-    public static synchronized MBeanServerLocator getMBeanServerLocator()
-    {
-        if (locator == null)
-        {
+    public static synchronized MBeanServerLocator getMBeanServerLocator() {
+        if (locator == null) {
             // Try app-server specific locators.
             // WebSphere provides access to its MBeanServer via a custom admin API.
-            instantiateLocator("flex.management.WebSphereMBeanServerLocator", new String[] {"com.ibm.websphere.management.AdminServiceFactory"});
+            instantiateLocator("flex.management.WebSphereMBeanServerLocator", new String[]{"com.ibm.websphere.management.AdminServiceFactory"});
 
             // Sun JRE 1.5 based implementation
             if (locator == null)
-                locator =  new PlatformMBeanServerLocator();
-            
+                locator = new PlatformMBeanServerLocator();
+
             if (Log.isDebug())
                 Log.getLogger(LogCategories.MANAGEMENT_GENERAL).debug("Using MBeanServerLocator: " + locator.getClass().getName());
         }
         return locator;
     }
-    
+
     /**
      * Release static MBeanServerLocator
      * Called on MessageBroker shutdown.
      */
-    public static void clear()
-    {
+    public static void clear() {
         locator = null;
     }
-    
+
     //--------------------------------------------------------------------------
     //
     // Private Static Methods
     //
     //--------------------------------------------------------------------------
-    
+
     /**
      * Helper method that attempts to load a specific MBeanServerLocator.
-     * 
-     * @param locatorClassName The classname of the desired MBeanServerLocator.
+     *
+     * @param locatorClassName     The classname of the desired MBeanServerLocator.
      * @param dependencyClassNames Any additional dependent classnames that the desired locator depends upon
-     *                            that should also be tested for availability.
+     *                             that should also be tested for availability.
      */
-    private static void instantiateLocator(String locatorClassName, String[] dependencyClassNames)
-    {
-        try
-        {
-            if (dependencyClassNames != null)
-            {
+    private static void instantiateLocator(String locatorClassName, String[] dependencyClassNames) {
+        try {
+            if (dependencyClassNames != null) {
                 for (int i = 0; i < dependencyClassNames.length; i++)
                     ClassUtil.createClass(dependencyClassNames[i]);
             }
-            
+
             Class locatorClass = ClassUtil.createClass(locatorClassName);
-            locator = (MBeanServerLocator)locatorClass.newInstance();
-        }
-        catch (Throwable t)
-        {
+            locator = (MBeanServerLocator) locatorClass.newInstance();
+        } catch (Throwable t) {
             if (Log.isDebug())
                 Log.getLogger(LogCategories.MANAGEMENT_MBEANSERVER).debug("Not using MBeanServerLocator: " + locatorClassName + ". Reason: " + t.getMessage());
         }
     }
-    
+
     //--------------------------------------------------------------------------
     //
     // Constructor
     //
     //--------------------------------------------------------------------------
-    
+
     /**
      * Direct instantiation is not allowed.
-     * Use <code>getMBeanServerLocator()</code> to obtain a <code>MBeanServerLocator</code> 
+     * Use <code>getMBeanServerLocator()</code> to obtain a <code>MBeanServerLocator</code>
      * instance to lookup the proper MBean server to use.
      */
-    private MBeanServerLocatorFactory() {}
-    
+    private MBeanServerLocatorFactory() {
+    }
+
 }

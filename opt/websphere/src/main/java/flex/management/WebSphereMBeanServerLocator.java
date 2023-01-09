@@ -28,25 +28,24 @@ import flex.messaging.util.ClassUtil;
  * Custom MBeanServerLocator for use with WebSphere.
  * This class locates a MBean server instance via WebSphere's administration APIs.
  */
-public class WebSphereMBeanServerLocator implements MBeanServerLocator
-{
+public class WebSphereMBeanServerLocator implements MBeanServerLocator {
     //--------------------------------------------------------------------------
     //
     // Private Static Variables
     //
     //--------------------------------------------------------------------------
-    
+
     /**
      * Localized error constant.
      */
     private static final int FAILED_TO_LOCATE_MBEAN_SERVER = 10427;
-    
+
     //--------------------------------------------------------------------------
     //
     // Private Variables
     //
     //--------------------------------------------------------------------------
-    
+
     /**
      * Reference to MBeanServer this locator found.
      */
@@ -57,24 +56,21 @@ public class WebSphereMBeanServerLocator implements MBeanServerLocator
     // Public Methods
     //
     //--------------------------------------------------------------------------
-    
-    /** {@inheritDoc} */
-    public synchronized MBeanServer getMBeanServer()
-    {
-        if (server == null)
-        {
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized MBeanServer getMBeanServer() {
+        if (server == null) {
             Class adminServiceClass = ClassUtil.createClass("com.ibm.websphere.management.AdminServiceFactory");
-            try
-            {
+            try {
                 Method getMBeanFactoryMethod = adminServiceClass.getMethod("getMBeanFactory", new Class[0]);
                 Object mbeanFactory = getMBeanFactoryMethod.invoke(null, new Object[0]);
                 Method getMBeanServerMethod = mbeanFactory.getClass().getMethod("getMBeanServer", new Class[0]);
-                server = (MBeanServer)getMBeanServerMethod.invoke(mbeanFactory, new Object[0]); 
-            }
-            catch (Exception e)
-            {
+                server = (MBeanServer) getMBeanServerMethod.invoke(mbeanFactory, new Object[0]);
+            } catch (Exception e) {
                 ManagementException me = new ManagementException();
-                me.setMessage(FAILED_TO_LOCATE_MBEAN_SERVER, new Object[] {getClass().getName()});
+                me.setMessage(FAILED_TO_LOCATE_MBEAN_SERVER, new Object[]{getClass().getName()});
                 me.setRootCause(e);
                 throw me;
             }

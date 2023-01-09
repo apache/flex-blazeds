@@ -22,12 +22,10 @@ import flex.messaging.io.amf.MessageBody;
 import flex.messaging.io.amf.ASObject;
 import flex.messaging.MessageException;
 
-public class Confirm11b extends DeserializationConfirmation
-{
+public class Confirm11b extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm11b()
-    {
+    public Confirm11b() {
         ActionMessage m = new ActionMessage();
         MessageBody body = new MessageBody();
         m.addBody(body);
@@ -35,18 +33,16 @@ public class Confirm11b extends DeserializationConfirmation
         ASObject aso = new ASObject();
         aso.put("prop0", "Hydrogen");
         aso.put("prop1", "Helium");
-        
+
         body.setData(aso);
         EXPECTED_VALUE = m;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

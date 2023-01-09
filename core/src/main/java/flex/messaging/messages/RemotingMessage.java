@@ -27,11 +27,8 @@ import java.util.List;
  * AMF Endpoint and not to other endpoints (the RTMP Endpoint has
  * no HTTP, and therefore cannot support the request/response and
  * session properties of the ActionContext).
- *
- *
  */
-public class RemotingMessage extends RPCMessage
-{
+public class RemotingMessage extends RPCMessage {
     /**
      * This number was generated using the 'serialver' command line tool.
      * This number should remain consistent with the version used by
@@ -43,84 +40,65 @@ public class RemotingMessage extends RPCMessage
     private String operation;
     private Object[] parameters;
     private transient List parameterList;
-    
-    public RemotingMessage()
-    {
+
+    public RemotingMessage() {
     }
 
-    public String getSource()
-    {
+    public String getSource() {
         return source;
     }
 
-    public void setSource(String s)
-    {
+    public void setSource(String s) {
         source = s;
     }
 
-    public Object getBody()
-    {
+    public Object getBody() {
         if (parameters == null && parameterList != null)
             return parameterList.toArray();
         else
             return parameters;
     }
 
-    public void setBody(Object bodyValue)
-    {
-        if (bodyValue instanceof List)
-        {
+    public void setBody(Object bodyValue) {
+        if (bodyValue instanceof List) {
             // some channels/endpoints may send in a list
             // and expect to keep a reference to it - amfx
             // for example works this way, so keep the list
             // around rather than making an array copy
-            if (parameterList != null)
-            {
+            if (parameterList != null) {
                 parameterList.addAll((List) bodyValue);
-            }
-            else
-            {
+            } else {
                 parameterList = (List) bodyValue;
             }
-        }
-        else if (!bodyValue.getClass().isArray())
-        {
-            parameters = new Object[] { bodyValue };
-        }
-        else
-        {
+        } else if (!bodyValue.getClass().isArray()) {
+            parameters = new Object[]{bodyValue};
+        } else {
             parameters = (Object[]) bodyValue;
         }
     }
 
-    public String getOperation()
-    {
+    public String getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation)
-    {
+    public void setOperation(String operation) {
         this.operation = operation;
     }
 
-    public List getParameters()
-    {
-        if (parameters == null && parameterList != null)
-        {
+    public List getParameters() {
+        if (parameters == null && parameterList != null) {
             parameters = parameterList.toArray();
             // we can clean up the parameter list now
             parameterList = null;
         }
-        return (parameters == null) ? null : Arrays.asList(parameters);            
+        return (parameters == null) ? null : Arrays.asList(parameters);
     }
 
-    public void setParameters(List params)
-    {
+    public void setParameters(List params) {
         parameters = params.toArray();
     }
-    
-    protected String toStringFields(int indentLevel)
-    {
+
+    protected String toStringFields(int indentLevel) {
         String s = getOperation();
         String sp = super.toStringFields(indentLevel);
         String sep = getFieldSeparator(indentLevel);

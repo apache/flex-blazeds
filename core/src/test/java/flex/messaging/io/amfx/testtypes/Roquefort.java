@@ -16,34 +16,27 @@
  */
 package flex.messaging.io.amfx.testtypes;
 
-public class Roquefort extends EweCheese
-{
-    public Roquefort()
-    {
+public class Roquefort extends EweCheese {
+    public Roquefort() {
     }
 
-    public int getMaturation()
-    {
+    public int getMaturation() {
         return 24;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return "Roquefort";
     }
 
-    public String getRegion()
-    {
+    public String getRegion() {
         return "Midi-Pyrnes";
     }
 
-    public Cheese getParing()
-    {
+    public Cheese getParing() {
         return paring;
     }
 
-    public void setParing(Cheese c)
-    {
+    public void setParing(Cheese c) {
         paring = c;
     }
 

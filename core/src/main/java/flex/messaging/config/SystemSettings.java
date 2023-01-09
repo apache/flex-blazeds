@@ -33,8 +33,7 @@ import javax.servlet.ServletContext;
 /**
  *
  */
-public class SystemSettings
-{
+public class SystemSettings {
     private ResourceLoader resourceLoader;
     private Locale defaultLocale;
     private boolean enforceEndpointValidation;
@@ -46,8 +45,7 @@ public class SystemSettings
     private String uuidGeneratorClassName;
     private String dotNetFrameworkVersion;
 
-    public SystemSettings()
-    {
+    public SystemSettings() {
         enforceEndpointValidation = false;
         manageable = true;
         redeployEnabled = false;
@@ -58,140 +56,107 @@ public class SystemSettings
         dotNetFrameworkVersion = null;
     }
 
-    public void setDefaultLocale(Locale locale)
-    {
+    public void setDefaultLocale(Locale locale) {
         defaultLocale = locale;
         resourceLoader.setDefaultLocale(defaultLocale);
     }
 
-    public Locale getDefaultLocale()
-    {
+    public Locale getDefaultLocale() {
         return defaultLocale;
     }
 
-    public boolean isManageable()
-    {
+    public boolean isManageable() {
         return manageable;
     }
 
-    public void setManageable(String manageable)
-    {
+    public void setManageable(String manageable) {
         manageable = manageable.toLowerCase();
         if (manageable.startsWith("f"))
             this.manageable = false;
     }
 
-    public boolean isEnforceEndpointValidation()
-    {
+    public boolean isEnforceEndpointValidation() {
         return enforceEndpointValidation;
     }
 
-    public void setEnforceEndpointValidation(String enforceEndpointValidation)
-    {
+    public void setEnforceEndpointValidation(String enforceEndpointValidation) {
         if (enforceEndpointValidation == null || enforceEndpointValidation.length() == 0)
             return;
         if (enforceEndpointValidation.toLowerCase().startsWith("t"))
             this.enforceEndpointValidation = true;
     }
 
-    public ResourceLoader getResourceLoader()
-    {
+    public ResourceLoader getResourceLoader() {
         return resourceLoader;
     }
 
-    public void setResourceLoader(ResourceLoader resourceLoader)
-    {
+    public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
-    public void setRedeployEnabled(String enabled)
-    {
+    public void setRedeployEnabled(String enabled) {
         enabled = enabled.toLowerCase();
         if (enabled.startsWith("t"))
             this.redeployEnabled = true;
     }
 
-    public boolean getRedeployEnabled()
-    {
+    public boolean getRedeployEnabled() {
         return redeployEnabled;
     }
 
-    public void setWatchInterval(String interval)
-    {
+    public void setWatchInterval(String interval) {
         this.watchInterval = Integer.parseInt(interval);
     }
 
-    public int getWatchInterval()
-    {
+    public int getWatchInterval() {
         return watchInterval;
     }
 
-    public void addWatchFile(String watch)
-    {
+    public void addWatchFile(String watch) {
         this.watches.add(watch);
     }
 
-    public List getWatchFiles()
-    {
+    public List getWatchFiles() {
         return watches;
     }
 
-    public void addTouchFile(String touch)
-    {
+    public void addTouchFile(String touch) {
         this.touches.add(touch);
     }
 
-    public List getTouchFiles()
-    {
+    public List getTouchFiles() {
         return touches;
     }
 
-    public void setPaths(ServletContext context)
-    {
-        if (redeployEnabled)
-        {
+    public void setPaths(ServletContext context) {
+        if (redeployEnabled) {
             List resolvedWatches = new ArrayList();
-            for (int i = 0; i < watches.size(); i++)
-            {
-                String path = (String)watches.get(i);
+            for (int i = 0; i < watches.size(); i++) {
+                String path = (String) watches.get(i);
                 String resolvedPath = null;
-                if (path.startsWith("{context.root}") || path.startsWith("{context-root}"))
-                {
+                if (path.startsWith("{context.root}") || path.startsWith("{context-root}")) {
                     path = path.substring(14);
                     resolvedPath = context.getRealPath(path);
 
-                    if (resolvedPath != null)
-                    {
-                        try
-                        {
+                    if (resolvedPath != null) {
+                        try {
                             resolvedWatches.add(new WatchedObject(resolvedPath));
-                        }
-                        catch (FileNotFoundException fnfe)
-                        {
+                        } catch (FileNotFoundException fnfe) {
                             Logger logger = Log.getLogger(ConfigurationManager.LOG_CATEGORY);
-                            if (logger != null)
-                            {
+                            if (logger != null) {
                                 logger.warn("The watch-file, " + path + ", could not be found and will be ignored.");
                             }
                         }
-                    }
-                    else
-                    {
+                    } else {
                         Logger logger = Log.getLogger(ConfigurationManager.LOG_CATEGORY);
                         logger.warn("The watch-file, " + path + ", could not be resolved to a path and will be ignored.");
                     }
-                }
-                else
-                {
-                    try
-                    {
+                } else {
+                    try {
                         resolvedWatches.add(new WatchedObject(path));
-                    }
-                    catch (FileNotFoundException fnfe)
-                    {
+                    } catch (FileNotFoundException fnfe) {
                         Logger logger = Log.getLogger(ConfigurationManager.LOG_CATEGORY);
-                        if (logger != null)
-                        {
+                        if (logger != null) {
                             logger.warn("The watch-file, " + path + ", could not be found and will be ignored.");
                         }
                     }
@@ -200,45 +165,31 @@ public class SystemSettings
             watches = resolvedWatches;
 
             List resolvedTouches = new ArrayList();
-            for (int i = 0; i < touches.size(); i++)
-            {
-                String path = (String)touches.get(i);
+            for (int i = 0; i < touches.size(); i++) {
+                String path = (String) touches.get(i);
                 String resolvedPath = null;
-                if (path.startsWith("{context.root}") || path.startsWith("{context-root}"))
-                {
+                if (path.startsWith("{context.root}") || path.startsWith("{context-root}")) {
                     path = path.substring(14);
                     resolvedPath = context.getRealPath(path);
 
-                    if (resolvedPath != null)
-                    {
+                    if (resolvedPath != null) {
                         File file = new File(resolvedPath);
-                        if (!file.exists() || (!file.isFile() && !file.isDirectory()) || (!file.isAbsolute()))
-                        {
+                        if (!file.exists() || (!file.isFile() && !file.isDirectory()) || (!file.isAbsolute())) {
                             Logger logger = Log.getLogger(ConfigurationManager.LOG_CATEGORY);
                             logger.warn("The touch-file, " + path + ", could not be found and will be ignored.");
-                        }
-                        else
-                        {
+                        } else {
                             resolvedTouches.add(resolvedPath);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         Logger logger = Log.getLogger(ConfigurationManager.LOG_CATEGORY);
                         logger.warn("The touch-file, " + path + ", could not be resolved to a path and will be ignored.");
                     }
-                }
-                else
-                {
-                    try
-                    {
+                } else {
+                    try {
                         resolvedTouches.add(new WatchedObject(path));
-                    }
-                    catch (FileNotFoundException fnfe)
-                    {
+                    } catch (FileNotFoundException fnfe) {
                         Logger logger = Log.getLogger(ConfigurationManager.LOG_CATEGORY);
-                        if (logger != null)
-                        {
+                        if (logger != null) {
                             logger.warn("The touch-file, " + path + ", could not be found and will be ignored.");
                         }
                     }
@@ -250,46 +201,44 @@ public class SystemSettings
 
     /**
      * Returns the UUID generator class name.
-     * 
+     *
      * @return The UUID generator class name.
      */
-    public String getUUIDGeneratorClassName()
-    {
+    public String getUUIDGeneratorClassName() {
         return uuidGeneratorClassName;
     }
 
     /**
      * Sets the UUID generator class name.
-     * 
+     *
      * @param value The UUID generator class name.
      */
-    public void setUUIDGeneratorClassName(String value)
-    {
+    public void setUUIDGeneratorClassName(String value) {
         uuidGeneratorClassName = value;
     }
 
     /**
      * Set the dotnet framework version to use.
+     *
      * @param version the configured dotnet framework version
      */
-    public void setDotNetFrameworkVersion(String version)
-    {
+    public void setDotNetFrameworkVersion(String version) {
         dotNetFrameworkVersion = version;
     }
-    
+
     /**
      * Get the dotnet framework version.
+     *
      * @return String the dotnet framework version
      */
-    public String getDotNetFrameworkVersion()
-    {
+    public String getDotNetFrameworkVersion() {
         return dotNetFrameworkVersion;
     }
+
     /**
      * Clean up static member variables.
      */
-    public void clear()
-    {
+    public void clear() {
         resourceLoader = null;
         defaultLocale = null;
         watches = null;

@@ -27,14 +27,13 @@ import java.util.Map;
 
 /**
  * A wrapped PageableRowSet instance requires custom serialization so this
- * legacy type has been made to fit the PropertyProxy interface. 
- * 
- * TODO: This proxy is similar to features made possible with Externalizable 
- * so PageableRowSet/RecordSet should be moved to an Externalizable 
+ * legacy type has been made to fit the PropertyProxy interface.
+ * <p>
+ * TODO: This proxy is similar to features made possible with Externalizable
+ * so PageableRowSet/RecordSet should be moved to an Externalizable
  * implementation.
  */
-public class PageableRowSetProxy extends AbstractProxy
-{
+public class PageableRowSetProxy extends AbstractProxy {
     static final long serialVersionUID = 1121859941216924326L;
 
     public static final int HUGE_PAGE_SIZE = Integer.MAX_VALUE;
@@ -45,7 +44,7 @@ public class PageableRowSetProxy extends AbstractProxy
     public static final String AS_TYPE_NAME = "RecordSet";
 
     public static final Integer RECORD_SET_VERSION = new Integer(1);
-    
+
     /**
      * ActionScript (AS) Object Key Names.
      */
@@ -59,74 +58,60 @@ public class PageableRowSetProxy extends AbstractProxy
     public static final String ID = "id";
 
     public static final List propertyNameCache = new ArrayList();
-    static
-    {
+
+    static {
         propertyNameCache.add(SERVER_INFO);
     }
 
-    public PageableRowSetProxy()
-    {
+    public PageableRowSetProxy() {
         super(null);
         alias = AS_TYPE_NAME;
     }
-    
-    public PageableRowSetProxy(RowSet defaultInstance)
-    {
+
+    public PageableRowSetProxy(RowSet defaultInstance) {
         super(defaultInstance);
         alias = AS_TYPE_NAME;
     }
 
-    public PageableRowSetProxy(PageableRowSet defaultInstance)
-    {
+    public PageableRowSetProxy(PageableRowSet defaultInstance) {
         super(defaultInstance);
         alias = AS_TYPE_NAME;
     }
 
-    public String getAlias(Object instance)
-    {
+    public String getAlias(Object instance) {
         return AS_TYPE_NAME;
     }
-    
-    public List getPropertyNames(Object instance)
-    {
+
+    public List getPropertyNames(Object instance) {
         return propertyNameCache;
     }
 
-    public Class getType(Object instance, String propertyName)
-    {
-        if (SERVER_INFO.equals(propertyName))
-        {
+    public Class getType(Object instance, String propertyName) {
+        if (SERVER_INFO.equals(propertyName)) {
             return HashMap.class;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
-    public Object getValue(Object instance, String propertyName)
-    {
+    public Object getValue(Object instance, String propertyName) {
         Object value = null;
-        
-        if (instance instanceof RowSet)
-        {
+
+        if (instance instanceof RowSet) {
             //Wrap in PageableRowSet just for its utility methods and don't create an id.
-            instance = new PagedRowSet((RowSet)instance, HUGE_PAGE_SIZE, false);
+            instance = new PagedRowSet((RowSet) instance, HUGE_PAGE_SIZE, false);
         }
 
-        if (instance instanceof PageableRowSet)
-        {
-            PageableRowSet prs = (PageableRowSet)instance;
-            
-            if (SERVER_INFO.equals(propertyName))
-            {
-                try
-                {
+        if (instance instanceof PageableRowSet) {
+            PageableRowSet prs = (PageableRowSet) instance;
+
+            if (SERVER_INFO.equals(propertyName)) {
+                try {
                     HashMap serverInfo = new HashMap();
                     serverInfo.put(ID, prs.getID());
-    
+
                     Map pageInfo = prs.getRecords(1, prs.getInitialDownloadCount());
-        
+
                     serverInfo.put(TOTAL_COUNT, new Integer(prs.getRowCount()));
                     serverInfo.put(INITIAL_DATA, pageInfo.get(PageableRowSet.PAGE)); //Array of Arrays - the first page returned
                     serverInfo.put(CURSOR, pageInfo.get(PageableRowSet.CURSOR)); //Integer
@@ -134,9 +119,7 @@ public class PageableRowSetProxy extends AbstractProxy
                     serverInfo.put(COLUMN_NAMES, prs.getColumnNames());
                     serverInfo.put(VERSION, RECORD_SET_VERSION);
                     value = serverInfo;
-                }
-                catch (SQLException ex)
-                {
+                } catch (SQLException ex) {
                     MessageException e = new MessageException();
                     e.setMessage("Error encountered serializing RowSet.");
                     e.setRootCause(ex);
@@ -148,8 +131,7 @@ public class PageableRowSetProxy extends AbstractProxy
         return value;
     }
 
-    public void setValue(Object instance, String propertyName, Object value)
-    {
-       // Client-to-server not supported
+    public void setValue(Object instance, String propertyName, Object value) {
+        // Client-to-server not supported
     }
 }

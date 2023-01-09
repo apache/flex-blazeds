@@ -20,18 +20,15 @@ package flex.messaging.io;
  * Throwable instances are treated as a special type of Bean as
  * usually properties are read only but need to be serialized.
  */
-public class ThrowableProxy extends BeanProxy
-{
+public class ThrowableProxy extends BeanProxy {
     static final long serialVersionUID = 6363249716988887262L;
 
-    public ThrowableProxy()
-    {
+    public ThrowableProxy() {
         super();
         setIncludeReadOnly(true);
     }
-    
-    public ThrowableProxy(Throwable defaultInstance)
-    {
+
+    public ThrowableProxy(Throwable defaultInstance) {
         super(defaultInstance);
         setIncludeReadOnly(true);
     }

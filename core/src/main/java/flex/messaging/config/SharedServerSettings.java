@@ -22,44 +22,35 @@ package flex.messaging.config;
  * defined in the configuration file.
  * The <tt>MessagingConfiguration</tt> instance using the parser will store these and
  * use them to configure the <tt>MessageBroker</tt> with shared server instances.
- *
- *
  */
-public class SharedServerSettings extends PropertiesSettings
-{
+public class SharedServerSettings extends PropertiesSettings {
     private String id;
 
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
-    public void setId(String value)
-    {
+    public void setId(String value) {
         id = value;
     }
 
     private String className;
 
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
-    public void setClassName(String value)
-    {
+    public void setClassName(String value) {
         className = value;
     }
-    
+
     private String sourceFile;
-    
-    public String getSourceFile()
-    {
+
+    public String getSourceFile() {
         return sourceFile;
     }
-    
-    public void setSourceFile(String value)
-    {
+
+    public void setSourceFile(String value) {
         sourceFile = value;
     }
 }

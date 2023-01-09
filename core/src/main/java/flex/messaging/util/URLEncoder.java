@@ -24,33 +24,23 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * Utility class for URL encoding.
- * 
- *
  */
-public final class URLEncoder
-{
+public final class URLEncoder {
     public static String charset = "UTF8";
 
-    private URLEncoder()
-    {
+    private URLEncoder() {
     }
 
-    public static String encode(String s)
-    {
-        try
-        {
+    public static String encode(String s) {
+        try {
             return encode(s, charset);
-        }
-        catch (UnsupportedEncodingException ex)
-        {
+        } catch (UnsupportedEncodingException ex) {
             throw new IllegalArgumentException(charset);
         }
     }
 
-    public static String encode(String s, String enc) throws UnsupportedEncodingException
-    {
-        if (!needsEncoding(s))
-        {
+    public static String encode(String s, String enc) throws UnsupportedEncodingException {
+        if (!needsEncoding(s)) {
             return s;
         }
 
@@ -62,89 +52,70 @@ public final class URLEncoder
 
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(buf, enc));
 
-        for (int i = 0; i < length; i++)
-        {
-            int c = (int)s.charAt(i);
-            if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || c == ' ')
-            {
-                if (c == ' ')
-                {
+        for (int i = 0; i < length; i++) {
+            int c = (int) s.charAt(i);
+            if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || c == ' ') {
+                if (c == ' ') {
                     c = '+';
                 }
 
                 toHex(out, buf.toByteArray());
                 buf.reset();
 
-                out.append((char)c);
-            }
-            else
-            {
-                try
-                {
+                out.append((char) c);
+            } else {
+                try {
                     writer.write(c);
 
-                    if (c >= 0xD800 && c <= 0xDBFF && i < length - 1)
-                    {
-                        int d = (int)s.charAt(i + 1);
-                        if (d >= 0xDC00 && d <= 0xDFFF)
-                        {
+                    if (c >= 0xD800 && c <= 0xDBFF && i < length - 1) {
+                        int d = (int) s.charAt(i + 1);
+                        if (d >= 0xDC00 && d <= 0xDFFF) {
                             writer.write(d);
                             i++;
                         }
                     }
 
                     writer.flush();
-                }
-                catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     throw new IllegalArgumentException(s);
                 }
             }
         }
-        try
-        {
+        try {
             writer.close();
-        }
-        catch (IOException ioe)
-        {
+        } catch (IOException ioe) {
             // Ignore exceptions on close.
         }
 
         toHex(out, buf.toByteArray());
-       
+
         return out.toString();
     }
 
-    private static void toHex(StringBuffer buffer, byte[] b)
-    {
-        for (int i = 0; i < b.length; i++)
-        {
+    private static void toHex(StringBuffer buffer, byte[] b) {
+        for (int i = 0; i < b.length; i++) {
             buffer.append('%');
 
             char ch = Character.forDigit((b[i] >> 4) & 0xF, 16);
-            if (Character.isLetter(ch))
-            {
+            if (Character.isLetter(ch)) {
                 ch -= 32;
             }
             buffer.append(ch);
 
             ch = Character.forDigit(b[i] & 0xF, 16);
-            if (Character.isLetter(ch))
-            {
+            if (Character.isLetter(ch)) {
                 ch -= 32;
             }
             buffer.append(ch);
         }
     }
 
-    private static boolean needsEncoding(String s)
-    {
+    private static boolean needsEncoding(String s) {
         if (s == null)
             return false;
 
-        for (int i = 0; i < s.length(); i++)
-        {
-            int c = (int)s.charAt(i);
+        for (int i = 0; i < s.length(); i++) {
+            int c = (int) s.charAt(i);
             if (!(c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9'))
                 return true;
             // Otherwise, keep going

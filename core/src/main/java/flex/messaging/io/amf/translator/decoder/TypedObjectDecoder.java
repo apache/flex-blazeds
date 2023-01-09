@@ -28,33 +28,25 @@ import flex.messaging.io.amf.translator.TranslationException;
 /**
  * Decodes an ASObject to a Java object based on the
  * type information returned from the ASObject.getType().
- *
+ * <p>
  * If the TranslationContext has been set up to support
  * _remoteClass then this property may be used as a back up.
- *
- *
  */
-public class TypedObjectDecoder extends ActionScriptDecoder
-{
-    public boolean hasShell()
-    {
+public class TypedObjectDecoder extends ActionScriptDecoder {
+    public boolean hasShell() {
         return true;
     }
 
-    public Object createShell(Object encodedObject, Class desiredClass)
-    {
+    public Object createShell(Object encodedObject, Class desiredClass) {
         Object shell = null;
 
         Class cls;
         String type = TypeMarshallingContext.getType(encodedObject);
 
-        if (type != null)
-        {
+        if (type != null) {
             TypeMarshallingContext context = TypeMarshallingContext.getTypeMarshallingContext();
-             cls = ClassUtil.createClass(type, context.getClassLoader());
-        }
-        else
-        {
+            cls = ClassUtil.createClass(type, context.getClassLoader());
+        } else {
             cls = desiredClass;
         }
 
@@ -63,8 +55,7 @@ public class TypedObjectDecoder extends ActionScriptDecoder
         return shell;
     }
 
-    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass)
-    {
+    public Object decodeObject(Object shell, Object encodedObject, Class desiredClass) {
         Object bean = shell;
         if (bean == null)
             return null;
@@ -72,18 +63,15 @@ public class TypedObjectDecoder extends ActionScriptDecoder
         return decodeTypedObject(bean, encodedObject);
     }
 
-    protected Object decodeTypedObject(Object bean, Object encodedObject)
-    {
+    protected Object decodeTypedObject(Object bean, Object encodedObject) {
         PropertyProxy beanProxy = PropertyProxyRegistry.getProxyAndRegister(bean);
         PropertyProxy encodedProxy = PropertyProxyRegistry.getProxyAndRegister(encodedObject);
 
         List propertyNames = beanProxy.getPropertyNames(bean);
-        if (propertyNames != null)
-        {
+        if (propertyNames != null) {
             Iterator it = propertyNames.iterator();
-            while (it.hasNext())
-            {
-                String propName = (String)it.next();
+            while (it.hasNext()) {
+                String propName = (String) it.next();
 
                 Class wClass = beanProxy.getType(bean, propName);
 
@@ -91,10 +79,8 @@ public class TypedObjectDecoder extends ActionScriptDecoder
                 Object value = encodedProxy.getValue(encodedObject, propName);
 
                 Object decodedObject = null;
-                try
-                {
-                    if (value != null)
-                    {
+                try {
+                    if (value != null) {
                         // We may need to honor our loose-typing rules for individual types as,
                         // unlike a Collection, an Array has a fixed element type. We'll use our handy
                         // decoder suite again to find us the right decoder...
@@ -104,15 +90,12 @@ public class TypedObjectDecoder extends ActionScriptDecoder
 
                     // TODO: Perhaps we could update NumberDecoder, CharacterDecoder and
                     // BooleanDecoder to do this for us?
-                    if (decodedObject == null && wClass.isPrimitive())
-                    {
+                    if (decodedObject == null && wClass.isPrimitive()) {
                         decodedObject = getDefaultPrimitiveValue(wClass);
                     }
 
                     beanProxy.setValue(bean, propName, decodedObject);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     TranslationException ex = new TranslationException("Could not set object " + decodedObject + " on " + bean.getClass() + "'s " + propName);
                     ex.setCode("Server.Processing");
                     ex.setRootCause(e);

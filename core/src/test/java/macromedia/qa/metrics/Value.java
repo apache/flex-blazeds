@@ -25,8 +25,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Value extends Persistable
-{
+public class Value extends Persistable {
     public static final String TABLE_NAME = "Value";
 
     public final Run run;
@@ -38,73 +37,58 @@ public class Value extends Persistable
     private Map clause;
     private String[] tables = new String[]{TABLE_NAME};
 
-    Value(Run run, Metric statistic)
-    {
+    Value(Run run, Metric statistic) {
         this.run = run;
         this.metric = statistic;
     }
 
-    public void load(MetricsDatabase database)
-    {
+    public void load(MetricsDatabase database) {
         PreparedStatement statement = null;
         ResultSet rs = null;
 
-        try
-        {
+        try {
             statement = get(database);
             rs = statement.executeQuery();
             rs.first(); //move to first row
 
             Object i = rs.getObject("id");
-            if (i != null)
-            {
+            if (i != null) {
                 id = MetricsDatabase.getId(i);
                 outlier = rs.getBoolean("outlier");
                 textValue = rs.getString("textvalue");
                 numberValue = new Double(rs.getDouble("numvalue"));
-            }
-            else
-            {
+            } else {
                 id = -1;
             }
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             if (UnitTrace.errors)
                 System.err.println("Error loading " + getIdentity() + ". " + ex == null ? "" : ex.getMessage());
-        }
-        finally
-        {
+        } finally {
             closeResultSet(rs);
             closeStatement(statement);
         }
     }
 
-    public String getIdentity()
-    {
+    public String getIdentity() {
         return TABLE_NAME + ": " + run.build.getIdentity() + ", " + metric.getIdentity() + ", id: " + id;
     }
 
-    public String getTableName()
-    {
+    public String getTableName() {
         return TABLE_NAME;
     }
 
-    protected String[] getTables()
-    {
+    protected String[] getTables() {
         return tables;
     }
 
-    protected Map getInserts()
-    {
+    protected Map getInserts() {
         Map inserts = getUpdates();
         inserts.put("metric_id", metric);
         inserts.put("run_id", run);
         return inserts;
     }
 
-    protected Map getUpdates()
-    {
+    protected Map getUpdates() {
         HashMap updates = new HashMap();
         updates.put("outlier", outlier ? Boolean.TRUE : Boolean.FALSE);
 
@@ -117,10 +101,8 @@ public class Value extends Persistable
         return updates;
     }
 
-    protected Map getClauses()
-    {
-        if (clause == null)
-        {
+    protected Map getClauses() {
+        if (clause == null) {
             clause = new HashMap();
             clause.put("metric_id", metric);
             clause.put("run_id", run);

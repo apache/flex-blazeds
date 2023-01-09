@@ -22,11 +22,8 @@ import java.util.concurrent.Future;
  * This class defines the default implementation of TimeoutCapable,
  * providing the default behavior for an object that is capable of timing
  * out where that time out mechanism is managed by TimeoutManager.
- *
- *
  */
-public abstract class TimeoutAbstractObject implements TimeoutCapable
-{
+public abstract class TimeoutAbstractObject implements TimeoutCapable {
     private long lastUse;
     private volatile boolean timeoutCanceled;
     private TimeoutManager timeoutManager;
@@ -35,9 +32,10 @@ public abstract class TimeoutAbstractObject implements TimeoutCapable
     private long timeoutPeriod;
     private final Object lock = new Object();
 
-    /** {@inheritDoc} */
-    public void cancelTimeout()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void cancelTimeout() {
         if (timeoutCanceled)
             return;
 
@@ -45,31 +43,29 @@ public abstract class TimeoutAbstractObject implements TimeoutCapable
         if ((timeoutManager != null) && (timeoutTask != null) && (timeoutFuture != null))
             purged = timeoutManager.unscheduleTimeout(this);
 
-        if (!purged && (timeoutFuture != null))
-        {
+        if (!purged && (timeoutFuture != null)) {
             timeoutFuture.cancel(false);
         }
 
         timeoutCanceled = true;
     }
 
-    /** {@inheritDoc} */
-    public long getLastUse()
-    {
-        synchronized (lock)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public long getLastUse() {
+        synchronized (lock) {
             return lastUse;
         }
     }
 
     /**
      * Updates the time this object was last used.
+     *
      * @param lastUse time this object was last used
      */
-    public void setLastUse(long lastUse)
-    {
-        synchronized (lock)
-        {
+    public void setLastUse(long lastUse) {
+        synchronized (lock) {
             this.lastUse = lastUse;
         }
     }
@@ -77,100 +73,92 @@ public abstract class TimeoutAbstractObject implements TimeoutCapable
     /**
      * Updates the time this object was last used to be the current time.
      */
-    public void updateLastUse()
-    {
-        synchronized (lock)
-        {
+    public void updateLastUse() {
+        synchronized (lock) {
             this.lastUse = System.currentTimeMillis();
         }
     }
 
     /**
      * Returns manager responsible for this object.
+     *
      * @return manager responsible for this object
      */
-    public TimeoutManager getTimeoutManager()
-    {
-        synchronized (lock)
-        {
+    public TimeoutManager getTimeoutManager() {
+        synchronized (lock) {
             return timeoutManager;
         }
     }
 
     /**
      * Sets the manager responsible for this object.
+     *
      * @param timeoutManager manager responsible for this object
      */
-    public void setTimeoutManager(TimeoutManager timeoutManager)
-    {
-        synchronized (lock)
-        {
+    public void setTimeoutManager(TimeoutManager timeoutManager) {
+        synchronized (lock) {
             this.timeoutManager = timeoutManager;
         }
     }
 
     /**
      * Returns the runnable task that will be executed once this object times out.
+     *
      * @return the runnable task that will be executed once this object times out
      */
-    public Runnable getTimeoutTask()
-    {
-        synchronized (lock)
-        {
+    public Runnable getTimeoutTask() {
+        synchronized (lock) {
             return timeoutTask;
         }
     }
 
     /**
      * Sets the runnable task that will be executed once this object times out.
+     *
      * @param timeoutTask the runnable task that will be executed once this object times out
      */
-    public void setTimeoutTask(Runnable timeoutTask)
-    {
-        synchronized (lock)
-        {
+    public void setTimeoutTask(Runnable timeoutTask) {
+        synchronized (lock) {
             this.timeoutTask = timeoutTask;
         }
     }
 
     /**
      * Return the object encapsulating result of the execution of this object once it has timed out.
+     *
      * @return the object encapsulating result of the execution of this object once it has timed out
      */
-    public Future getTimeoutFuture()
-    {
-        synchronized (lock)
-        {
+    public Future getTimeoutFuture() {
+        synchronized (lock) {
             return timeoutFuture;
         }
     }
 
-    /** {@inheritDoc} */
-    public void setTimeoutFuture(Future timeoutFuture)
-    {
-        synchronized (lock)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void setTimeoutFuture(Future timeoutFuture) {
+        synchronized (lock) {
             this.timeoutFuture = timeoutFuture;
         }
     }
 
-    /** {@inheritDoc} */
-    public long getTimeoutPeriod()
-    {
-        synchronized (lock)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public long getTimeoutPeriod() {
+        synchronized (lock) {
             return timeoutPeriod;
         }
     }
 
     /**
      * Set the time to be elapsed before this object times out and its associated task gets executed.
+     *
      * @param timeoutPeriod the time to be elapsed before this object times out and its associated task gets executed
      */
-    public void setTimeoutPeriod(long timeoutPeriod)
-    {
-        synchronized (lock)
-        {
+    public void setTimeoutPeriod(long timeoutPeriod) {
+        synchronized (lock) {
             this.timeoutPeriod = timeoutPeriod;
         }
     }

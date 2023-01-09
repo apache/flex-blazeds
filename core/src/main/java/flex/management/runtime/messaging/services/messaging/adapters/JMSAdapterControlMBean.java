@@ -23,8 +23,7 @@ import flex.management.runtime.messaging.services.ServiceAdapterControlMBean;
 /**
  * Defines the runtime monitoring and management interface for managed JMS adapters.
  */
-public interface JMSAdapterControlMBean extends ServiceAdapterControlMBean
-{
+public interface JMSAdapterControlMBean extends ServiceAdapterControlMBean {
     /**
      * Returns the number of topic producers for the adapter.
      *

@@ -25,29 +25,24 @@ import flex.messaging.io.ClassAlias;
 /**
  *
  */
-public class AsyncMessageExt extends AsyncMessage implements Externalizable, ClassAlias
-{
+public class AsyncMessageExt extends AsyncMessage implements Externalizable, ClassAlias {
     private static final long serialVersionUID = -5371460213241777011L;
     public static final String CLASS_ALIAS = "DSA";
 
-    public AsyncMessageExt()
-    {
+    public AsyncMessageExt() {
         super();
     }
 
-    public AsyncMessageExt(AsyncMessage message)
-    {
+    public AsyncMessageExt(AsyncMessage message) {
         super();
         _message = message;
     }
 
-    public String getAlias()
-    {
+    public String getAlias() {
         return CLASS_ALIAS;
     }
 
-    public void writeExternal(ObjectOutput output) throws IOException
-    {
+    public void writeExternal(ObjectOutput output) throws IOException {
         if (_message != null)
             _message.writeExternal(output);
         else

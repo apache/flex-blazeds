@@ -19,17 +19,16 @@ package flex.management.runtime;
 /**
  * The interface defines a number of constants for admin console types.
  */
-public interface AdminConsoleTypes
-{
+public interface AdminConsoleTypes {
     static final int GENERAL_SERVER = 1;
     static final int GENERAL_POLLABLE = 2;
     static final int GENERAL_OPERATION = 3;
-    
+
     static final int GRAPH_BY_POLL_INTERVAL = 50;
-    
+
     static final int ENDPOINT_SCALAR = 100;
     static final int ENDPOINT_POLLABLE = 101;
-    
+
     static final int DESTINATION_GENERAL = 150;
     static final int DESTINATION_POLLABLE = 151;
 }

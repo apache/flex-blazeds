@@ -20,11 +20,8 @@ import javax.jms.JMSException;
 
 /**
  * An interface used by <code>JMSConsumer</code> to receive messages from JMS.
- *
- *
  */
-interface MessageReceiver
-{
+interface MessageReceiver {
     /**
      * Called by <code>JMSConsumer</code> as it starts up.
      *

@@ -21,46 +21,42 @@ import javax.management.MalformedObjectNameException;
 /**
  * Remotable ObjectInstance representation that complies with Flash serialization requirements.
  */
-public class ObjectInstance
-{
+public class ObjectInstance {
     /**
      * The object name part of the <code>ObjectInstance</code>.
      */
     public ObjectName objectName;
-    
+
     /**
      * The class name part of the <code>ObjectInstance</code>.
      */
     public String className;
-    
+
     /**
      * Constructs an empty <code>ObjectInstance</code> instance.
-     *
      */
-    public ObjectInstance()
-    {}
-    
+    public ObjectInstance() {
+    }
+
     /**
      * Constructs a <code>ObjectInstance</code> instance based upon a
      * <code>javax.management.ObjectInstance</code> instance.
-     * 
+     *
      * @param objectInstance The JMX <code>ObjectInstance</code> instance to base this instance on.
      */
-    public ObjectInstance(javax.management.ObjectInstance objectInstance)
-    {
+    public ObjectInstance(javax.management.ObjectInstance objectInstance) {
         objectName = new ObjectName(objectInstance.getObjectName());
         className = objectInstance.getClassName();
     }
-    
+
     /**
      * Utility method to convert this <code>ObjectInstance</code> to a
      * <code>javax.management.ObjectInstance</code> instance.
-     * 
+     *
      * @return A JMX <code>ObjectInstance</code> based upon this instance.
      * @throws MalformedObjectNameException an exception
      */
-    public javax.management.ObjectInstance toObjectInstance() throws MalformedObjectNameException
-    {
+    public javax.management.ObjectInstance toObjectInstance() throws MalformedObjectNameException {
         return new javax.management.ObjectInstance(objectName.toObjectName(), className);
     }
 }

@@ -22,11 +22,8 @@ import flex.messaging.io.MessageIOConstants;
  * A SOAP specific subclass of HTTPMessage. By default we
  * assume the content-type as &quot;text/xml; charset=utf-8&quot;
  * and the HTTP method will be POST.
- *
- *
  */
-public class SOAPMessage extends HTTPMessage
-{
+public class SOAPMessage extends HTTPMessage {
     /**
      * This number was generated using the 'serialver' command line tool.
      * This number should remain consistent with the version used by
@@ -34,20 +31,17 @@ public class SOAPMessage extends HTTPMessage
      */
     private static final long serialVersionUID = 3706466843618325314L;
 
-    public SOAPMessage()
-    {
+    public SOAPMessage() {
         contentType = MessageIOConstants.CONTENT_TYPE_XML;
         method = MessageIOConstants.METHOD_POST;
     }
 
-    public String getAction()
-    {
+    public String getAction() {
         Object action = httpHeaders.get(MessageIOConstants.HEADER_SOAP_ACTION);
         return action == null ? null : action.toString();
     }
 
-    public void setAction(String action)
-    {
+    public void setAction(String action) {
         httpHeaders.put(MessageIOConstants.HEADER_SOAP_ACTION, action);
     }
 }

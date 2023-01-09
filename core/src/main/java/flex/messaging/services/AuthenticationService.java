@@ -39,14 +39,13 @@ import flex.messaging.util.Base64;
  * Core service that is automatically created and registered with a <tt>MessageBroker</tt>.
  * It handles login and logout commands from clients.
  * The service implementation is internal, but customer code may look up the service by id
- * using <code>MessageBroker#getService(String)</code>, and register as an <tt>AuthenticationListener</tt> for 
- * <tt>AuthenticationEvent</tt>s. An authentication event is dispatched following successful and after 
+ * using <code>MessageBroker#getService(String)</code>, and register as an <tt>AuthenticationListener</tt> for
+ * <tt>AuthenticationEvent</tt>s. An authentication event is dispatched following successful and after
  * successful logout.
  */
-public class AuthenticationService extends AbstractService
-{
+public class AuthenticationService extends AbstractService {
     private static final int INVALID_CREDENTIALS_ERROR = 10064;
-    
+
     /**
      * The well-known id that the <tt>AuthenticationService</tt> is bound to the <tt>MessageBroker</tt> under.
      */
@@ -55,87 +54,79 @@ public class AuthenticationService extends AbstractService
     /**
      *
      */
-    public AuthenticationService()
-    {
+    public AuthenticationService() {
         this(false);
     }
-    
+
     /**
      *
      */
-    public AuthenticationService(boolean enableManagement)
-    {
+    public AuthenticationService(boolean enableManagement) {
         // this service can never be managed
         super(false);
         super.setId(ID);
     }
-    
+
     /**
      * Internal thread-safe storage for AuthenticationListeners.
      */
     private final CopyOnWriteArrayList<AuthenticationListener> authenticationListeners = new CopyOnWriteArrayList<AuthenticationListener>();
-     
+
     /**
      * Registers an <tt>AuthenticationListener</tt> to receive <tt>AuthenticationEvent</tt>s.
-     *  
+     *
      * @param listener The <tt>AuthenticationListener</tt> to register.
      */
-    public void addAuthenticationListener(final AuthenticationListener listener)
-    {
+    public void addAuthenticationListener(final AuthenticationListener listener) {
         authenticationListeners.addIfAbsent(listener);
     }
-    
+
     /**
      * Unregisters an <tt>AuthenticationListener</tt>.
-     * 
+     *
      * @param listener The <tt>AuthenticationListener</tt> to unregister.
      */
-    public void removeAuthenticationListener(final AuthenticationListener listener)
-    {
+    public void removeAuthenticationListener(final AuthenticationListener listener) {
         authenticationListeners.remove(listener);
     }
-    
+
     // This service's id should never be changed
+
     /**
      *
      */
-    public void setId(String id)
-    {
+    public void setId(String id) {
         // No-op
     }
 
     // This service should not be visible to the client
+
     /**
      *
      */
-    public ConfigMap describeService(Endpoint endpoint)
-    { 
-        return null;
-    }
-    
-    /**
-     *
-     */
-    public Object serviceMessage(Message message)
-    {
+    public ConfigMap describeService(Endpoint endpoint) {
         return null;
     }
 
     /**
      *
      */
-    public Object serviceCommand(CommandMessage msg)
-    {
+    public Object serviceMessage(Message message) {
+        return null;
+    }
+
+    /**
+     *
+     */
+    public Object serviceCommand(CommandMessage msg) {
         LoginManager lm = getMessageBroker().getLoginManager();
-        switch (msg.getOperation())
-        {
+        switch (msg.getOperation()) {
             case CommandMessage.LOGIN_OPERATION:
-                if (msg.getBody() instanceof String)
-                {
-                    String encoded = (String)msg.getBody();
-                    Object charsetHeader = msg.getHeader(CommandMessage.CREDENTIALS_CHARSET_HEADER); 
+                if (msg.getBody() instanceof String) {
+                    String encoded = (String) msg.getBody();
+                    Object charsetHeader = msg.getHeader(CommandMessage.CREDENTIALS_CHARSET_HEADER);
                     if (charsetHeader instanceof String)
-                        decodeAndLoginWithCharset(encoded, lm, (String)charsetHeader);
+                        decodeAndLoginWithCharset(encoded, lm, (String) charsetHeader);
                     else
                         decodeAndLoginWithCharset(encoded, lm, null);
                 }
@@ -145,16 +136,12 @@ public class AuthenticationService extends AbstractService
                 AuthenticationEvent logoutEvent = buildAuthenticationEvent(null, null); // null username and creds.
                 lm.logout();
                 // Success - notify listeners.
-                for (AuthenticationListener listener : authenticationListeners)
-                {
-                    try
-                    {
+                for (AuthenticationListener listener : authenticationListeners) {
+                    try {
                         listener.logoutSucceeded(logoutEvent);
-                    }
-                    catch (Throwable t)
-                    {
+                    } catch (Throwable t) {
                         if (Log.isError())
-                            Log.getLogger(LogCategories.SECURITY).error("AuthenticationListener {0} threw an exception handling a logout event.", new Object[] {listener}, t);
+                            Log.getLogger(LogCategories.SECURITY).error("AuthenticationListener {0} threw an exception handling a logout event.", new Object[]{listener}, t);
                     }
                 }
                 break;
@@ -163,13 +150,12 @@ public class AuthenticationService extends AbstractService
         }
         return "success";
     }
-    
+
     /**
      *
      */
     @Override
-    public void stop()
-    {
+    public void stop() {
         super.stop();
         authenticationListeners.clear();
     }
@@ -177,16 +163,14 @@ public class AuthenticationService extends AbstractService
     /**
      *
      */
-    public void decodeAndLogin(String encoded, LoginManager lm)
-    {
+    public void decodeAndLogin(String encoded, LoginManager lm) {
         decodeAndLoginWithCharset(encoded, lm, null);
     }
 
     /**
      *
      */
-    private void decodeAndLoginWithCharset(String encoded, LoginManager lm, String charset)
-    {
+    private void decodeAndLoginWithCharset(String encoded, LoginManager lm, String charset) {
         String username = null;
         String password = null;
         Base64.Decoder decoder = new Base64.Decoder();
@@ -194,72 +178,56 @@ public class AuthenticationService extends AbstractService
         String decoded = "";
 
         // Charset-aware decoding of the credentials bytes 
-        if (charset != null)
-        {
-            try
-            {
+        if (charset != null) {
+            try {
                 decoded = new String(decoder.drain(), charset);
+            } catch (UnsupportedEncodingException ex) {
             }
-            catch (UnsupportedEncodingException ex)
-            {
-            }
-        }
-        else
-        {
+        } else {
             decoded = new String(decoder.drain());
         }
 
         int colon = decoded.indexOf(":");
-        if (colon > 0 && colon < decoded.length() - 1)
-        {
+        if (colon > 0 && colon < decoded.length() - 1) {
             username = decoded.substring(0, colon);
             password = decoded.substring(colon + 1);
         }
 
-        if (username != null && password != null)
-        {
+        if (username != null && password != null) {
             lm.login(username, password);
-            
+
             // Success - notify listeners.
             AuthenticationEvent loginEvent = buildAuthenticationEvent(username, password);
-            for (AuthenticationListener listener : authenticationListeners)
-            {
-                try
-                {
+            for (AuthenticationListener listener : authenticationListeners) {
+                try {
                     listener.loginSucceeded(loginEvent);
-                }
-                catch (Throwable t)
-                {
+                } catch (Throwable t) {
                     if (Log.isError())
-                        Log.getLogger(LogCategories.SECURITY).error("AuthenticationListener {0} threw an exception handling a login event.", new Object[] {listener}, t);
+                        Log.getLogger(LogCategories.SECURITY).error("AuthenticationListener {0} threw an exception handling a login event.", new Object[]{listener}, t);
                 }
             }
-        }
-        else
-        {
+        } else {
             SecurityException se = new SecurityException();
             se.setCode(SecurityException.CLIENT_AUTHENTICATION_CODE);
             se.setMessage(INVALID_CREDENTIALS_ERROR);
             throw se;
         }
     }
-    
+
     /**
      *
      */
-    protected void setupServiceControl(MessageBroker broker)
-    {
+    protected void setupServiceControl(MessageBroker broker) {
         // not doing anything
     }
-    
+
     /**
      * Utility method to build an <tt>AuthenticationEvent</tt> based on the current
      * thread-local state for the remote user.
-     * 
+     *
      * @return An <tt>AuthenticationEvent</tt> that captures references to the server state for the remote user.
      */
-    private AuthenticationEvent buildAuthenticationEvent(String username, Object credentials)
-    {
+    private AuthenticationEvent buildAuthenticationEvent(String username, Object credentials) {
         Principal principal = FlexContext.getUserPrincipal();
         FlexClient flexClient = FlexContext.getFlexClient();
         FlexSession flexSession = FlexContext.getFlexSession();

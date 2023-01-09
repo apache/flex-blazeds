@@ -19,8 +19,7 @@ package flex.messaging.services.messaging;
 /**
  *
  */
-public interface MessagingConstants
-{
+public interface MessagingConstants {
     // General constants.
     /**
      * The default subtopic separator value.

@@ -16,6 +16,7 @@
  */
 
 package flex.management.runtime.messaging.log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,8 +34,7 @@ import flex.messaging.log.Target;
  * because Log lives in the common package, so it cannot extend ManageableComponent itself,
  * which is necessary for a class to be exposed through MBeans.
  */
-public class LogManager extends ManageableComponent
-{
+public class LogManager extends ManageableComponent {
 
     private static final String LOG_CATEGORY = LogCategories.CONFIGURATION; // Log category used by LogManager (ManageableComponent)
     private static final int NULL_LOG_REF_EXCEPTION = 10031;
@@ -49,13 +49,11 @@ public class LogManager extends ManageableComponent
     /**
      * Public constructor required by ManageableComponent.
      */
-    public LogManager()
-    {
+    public LogManager() {
         this(true);
     }
 
-    public LogManager(boolean enableManagement)
-    {
+    public LogManager(boolean enableManagement) {
         super(enableManagement);
         setId(ID);
 
@@ -64,10 +62,8 @@ public class LogManager extends ManageableComponent
     }
 
 
-    public void setupLogControl()
-    {
-        if (!isSetup)
-        {
+    public void setupLogControl() {
+        if (!isSetup) {
             controller = new LogControl(getParent().getControl(), this);
             setControl(controller);
             controller.register();
@@ -75,10 +71,8 @@ public class LogManager extends ManageableComponent
         }
     }
 
-    public void stop()
-    {
-        if (!isStarted())
-        {
+    public void stop() {
+        if (!isStarted()) {
             return;
         }
 
@@ -86,10 +80,8 @@ public class LogManager extends ManageableComponent
         super.stop();
 
         // Remove management
-        if (isManaged())
-        {
-            if (getControl() != null)
-            {
+        if (isManaged()) {
+            if (getControl() != null) {
                 getControl().unregister();
                 setControl(null);
             }
@@ -97,34 +89,32 @@ public class LogManager extends ManageableComponent
         }
     }
 
-    public void setLog(Log logInstance)
-    {
+    public void setLog(Log logInstance) {
         log = logInstance;
     }
 
     /* (non-Javadoc)
      * @see flex.management.ManageableComponent#getLogCategory()
      */
-    protected String getLogCategory()
-    {
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
     /**
      * Gets the Loggers as a string array.
+     *
      * @return a String array
      */
-    public String[] getLoggers()
-    {
+    public String[] getLoggers() {
         return log.getLoggers();
     }
 
     /**
      * Gets the Target IDs.
+     *
      * @return a string array
      */
-    public String[] getTargetIds()
-    {
+    public String[] getTargetIds() {
         return (String[]) Log.getTargetMap().keySet().toArray(new String[0]);
     }
 
@@ -134,18 +124,17 @@ public class LogManager extends ManageableComponent
      * @param targetId the target ID
      * @return the target from the Log, or null if it is not found
      */
-    public Target getTarget(String targetId)
-    {
+    public Target getTarget(String targetId) {
         return (Target) Log.getTargetMap().get(targetId);
     }
 
     /**
      * Gets the filters for a given target.
+     *
      * @param targetId the target ID
      * @return a string array
      */
-    public String[] getTargetFilters(String targetId)
-    {
+    public String[] getTargetFilters(String targetId) {
 
         Target target = getTarget(targetId);
 
@@ -154,9 +143,8 @@ public class LogManager extends ManageableComponent
 
         List filterObjects = target.getFilters();
         String[] filters = new String[filterObjects.size()];
-        for (int i = 0; i < filterObjects.size(); i++)
-        {
-            filters[i] = (String)filterObjects.get(i);
+        for (int i = 0; i < filterObjects.size(); i++) {
+            filters[i] = (String) filterObjects.get(i);
         }
 
         return filters;
@@ -164,32 +152,30 @@ public class LogManager extends ManageableComponent
 
     /**
      * Check whether a filter is valid.
+     *
      * @param filter the filter string to check
      * @return whether the category exists in LogCategories
      */
-    public boolean checkFilter(String filter)
-    {
+    public boolean checkFilter(String filter) {
         return categoryManager.checkFilter(filter);
     }
 
     /**
      * Return a list of categories in LogCategories.
+     *
      * @return the list of categories in LogCategories
      */
-    public List getCategories()
-    {
+    public List getCategories() {
         return categoryManager.getCategories();
     }
 
-    protected void validate()
-    {
+    protected void validate() {
         if (isValid())
             return;
 
         super.validate();
 
-        if (log == null)
-        {
+        if (log == null) {
             invalidate();
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(NULL_LOG_REF_EXCEPTION, new Object[]{});
@@ -202,8 +188,7 @@ public class LogManager extends ManageableComponent
      * This private class keeps track of what categories exist in LogCategories by implementing
      * LogCategories and reflecting the interface's properties.
      */
-    private class CategoryManager implements LogCategories
-    {
+    private class CategoryManager implements LogCategories {
         private List categories;
 
         /**
@@ -211,19 +196,14 @@ public class LogManager extends ManageableComponent
          * Note this will be incorrect if additional public properties are added to this class
          * or to the interface LogCategories.
          */
-        public CategoryManager()
-        {
+        public CategoryManager() {
             categories = new ArrayList();
 
             Field[] categoryFields = this.getClass().getFields();
-            for (int i = 0; i < categoryFields.length; i++)
-            {
-                try
-                {
-                    categories.add((String)categoryFields[i].get(this));
-                }
-                catch (IllegalAccessException iae)
-                {
+            for (int i = 0; i < categoryFields.length; i++) {
+                try {
+                    categories.add((String) categoryFields[i].get(this));
+                } catch (IllegalAccessException iae) {
                     // Illegal Access on reflection
                 }
             }
@@ -232,16 +212,14 @@ public class LogManager extends ManageableComponent
 
         /**
          * Check if any categories match with the filter (the filter is valid or not).
+         *
          * @param filter the filter string to check
          * @return whether the filter is valid  (with or without a trailing .*)
          */
-        public boolean checkFilter(String filter)
-        {
+        public boolean checkFilter(String filter) {
 
-            for (int i = 0; i < categories.size(); i++)
-            {
-                if (Log.checkFilterToCategory((String)filter, (String)categories.get(i)))
-                {
+            for (int i = 0; i < categories.size(); i++) {
+                if (Log.checkFilterToCategory((String) filter, (String) categories.get(i))) {
                     return true;
                 }
             }
@@ -250,10 +228,10 @@ public class LogManager extends ManageableComponent
 
         /**
          * Return a list of log categories.
+         *
          * @return List a list of the categories
          */
-        public List getCategories()
-        {
+        public List getCategories() {
             return Collections.unmodifiableList(new ArrayList(categories));
         }
     }

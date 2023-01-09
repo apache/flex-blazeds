@@ -24,8 +24,7 @@ import flex.messaging.services.MessageService;
  * for monitoring and managing a <code>MessageService</code> at runtime.
  */
 public class MessageServiceControl extends ServiceControl implements
-        MessageServiceControlMBean
-{
+        MessageServiceControlMBean {
     private static final String TYPE = "MessageService";
 
     /**
@@ -33,16 +32,16 @@ public class MessageServiceControl extends ServiceControl implements
      * message service and parent MBean.
      *
      * @param service The <code>MessageService</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent  The parent MBean in the management hierarchy.
      */
-    public MessageServiceControl(MessageService service, BaseControl parent)
-    {
+    public MessageServiceControl(MessageService service, BaseControl parent) {
         super(service, parent);
     }
 
-    /** {@inheritDoc} */
-    public String getType()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public String getType() {
         return TYPE;
     }
 

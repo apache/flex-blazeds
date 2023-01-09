@@ -20,17 +20,17 @@
 <amfx ver="3" xmlns="http://www.macromedia.com/2005/amfx">
     <body>
         <array length="7">
-            <false benign="true"  />
-            <false   />
+            <false benign="true"/>
+            <false/>
             <false></false>
-            <false>     	 </false>
-            <false   	 >
+            <false></false>
+            <false>
 
             </false>
-            <false>     </false  >
-            <false  benign="">
+            <false></false>
+            <false benign="">
 
-	            </false    >
+            </false>
         </array>
     </body>
 </amfx>

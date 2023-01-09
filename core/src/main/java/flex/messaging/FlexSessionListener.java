@@ -22,8 +22,7 @@ package flex.messaging;
  * To listen for FlexSession destruction, the implementation class instance must add itself as a listener to
  * a specific FlexSession instance via the <code>addSessionDestroyedListener()</code> method.
  */
-public interface FlexSessionListener
-{
+public interface FlexSessionListener {
     /**
      * Notification that a FlexSession was created.
      *

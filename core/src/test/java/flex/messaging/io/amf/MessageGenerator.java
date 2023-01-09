@@ -18,7 +18,6 @@
 package flex.messaging.io.amf;
 
 import flex.messaging.io.SerializationContext;
-import org.apache.xpath.CachedXPathAPI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -28,6 +27,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,6 +71,8 @@ public class MessageGenerator extends Amf0Output {
             Document doc = docBuilder.parse(file);
             doc.getDocumentElement().normalize();
             parseAmf(doc);
+        } catch(XPathExpressionException ex) {
+            throw new RuntimeException(ex);
         } catch (TransformerException ex) {
             throw new RuntimeException(ex);
         } catch (SAXException ex) {
@@ -77,13 +83,13 @@ public class MessageGenerator extends Amf0Output {
     }
 
 
-    private void parseAmf(Document doc) throws TransformerException, IOException {
-        CachedXPathAPI xpath = new CachedXPathAPI();
-        Node root = xpath.selectSingleNode(doc, "/amf-request");
+    private void parseAmf(Document doc) throws TransformerException, IOException, XPathExpressionException {
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        Node root = (Node) xpath.evaluate("/amf-request", doc, XPathConstants.NODE);
 
         if (root != null) {
             // messages
-            NodeList list = xpath.selectNodeList(root, "message");
+            NodeList list = (NodeList) xpath.evaluate("message", root, XPathConstants.NODESET);
             for (int i = 0; i < list.getLength(); i++) {
                 Node message = list.item(i);
                 message(xpath, message);
@@ -91,16 +97,16 @@ public class MessageGenerator extends Amf0Output {
         }
     }
 
-    private void message(CachedXPathAPI xpath, Node message) throws TransformerException, IOException {
-        int version = (int) xpath.eval(message, "version").num();
+    private void message(XPath xpath, Node message) throws TransformerException, IOException, XPathExpressionException {
+        int version = ((Double) xpath.evaluate("version", message, XPathConstants.NUMBER)).intValue();
         out.writeShort(version);
 
         // Headers
-        Node headers = xpath.selectSingleNode(message, "headers");
-        int headerCount = (int) xpath.eval(headers, "@count").num();
+        Node headers = (Node) xpath.evaluate("headers", message, XPathConstants.NODE);
+        int headerCount = ((Double) xpath.evaluate("@count", headers, XPathConstants.NUMBER)).intValue();
         out.writeShort(headerCount);
 
-        NodeList list = xpath.selectNodeList(headers, "header");
+        NodeList list = (NodeList) xpath.evaluate("header", headers, XPathConstants.NODESET);
         for (int i = 0; i < headerCount; i++) {
             Node header = list.item(i);
             if (header != null) {
@@ -111,11 +117,11 @@ public class MessageGenerator extends Amf0Output {
         }
 
         // Bodies
-        Node bodies = xpath.selectSingleNode(message, "bodies");
-        int bodyCount = (int) xpath.eval(bodies, "@count").num();
+        Node bodies = (Node) xpath.evaluate("bodies", message, XPathConstants.NODE);
+        int bodyCount = ((Double) xpath.evaluate("@count", bodies, XPathConstants.NUMBER)).intValue();
         out.writeShort(bodyCount);
 
-        list = xpath.selectNodeList(bodies, "body");
+        list = (NodeList) xpath.evaluate("body", bodies, XPathConstants.NODESET);
         for (int i = 0; i < bodyCount; i++) {
             Node body = list.item(i);
             if (body != null) {
@@ -126,9 +132,9 @@ public class MessageGenerator extends Amf0Output {
         }
     }
 
-    private void header(CachedXPathAPI xpath, Node header, int i) throws TransformerException, IOException {
-        String name = xpath.eval(header, "@name").toString();
-        boolean mustUnderstand = xpath.eval(header, "@mustUnderstand").bool();
+    private void header(XPath xpath, Node header, int i) throws TransformerException, IOException, XPathExpressionException {
+        String name = xpath.evaluate("@name", header);
+        boolean mustUnderstand = (Boolean) xpath.evaluate("@mustUnderstand", header, XPathConstants.BOOLEAN);
 
         if (isDebug)
             trace.startHeader(name, mustUnderstand, i);
@@ -136,12 +142,12 @@ public class MessageGenerator extends Amf0Output {
         out.writeUTF(name);
         out.writeBoolean(mustUnderstand);
 
-        //int length = (int)xpath.eval(body, "@length").num();
+        //int length = ((Double) xpath.evaluate("@length", body, XPathConstants.NUMBER)).intValue();
         out.writeInt(-1); //Specify unknown content length
 
         reset();
 
-        Node data = xpath.selectSingleNode(header, "*"); // Only one data item can be sent as the body...
+        Node data = (Node) xpath.evaluate("*", header, XPathConstants.NODE); // Only one data item can be sent as the body...
         Object value = value(xpath, data);
         writeObject(value);
 
@@ -149,9 +155,9 @@ public class MessageGenerator extends Amf0Output {
             trace.endHeader();
     }
 
-    private void body(CachedXPathAPI xpath, Node body, int i) throws TransformerException, IOException {
-        String targetUri = xpath.eval(body, "@targetUri").toString();
-        String responseUri = xpath.eval(body, "@responseUri").toString();
+    private void body(XPath xpath, Node body, int i) throws TransformerException, IOException, XPathExpressionException {
+        String targetUri = xpath.evaluate("@targetUri", body);
+        String responseUri = xpath.evaluate("@responseUri", body);
 
         if (isDebug)
             trace.startMessage(targetUri, responseUri, i);
@@ -159,12 +165,12 @@ public class MessageGenerator extends Amf0Output {
         out.writeUTF(targetUri);
         out.writeUTF(responseUri);
 
-        //int length = (int)xpath.eval(body, "@length").num();
+        //int length = ((Double) xpath.evaluate("@length", body, XPathConstants.NUMBER)).intValue();
         out.writeInt(-1); //Specify unknown content length
 
         reset();
 
-        Node data = xpath.selectSingleNode(body, "*"); // Only one data item can be sent as the body...
+        Node data = (Node) xpath.evaluate("*", body, XPathConstants.NODE); // Only one data item can be sent as the body...
         Object value = value(xpath, data);
         writeObject(value);
 
@@ -172,9 +178,9 @@ public class MessageGenerator extends Amf0Output {
             trace.endMessage();
     }
 
-    private Object value(CachedXPathAPI xpath, Node node) throws TransformerException, IOException {
+    private Object value(XPath xpath, Node node) throws TransformerException, IOException, XPathExpressionException {
         String type = node.getNodeName();
-        String value = xpath.eval(node, ".").toString();
+        String value = xpath.evaluate(".", node);
 
         if (value == null) {
             return null;
@@ -192,9 +198,9 @@ public class MessageGenerator extends Amf0Output {
             } else if ("array".equals(type)) {
                 List<Object> array = new ArrayList<Object>();
 
-                int count = (int) xpath.eval(node, "@count").num();
+                int count = ((Double) xpath.evaluate("@count", node, XPathConstants.NUMBER)).intValue();
 
-                NodeList list = xpath.selectNodeList(node, "*");
+                NodeList list = (NodeList) xpath.evaluate("*", node, XPathConstants.NODESET);
                 for (int i = 0; i < count; i++) {
                     Node item = list.item(i);
                     if (item != null) {
@@ -208,7 +214,7 @@ public class MessageGenerator extends Amf0Output {
             } else if ("object".equals(type)) {
                 ASObject object = new ASObject();
 
-                NodeList list = xpath.selectNodeList(node, "*[not(self::property)]");
+                NodeList list = (NodeList) xpath.evaluate("*[not(self::property)]", node, XPathConstants.NODESET);
 
                 List<Object> traitProperties = null;
 
@@ -217,9 +223,9 @@ public class MessageGenerator extends Amf0Output {
                     if (i == 0) {
                         Node traits = list.item(i);
 
-                        String className = xpath.eval(traits, "@classname").toString().trim();
-                        int count = (int) xpath.eval(traits, "@count").num();
-                        // boolean dynamic = xpath.eval(traits, "@dynamic").bool();
+                        String className = xpath.evaluate("@classname", traits).trim();
+                        int count = ((Double) xpath.evaluate("@count", traits, XPathConstants.NUMBER)).intValue();
+                        // boolean dynamic = (Boolean) xpath.evaluate("@dynamic", traits, XPathConstants.BOOLEAN);
 
                         traitProperties = new ArrayList<Object>(count);
 
@@ -227,11 +233,11 @@ public class MessageGenerator extends Amf0Output {
                             object.setType(className);
                         }
 
-                        NodeList propList = xpath.selectNodeList(traits, "property");
+                        NodeList propList = (NodeList) xpath.evaluate("property", traits, XPathConstants.NODESET);
                         for (int p = 0; p < count; p++) {
                             Node prop = propList.item(p);
                             if (prop != null) {
-                                String propName = xpath.eval(prop, "@name").toString().trim();
+                                String propName = xpath.evaluate("@name", prop).trim();
                                 traitProperties.add(propName);
                             } else {
                                 throw new RuntimeException("Missing trait property(ies). Specified " + count + ", found " + (p - 1));
@@ -245,11 +251,11 @@ public class MessageGenerator extends Amf0Output {
                 }
 
                 // DYNAMIC PROPERTIES
-                list = xpath.selectNodeList(node, "property");
+                list = (NodeList) xpath.evaluate("property", node, XPathConstants.NODESET);
                 for (int i = 0; i < list.getLength(); i++) {
                     Node prop = list.item(i);
-                    String propName = xpath.eval(prop, "@name").toString();
-                    Node propValue = xpath.selectSingleNode(prop, "*");
+                    String propName = xpath.evaluate("@name", prop);
+                    Node propValue = (Node) xpath.evaluate("*", prop, XPathConstants.NODE);
                     object.put(propName, value(xpath, propValue));
                 }
 
@@ -261,7 +267,7 @@ public class MessageGenerator extends Amf0Output {
         } else {
             if ("avmplus".equals(type)) {
                 setAvmPlus(true);
-                Node data = xpath.selectSingleNode(node, "*"); // Only one data item can be sent as the body...
+                Node data = (Node) xpath.evaluate("*", node, XPathConstants.NODE); // Only one data item can be sent as the body...
                 return value(xpath, data);
             } else if ("string".equals(type)) {
                 return value;
@@ -272,9 +278,9 @@ public class MessageGenerator extends Amf0Output {
             } else if ("array".equals(type)) {
                 List<Object> array = new ArrayList<Object>();
 
-                int count = (int) xpath.eval(node, "@count").num();
+                int count = ((Double) xpath.evaluate("@count", node, XPathConstants.NUMBER)).intValue();
 
-                NodeList list = xpath.selectNodeList(node, "*");
+                NodeList list = (NodeList) xpath.evaluate("*", node, XPathConstants.NODESET);
                 for (int i = 0; i < count; i++) {
                     Node item = list.item(i);
                     if (item != null) {
@@ -287,16 +293,16 @@ public class MessageGenerator extends Amf0Output {
                 return array;
             } else if ("object".equals(type)) {
                 ASObject object = new ASObject();
-                String className = xpath.eval(node, "@classname").toString().trim();
+                String className = xpath.evaluate("@classname", node).trim();
 
                 if (className.length() > 0) {
                     object.setType(className);
                 }
 
-                NodeList list = xpath.selectNodeList(node, "property");
+                NodeList list = (NodeList) xpath.evaluate("property", node, XPathConstants.NODESET);
                 for (int i = 0; i < list.getLength(); i++) {
                     Node prop = list.item(i);
-                    String propName = xpath.eval(prop, "@name").toString().trim();
+                    String propName = xpath.evaluate("@name", prop).trim();
                     object.put(propName, value(xpath, prop));
                 }
 

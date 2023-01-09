@@ -26,8 +26,7 @@ import javax.management.ObjectName;
  * Defines the runtime monitoring and management interface for managed
  * <code>MessageDestination</code>s.
  */
-public interface MessageDestinationControlMBean extends DestinationControlMBean
-{
+public interface MessageDestinationControlMBean extends DestinationControlMBean {
     /**
      * Returns the <code>ObjectName</code> for the message cache used by the managed
      * destination.

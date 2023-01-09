@@ -44,11 +44,8 @@ import flex.messaging.util.Trace;
  * This class intends to matches the Flash Player 8 C++ code
  * in avmglue/DataIO.cpp
  * </p>
- *
- *
  */
-public class Amf3Input extends AbstractAmfInput implements Amf3Types
-{
+public class Amf3Input extends AbstractAmfInput implements Amf3Types {
     /**
      *
      */
@@ -64,8 +61,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
      */
     protected List traitsTable;
 
-    public Amf3Input(SerializationContext context)
-    {
+    public Amf3Input(SerializationContext context) {
         super(context);
 
         stringTable = new ArrayList(64);
@@ -78,58 +74,51 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
      * such as a new header or a new body.
      */
     @Override
-    public void reset()
-    {
+    public void reset() {
         super.reset();
         stringTable.clear();
         objectTable.clear();
         traitsTable.clear();
     }
 
-    public Object saveObjectTable()
-    {
+    public Object saveObjectTable() {
         Object table = objectTable;
         objectTable = new ArrayList(64);
         return table;
     }
 
-    public void restoreObjectTable(Object table)
-    {
+    public void restoreObjectTable(Object table) {
         objectTable = (ArrayList) table;
     }
 
-    public Object saveTraitsTable()
-    {
+    public Object saveTraitsTable() {
         Object table = traitsTable;
         traitsTable = new ArrayList(10);
         return table;
     }
 
-    public void restoreTraitsTable(Object table)
-    {
+    public void restoreTraitsTable(Object table) {
         traitsTable = (ArrayList) table;
     }
 
-    public Object saveStringTable()
-    {
+    public Object saveStringTable() {
         Object table = stringTable;
         stringTable = new ArrayList(64);
         return table;
     }
 
-    public void restoreStringTable(Object table)
-    {
+    public void restoreStringTable(Object table) {
         stringTable = (ArrayList) table;
     }
 
     /**
      * Public entry point to read a top level AMF Object, such as
      * a header value or a message body.
+     *
      * @return Object the object read
      * @throws ClassNotFoundException, IOException when reading object process failed
      */
-    public Object readObject() throws ClassNotFoundException, IOException
-    {
+    public Object readObject() throws ClassNotFoundException, IOException {
         int type = in.readByte();
         Object value = readObjectValue(type);
         return value;
@@ -138,18 +127,16 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      *
      */
-    protected Object readObjectValue(int type) throws ClassNotFoundException, IOException
-    {
+    protected Object readObjectValue(int type) throws ClassNotFoundException, IOException {
         Object value = null;
 
-        switch (type)
-        {
+        switch (type) {
             case kStringType:
                 ClassUtil.validateCreation(String.class);
 
                 value = readString();
                 if (isDebug)
-                    trace.writeString((String)value);
+                    trace.writeString((String) value);
                 break;
 
             case kObjectType:
@@ -190,57 +177,58 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
                     trace.write(value);
                 break;
 
-                case kDoubleType:
-                    value = Double.valueOf(readDouble());
-                    break;
+            case kDoubleType:
+                value = Double.valueOf(readDouble());
+                break;
 
-                case kUndefinedType:
-                    if (isDebug)
-                        trace.writeUndefined();
-                    break;
+            case kUndefinedType:
+                if (isDebug)
+                    trace.writeUndefined();
+                break;
 
-                case kNullType:
-                    if (isDebug)
-                        trace.writeNull();
-                    break;
+            case kNullType:
+                if (isDebug)
+                    trace.writeNull();
+                break;
 
-                case kXMLType:
-                case kAvmPlusXmlType:
-                    value = readXml();
-                    break;
+            case kXMLType:
+            case kAvmPlusXmlType:
+                value = readXml();
+                break;
 
-                case kDateType:
-                    value = readDate();
-                    break;
+            case kDateType:
+                value = readDate();
+                break;
 
-                case kByteArrayType:
-                    value = readByteArray();
-                    break;
+            case kByteArrayType:
+                value = readByteArray();
+                break;
 
-                case kDictionaryType:
-                    value = readDictionary();
-                    break;
+            case kDictionaryType:
+                value = readDictionary();
+                break;
 
-                case kTypedVectorInt:
-                case kTypedVectorUint:
-                case kTypedVectorDouble:
-                case kTypedVectorObject:
-                    value = readTypedVector(type);
-                    break;
-                default:
-                    // Unknown object type tag {type}
-                    UnknownTypeException ex = new UnknownTypeException();
-                    ex.setMessage(10301, new Object[]{new Integer(type)});
-                    throw ex;
+            case kTypedVectorInt:
+            case kTypedVectorUint:
+            case kTypedVectorDouble:
+            case kTypedVectorObject:
+                value = readTypedVector(type);
+                break;
+            default:
+                // Unknown object type tag {type}
+                UnknownTypeException ex = new UnknownTypeException();
+                ex.setMessage(10301, new Object[]{new Integer(type)});
+                throw ex;
         }
 
         return value;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public double readDouble() throws IOException
-    {
+    public double readDouble() throws IOException {
         ClassUtil.validateCreation(Double.class);
 
         double d = super.readDouble();
@@ -252,8 +240,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      *
      */
-    protected String readString() throws IOException
-    {
+    protected String readString() throws IOException {
         int ref = readUInt29();
         if ((ref & 1) == 0) // This is a reference
             return getStringReference(ref >> 1);
@@ -275,15 +262,14 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      * Deserialize the bits of a date-time value w/o a prefixing type byte.
      */
-    protected Date readDate() throws IOException
-    {
+    protected Date readDate() throws IOException {
         ClassUtil.validateCreation(Date.class);
 
         int ref = readUInt29();
         if ((ref & 1) == 0) // This is a reference
-            return (Date)getObjectReference(ref >> 1);
+            return (Date) getObjectReference(ref >> 1);
 
-        long time = (long)in.readDouble();
+        long time = (long) in.readDouble();
 
         Date d = new Date(time);
 
@@ -295,8 +281,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
         return d;
     }
 
-    protected Object readDictionary() throws IOException, ClassNotFoundException
-    {
+    protected Object readDictionary() throws IOException, ClassNotFoundException {
         int ref = readUInt29();
 
         if ((ref & 1) == 0) // This is a reference.
@@ -305,21 +290,20 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
         readBoolean(); // usingWeakTypes - irrelevant in Java.
         int len = (ref >> 1);
 
-        Dictionary dictionary = (Hashtable)ClassUtil.createDefaultInstance(Hashtable.class, null, true /*validate*/);
+        Dictionary dictionary = (Hashtable) ClassUtil.createDefaultInstance(Hashtable.class, null, true /*validate*/);
 
         objectTable.add(dictionary); // Remember the object.
 
         if (isDebug)
             trace.startAMFDictionary(objectTable.size() - 1);
 
-        for (int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             if (isDebug) trace.startDictionaryElement();
             Object key = readObjectOneLevelDown(true);
 
             if (isDebug) trace.addDictionaryEquals();
             Object value = readObjectOneLevelDown(true);
-            ClassUtil.validateAssignment(dictionary, key != null? key.toString() : null, value);
+            ClassUtil.validateAssignment(dictionary, key != null ? key.toString() : null, value);
             dictionary.put(key, value);
         }
 
@@ -329,8 +313,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
         return dictionary;
     }
 
-    protected Object readTypedVector(int type) throws IOException, ClassNotFoundException
-    {
+    protected Object readTypedVector(int type) throws IOException, ClassNotFoundException {
         int ref = readUInt29();
 
         if ((ref & 1) == 0) // This is a reference.
@@ -340,8 +323,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
         boolean fixed = readBoolean();
 
         Object vector = null;
-        switch (type)
-        {
+        switch (type) {
             case kTypedVectorInt:
                 vector = readTypedIntVector(len, fixed);
                 break;
@@ -364,31 +346,24 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     @SuppressWarnings("unchecked")
-    protected Object readTypedIntVector(int len, boolean fixed) throws IOException
-    {
+    protected Object readTypedIntVector(int len, boolean fixed) throws IOException {
         // Don't instantiate Array right away with the supplied size if it is more
         // than INITIAL_ARRAY_CAPACITY in case the supplied size has been tampered.
         boolean useListTemporarily = false;
 
         Object vector;
-        if (fixed)
-        {
+        if (fixed) {
             useListTemporarily = len > INITIAL_COLLECTION_CAPACITY;
-            if (useListTemporarily)
-            {
+            if (useListTemporarily) {
                 ClassUtil.validateCreation(ArrayList.class);
                 vector = new ArrayList<Integer>(INITIAL_COLLECTION_CAPACITY);
-            }
-            else
-            {
+            } else {
                 ClassUtil.validateCreation(Integer[].class);
                 vector = new Integer[len];
             }
-        }
-        else
-        {
+        } else {
             ClassUtil.validateCreation(ArrayList.class);
-            int initialCapacity = len < INITIAL_COLLECTION_CAPACITY? len : INITIAL_COLLECTION_CAPACITY;
+            int initialCapacity = len < INITIAL_COLLECTION_CAPACITY ? len : INITIAL_COLLECTION_CAPACITY;
             vector = new ArrayList<Integer>(initialCapacity);
         }
 
@@ -397,8 +372,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
         if (isDebug)
             trace.startAMFVector(objectTable.size() - 1, VectorType.INT);
 
-        for (int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             if (isDebug)
                 trace.arrayElement(i);
 
@@ -414,12 +388,11 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
             if (vector instanceof Integer[])
                 Array.set(vector, i, item);
             else
-                ((List<Integer>)vector).add(item);
+                ((List<Integer>) vector).add(item);
         }
 
-        if (useListTemporarily)
-        {
-            vector = ((ArrayList<Integer>)vector).toArray();
+        if (useListTemporarily) {
+            vector = ((ArrayList<Integer>) vector).toArray();
             objectTable.set(objectId, vector);
         }
 
@@ -430,31 +403,24 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     @SuppressWarnings("unchecked")
-    protected Object readTypedUintVector(int len, boolean fixed) throws IOException
-    {
+    protected Object readTypedUintVector(int len, boolean fixed) throws IOException {
         // Don't instantiate Array right away with the supplied size if it is more
         // than INITIAL_ARRAY_CAPACITY in case the supplied size has been tampered.
         boolean useListTemporarily = false;
 
         Object vector;
-        if (fixed)
-        {
+        if (fixed) {
             useListTemporarily = len > INITIAL_COLLECTION_CAPACITY;
-            if (useListTemporarily)
-            {
+            if (useListTemporarily) {
                 ClassUtil.validateCreation(ArrayList.class);
                 vector = new ArrayList<Long>(INITIAL_COLLECTION_CAPACITY);
-            }
-            else
-            {
+            } else {
                 ClassUtil.validateCreation(Long[].class);
                 vector = new Long[len];
             }
-        }
-        else
-        {
+        } else {
             ClassUtil.validateCreation(ArrayList.class);
-            int initialCapacity = len < INITIAL_COLLECTION_CAPACITY? len : INITIAL_COLLECTION_CAPACITY;
+            int initialCapacity = len < INITIAL_COLLECTION_CAPACITY ? len : INITIAL_COLLECTION_CAPACITY;
             vector = new ArrayList<Long>(initialCapacity);
         }
 
@@ -463,8 +429,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
         if (isDebug)
             trace.startAMFVector(objectTable.size() - 1, VectorType.UINT);
 
-        for (int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             if (isDebug)
                 trace.arrayElement(i);
 
@@ -484,12 +449,11 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
             if (vector instanceof Long[])
                 Array.set(vector, i, item);
             else
-                ((List<Long>)vector).add(item);
+                ((List<Long>) vector).add(item);
         }
 
-        if (useListTemporarily)
-        {
-            vector = ((ArrayList<Long>)vector).toArray();
+        if (useListTemporarily) {
+            vector = ((ArrayList<Long>) vector).toArray();
             objectTable.set(objectId, vector);
         }
 
@@ -500,31 +464,24 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     @SuppressWarnings("unchecked")
-    protected Object readTypedDoubleVector(int len, boolean fixed) throws IOException
-    {
+    protected Object readTypedDoubleVector(int len, boolean fixed) throws IOException {
         // Don't instantiate Array right away with the supplied size if it is more
         // than INITIAL_ARRAY_CAPACITY in case the supplied size has been tampered.
         boolean useListTemporarily = false;
 
         Object vector;
-        if (fixed)
-        {
+        if (fixed) {
             useListTemporarily = len > INITIAL_COLLECTION_CAPACITY;
-            if (useListTemporarily)
-            {
+            if (useListTemporarily) {
                 ClassUtil.validateCreation(ArrayList.class);
                 vector = new ArrayList<Double>(INITIAL_COLLECTION_CAPACITY);
-            }
-            else
-            {
+            } else {
                 ClassUtil.validateCreation(Double[].class);
                 vector = new Double[len];
             }
-        }
-        else
-        {
+        } else {
             ClassUtil.validateCreation(ArrayList.class);
-            int initialCapacity = len < INITIAL_COLLECTION_CAPACITY? len : INITIAL_COLLECTION_CAPACITY;
+            int initialCapacity = len < INITIAL_COLLECTION_CAPACITY ? len : INITIAL_COLLECTION_CAPACITY;
             vector = new ArrayList<Double>(initialCapacity);
         }
 
@@ -533,8 +490,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
         if (isDebug)
             trace.startAMFVector(objectTable.size() - 1, VectorType.DOUBLE);
 
-        for (int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             if (isDebug)
                 trace.arrayElement(i);
 
@@ -544,12 +500,11 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
             if (vector instanceof Double[])
                 Array.set(vector, i, item);
             else
-                ((List<Double>)vector).add(item);
+                ((List<Double>) vector).add(item);
         }
 
-        if (useListTemporarily)
-        {
-            vector = ((ArrayList<Double>)vector).toArray();
+        if (useListTemporarily) {
+            vector = ((ArrayList<Double>) vector).toArray();
             objectTable.set(objectId, vector);
         }
 
@@ -560,8 +515,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     }
 
     @SuppressWarnings("unchecked")
-    protected Object readTypedObjectVector(int len, boolean fixed) throws IOException, ClassNotFoundException
-    {
+    protected Object readTypedObjectVector(int len, boolean fixed) throws IOException, ClassNotFoundException {
         // TODO - Class name is always empty for some reason, need to figure out if this is expected.
         String className = readString();
         if (className == null || className.length() == 0 || className.equals(EMPTY_STRING))
@@ -572,24 +526,18 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
         boolean useListTemporarily = false;
 
         Object vector;
-        if (fixed)
-        {
+        if (fixed) {
             useListTemporarily = len > INITIAL_COLLECTION_CAPACITY;
-            if (useListTemporarily)
-            {
+            if (useListTemporarily) {
                 ClassUtil.validateCreation(ArrayList.class);
                 vector = new ArrayList<Object>(INITIAL_COLLECTION_CAPACITY);
-            }
-            else
-            {
+            } else {
                 ClassUtil.validateCreation(Object[].class);
                 vector = new Object[len];
             }
-        }
-        else
-        {
+        } else {
             ClassUtil.validateCreation(ArrayList.class);
-            int initialCapacity = len < INITIAL_COLLECTION_CAPACITY? len : INITIAL_COLLECTION_CAPACITY;
+            int initialCapacity = len < INITIAL_COLLECTION_CAPACITY ? len : INITIAL_COLLECTION_CAPACITY;
             vector = new ArrayList<Object>(initialCapacity);
         }
 
@@ -598,8 +546,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
         if (isDebug)
             trace.startAMFVector(objectTable.size() - 1, VectorType.OBJECT);
 
-        for (int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             if (isDebug)
                 trace.arrayElement(i);
             Object item = readObjectOneLevelDown(true);
@@ -607,12 +554,11 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
             if (vector instanceof Object[])
                 Array.set(vector, i, item);
             else
-                ((List<Object>)vector).add(item);
+                ((List<Object>) vector).add(item);
         }
 
-        if (useListTemporarily)
-        {
-            vector = ((ArrayList<Object>)vector).toArray();
+        if (useListTemporarily) {
+            vector = ((ArrayList<Object>) vector).toArray();
             objectTable.set(objectId, vector);
         }
 
@@ -625,8 +571,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      *
      */
-    protected Object readArray() throws ClassNotFoundException, IOException
-    {
+    protected Object readArray() throws ClassNotFoundException, IOException {
         int ref = readUInt29();
 
         if ((ref & 1) == 0) // This is a reference.
@@ -638,15 +583,13 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
         // First, look for any string based keys. If any non-ordinal indices were used,
         // or if the Array is sparse, we represent the structure as a Map.
         Map map = null;
-        for (; ;)
-        {
+        for (; ; ) {
             String name = readString();
             if (name == null || name.length() == 0)
                 break;
 
-            if (map == null)
-            {
-                map = (HashMap)ClassUtil.createDefaultInstance(HashMap.class, null, true /*validate*/);
+            if (map == null) {
+                map = (HashMap) ClassUtil.createDefaultInstance(HashMap.class, null, true /*validate*/);
                 array = map;
 
                 //Remember Object
@@ -665,24 +608,21 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
 
         // If we didn't find any string based keys, we have a dense Array, so we
         // represent the structure as a List.
-        if (map == null)
-        {
+        if (map == null) {
             // Don't instantiate List/Array right away with the supplied size if it is more than
             // INITIAL_ARRAY_CAPACITY in case the supplied size has been tampered. This at least
             // requires the user to pass in the actual objects for the List/Array to grow beyond.
             boolean useListTemporarily = false;
 
             // Legacy Flex 1.5 behavior was to return a java.util.Collection for Array
-            if (context.legacyCollection || len > INITIAL_COLLECTION_CAPACITY)
-            {
+            if (context.legacyCollection || len > INITIAL_COLLECTION_CAPACITY) {
                 useListTemporarily = !context.legacyCollection;
                 ClassUtil.validateCreation(ArrayList.class);
-                int initialCapacity = len < INITIAL_COLLECTION_CAPACITY? len : INITIAL_COLLECTION_CAPACITY;
+                int initialCapacity = len < INITIAL_COLLECTION_CAPACITY ? len : INITIAL_COLLECTION_CAPACITY;
                 array = new ArrayList(initialCapacity);
             }
             // Flex 2+ behavior is to return Object[] for AS3 Array
-            else
-            {
+            else {
                 ClassUtil.validateCreation(Object[].class);
                 array = new Object[len];
             }
@@ -691,28 +631,23 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
             if (isDebug)
                 trace.startAMFArray(objectTable.size() - 1);
 
-            for (int i = 0; i < len; i++)
-            {
+            for (int i = 0; i < len; i++) {
                 if (isDebug)
                     trace.arrayElement(i);
                 Object item = readObjectOneLevelDown(true);
                 ClassUtil.validateAssignment(array, i, item);
                 if (array instanceof ArrayList)
-                    ((ArrayList)array).add(item);
+                    ((ArrayList) array).add(item);
                 else
                     Array.set(array, i, item);
             }
 
-            if (useListTemporarily)
-            {
-                array = ((ArrayList)array).toArray();
+            if (useListTemporarily) {
+                array = ((ArrayList) array).toArray();
                 objectTable.set(objectId, array);
             }
-        }
-        else
-        {
-            for (int i = 0; i < len; i++)
-            {
+        } else {
+            for (int i = 0; i < len; i++) {
                 if (isDebug)
                     trace.arrayElement(i);
                 Object item = readObjectOneLevelDown(true);
@@ -731,8 +666,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      *
      */
-    protected Object readScriptObject() throws ClassNotFoundException, IOException
-    {
+    protected Object readScriptObject() throws ClassNotFoundException, IOException {
         int ref = readUInt29();
 
         if ((ref & 1) == 0)
@@ -744,32 +678,27 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
 
         // Prepare the parameters for createObjectInstance(). Use an array as a holder
         // to simulate two 'by-reference' parameters className and (initially null) proxy
-        Object[] params = new Object[] {className, null};
+        Object[] params = new Object[]{className, null};
         Object object = createObjectInstance(params);
 
         // Retrieve any changes to the className and the proxy parameters
-        className = (String)params[0];
-        PropertyProxy proxy = (PropertyProxy)params[1];
+        className = (String) params[0];
+        PropertyProxy proxy = (PropertyProxy) params[1];
 
         // Remember our instance in the object table
         int objectId = rememberObject(object);
 
-        if (externalizable)
-        {
+        if (externalizable) {
             readExternalizable(className, object);
-        }
-        else
-        {
-            if (isDebug)
-            {
+        } else {
+            if (isDebug) {
                 trace.startAMFObject(className, objectTable.size() - 1);
             }
 
             boolean isCollectionClass = isCollectionClass(object);
             int len = ti.getProperties().size();
 
-            for (int i = 0; i < len; i++)
-            {
+            for (int i = 0; i < len; i++) {
                 String propName = ti.getProperty(i);
 
                 if (isDebug)
@@ -778,10 +707,8 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
                 proxy.setValue(object, propName, value);
             }
 
-            if (ti.isDynamic())
-            {
-                for (; ;)
-                {
+            if (ti.isDynamic()) {
+                for (; ; ) {
                     String name = readString();
                     if (name == null || name.length() == 0) break;
 
@@ -806,8 +733,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
         // temporary object.  it would be possible to warn users about
         // that problem by tracking if we read any references to this object
         // in the readObject call above.
-        if (newObj != object)
-        {
+        if (newObj != object) {
             objectTable.set(objectId, newObj);
             object = newObj;
         }
@@ -818,20 +744,16 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      *
      */
-    protected void readExternalizable(String className, Object object) throws ClassNotFoundException, IOException
-    {
-        if (object instanceof Externalizable)
-        {
+    protected void readExternalizable(String className, Object object) throws ClassNotFoundException, IOException {
+        if (object instanceof Externalizable) {
             if (isDebug)
                 trace.startExternalizableObject(className, objectTable.size() - 1);
 
-            ((Externalizable)object).readExternal(this);
-        }
-        else
-        {
+            ((Externalizable) object).readExternal(this);
+        } else {
             //Class '{className}' must implement java.io.Externalizable to receive client IExternalizable instances.
             SerializationException ex = new SerializationException();
-            ex.setMessage(10305, new Object[] {object.getClass().getName()});
+            ex.setMessage(10305, new Object[]{object.getClass().getName()});
             throw ex;
         }
     }
@@ -839,16 +761,15 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      *
      */
-    protected byte[] readByteArray() throws IOException
-    {
+    protected byte[] readByteArray() throws IOException {
         ClassUtil.validateCreation(byte[].class);
 
         int ref = readUInt29();
         if ((ref & 1) == 0)
-            return (byte[])getObjectReference(ref >> 1);
+            return (byte[]) getObjectReference(ref >> 1);
 
         int len = (ref >> 1);
-        int initialCapacity = len < INITIAL_COLLECTION_CAPACITY? len : INITIAL_COLLECTION_CAPACITY;
+        int initialCapacity = len < INITIAL_COLLECTION_CAPACITY ? len : INITIAL_COLLECTION_CAPACITY;
         ByteArrayOutputStream outStream = new ByteArrayOutputStream(initialCapacity);
         for (int i = 0; i < len; i++)
             outStream.write(in.read());
@@ -865,8 +786,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      *
      */
-    protected TraitsInfo readTraits(int ref) throws IOException
-    {
+    protected TraitsInfo readTraits(int ref) throws IOException {
         if ((ref & 3) == 1) // This is a reference
             return getTraitReference(ref >> 2);
 
@@ -880,8 +800,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
         // Remember Trait Info
         traitsTable.add(ti);
 
-        for (int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             String propName = readString();
             ti.addProperty(propName);
         }
@@ -892,8 +811,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      *
      */
-    protected String readUTF(int utflen) throws IOException
-    {
+    protected String readUTF(int utflen) throws IOException {
         checkUTFLength(utflen);
         // We should just read the bytes into a buffer
         byte[] bytearr = new byte[utflen];
@@ -919,10 +837,8 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
      *
      * @return A int capable of holding an unsigned 29 bit integer.
      * @throws IOException
-     *
      */
-    protected int readUInt29() throws IOException
-    {
+    protected int readUInt29() throws IOException {
         int value;
 
         // Each byte must be treated as unsigned
@@ -952,26 +868,22 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      *
      */
-    protected Object readXml() throws IOException
-    {
+    protected Object readXml() throws IOException {
         String xml = null;
 
         int ref = readUInt29();
 
-        if ((ref & 1) == 0)
-        {
+        if ((ref & 1) == 0) {
             // This is a reference
-            xml = (String)getObjectReference(ref >> 1);
-        }
-        else
-        {
+            xml = (String) getObjectReference(ref >> 1);
+        } else {
             // Read the string in
             int len = (ref >> 1);
 
             // writeString() special case the empty string
             // for speed.  Do add a reference
             if (0 == len)
-                xml = (String)ClassUtil.createDefaultInstance(String.class, null);
+                xml = (String) ClassUtil.createDefaultInstance(String.class, null);
             else
                 xml = readUTF(len);
 
@@ -995,8 +907,7 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      *
      */
-    protected Object getObjectReference(int ref)
-    {
+    protected Object getObjectReference(int ref) {
         if (isDebug)
             trace.writeRef(ref);
 
@@ -1006,9 +917,8 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      *
      */
-    protected String getStringReference(int ref)
-    {
-        String str = (String)stringTable.get(ref);
+    protected String getStringReference(int ref) {
+        String str = (String) stringTable.get(ref);
 
         if (Trace.amf && isDebug)
             trace.writeStringRef(ref);
@@ -1019,27 +929,24 @@ public class Amf3Input extends AbstractAmfInput implements Amf3Types
     /**
      *
      */
-    protected TraitsInfo getTraitReference(int ref)
-    {
+    protected TraitsInfo getTraitReference(int ref) {
         if (Trace.amf && isDebug)
             trace.writeTraitsInfoRef(ref);
 
-        return (TraitsInfo)traitsTable.get(ref);
+        return (TraitsInfo) traitsTable.get(ref);
     }
 
     /**
      * Remember a deserialized object so that you can use it later through a reference.
      */
-    protected int rememberObject(Object obj)
-    {
+    protected int rememberObject(Object obj) {
         int id = objectTable.size();
         objectTable.add(obj);
         return id;
     }
 
 
-    protected Object readObjectOneLevelDown(boolean nestCollectionLevelDown) throws ClassNotFoundException, IOException
-    {
+    protected Object readObjectOneLevelDown(boolean nestCollectionLevelDown) throws ClassNotFoundException, IOException {
         increaseNestObjectLevel();
         if (nestCollectionLevelDown)
             increaseNestCollectionLevel();

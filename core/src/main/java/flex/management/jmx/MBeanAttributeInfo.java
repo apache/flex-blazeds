@@ -17,22 +17,21 @@
 package flex.management.jmx;
 
 /**
- * Remotable <code>MBeanAttributeInfo</code> class that complies with Flash serialization requirements. 
- * The <code>isIs</code> property is not named <code>is</code> because <code>is</code> is 
+ * Remotable <code>MBeanAttributeInfo</code> class that complies with Flash serialization requirements.
+ * The <code>isIs</code> property is not named <code>is</code> because <code>is</code> is
  * an ActionScript keyword.
  */
-public class MBeanAttributeInfo
-{
+public class MBeanAttributeInfo {
     /**
      * The name of the attribute.
      */
     public String name;
-    
+
     /**
      * The class name of the attribute.
      */
     public String type;
-    
+
     /**
      * The description of the attribute.
      */
@@ -42,31 +41,30 @@ public class MBeanAttributeInfo
      * Whether the attribute can be read.
      */
     public boolean readable;
-    
+
     /**
      * Whether the attribute can be written.
      */
-    public boolean writable; 
-    
+    public boolean writable;
+
     /**
      * Whether the attribute has an "is" getter.
      */
     public boolean isIs;
-    
+
     /**
      * Constructs an empty <code>MBeanAttributeInfo</code> instance.
      */
-    public MBeanAttributeInfo()
-    {}
-    
+    public MBeanAttributeInfo() {
+    }
+
     /**
      * Constructs a <code>MBeanAttributeInfo</code> instance based upon a
      * <code>javax.management.MBeanAttributeInfo</code> instance.
-     * 
+     *
      * @param mbeanAttributeInfo The JMX <code>MBeanAttributeInfo</code> instance to base this instance on.
      */
-    public MBeanAttributeInfo(javax.management.MBeanAttributeInfo mbeanAttributeInfo)
-    {
+    public MBeanAttributeInfo(javax.management.MBeanAttributeInfo mbeanAttributeInfo) {
         name = mbeanAttributeInfo.getName();
         type = mbeanAttributeInfo.getType();
         description = mbeanAttributeInfo.getDescription();
@@ -74,21 +72,20 @@ public class MBeanAttributeInfo
         writable = mbeanAttributeInfo.isWritable();
         isIs = mbeanAttributeInfo.isIs();
     }
-    
+
     /**
      * Utility method to convert this <code>MBeanAttributeInfo</code> to a
      * <code>javax.management.MBeanAttributeInfo</code> instance.
-     * 
+     *
      * @return A JMX <code>MBeanAttributeInfo</code> based upon this instance.
      */
-    public javax.management.MBeanAttributeInfo toMBeanAttributeInfo()
-    {
+    public javax.management.MBeanAttributeInfo toMBeanAttributeInfo() {
         return new javax.management.MBeanAttributeInfo(name,
-                                                       type,
-                                                       description,
-                                                       readable,
-                                                       writable,
-                                                       isIs);
+                type,
+                description,
+                readable,
+                writable,
+                isIs);
     }
 
 }

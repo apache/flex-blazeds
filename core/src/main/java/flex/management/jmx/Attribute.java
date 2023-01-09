@@ -19,43 +19,39 @@ package flex.management.jmx;
 /**
  * Remotable <code>Attribute</code> class that complies with Flash serialization requirements.
  */
-public class Attribute
-{
+public class Attribute {
     /**
      * The name of the attribute.
      */
     public String name;
-    
+
     /**
      * The value of the attribute.
      */
     public Object value;
-    
+
     /**
      * Constructs an empty <code>Attribute</code> instance.
-     *
      */
-    public Attribute()
-    {}
-    
+    public Attribute() {
+    }
+
     /**
      * Constructs an <code>Attribute</code> instance based upon a <code>javax.management.Attribute</code> instance.
-     * 
+     *
      * @param attribute The JMX <code>Attribute</code> to base this instance on.
      */
-    public Attribute(javax.management.Attribute attribute)
-    {
+    public Attribute(javax.management.Attribute attribute) {
         name = attribute.getName();
         value = attribute.getValue();
     }
-    
+
     /**
      * Utility method to convert this <code>Attribute</code> instance to a <code>javax.management.Attribute</code> instance.
-     * 
+     *
      * @return A JMX <code>Attribute</code> based upon this instance.
      */
-    public javax.management.Attribute toAttribute()
-    {
+    public javax.management.Attribute toAttribute() {
         return new javax.management.Attribute(name, value);
     }
 }

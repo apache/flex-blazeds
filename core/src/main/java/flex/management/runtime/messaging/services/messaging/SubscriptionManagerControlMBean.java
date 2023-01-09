@@ -24,8 +24,7 @@ import flex.management.BaseControlMBean;
  * Defines the runtime monitoring and management interface for
  * <code>SubscriptionManager</code>s.
  */
-public interface SubscriptionManagerControlMBean extends BaseControlMBean
-{
+public interface SubscriptionManagerControlMBean extends BaseControlMBean {
     /**
      * Returns the count of active subscribers.
      *

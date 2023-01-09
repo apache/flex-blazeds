@@ -27,8 +27,7 @@ import java.util.List;
 /**
  *
  */
-public abstract class AbstractTarget implements Target
-{
+public abstract class AbstractTarget implements Target {
     private static final int INVALID_FILTER_CHARS = 10016;
     private static final int INVALID_FILTER_STAR = 10017;
 
@@ -48,8 +47,7 @@ public abstract class AbstractTarget implements Target
     /**
      * Default constructor.
      */
-    public AbstractTarget()
-    {
+    public AbstractTarget() {
         id = UUIDUtils.createUUID();
         level = LogEvent.ERROR;
         filters = new ArrayList();
@@ -66,11 +64,10 @@ public abstract class AbstractTarget implements Target
     /**
      * Initializes the target with id and properties. Subclasses can overwrite.
      *
-     * @param id id for the target which is ignored.
+     * @param id         id for the target which is ignored.
      * @param properties ConfigMap of properties for the target.
      */
-    public void initialize(String id, ConfigMap properties)
-    {
+    public void initialize(String id, ConfigMap properties) {
         // No-op
     }
 
@@ -85,8 +82,7 @@ public abstract class AbstractTarget implements Target
      *
      * @return An unmodifiable list of filters.
      */
-    public List getFilters()
-    {
+    public List getFilters() {
         return Collections.unmodifiableList(new ArrayList(filters));
     }
 
@@ -95,21 +91,17 @@ public abstract class AbstractTarget implements Target
      *
      * @param value Filter to be added.
      */
-    public void addFilter(String value)
-    {
+    public void addFilter(String value) {
         if (value != null)
             validateFilter(value);
         else // Default to "*"
             value = "*";
 
         boolean filterWasAdded = false;
-        synchronized (lock)
-        {
-            if (!filters.contains(value))
-            {
+        synchronized (lock) {
+            if (!filters.contains(value)) {
                 // If the default filter is being used, remove it.
-                if (usingDefaultFilter)
-                {
+                if (usingDefaultFilter) {
                     removeFilter("*");
                     usingDefaultFilter = false;
                 }
@@ -126,11 +118,9 @@ public abstract class AbstractTarget implements Target
      *
      * @param value Filter to be removed.
      */
-    public void removeFilter(String value)
-    {
+    public void removeFilter(String value) {
         boolean filterWasRemoved;
-        synchronized (lock)
-        {
+        synchronized (lock) {
             filterWasRemoved = filters.remove(value);
         }
         if (filterWasRemoved)
@@ -142,28 +132,22 @@ public abstract class AbstractTarget implements Target
      *
      * @param value List of filters.
      */
-    public void setFilters(List value)
-    {
-        if (value != null && value.size() > 0)
-        {
+    public void setFilters(List value) {
+        if (value != null && value.size() > 0) {
             // a valid filter value will be fully qualified or have a wildcard
             // in it.  the wild card can only be located at the end of the
             // expression.  valid examples  xx*, xx.*,  *
-            for (int i = 0; i < value.size(); i++)
-            {
+            for (int i = 0; i < value.size(); i++) {
                 validateFilter((String) value.get(i));
             }
-        }
-        else
-        {
+        } else {
             // if null was specified then default to all
             value = new ArrayList();
             value.add("*");
         }
 
         Log.removeTarget(this);
-        synchronized (lock)
-        {
+        synchronized (lock) {
             filters = value;
             usingDefaultFilter = false;
         }
@@ -175,8 +159,7 @@ public abstract class AbstractTarget implements Target
      *
      * @return the log level set for this target.
      */
-    public short getLevel()
-    {
+    public short getLevel() {
         return level;
     }
 
@@ -185,16 +168,14 @@ public abstract class AbstractTarget implements Target
      *
      * @return the target's unique ID.
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
     /**
      * Sets the log level for this target. If not set, defaults to <code>LogEvent.ERROR</code>.
      */
-    public void setLevel(short value)
-    {
+    public void setLevel(short value) {
         level = value;
         Log.resetTargetLevel();
     }
@@ -205,12 +186,9 @@ public abstract class AbstractTarget implements Target
      *
      * @param logger this target should listen to.
      */
-    public void addLogger(Logger logger)
-    {
-        if (logger != null)
-        {
-            synchronized (lock)
-            {
+    public void addLogger(Logger logger) {
+        if (logger != null) {
+            synchronized (lock) {
                 loggerCount++;
             }
             logger.addTarget(this);
@@ -222,12 +200,9 @@ public abstract class AbstractTarget implements Target
      *
      * @param logger this target should ignore.
      */
-    public void removeLogger(Logger logger)
-    {
-        if (logger != null)
-        {
-            synchronized (lock)
-            {
+    public void removeLogger(Logger logger) {
+        if (logger != null) {
+            synchronized (lock) {
                 loggerCount--;
             }
             logger.removeTarget(this);
@@ -238,8 +213,7 @@ public abstract class AbstractTarget implements Target
      * @param filter category to check against the filters defined for this target
      * @return whether filter is defined
      */
-    public boolean containsFilter(String filter)
-    {
+    public boolean containsFilter(String filter) {
         return filters.contains(filter);
     }
 
@@ -249,11 +223,9 @@ public abstract class AbstractTarget implements Target
     //
     //--------------------------------------------------------------------------
 
-    private void validateFilter(String value)
-    {
+    private void validateFilter(String value) {
         // check for invalid characters
-        if (Log.hasIllegalCharacters(value))
-        {
+        if (Log.hasIllegalCharacters(value)) {
             //Error for filter '{filter}'. The following characters are not valid: {Log.INVALID_CHARS}
             LocalizedException ex = new LocalizedException();
             ex.setMessage(INVALID_FILTER_CHARS, new Object[]{value, Log.INVALID_CHARS});
@@ -261,8 +233,7 @@ public abstract class AbstractTarget implements Target
         }
 
         int index = value.indexOf('*');
-        if ((index >= 0) && (index != (value.length() - 1)))
-        {
+        if ((index >= 0) && (index != (value.length() - 1))) {
             //Error for filter '{filter}'. '*' must be the right most character.
             LocalizedException ex = new LocalizedException();
             ex.setMessage(INVALID_FILTER_STAR, new Object[]{value});

@@ -23,19 +23,18 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Interface to code in the Tomcat valve. This is needed because Tomcat has a classloader system
- * where code in a valve does not appear in the classloader that is used for servlets. 
+ * where code in a valve does not appear in the classloader that is used for servlets.
  * There is a commons area that both valves and servlets share and this interface
- * needs to be placed there. 
+ * needs to be placed there.
  */
-public interface TomcatLogin
-{
+public interface TomcatLogin {
     /**
-     * Attempt to login user with the specified credentials.  Return a generated 
+     * Attempt to login user with the specified credentials.  Return a generated
      * Principal object if login were successful
-     * 
+     *
      * @param username username.
      * @param password credentials.
-     * @param request request via which this login attempt was made
+     * @param request  request via which this login attempt was made
      * @return Principal generated for user if login were successful
      */
     Principal login(String username, String password, HttpServletRequest request);
@@ -49,22 +48,22 @@ public interface TomcatLogin
      * </p>
      *
      * @param principal The principal being checked for authorization
-     * @param roles    A List of role names to check, all members should be strings
+     * @param roles     A List of role names to check, all members should be strings
      * @return true if the principal is authorized given the list of roles
      */
     boolean authorize(Principal principal, List roles);
 
     /**
      * Logs out the user associated with the passed-in request.
-     * 
+     *
      * @param request whose associated user is to be loged-out
      * @return true if logout were successful
      */
     boolean logout(HttpServletRequest request);
-    
+
     /**
      * Classes that implement the flex.messaging.security.PrinciplaConverter interface, to convert a J2EE Principal to a
-     * Flex Principal impl. A Flex Principal impl is specific to different Application Servers and will be used by Flex to 
+     * Flex Principal impl. A Flex Principal impl is specific to different Application Servers and will be used by Flex to
      * do security authorization check, which calls security framework API specific to Application Servers.
      */
     Principal convertPrincipal(Principal principal);

@@ -73,8 +73,7 @@ import flex.messaging.services.messaging.Subtopic;
  * @see flex.messaging.messages.Message
  * @see flex.messaging.messages.CommandMessage
  */
-public abstract class MessagingAdapter extends ServiceAdapter implements MessagingSecurity
-{
+public abstract class MessagingAdapter extends ServiceAdapter implements MessagingSecurity {
     /**
      * Constraint manager used to assert authorization of send and subscribe related operations.
      */
@@ -89,8 +88,7 @@ public abstract class MessagingAdapter extends ServiceAdapter implements Messagi
     /**
      * Constructs an unmanaged <code>MessagingAdapter</code> instance.
      */
-    public MessagingAdapter()
-    {
+    public MessagingAdapter() {
         this(false);
     }
 
@@ -98,10 +96,9 @@ public abstract class MessagingAdapter extends ServiceAdapter implements Messagi
      * Constructs a <code>MessagingAdapter</code> instance.
      *
      * @param enableManagement <code>true</code> if the <code>MessagingAdapter</code>
-     * has a corresponding MBean control for management; otherwise <code>false</code>.
+     *                         has a corresponding MBean control for management; otherwise <code>false</code>.
      */
-    public MessagingAdapter(boolean enableManagement)
-    {
+    public MessagingAdapter(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -115,26 +112,22 @@ public abstract class MessagingAdapter extends ServiceAdapter implements Messagi
      * Initializes the <code>MessagingAdapter</code> with the properties.
      * Subclasses should call <code>super.initialize</code>.
      *
-     * @param id Id of the <code>MessagingAdapter</code>.
+     * @param id         Id of the <code>MessagingAdapter</code>.
      * @param properties Properties for the <code>MessagingAdapter</code>.
      */
-    public void initialize(String id, ConfigMap properties)
-    {
+    public void initialize(String id, ConfigMap properties) {
         super.initialize(id, properties);
 
         if (properties == null || properties.size() == 0)
             return;
 
         ConfigMap serverSettings = properties.getPropertyAsMap(DestinationSettings.SERVER_ELEMENT, null);
-        if (serverSettings != null)
-        {
+        if (serverSettings != null) {
             // Send constraint
             ConfigMap send = serverSettings.getPropertyAsMap(MessagingSecurityConstraintManager.SEND_SECURITY_CONSTRAINT, null);
-            if (send != null)
-            {
+            if (send != null) {
                 String ref = send.getPropertyAsString(ConfigurationConstants.REF_ATTR, null);
-                if (ref != null)
-                {
+                if (ref != null) {
                     if (constraintManager == null)
                         constraintManager = new MessagingSecurityConstraintManager(getDestination().getService().getMessageBroker());
                     constraintManager.createSendConstraint(ref);
@@ -143,11 +136,9 @@ public abstract class MessagingAdapter extends ServiceAdapter implements Messagi
 
             // Subscribe constraint
             ConfigMap subscribe = serverSettings.getPropertyAsMap(MessagingSecurityConstraintManager.SUBSCRIBE_SECURITY_CONSTRAINT, null);
-            if (subscribe != null)
-            {
+            if (subscribe != null) {
                 String ref = subscribe.getPropertyAsString(ConfigurationConstants.REF_ATTR, null);
-                if (ref != null)
-                {
+                if (ref != null) {
                     if (constraintManager == null)
                         constraintManager = new MessagingSecurityConstraintManager(getDestination().getService().getMessageBroker());
                     constraintManager.createSubscribeConstraint(ref);
@@ -160,8 +151,7 @@ public abstract class MessagingAdapter extends ServiceAdapter implements Messagi
      * Verifies that the <code>MessagingAdapter</code> is in valid state before
      * it is started. If subclasses override, they must call <code>super.validate()</code>.
      */
-    protected void validate()
-    {
+    protected void validate() {
         if (isValid())
             return;
 
@@ -185,8 +175,7 @@ public abstract class MessagingAdapter extends ServiceAdapter implements Messagi
      * @param subtopic The subtopic the client is attempting to subscribe to.
      * @return true to allow the subscription, false to prevent it.
      */
-    public boolean allowSubscribe(Subtopic subtopic)
-    {
+    public boolean allowSubscribe(Subtopic subtopic) {
         return true;
     }
 
@@ -201,8 +190,7 @@ public abstract class MessagingAdapter extends ServiceAdapter implements Messagi
      * @param subtopic The subtopic the client is attempting to send a message to.
      * @return true to allow the message to be sent, false to prevent it.
      */
-    public boolean allowSend(Subtopic subtopic)
-    {
+    public boolean allowSend(Subtopic subtopic) {
         return true;
     }
 
@@ -211,8 +199,7 @@ public abstract class MessagingAdapter extends ServiceAdapter implements Messagi
      *
      * @return The <code>MessagingSecurityConstraintManager</code> of the <code>MessagingAdapter</code>.
      */
-    public MessagingSecurityConstraintManager getSecurityConstraintManager()
-    {
+    public MessagingSecurityConstraintManager getSecurityConstraintManager() {
         return constraintManager;
     }
 
@@ -221,8 +208,7 @@ public abstract class MessagingAdapter extends ServiceAdapter implements Messagi
      *
      * @param constraintManager The <code>MessagingSecurityConstraintManager</code> of the <code>MessagingAdapter</code>.
      */
-    public void setSecurityConstraintManager(MessagingSecurityConstraintManager constraintManager)
-    {
+    public void setSecurityConstraintManager(MessagingSecurityConstraintManager constraintManager) {
         this.constraintManager = constraintManager;
     }
 

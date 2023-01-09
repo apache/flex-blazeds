@@ -20,93 +20,78 @@ package remoting.amfclient;
 /**
  * A class used as a remoting destination source for AMF connection JUnit tests.
  */
- import java.util.Date;
- 
-public class AMFConnectionTestService
-{
 
-    public String echoString(String text)
-    {
+import java.util.Date;
+
+public class AMFConnectionTestService {
+
+    public String echoString(String text) {
         return text;
     }
 
-    public int echoInt(int value)
-    {
+    public int echoInt(int value) {
         return value;
     }
 
-    public boolean echoBoolean(boolean value)
-    {
+    public boolean echoBoolean(boolean value) {
         return value;
     }
 
-    public Date echoDate(Date value)
-    {
+    public Date echoDate(Date value) {
         return value;
     }
 
-    public short echoShort(short value)
-    {
+    public short echoShort(short value) {
         return value;
     }
 
-    public double echoDouble(double value)
-    {
+    public double echoDouble(double value) {
         return value;
     }
 
     // Object argument, Object return.
-    public Object echoObject1(Object customType)
-    {
+    public Object echoObject1(Object customType) {
         return customType;
     }
-    
+
     // Object argument, CustomType return.
-    public ServerCustomType echoObject2(Object customType)
-    {
-        return (ServerCustomType)customType;
+    public ServerCustomType echoObject2(Object customType) {
+        return (ServerCustomType) customType;
     }
-    
+
     // CustomType argument, Object return
-    public Object echoObject3(ServerCustomType customType)
-    {
+    public Object echoObject3(ServerCustomType customType) {
         return customType;
     }
 
     // CustomType argument, CustomType return
-    public ServerCustomType echoObject4(ServerCustomType customType)
-    {
+    public ServerCustomType echoObject4(ServerCustomType customType) {
         return customType;
     }
 
     // Object argument, Object return.
-    public Object[] echoObject5(Object[] customType)
-    {
+    public Object[] echoObject5(Object[] customType) {
         return customType;
     }
 
     // No argument, Object return
-    public Object getObject1()
-    {
+    public Object getObject1() {
         ServerCustomType ct = new ServerCustomType();
         ct.setId(1);
         return ct;
     }
 
     // No argument, CustomType return.
-    public ServerCustomType getObject2()
-    {
+    public ServerCustomType getObject2() {
         ServerCustomType ct = new ServerCustomType();
         ct.setId(1);
         return ct;
     }
-    
+
     // No argument, an Array of Objects.
-    public Object[] getObjectArray1()
-    {
+    public Object[] getObjectArray1() {
         Object[] customTypes = new Object[10];
-        for (int i = 0; i < customTypes.length; i++)
-        {
+        for (int i = 0; i < customTypes.length; i++) {
             ServerCustomType sct = new ServerCustomType();
             sct.setId(i);
             customTypes[i] = sct;

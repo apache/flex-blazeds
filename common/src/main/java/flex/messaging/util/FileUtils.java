@@ -23,8 +23,7 @@ import java.io.InputStream;
 /**
  *
  */
-public class FileUtils
-{
+public class FileUtils {
     public static final String UTF_8 = "UTF-8";
     public static final String UTF_16 = "UTF-16";
 
@@ -34,59 +33,43 @@ public class FileUtils
      * for UTF-16 with a BOM or any other encoding situation the stream is reset to the
      * mark (as for UTF-16 the parser will handle the BOM).
      *
-     * @param in InputStream containing BOM and must support mark().
+     * @param in               InputStream containing BOM and must support mark().
      * @param default_encoding The default character set encoding. null or "" =&gt; system default
      * @return The file character set encoding.
      * @throws IOException an IOException, if something went wrong.
      */
-    public static final String consumeBOM(InputStream in, String default_encoding) throws IOException
-    {
+    public static final String consumeBOM(InputStream in, String default_encoding) throws IOException {
         in.mark(3);
 
         // Determine file encoding...
         // ASCII - no header (use the supplied encoding)
         // UTF8  - EF BB BF
         // UTF16 - FF FE or FE FF (decoder chooses endian-ness)
-        if (in.read() == 0xef && in.read() == 0xbb && in.read() == 0xbf)
-        {
+        if (in.read() == 0xef && in.read() == 0xbb && in.read() == 0xbf) {
             // UTF-8 reader does not consume BOM, so do not reset
-            if (System.getProperty("flex.platform.CLR") != null)
-            {
+            if (System.getProperty("flex.platform.CLR") != null) {
                 return "UTF8";
-            }
-            else
-            {
+            } else {
                 return UTF_8;
             }
-        }
-        else
-        {
+        } else {
             in.reset();
             int b0 = in.read();
             int b1 = in.read();
-            if (b0 == 0xff && b1 == 0xfe || b0 == 0xfe && b1 == 0xff)
-            {
+            if (b0 == 0xff && b1 == 0xfe || b0 == 0xfe && b1 == 0xff) {
                 in.reset();
                 // UTF-16 reader will consume BOM
-                if (System.getProperty("flex.platform.CLR") != null)
-                {
+                if (System.getProperty("flex.platform.CLR") != null) {
                     return "UTF16";
-                }
-                else
-                {
+                } else {
                     return UTF_16;
                 }
-            }
-            else
-            {
+            } else {
                 // no BOM found
                 in.reset();
-                if (default_encoding != null && default_encoding.length() != 0)
-                {
+                if (default_encoding != null && default_encoding.length() != 0) {
                     return default_encoding;
-                }
-                else
-                {
+                } else {
                     return System.getProperty("file.encoding");
                 }
             }

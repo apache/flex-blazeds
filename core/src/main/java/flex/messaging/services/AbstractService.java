@@ -43,9 +43,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * This is the default implementation of <code>Service</code>, which provides a
  * convenient base for behavior and associations common to all Services.
  */
-public abstract class AbstractService extends ManageableComponent implements Service
-{
-    /** Log category for <code>AbstractService</code>.*/
+public abstract class AbstractService extends ManageableComponent implements Service {
+    /**
+     * Log category for <code>AbstractService</code>.
+     */
     public static final String LOG_CATEGORY = LogCategories.SERVICE_GENERAL;
     /**
      * Log category that captures startup information for service's destinations.
@@ -70,8 +71,7 @@ public abstract class AbstractService extends ManageableComponent implements Ser
     /**
      * Constructs an unmanaged <code>AbstractService</code>.
      */
-    public AbstractService()
-    {
+    public AbstractService() {
         this(false);
     }
 
@@ -79,14 +79,13 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      * Constructs an <code>AbstractService</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>AbstractService</code>
-     * is manageable; otherwise <code>false</code>.
+     *                         is manageable; otherwise <code>false</code>.
      */
-    public AbstractService(boolean enableManagement)
-    {
+    public AbstractService(boolean enableManagement) {
         super(enableManagement);
 
-        adapterClasses = new HashMap<String, String>(); 
-        destinations = new ConcurrentHashMap<String, Destination>();             
+        adapterClasses = new HashMap<String, String>();
+        destinations = new ConcurrentHashMap<String, Destination>();
     }
 
     //--------------------------------------------------------------------------
@@ -100,31 +99,24 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      * it is started. If subclasses override, they must call <code>super.validate()</code>.
      */
     @Override
-    protected void validate()
-    {
+    protected void validate() {
         if (isValid())
             return;
 
         super.validate();
 
-        if (defaultChannels != null)
-        {
-            for (Iterator<String> iter = defaultChannels.iterator(); iter.hasNext();)
-            {
+        if (defaultChannels != null) {
+            for (Iterator<String> iter = defaultChannels.iterator(); iter.hasNext(); ) {
                 String id = iter.next();
-                if (!getMessageBroker().getChannelIds().contains(id))
-                {
+                if (!getMessageBroker().getChannelIds().contains(id)) {
                     iter.remove();
-                    if (Log.isWarn())
-                    {
-                        Log.getLogger(getLogCategory()).warn("Removing the Channel "+id+" from Destination "+getId()+
+                    if (Log.isWarn()) {
+                        Log.getLogger(getLogCategory()).warn("Removing the Channel " + id + " from Destination " + getId() +
                                 "as MessageBroker does not know the channel");
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             defaultChannels = getMessageBroker().getDefaultChannels();
         }
     }
@@ -136,10 +128,8 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      * If subclasses override, they must call <code>super.start()</code>.
      */
     @Override
-    public void start()
-    {
-        if (isStarted())
-        {
+    public void start() {
+        if (isStarted()) {
             // Needed for destinations added after startup.
             startDestinations();
             return;
@@ -147,22 +137,19 @@ public abstract class AbstractService extends ManageableComponent implements Ser
 
         // Check if the MessageBroker is started
         MessageBroker broker = getMessageBroker();
-        if (!broker.isStarted())
-        {
-            if (Log.isWarn())
-            {
+        if (!broker.isStarted()) {
+            if (Log.isWarn()) {
                 Log.getLogger(getLogCategory()).warn("Service with id '{0}' cannot be started" +
-                        " when the MessageBroker is not started.",
+                                " when the MessageBroker is not started.",
                         new Object[]{getId()});
             }
             return;
         }
 
         // Set up management
-        if (isManaged() && broker.isManaged())
-        {
+        if (isManaged() && broker.isManaged()) {
             setupServiceControl(broker);
-            MessageBrokerControl controller = (MessageBrokerControl)broker.getControl();
+            MessageBrokerControl controller = (MessageBrokerControl) broker.getControl();
             if (getControl() != null)
                 controller.addService(getControl().getObjectName());
         }
@@ -178,10 +165,8 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      * If subclasses override, they must call <code>super.stop()</code>.
      */
     @Override
-    public void stop()
-    {
-        if (!isStarted())
-        {
+    public void stop() {
+        if (!isStarted()) {
             return;
         }
 
@@ -190,10 +175,8 @@ public abstract class AbstractService extends ManageableComponent implements Ser
         super.stop();
 
         // Remove management
-        if (isManaged() && getMessageBroker().isManaged())
-        {
-            if (getControl() != null)
-            {
+        if (isManaged() && getMessageBroker().isManaged()) {
+            if (getControl() != null) {
                 getControl().unregister();
                 setControl(null);
             }
@@ -212,20 +195,18 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      *
      * @return The Map of adapter id and classes.
      */
-    public Map<String, String> getRegisteredAdapters()
-    {
+    public Map<String, String> getRegisteredAdapters() {
         return adapterClasses;
     }
 
     /**
      * Registers the adapter with the <code>AbstractService</code>.
      *
-     * @param id The id of the adapter.
+     * @param id           The id of the adapter.
      * @param adapterClass The class of the adapter.
      * @return The previous adapter class that the id was associated with.
      */
-    public String registerAdapter(String id, String adapterClass)
-    {
+    public String registerAdapter(String id, String adapterClass) {
         return adapterClasses.put(id, adapterClass);
     }
 
@@ -236,10 +217,9 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      * @param id The id of the adapter.
      * @return The adapter class that the id was associated with.
      */
-    public String unregisterAdapter(String id)
-    {
+    public String unregisterAdapter(String id) {
         if (id != null && id.equals(defaultAdapterId))
-                defaultAdapterId = null;
+            defaultAdapterId = null;
 
         return adapterClasses.remove(id);
 
@@ -250,8 +230,7 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      *
      * @return defaultAdapterId The id of the default adapter of the <code>AbstractService</code>.
      */
-    public String getDefaultAdapter()
-    {
+    public String getDefaultAdapter() {
         return defaultAdapterId;
     }
 
@@ -260,10 +239,8 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      *
      * @param id The id of the default adapter.
      */
-    public void setDefaultAdapter(String id)
-    {
-        if (adapterClasses.get(id) == null)
-        {
+    public void setDefaultAdapter(String id) {
+        if (adapterClasses.get(id) == null) {
             // No adapter with id '{0}' is registered with the service '{1}'.
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.UNREGISTERED_ADAPTER, new Object[]{id, getId()});
@@ -277,8 +254,7 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      *
      * @return list of default channels
      */
-    public List<String> getDefaultChannels()
-    {
+    public List<String> getDefaultChannels() {
         return defaultChannels;
     }
 
@@ -289,23 +265,19 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      *
      * @param id The id of the channel.
      */
-    public void addDefaultChannel(String id)
-    {
+    public void addDefaultChannel(String id) {
         if (defaultChannels == null)
             defaultChannels = new ArrayList<String>();
         else if (defaultChannels.contains(id))
             return;
 
-        if (isStarted())
-        {
+        if (isStarted()) {
             List<String> channelIds = getMessageBroker().getChannelIds();
-            if (channelIds == null || !channelIds.contains(id))
-            {
+            if (channelIds == null || !channelIds.contains(id)) {
                 // No channel with id ''{0}'' is known by the MessageBroker.
-                if (Log.isWarn())
-                {
+                if (Log.isWarn()) {
                     Log.getLogger(getLogCategory()).warn("No channel with id '{0}' is known by the MessageBroker." +
-                            " Not adding the channel.",
+                                    " Not adding the channel.",
                             new Object[]{id});
                 }
                 return;
@@ -323,21 +295,16 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      *
      * @param ids List of channel ids.
      */
-    public void setDefaultChannels(List<String> ids)
-    {
-        if (ids != null && isStarted())
-        {
+    public void setDefaultChannels(List<String> ids) {
+        if (ids != null && isStarted()) {
             List<String> channelIds = getMessageBroker().getChannelIds();
-            for (Iterator<String> iter = ids.iterator(); iter.hasNext();)
-            {
+            for (Iterator<String> iter = ids.iterator(); iter.hasNext(); ) {
                 String id = iter.next();
-                if (channelIds == null || !channelIds.contains(id))
-                {
+                if (channelIds == null || !channelIds.contains(id)) {
                     iter.remove();
-                    if (Log.isWarn())
-                    {
+                    if (Log.isWarn()) {
                         Log.getLogger(getLogCategory()).warn("No channel with id '{0}' is known by the MessageBroker." +
-                                " Not adding the channel.",
+                                        " Not adding the channel.",
                                 new Object[]{id});
                     }
                 }
@@ -353,8 +320,7 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      * @param id The id of the channel.
      * @return <code>true</code> if the list contained the channel id.
      */
-    public boolean removeDefaultChannel(String id)
-    {
+    public boolean removeDefaultChannel(String id) {
         return defaultChannels != null && defaultChannels.remove(id);
     }
 
@@ -365,12 +331,10 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      * @return The <code>Destination</code> that the <code>Message</code> targets.
      * @throws MessageException if no such <code>Destination</code> exists.
      */
-    public Destination getDestination(Message message)
-    {
+    public Destination getDestination(Message message) {
         String id = message.getDestination();
         Destination result = getDestination(id);
-        if (result == null)
-        {
+        if (result == null) {
             throw new MessageException
                     ("No destination '" + id + "' exists in service " + getClass().getName());
         }
@@ -384,8 +348,7 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      * @param id The id of the <code>Destination</code>.
      * @return the destination
      */
-    public Destination getDestination(String id)
-    {
+    public Destination getDestination(String id) {
         return destinations.get(id);
     }
 
@@ -394,8 +357,7 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      *
      * @return The a read-only Map of <code>Destination</code> ids and instances.
      */
-    public Map<String, Destination> getDestinations()
-    {
+    public Map<String, Destination> getDestinations() {
         return Collections.unmodifiableMap(destinations);
     }
 
@@ -409,16 +371,14 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      * @param id The id of the <code>Destination</code>.
      * @return The <code>Destination</code> instanced created.
      */
-    public Destination createDestination(String id)
-    {
-        if (id == null)
-        {
+    public Destination createDestination(String id) {
+        if (id == null) {
             // Cannot add ''{0}'' with null id to the ''{1}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.NULL_COMPONENT_ID, new Object[]{"Destination", "Service"});
             throw ex;
         }
-        
+
         // check with the message broker to make sure that no destination with the id already exists
         getMessageBroker().isDestinationRegistered(id, getId(), true);
 
@@ -443,10 +403,8 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      *
      * @param destination The <code>Destination</code> instance to be added.
      */
-    public void addDestination(Destination destination)
-    {
-        if (destination == null)
-        {
+    public void addDestination(Destination destination) {
+        if (destination == null) {
             // Cannot add null ''{0}'' to the ''{1}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.NULL_COMPONENT, new Object[]{"Destination", "Service"});
@@ -455,16 +413,14 @@ public abstract class AbstractService extends ManageableComponent implements Ser
 
         String id = destination.getId();
 
-        if (id == null)
-        {
+        if (id == null) {
             // Cannot add ''{0}'' with null id to the ''{1}''
             ConfigurationException ex = new ConfigurationException();
             ex.setMessage(ConfigurationConstants.NULL_COMPONENT_ID, new Object[]{"Destination", "Service"});
             throw ex;
         }
         // No need to add if the destination is already there
-        if (getDestination(id) == destination)
-        {
+        if (getDestination(id) == destination) {
             return;
         }
 
@@ -474,8 +430,7 @@ public abstract class AbstractService extends ManageableComponent implements Ser
 
         destinations.put(id, destination);
 
-        if (destination.getService() == null || destination.getService() != this)
-        {
+        if (destination.getService() == null || destination.getService() != this) {
             destination.setService(this);
         }
     }
@@ -487,11 +442,9 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      * @param id The id of the <code>Destination</code>.
      * @return Previous <code>Destination</code> associated with the id.
      */
-    public Destination removeDestination(String id)
-    {
+    public Destination removeDestination(String id) {
         Destination destination = destinations.get(id);
-        if (destination != null)
-        {
+        if (destination != null) {
             destination.stop();
             destinations.remove(id);
             getMessageBroker().unregisterDestination(id);
@@ -507,16 +460,14 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      * @param id the id
      */
     @Override
-    public void setId(String id)
-    {
+    public void setId(String id) {
         String oldId = getId();
 
         super.setId(id);
 
         // Update the service id in the broker
         MessageBroker broker = getMessageBroker();
-        if (broker != null)
-        {
+        if (broker != null) {
             // broker must have the service then
             broker.removeService(oldId);
             broker.addService(this);
@@ -528,9 +479,8 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      *
      * @return MessageBroker of the <code>AbstractService</code>.
      */
-    public MessageBroker getMessageBroker()
-    {
-        return (MessageBroker)getParent();
+    public MessageBroker getMessageBroker() {
+        return (MessageBroker) getParent();
     }
 
     /**
@@ -540,14 +490,12 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      *
      * @param broker <code>MessageBroker</code> of the <code>AbstractService</code>.
      */
-    public void setMessageBroker(MessageBroker broker)
-    {
+    public void setMessageBroker(MessageBroker broker) {
         MessageBroker oldBroker = getMessageBroker();
 
         setParent(broker);
 
-        if (oldBroker != null)
-        {
+        if (oldBroker != null) {
             oldBroker.removeService(getId());
         }
 
@@ -563,53 +511,45 @@ public abstract class AbstractService extends ManageableComponent implements Ser
     //--------------------------------------------------------------------------
 
     /**
-     * Calls {@link AbstractService#describeService(Endpoint, boolean)} with 
+     * Calls {@link AbstractService#describeService(Endpoint, boolean)} with
      * the passed in endpoint and boolean value of true.
      *
      * @param endpoint Endpoint used to filter the destinations of the service;
-     * no filtering is done if the endpoint is null. 
+     *                 no filtering is done if the endpoint is null.
      * @return ConfigMap of service properties.
      * @see flex.messaging.services.AbstractService#describeService(Endpoint, boolean)
      */
-    public ConfigMap describeService(Endpoint endpoint)
-    {
+    public ConfigMap describeService(Endpoint endpoint) {
         return describeService(endpoint, true);
     }
 
     /**
-     *
      * Returns a <tt>ConfigMap</tt> of service properties that the client needs.
-     * The <tt>allDestinations</tt> flag controls whether configuration for all 
-     * destinations or only reliable client destinations is returned. 
+     * The <tt>allDestinations</tt> flag controls whether configuration for all
+     * destinations or only reliable client destinations is returned.
      * Subclasses can override to return properties relevant to their implementation.
      *
-     * @param endpoint Endpoint used to filter the destinations of the service.
-     * No filtering is done if the endpoint is null. 
+     * @param endpoint     Endpoint used to filter the destinations of the service.
+     *                     No filtering is done if the endpoint is null.
      * @param onlyReliable When false, configuration for all destinations is
-     * returned instead of only reliable destinations. 
+     *                     returned instead of only reliable destinations.
      * @return ConfigMap of service properties.
      */
-    public ConfigMap describeService(Endpoint endpoint, boolean onlyReliable)
-    {
+    public ConfigMap describeService(Endpoint endpoint, boolean onlyReliable) {
         ConfigMap serviceConfig = null;
 
         // Scan for reliable destinations; if any are found they need to be shipped to the client.
-        for (Destination destination : destinations.values())
-        {
+        for (Destination destination : destinations.values()) {
             boolean endpointIdMatches = false;
             if (endpoint == null) // No need to check against destination channels.
             {
                 endpointIdMatches = true;
-            }
-            else // One of the destination ids should match.
+            } else // One of the destination ids should match.
             {
                 List<String> channels = destination.getChannels();
-                if (channels != null)
-                {
-                    for (String channelId : channels)
-                    {
-                        if (channelId.equals(endpoint.getId()))
-                        {
+                if (channels != null) {
+                    for (String channelId : channels) {
+                        if (channelId.equals(endpoint.getId())) {
                             endpointIdMatches = true;
                             break;
                         }
@@ -617,11 +557,9 @@ public abstract class AbstractService extends ManageableComponent implements Ser
                 }
             }
 
-            if (endpointIdMatches)
-            {
+            if (endpointIdMatches) {
                 ConfigMap destinationConfig = destination.describeDestination(onlyReliable);
-                if (destinationConfig != null && destinationConfig.size() > 0)
-                {
+                if (destinationConfig != null && destinationConfig.size() > 0) {
                     if (serviceConfig == null) // Lazy-init only if destinations exist.
                     {
                         serviceConfig = new ConfigMap();
@@ -647,11 +585,9 @@ public abstract class AbstractService extends ManageableComponent implements Ser
     /**
      * {@inheritDoc}
      */
-    public Object serviceCommand(CommandMessage message)
-    {
+    public Object serviceCommand(CommandMessage message) {
         Object result = serviceCommonCommands(message);
-        if (result != null)
-        {
+        if (result != null) {
             // TODO: ServiceControl needs this method.
             /*
             if (isManaged())
@@ -670,24 +606,17 @@ public abstract class AbstractService extends ManageableComponent implements Ser
     //
     //--------------------------------------------------------------------------
 
-    protected Object serviceCommonCommands(CommandMessage message)
-    {
+    protected Object serviceCommonCommands(CommandMessage message) {
         Object commandResult = null;
-        if (message.getOperation() == CommandMessage.CLIENT_PING_OPERATION)
-        {
+        if (message.getOperation() == CommandMessage.CLIENT_PING_OPERATION) {
             commandResult = Boolean.TRUE;
-        }
-        else if (message.getOperation() == CommandMessage.CLUSTER_REQUEST_OPERATION)
-        {
+        } else if (message.getOperation() == CommandMessage.CLUSTER_REQUEST_OPERATION) {
             ClusterManager clusterManager = getMessageBroker().getClusterManager();
             String serviceType = getClass().getName();
             String destinationName = message.getDestination();
-            if (clusterManager.isDestinationClustered(serviceType, destinationName))
-            {
+            if (clusterManager.isDestinationClustered(serviceType, destinationName)) {
                 commandResult = clusterManager.getEndpointsForDestination(serviceType, destinationName);
-            }
-            else
-            {
+            } else {
                 // client should never send this message if its local
                 // config declares the destination is not clustered
                 commandResult = Boolean.FALSE;
@@ -703,8 +632,7 @@ public abstract class AbstractService extends ManageableComponent implements Ser
      * @return The log category.
      */
     @Override
-    protected String getLogCategory()
-    {
+    protected String getLogCategory() {
         return LOG_CATEGORY;
     }
 
@@ -720,18 +648,15 @@ public abstract class AbstractService extends ManageableComponent implements Ser
     /**
      * Start all of the destinations of the service.
      */
-    private void startDestinations()
-    {
-        for (Destination destination : destinations.values())
-        {
+    private void startDestinations() {
+        for (Destination destination : destinations.values()) {
             long timeBeforeStartup = 0;
             if (Log.isDebug())
                 timeBeforeStartup = System.currentTimeMillis();
 
             destination.start();
 
-            if (Log.isDebug())
-            {
+            if (Log.isDebug()) {
                 long timeAfterStartup = System.currentTimeMillis();
                 Long diffMillis = timeAfterStartup - timeBeforeStartup;
                 Log.getLogger(LOG_CATEGORY_STARTUP_DESTINATION).debug("Destination with id '{0}' is ready (startup time: '{1}' ms)",
@@ -743,10 +668,8 @@ public abstract class AbstractService extends ManageableComponent implements Ser
     /**
      * Stop all of the destinations of the service.
      */
-    private void stopDestinations()
-    {
-        for (Destination destination : destinations.values())
-        {
+    private void stopDestinations() {
+        for (Destination destination : destinations.values()) {
             destination.stop();
         }
     }

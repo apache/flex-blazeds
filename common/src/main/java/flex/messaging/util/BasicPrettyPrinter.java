@@ -26,15 +26,11 @@ import java.util.Map;
 /**
  * Prettifies the representation of an Object as a String. Complex
  * types are not traversed.
- *
- *
  */
-public class BasicPrettyPrinter implements PrettyPrinter
-{
+public class BasicPrettyPrinter implements PrettyPrinter {
     protected ObjectTrace trace;
 
-    public BasicPrettyPrinter()
-    {
+    public BasicPrettyPrinter() {
     }
 
     /**
@@ -45,84 +41,59 @@ public class BasicPrettyPrinter implements PrettyPrinter
      *   <li>Complex types report their class names.</li>
      *   <li>Collections, Maps and native Arrays also report their size/length.</li>
      * </ul>
+     *
      * @return A prettified version of an Object as a String.
      */
-    public String prettify(Object o)
-    {
-        try
-        {
+    public String prettify(Object o) {
+        try {
             trace = new ObjectTrace();
             internalPrettify(o);
             return trace.toString();
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             return trace.toString();
-        }
-        finally
-        {
+        } finally {
             trace = null;
         }
     }
 
-    protected void internalPrettify(Object o)
-    {
-        if (o == null)
-        {
+    protected void internalPrettify(Object o) {
+        if (o == null) {
             trace.writeNull();
-        }
-        else if (o instanceof String)
-        {
-            String string = (String)o;
-            if (string.startsWith("<?xml"))
-            {
+        } else if (o instanceof String) {
+            String string = (String) o;
+            if (string.startsWith("<?xml")) {
                 trace.write(StringUtils.prettifyXML(string));
-            }
-            else
-            {
+            } else {
                 trace.write(string);
             }
-        }
-        else if (o instanceof Number || o instanceof Boolean || o instanceof Date
-                || o instanceof Calendar || o instanceof Character)
-        {
+        } else if (o instanceof Number || o instanceof Boolean || o instanceof Date
+                || o instanceof Calendar || o instanceof Character) {
             trace.write(o);
-        }
-        else
-        {
+        } else {
             prettifyComplexType(o);
         }
     }
 
-    protected void prettifyComplexType(Object o)
-    {
+    protected void prettifyComplexType(Object o) {
         StringBuffer header = new StringBuffer();
 
-        if (o instanceof PrettyPrintable)
-        {
-            PrettyPrintable pp = (PrettyPrintable)o;
+        if (o instanceof PrettyPrintable) {
+            PrettyPrintable pp = (PrettyPrintable) o;
             header.append(pp.toStringHeader());
         }
 
         Class c = o.getClass();
         String className = c.getName();
 
-        if (o instanceof Collection)
-        {
-            header.append(className).append(" (Collection size:").append(((Collection)o).size()).append(")");
-        }
-        else if (o instanceof Map)
-        {
-            header.append(className).append(" (Map size:").append(((Map)o).size()).append(")");
-        }
-        else if (c.isArray() && c.getComponentType() != null)
-        {
+        if (o instanceof Collection) {
+            header.append(className).append(" (Collection size:").append(((Collection) o).size()).append(")");
+        } else if (o instanceof Map) {
+            header.append(className).append(" (Map size:").append(((Map) o).size()).append(")");
+        } else if (c.isArray() && c.getComponentType() != null) {
             Class componentType = c.getComponentType();
             className = componentType.getName();
             header.append(className).append("[] (Array length:").append(Array.getLength(o)).append(")");
-        }
-        else
-        {
+        } else {
             header.append(className);
         }
 
@@ -138,27 +109,21 @@ public class BasicPrettyPrinter implements PrettyPrinter
      * @param c The class to check for a custom toString definition.
      * @return Whether this class declares a custom toString() method.
      */
-    protected boolean hasCustomToStringMethod(Class c)
-    {
-        try
-        {
-            Method toStringMethod = c.getMethod("toString", (Class[])null);
+    protected boolean hasCustomToStringMethod(Class c) {
+        try {
+            Method toStringMethod = c.getMethod("toString", (Class[]) null);
             Class declaringClass = toStringMethod.getDeclaringClass();
             if (declaringClass != Object.class
-                    && !declaringClass.getName().startsWith("java.util"))
-            {
+                    && !declaringClass.getName().startsWith("java.util")) {
                 return true;
             }
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
         }
 
         return false;
     }
 
-    public Object copy()
-    {
+    public Object copy() {
         return new BasicPrettyPrinter();
     }
 }

@@ -31,8 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * The <code>EndpointControl</code> class is the MBean implementation for
  * monitoring and managing an <code>Endpoint</code> at runtime.
  */
-public abstract class EndpointControl extends BaseControl implements EndpointControlMBean
-{
+public abstract class EndpointControl extends BaseControl implements EndpointControlMBean {
     protected Endpoint endpoint;
     private AtomicInteger serviceMessageCount = new AtomicInteger(0);
     private Date lastServiceMessageTimestamp;
@@ -45,28 +44,26 @@ public abstract class EndpointControl extends BaseControl implements EndpointCon
      * parent MBean.
      *
      * @param endpoint The <code>Endpoint</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent   The parent MBean in the management hierarchy.
      */
-    public EndpointControl(Endpoint endpoint, BaseControl parent)
-    {
+    public EndpointControl(Endpoint endpoint, BaseControl parent) {
         super(parent);
         this.endpoint = endpoint;
         serviceMessageStart = System.currentTimeMillis();
     }
 
 
-    protected void onRegistrationComplete()
-    {
+    protected void onRegistrationComplete() {
         String name = this.getObjectName().getCanonicalName();
-        String[] generalNames = { "SecurityConstraint"};
-        String[] generalPollables = { "ServiceMessageCount", "LastServiceMessageTimestamp", "ServiceMessageFrequency"};
+        String[] generalNames = {"SecurityConstraint"};
+        String[] generalPollables = {"ServiceMessageCount", "LastServiceMessageTimestamp", "ServiceMessageFrequency"};
         String[] pollableGraphByInterval = {"BytesDeserialized", "BytesSerialized"};
 
         getRegistrar().registerObjects(AdminConsoleTypes.ENDPOINT_SCALAR,
                 name, generalNames);
         getRegistrar().registerObjects(AdminConsoleTypes.ENDPOINT_POLLABLE,
                 name, generalPollables);
-        getRegistrar().registerObjects(new int[] {AdminConsoleTypes.GRAPH_BY_POLL_INTERVAL, AdminConsoleTypes.ENDPOINT_POLLABLE},
+        getRegistrar().registerObjects(new int[]{AdminConsoleTypes.GRAPH_BY_POLL_INTERVAL, AdminConsoleTypes.ENDPOINT_POLLABLE},
                 name, pollableGraphByInterval);
     }
 
@@ -74,8 +71,7 @@ public abstract class EndpointControl extends BaseControl implements EndpointCon
      *  (non-Javadoc)
      * @see flex.management.BaseControlMBean#getId()
      */
-    public String getId()
-    {
+    public String getId() {
         return endpoint.getId();
     }
 
@@ -83,8 +79,7 @@ public abstract class EndpointControl extends BaseControl implements EndpointCon
      *  (non-Javadoc)
      * @see flex.management.runtime.EndpointControlMBean#isRunning()
      */
-    public Boolean isRunning()
-    {
+    public Boolean isRunning() {
         return Boolean.valueOf(endpoint.isStarted());
     }
 
@@ -92,8 +87,7 @@ public abstract class EndpointControl extends BaseControl implements EndpointCon
      *  (non-Javadoc)
      * @see flex.management.runtime.EndpointControlMBean#getStartTimestamp()
      */
-    public Date getStartTimestamp()
-    {
+    public Date getStartTimestamp() {
         return startTimestamp;
     }
 
@@ -101,8 +95,7 @@ public abstract class EndpointControl extends BaseControl implements EndpointCon
      *  (non-Javadoc)
      * @see flex.management.runtime.EndpointControlMBean#getServiceMessageCount()
      */
-    public Integer getServiceMessageCount()
-    {
+    public Integer getServiceMessageCount() {
         return Integer.valueOf(serviceMessageCount.get());
     }
 
@@ -110,8 +103,7 @@ public abstract class EndpointControl extends BaseControl implements EndpointCon
      *  (non-Javadoc)
      * @see flex.management.runtime.EndpointControlMBean#resetServiceMessageCount()
      */
-    public void resetServiceMessageCount()
-    {
+    public void resetServiceMessageCount() {
         serviceMessageStart = System.currentTimeMillis();
         serviceMessageCount = new AtomicInteger(0);
         lastServiceMessageTimestamp = null;
@@ -120,8 +112,7 @@ public abstract class EndpointControl extends BaseControl implements EndpointCon
     /**
      * Increments the count of <code>serviceMessage()</code> invocations by the endpoint.
      */
-    public void incrementServiceMessageCount()
-    {
+    public void incrementServiceMessageCount() {
         serviceMessageCount.incrementAndGet();
         lastServiceMessageTimestamp = new Date();
     }
@@ -130,8 +121,7 @@ public abstract class EndpointControl extends BaseControl implements EndpointCon
      *  (non-Javadoc)
      * @see flex.management.runtime.EndpointControlMBean#getLastServiceMessageTimestamp()
      */
-    public Date getLastServiceMessageTimestamp()
-    {
+    public Date getLastServiceMessageTimestamp() {
         return lastServiceMessageTimestamp;
     }
 
@@ -139,15 +129,11 @@ public abstract class EndpointControl extends BaseControl implements EndpointCon
      *  (non-Javadoc)
      * @see flex.management.runtime.EndpointControlMBean#getServiceMessageFrequency()
      */
-    public Double getServiceMessageFrequency()
-    {
-        if (serviceMessageCount.get() > 0)
-        {
+    public Double getServiceMessageFrequency() {
+        if (serviceMessageCount.get() > 0) {
             double runtime = differenceInMinutes(serviceMessageStart, System.currentTimeMillis());
-            return new Double(serviceMessageCount.get()/runtime);
-        }
-        else
-        {
+            return new Double(serviceMessageCount.get() / runtime);
+        } else {
             return new Double(0);
         }
     }
@@ -156,43 +142,34 @@ public abstract class EndpointControl extends BaseControl implements EndpointCon
      *  (non-Javadoc)
      * @see javax.management.MBeanRegistration#preDeregister()
      */
-    public void preDeregister() throws Exception
-    {
-        MessageBrokerControl parent = (MessageBrokerControl)getParentControl();
+    public void preDeregister() throws Exception {
+        MessageBrokerControl parent = (MessageBrokerControl) getParentControl();
         parent.removeEndpoint(getObjectName());
     }
 
-    public String getURI()
-    {
+    public String getURI() {
         return endpoint.getUrl();
     }
 
-    public String getSecurityConstraint()
-    {
+    public String getSecurityConstraint() {
         return getSecurityConstraintOf(endpoint);
     }
 
-    public static String getSecurityConstraintOf(Endpoint endpoint)
-    {
+    public static String getSecurityConstraintOf(Endpoint endpoint) {
         String result = "None";
 
         SecurityConstraint constraint = endpoint.getSecurityConstraint();
-        if (constraint != null)
-        {
+        if (constraint != null) {
             String authMethod = constraint.getMethod();
-            if (authMethod != null)
-            {
+            if (authMethod != null) {
                 StringBuffer buffer = new StringBuffer();
                 buffer.append(authMethod);
 
                 List roles = constraint.getRoles();
-                if ((roles != null) && !roles.isEmpty())
-                {
+                if ((roles != null) && !roles.isEmpty()) {
                     buffer.append(':');
-                    for (int i = 0; i < roles.size(); i++)
-                    {
-                        if (i > 0)
-                        {
+                    for (int i = 0; i < roles.size(); i++) {
+                        if (i > 0) {
                             buffer.append(',');
                         }
                         buffer.append(' ');
@@ -209,12 +186,13 @@ public abstract class EndpointControl extends BaseControl implements EndpointCon
      *  (non-Javadoc)
      * @see flex.management.runtime.EndpointControlMBean#getBytesDeserialized()
      */
-    public Long getBytesDeserialized(){
+    public Long getBytesDeserialized() {
         return Long.valueOf(bytesDeserialized.get());
     }
 
     /**
      * Increments the count of bytes deserialized by the endpoint.
+     *
      * @param currentBytesDeserialized the bytes is deserialized
      */
     public void addToBytesDeserialized(int currentBytesDeserialized) {
@@ -231,6 +209,7 @@ public abstract class EndpointControl extends BaseControl implements EndpointCon
 
     /**
      * Increments the count of bytes serialized by the endpoint.
+     *
      * @param currentBytesSerialized the bytes is serialized
      */
     public void addToBytesSerialized(int currentBytesSerialized) {

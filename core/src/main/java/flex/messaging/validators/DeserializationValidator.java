@@ -23,15 +23,14 @@ import flex.messaging.FlexConfigurable;
  * opportunity to validate the creation of classes and assignment of a property
  * of an instance to a value for incoming (client-to-server) deserialization.
  */
-public interface DeserializationValidator extends FlexConfigurable
-{
+public interface DeserializationValidator extends FlexConfigurable {
 
     /**
      * Validate the assignment of a value to an index of an Array or List instance.
      *
      * @param instance The Array or List instance.
-     * @param index The index at which the value is being assigned.
-     * @param value The value that is assigned to the index.
+     * @param index    The index at which the value is being assigned.
+     * @param value    The value that is assigned to the index.
      * @return True if the assignment is valid.
      */
     boolean validateAssignment(Object instance, int index, Object value);
@@ -39,9 +38,9 @@ public interface DeserializationValidator extends FlexConfigurable
     /**
      * Validate the assignment of a property of an instance to a value.
      *
-     * @param instance The instance with the property that is being assigned a new value.
+     * @param instance     The instance with the property that is being assigned a new value.
      * @param propertyName The name of the property that is being assigned.
-     * @param value The value that the property is being assigned to.
+     * @param value        The value that the property is being assigned to.
      * @return True if the assignment is valid.
      */
     boolean validateAssignment(Object instance, String propertyName, Object value);

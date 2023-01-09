@@ -23,36 +23,34 @@ import java.util.Date;
 
 /**
  * Decode an ActionScript object (of some type) to a Java object (of some type).
- *
- *
  */
-public abstract class ActionScriptDecoder
-{
+public abstract class ActionScriptDecoder {
     /**
      * Does this type have a placeholder shell?
+     *
      * @return boolean true if there is a placeholder shell
      */
-    public boolean hasShell()
-    {
+    public boolean hasShell() {
         return false;
     }
 
     /**
      * Used for calls only interested in creating a placeholder shell for a type.
+     *
      * @param encodedObject the encoded object
-     * @param desiredClass the desired class for the decoded object
+     * @param desiredClass  the desired class for the decoded object
      * @return Object the shell placeholder object
      */
-    public Object createShell(Object encodedObject, Class desiredClass)
-    {
+    public Object createShell(Object encodedObject, Class desiredClass) {
         return null;
     }
 
     /**
      * Used by calls to decode an object has a shell placeholder.
-     * @param shell the placeholder shell
+     *
+     * @param shell         the placeholder shell
      * @param encodedObject the encoded object
-     * @param desiredClass the desired class for the decoded object
+     * @param desiredClass  the desired class for the decoded object
      * @return Object the decoded object
      */
     public abstract Object decodeObject(Object shell, Object encodedObject, Class desiredClass);
@@ -60,24 +58,22 @@ public abstract class ActionScriptDecoder
     /**
      * Used by calls wanted to decode an object. If the decoder requires a place holder shell one is created
      * and then the encodedObject is decoded to fill the object shell.
+     *
      * @param encodedObject the encoded object
-     * @param desiredClass the desire class for the decoded object
+     * @param desiredClass  the desire class for the decoded object
      * @return Object the decoded object
      */
-    public Object decodeObject(Object encodedObject, Class desiredClass)
-    {
+    public Object decodeObject(Object encodedObject, Class desiredClass) {
         Object shell = null;
 
-        if (hasShell())
-        {
+        if (hasShell()) {
             shell = createShell(encodedObject, desiredClass);
         }
 
         return decodeObject(shell, encodedObject, desiredClass);
     }
 
-    protected boolean canUseByReference(Object o)
-    {
+    protected boolean canUseByReference(Object o) {
         if (o == null)
             return false;
 
@@ -90,12 +86,9 @@ public abstract class ActionScriptDecoder
         else if (o instanceof Boolean)
             return false;
 
-        else if (o instanceof Date)
-        {
+        else if (o instanceof Date) {
             return SerializationContext.getSerializationContext().supportDatesByReference;
-        }
-
-        else if (o instanceof Calendar)
+        } else if (o instanceof Calendar)
             return false;
 
         else if (o instanceof Character)
@@ -104,8 +97,7 @@ public abstract class ActionScriptDecoder
         return true;
     }
 
-    protected static Object getDefaultPrimitiveValue(Class type)
-    {
+    protected static Object getDefaultPrimitiveValue(Class type) {
         if (type == Boolean.TYPE)
             return Boolean.FALSE;
         else if (type == Integer.TYPE)
@@ -119,9 +111,9 @@ public abstract class ActionScriptDecoder
         else if (type == Character.TYPE)
             return new Character(Character.MIN_VALUE);
         else if (type == Short.TYPE)
-            return new Short((short)0);
+            return new Short((short) 0);
         else if (type == Byte.TYPE)
-            return new Byte((byte)0);
+            return new Byte((byte) 0);
 
         return null;
     }

@@ -25,8 +25,7 @@ package flex.messaging.config;
  * properties.
  * </p>
  */
-public class AdapterSettings extends PropertiesSettings
-{
+public class AdapterSettings extends PropertiesSettings {
     private final String id;
     private String sourceFile;
     private String className;
@@ -38,10 +37,9 @@ public class AdapterSettings extends PropertiesSettings
      * adapter.
      *
      * @param id the <code>String</code> representing the unique identity for
-     * this adapter.
+     *           this adapter.
      */
-    public AdapterSettings(String id)
-    {
+    public AdapterSettings(String id) {
         super();
         this.id = id;
     }
@@ -51,8 +49,7 @@ public class AdapterSettings extends PropertiesSettings
      *
      * @return the adapter identity as a <code>String</code>.
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
@@ -61,8 +58,7 @@ public class AdapterSettings extends PropertiesSettings
      *
      * @return String The name of the adapter implementation.
      */
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
@@ -73,8 +69,7 @@ public class AdapterSettings extends PropertiesSettings
      *
      * @param name the <code>String</code>
      */
-    public void setClassName(String name)
-    {
+    public void setClassName(String name) {
         className = name;
     }
 
@@ -85,8 +80,7 @@ public class AdapterSettings extends PropertiesSettings
      *
      * @return boolean true if this adapter is the default.
      */
-    public boolean isDefault()
-    {
+    public boolean isDefault() {
         return defaultAdapter;
     }
 
@@ -94,32 +88,27 @@ public class AdapterSettings extends PropertiesSettings
      * Sets a flag to determine whether an adapter will be used as the default
      * (for example, in the event that a destination did not specify an adapter
      * explicitly).
-     *
+     * <p>
      * Only one default can be set for a given service.
      *
      * @param b a <code>boolean</code> flag, true if this adapter should be
-     * used as the default for the service.
+     *          used as the default for the service.
      */
-    public void setDefault(boolean b)
-    {
+    public void setDefault(boolean b) {
         defaultAdapter = b;
     }
 
     /**
      * Internal use only.
-     *
      */
-    String getSourceFile()
-    {
+    String getSourceFile() {
         return sourceFile;
     }
 
     /**
      * Internal use only.
-     *
      */
-    void setSourceFile(String file)
-    {
+    void setSourceFile(String file) {
         this.sourceFile = file;
     }
 }

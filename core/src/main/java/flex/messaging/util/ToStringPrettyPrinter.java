@@ -34,92 +34,79 @@ import flex.messaging.log.Log;
  * Recursively convert an Object graph into a String
  * for logging/debugging purposes. Cyclical references are
  * handled by tracking known objects.
- * 
+ * <p>
  *  TODO: Remove check for custom toString implementations... we
  *  should be able to extend the PrettyPrintable interface to handle
  *  any custom toString requirements without needing to actually call
  *  toString on a custom object.
  */
-public class ToStringPrettyPrinter extends BasicPrettyPrinter
-{
+public class ToStringPrettyPrinter extends BasicPrettyPrinter {
     private IdentityHashMap knownObjects;
     private int knownObjectsCount;
 
     /**
      * Default constructor.
      */
-    public ToStringPrettyPrinter()
-    {
+    public ToStringPrettyPrinter() {
         super();
     }
-    
-    /** {@inheritDoc} */
-    public String prettify(Object o)
-    {
-        try
-        {
+
+    /**
+     * {@inheritDoc}
+     */
+    public String prettify(Object o) {
+        try {
             knownObjects = new IdentityHashMap();
             knownObjectsCount = 0;
-            return super.prettify(o);    
-        }
-        finally
-        {
+            return super.prettify(o);
+        } finally {
             knownObjects = null;
             knownObjectsCount = 0;
         }
     }
-    
-    /** {@inheritDoc} */
-    public Object copy()
-    {
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object copy() {
         return new ToStringPrettyPrinter();
     }
 
-    protected void prettifyComplexType(Object o)
-    {
+    protected void prettifyComplexType(Object o) {
         // Avoid circular references
-        if (!isKnownObject(o))
-        {
-            StringBuffer header = new StringBuffer(); 
+        if (!isKnownObject(o)) {
+            StringBuffer header = new StringBuffer();
 
             Class c = o.getClass();
 
-            if (hasCustomToStringMethod(c))
-            {
+            if (hasCustomToStringMethod(c)) {
                 trace.write(String.valueOf(o));
-            }
-            else if (o instanceof Collection)
-            {
-                Collection col = ((Collection)o);
+            } else if (o instanceof Collection) {
+                Collection col = ((Collection) o);
                 header.append(c.getName()).append(" (Collection size:").append(col.size()).append(")");
                 trace.startArray(header.toString());
 
                 Iterator it = col.iterator();
                 int i = 0;
-                while (it.hasNext())
-                {
+                while (it.hasNext()) {
                     trace.arrayElement(i);
                     internalPrettify(it.next());
                     trace.newLine();
                     i++;
                 }
-                
+
                 trace.endArray();
-            }
-            else if (c.isArray())
-            {
+            } else if (c.isArray()) {
                 Class componentType = c.getComponentType();
                 int count = Array.getLength(o);
 
                 header.append(componentType.getName()).append("[] (Array length:").append(count).append(")");
                 trace.startArray(header.toString());
-                
+
                 // Check whether it is primitive array case, we omit printing the content of primitive array
                 // To avoid cases like large byte array. 
-                if (!componentType.isPrimitive())
-                {
-                    for (int i = 0; i < count; i++)
-                    {
+                if (!componentType.isPrimitive()) {
+                    for (int i = 0; i < count; i++) {
                         trace.arrayElement(i);
                         internalPrettify(Array.get(o, i));
                         trace.newLine();
@@ -127,68 +114,49 @@ public class ToStringPrettyPrinter extends BasicPrettyPrinter
                 }
 
                 trace.endArray();
-            }
-            else if (o instanceof Document)
-            {
-                try
-                {
-                    String xml = XMLUtil.documentToString((Document)o);
+            } else if (o instanceof Document) {
+                try {
+                    String xml = XMLUtil.documentToString((Document) o);
                     trace.write(xml);
-                }
-                catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     trace.write("(Document not printable)");
                 }
-            }
-            else
-            {
+            } else {
                 PropertyProxy proxy = PropertyProxyRegistry.getProxy(o);
-                
-                if (o instanceof PrettyPrintable)
-                {
-                    PrettyPrintable pp = (PrettyPrintable)o;
-                    header.append(pp.toStringHeader()); 
-                }
-                else
-                {
+
+                if (o instanceof PrettyPrintable) {
+                    PrettyPrintable pp = (PrettyPrintable) o;
+                    header.append(pp.toStringHeader());
+                } else {
                     header.append(c.getName());
-                    if (o instanceof Map)
-                    {
-                        header.append(" (Map size:").append(((Map)o).size()).append(")");
+                    if (o instanceof Map) {
+                        header.append(" (Map size:").append(((Map) o).size()).append(")");
                     }
                 }
 
                 trace.startObject(header.toString());
 
                 List propertyNames = proxy.getPropertyNames();
-                if (propertyNames != null)
-                {
+                if (propertyNames != null) {
                     Iterator it = propertyNames.iterator();
-                    while (it.hasNext())
-                    {
-                        String propName = (String)it.next();
+                    while (it.hasNext()) {
+                        String propName = (String) it.next();
                         trace.namedElement(propName);
-                        
+
                         Object value = null;
-                        if (trace.nextElementExclude)
-                        {
+                        if (trace.nextElementExclude) {
                             trace.nextElementExclude = false;
                             value = Log.VALUE_SUPRESSED;
-                        }
-                        else
-                        {
-                            if (o instanceof PrettyPrintable)
-                            {
-                                String customToString = ((PrettyPrintable)o).toStringCustomProperty(propName);
-                                if (customToString != null)
-                                {
+                        } else {
+                            if (o instanceof PrettyPrintable) {
+                                String customToString = ((PrettyPrintable) o).toStringCustomProperty(propName);
+                                if (customToString != null) {
                                     value = customToString;
                                 }
                             }
 
 
-                            if (value == null)
-                            {
+                            if (value == null) {
                                 value = proxy.getValue(propName);
                             }
                         }
@@ -202,31 +170,23 @@ public class ToStringPrettyPrinter extends BasicPrettyPrinter
             }
         }
     }
-    
-    private boolean isKnownObject(Object o)
-    {
+
+    private boolean isKnownObject(Object o) {
         Object ref = knownObjects.get(o);
-        if (ref != null)
-        {
-            try
-            {
-                int refNum = ((Integer)ref).intValue();
+        if (ref != null) {
+            try {
+                int refNum = ((Integer) ref).intValue();
                 trace.writeRef(refNum);
-            }
-            catch (ClassCastException e)
-            {
+            } catch (ClassCastException e) {
                 // Ignore
             }
-        }
-        else
-        {
+        } else {
             rememberObject(o);
         }
         return (ref != null);
     }
-    
-    private void rememberObject(Object o)
-    {
+
+    private void rememberObject(Object o) {
         knownObjects.put(o, new Integer(knownObjectsCount++));
     }
 }

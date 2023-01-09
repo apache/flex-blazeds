@@ -20,11 +20,10 @@ package flex.messaging.util;
  * A custom UUID generator can be set on MessageBroker in order to provide custom
  * uuid generation for NIO-HTTP session cookie and FlexClient id.
  */
-public interface UUIDGenerator
-{
+public interface UUIDGenerator {
     /**
      * Creates and returns a UUID.
-     * 
+     *
      * @return UUID.
      */
     String createUUID();

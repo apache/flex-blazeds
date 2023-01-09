@@ -33,11 +33,8 @@ import java.util.Map;
  * effectively represents a &quot;whitelist&quot;
  * of actions allowed by that service.
  * </p>
- *
- *
  */
-public class ServiceSettings extends PropertiesSettings
-{
+public class ServiceSettings extends PropertiesSettings {
     private final String id;
     private String sourceFile;
     private String className;
@@ -48,62 +45,51 @@ public class ServiceSettings extends PropertiesSettings
     private final Map destinationSettings;
     private SecurityConstraint securityConstraint;
 
-    public ServiceSettings(String id)
-    {
+    public ServiceSettings(String id) {
         this.id = id;
         destinationSettings = new HashMap();
         adapterSettings = new HashMap(2);
         defaultChannels = new ArrayList(4);
     }
 
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
-    String getSourceFile()
-    {
+    String getSourceFile() {
         return sourceFile;
     }
 
-    void setSourceFile(String sourceFile)
-    {
+    void setSourceFile(String sourceFile) {
         this.sourceFile = sourceFile;
     }
 
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
-    public void setClassName(String name)
-    {
+    public void setClassName(String name) {
         className = name;
     }
 
     /*
      *  SERVER ADAPTERS
      */
-    public AdapterSettings getDefaultAdapter()
-    {
+    public AdapterSettings getDefaultAdapter() {
         return defaultAdapterSettings;
     }
 
-    public AdapterSettings getAdapterSettings(String id)
-    {
-        return (AdapterSettings)adapterSettings.get(id);
+    public AdapterSettings getAdapterSettings(String id) {
+        return (AdapterSettings) adapterSettings.get(id);
     }
 
-    public Map getAllAdapterSettings()
-    {
+    public Map getAllAdapterSettings() {
         return adapterSettings;
     }
 
-    public void addAdapterSettings(AdapterSettings a)
-    {
+    public void addAdapterSettings(AdapterSettings a) {
         adapterSettings.put(a.getId(), a);
-        if (a.isDefault())
-        {
+        if (a.isDefault()) {
             defaultAdapterSettings = a;
         }
     }
@@ -111,13 +97,11 @@ public class ServiceSettings extends PropertiesSettings
     /*
      *  DEFAULT CHANNELS
      */
-    public void addDefaultChannel(ChannelSettings c)
-    {
+    public void addDefaultChannel(ChannelSettings c) {
         defaultChannels.add(c);
     }
 
-    public List getDefaultChannels()
-    {
+    public List getDefaultChannels() {
         return defaultChannels;
     }
 
@@ -132,8 +116,7 @@ public class ServiceSettings extends PropertiesSettings
      *
      * @return the <code>SecurityConstraint</code> for this service.
      */
-    public SecurityConstraint getConstraint()
-    {
+    public SecurityConstraint getConstraint() {
         return securityConstraint;
     }
 
@@ -143,23 +126,20 @@ public class ServiceSettings extends PropertiesSettings
      * <code>null</code> to remove an existing constraint.
      *
      * @param sc the <code>SecurityConstraint</code> to apply to this
-     * service.
+     *           service.
      */
-    public void setConstraint(SecurityConstraint sc)
-    {
+    public void setConstraint(SecurityConstraint sc) {
         securityConstraint = sc;
     }
 
     /*
      *  DESTINATIONS
      */
-    public Map getDestinationSettings()
-    {
+    public Map getDestinationSettings() {
         return destinationSettings;
     }
 
-    public void addDestinationSettings(DestinationSettings dest)
-    {
+    public void addDestinationSettings(DestinationSettings dest) {
         destinationSettings.put(dest.getId(), dest);
     }
 }

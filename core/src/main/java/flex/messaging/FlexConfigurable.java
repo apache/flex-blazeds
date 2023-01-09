@@ -23,12 +23,11 @@ import flex.messaging.config.ConfigMap;
  * the FlexConfigurable interface to get access to the configuration
  * properties like a regular component in the system.
  */
-public interface FlexConfigurable
-{
+public interface FlexConfigurable {
     /**
      * Initializes the component with configuration information.
      *
-     * @param id The id of the component.
+     * @param id        The id of the component.
      * @param configMap The properties for configuring component.
      */
     void initialize(String id, ConfigMap configMap);

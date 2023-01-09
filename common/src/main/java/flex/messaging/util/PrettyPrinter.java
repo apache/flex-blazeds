@@ -19,11 +19,8 @@ package flex.messaging.util;
 /**
  * Implementations convert Object graphs to Strings for
  * logging and debugging.
- *
- *
  */
-public interface PrettyPrinter
-{
+public interface PrettyPrinter {
     String prettify(Object o);
 
     Object copy();

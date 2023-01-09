@@ -38,8 +38,7 @@ import javax.management.ObjectName;
  * The <code>MessageBrokerControl</code> class is the MBean implemenation for monitoring
  * and managing a <code>MessageBroker</code> at runtime.
  */
-public class MessageBrokerControl extends BaseControl implements MessageBrokerControlMBean
-{
+public class MessageBrokerControl extends BaseControl implements MessageBrokerControlMBean {
     private static final Object classMutex = new Object();
     private static final String TYPE = "MessageBroker";
     private static int instanceCount = 0;
@@ -59,8 +58,7 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *
      * @param broker The <code>MessageBroker</code> managed by this MBean.
      */
-    public MessageBrokerControl(MessageBroker broker)
-    {
+    public MessageBrokerControl(MessageBroker broker) {
         super(null);
         this.broker = broker;
         endpointNames = new ArrayList();
@@ -70,20 +68,18 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
         streamingAmfEndpoints = new ArrayList();
         streamingHttpEndpoints = new ArrayList();
         services = new ArrayList();
-        synchronized (classMutex)
-        {
+        synchronized (classMutex) {
             id = TYPE + ++instanceCount;
         }
 
         setRegistrar(new AdminConsoleDisplayRegistrar(this));
     }
 
-    protected void onRegistrationComplete()
-    {
+    protected void onRegistrationComplete() {
         String name = this.getObjectName().getCanonicalName();
         getRegistrar().registerObject(AdminConsoleTypes.GENERAL_POLLABLE, name, "FlexSessionCount");
-        getRegistrar().registerObjects(new int[] {AdminConsoleTypes.GENERAL_POLLABLE, AdminConsoleTypes.GRAPH_BY_POLL_INTERVAL },
-                name, new String[] {"AMFThroughput", "HTTPThroughput", "EnterpriseThroughput"});
+        getRegistrar().registerObjects(new int[]{AdminConsoleTypes.GENERAL_POLLABLE, AdminConsoleTypes.GRAPH_BY_POLL_INTERVAL},
+                name, new String[]{"AMFThroughput", "HTTPThroughput", "EnterpriseThroughput"});
 
         getRegistrar().registerObject(AdminConsoleTypes.GENERAL_SERVER, name, "MaxFlexSessionsInCurrentHour");
     }
@@ -92,8 +88,7 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *  (non-Javadoc)
      * @see flex.management.BaseControlMBean#getId()
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
@@ -101,8 +96,7 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *  (non-Javadoc)
      * @see flex.management.BaseControlMBean#getType()
      */
-    public String getType()
-    {
+    public String getType() {
         return TYPE;
     }
 
@@ -110,8 +104,7 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *  (non-Javadoc)
      * @see flex.management.runtime.MessageBrokerControlMBean#isRunning()
      */
-    public Boolean isRunning()
-    {
+    public Boolean isRunning() {
         return Boolean.valueOf(broker.isStarted());
     }
 
@@ -119,8 +112,7 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *  (non-Javadoc)
      * @see flex.management.runtime.MessageBrokerControlMBean#getStartTimestamp()
      */
-    public Date getStartTimestamp()
-    {
+    public Date getStartTimestamp() {
         return startTimestamp;
     }
 
@@ -128,13 +120,11 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *  (non-Javadoc)
      * @see flex.management.runtime.MessageBrokerControlMBean#getEndpoints()
      */
-    public ObjectName[] getEndpoints() throws IOException
-    {
+    public ObjectName[] getEndpoints() throws IOException {
         int size = endpointNames.size();
         ObjectName[] endpointNameObjects = new ObjectName[size];
-        for (int i = 0; i < size; ++i)
-        {
-            endpointNameObjects[i] = (ObjectName)endpointNames.get(i);
+        for (int i = 0; i < size; ++i) {
+            endpointNameObjects[i] = (ObjectName) endpointNames.get(i);
         }
         return endpointNameObjects;
     }
@@ -144,8 +134,7 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *
      * @param value The endpoint <code>Endpoint</code>.
      */
-    public void addEndpoint(Endpoint value)
-    {
+    public void addEndpoint(Endpoint value) {
         if (value instanceof AMFEndpoint)
             amfEndpoints.add(value);
         else if (value instanceof HTTPEndpoint)
@@ -165,8 +154,7 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *
      * @param value The endpoint <code>ObjectName</code>.
      */
-    public void removeEndpoint(ObjectName value)
-    {
+    public void removeEndpoint(ObjectName value) {
         endpointNames.remove(value);
     }
 
@@ -174,13 +162,11 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *  (non-Javadoc)
      * @see flex.management.runtime.MessageBrokerControlMBean#getServices()
      */
-    public ObjectName[] getServices() throws IOException
-    {
+    public ObjectName[] getServices() throws IOException {
         int size = services.size();
         ObjectName[] serviceNames = new ObjectName[size];
-        for (int i = 0; i < size; ++i)
-        {
-            serviceNames[i] = (ObjectName)services.get(i);
+        for (int i = 0; i < size; ++i) {
+            serviceNames[i] = (ObjectName) services.get(i);
         }
         return serviceNames;
     }
@@ -190,8 +176,7 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *
      * @param value The service <code>ObjectName</code>.
      */
-    public void addService(ObjectName value)
-    {
+    public void addService(ObjectName value) {
         services.add(value);
     }
 
@@ -200,8 +185,7 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *
      * @param value The service <code>ObjectName</code>.
      */
-    public void removeService(ObjectName value)
-    {
+    public void removeService(ObjectName value) {
         services.remove(value);
     }
 
@@ -209,8 +193,7 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *  (non-Javadoc)
      * @see flex.management.runtime.MessageBrokerControlMBean#getFlexSessionCount()
      */
-    public Integer getFlexSessionCount()
-    {
+    public Integer getFlexSessionCount() {
         return broker.getFlexSessionManager().getFlexSessionCount();
     }
 
@@ -218,16 +201,14 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
      *  (non-Javadoc)
      * @see flex.management.runtime.MessageBrokerControlMBean#getMaxFlexSessionsInCurrentHour()
      */
-    public Integer getMaxFlexSessionsInCurrentHour()
-    {
+    public Integer getMaxFlexSessionsInCurrentHour() {
         return broker.getFlexSessionManager().getMaxFlexSessionsInCurrentHour();
     }
 
     /* (non-Javadoc)
      * @see flex.management.runtime.messaging.MessageBrokerControlMBean#getRTMPConnectionCount()
      */
-    public Integer getEnterpriseConnectionCount() throws IOException
-    {
+    public Integer getEnterpriseConnectionCount() throws IOException {
         int connections = 0;
     /*
         for (int i = 0; i < rtmpEndpoints.size(); i++)
@@ -241,52 +222,45 @@ public class MessageBrokerControl extends BaseControl implements MessageBrokerCo
     /* (non-Javadoc)
      * @see flex.management.runtime.messaging.MessageBrokerControlMBean#getAMFThroughput()
      */
-    public Long getAMFThroughput() throws IOException
-    {
+    public Long getAMFThroughput() throws IOException {
         return new Long(calculateEndpointThroughput(amfEndpoints));
     }
 
     /* (non-Javadoc)
      * @see flex.management.runtime.messaging.MessageBrokerControlMBean#getHTTPThroughput()
      */
-    public Long getHTTPThroughput() throws IOException
-    {
+    public Long getHTTPThroughput() throws IOException {
         return new Long(calculateEndpointThroughput(httpEndpoints));
     }
 
     /* (non-Javadoc)
      * @see flex.management.runtime.messaging.MessageBrokerControlMBean#getRTMPThroughput()
      */
-    public Long getEnterpriseThroughput() throws IOException
-    {
+    public Long getEnterpriseThroughput() throws IOException {
         return new Long(calculateEndpointThroughput(enterpriseEndpoints));
     }
 
     /* (non-Javadoc)
      * @see flex.management.runtime.messaging.MessageBrokerControlMBean#getStreamingAMFThroughput()
      */
-    public Long getStreamingAMFThroughput() throws IOException
-    {
+    public Long getStreamingAMFThroughput() throws IOException {
         return new Long(calculateEndpointThroughput(streamingAmfEndpoints));
     }
 
     /* (non-Javadoc)
      * @see flex.management.runtime.messaging.MessageBrokerControlMBean#getStreamingHTTPThroughput()
      */
-    public Long getStreamingHTTPThroughput() throws IOException
-    {
+    public Long getStreamingHTTPThroughput() throws IOException {
         return new Long(calculateEndpointThroughput(streamingHttpEndpoints));
     }
 
-    private long calculateEndpointThroughput(List endpoints)
-    {
+    private long calculateEndpointThroughput(List endpoints) {
         long throughput = 0;
 
-        for (int i = 0; i < endpoints.size(); i++)
-        {
+        for (int i = 0; i < endpoints.size(); i++) {
             // This method shouldn't be used with Lists containing objects that are not AbstractEndpoints
             if (endpoints.get(i) instanceof AbstractEndpoint)
-                throughput += ((AbstractEndpoint)endpoints.get(i)).getThroughput();
+                throughput += ((AbstractEndpoint) endpoints.get(i)).getThroughput();
         }
 
         return throughput;

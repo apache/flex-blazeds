@@ -28,8 +28,7 @@ import flex.messaging.MessageException;
 /**
  * A <code>JMSConsumer</code> subclass specifically for JMS Queue receivers.
  */
-public class JMSQueueConsumer extends JMSConsumer
-{
+public class JMSQueueConsumer extends JMSConsumer {
     //--------------------------------------------------------------------------
     //
     // Initialize, validate, start, and stop methods.
@@ -40,44 +39,37 @@ public class JMSQueueConsumer extends JMSConsumer
      * Starts the <code>JMSQueueConsumer</code>.
      *
      * @throws NamingException The thrown naming exception.
-     * @throws JMSException The thrown JMS exception.
+     * @throws JMSException    The thrown JMS exception.
      */
-    public void start() throws NamingException, JMSException
-    {
+    public void start() throws NamingException, JMSException {
         super.start();
 
         // Establish queue
         Queue queue = null;
-        try
-        {
-            queue = (Queue)destination;
-        }
-        catch (ClassCastException cce)
-        {
+        try {
+            queue = (Queue) destination;
+        } catch (ClassCastException cce) {
             // JMS queue proxy for JMS destination ''{0}'' has a destination type of ''{1}'' which is not Queue.
             MessageException me = new MessageException();
-            me.setMessage(JMSConfigConstants.NON_QUEUE_DESTINATION, new Object[] {destinationJndiName, destination.getClass().getName()});
+            me.setMessage(JMSConfigConstants.NON_QUEUE_DESTINATION, new Object[]{destinationJndiName, destination.getClass().getName()});
             throw me;
         }
 
         // Create connection
-        try
-        {
-            QueueConnectionFactory queueFactory = (QueueConnectionFactory)connectionFactory;
+        try {
+            QueueConnectionFactory queueFactory = (QueueConnectionFactory) connectionFactory;
             if (connectionCredentials != null)
                 connection = queueFactory.createQueueConnection(connectionCredentials.getUsername(), connectionCredentials.getPassword());
             else
                 connection = queueFactory.createQueueConnection();
-        }
-        catch (ClassCastException cce)
-        {
+        } catch (ClassCastException cce) {
             // JMS queue proxy for JMS destination ''{0}'' has a connection factory type of ''{1}'' which is not QueueConnectionFactory.
             MessageException me = new MessageException();
-            me.setMessage(JMSConfigConstants.NON_QUEUE_FACTORY, new Object[] {destinationJndiName, connectionFactory.getClass().getName()});
+            me.setMessage(JMSConfigConstants.NON_QUEUE_FACTORY, new Object[]{destinationJndiName, connectionFactory.getClass().getName()});
             throw me;
         }
 
-        QueueConnection queueConnection = (QueueConnection)connection;
+        QueueConnection queueConnection = (QueueConnection) connection;
 
         // Create queue session on the connection
         session = queueConnection.createQueueSession(false, getAcknowledgeMode());

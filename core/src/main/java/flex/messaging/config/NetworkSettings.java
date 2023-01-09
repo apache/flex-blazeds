@@ -19,8 +19,7 @@ package flex.messaging.config;
 /**
  * Network policy settings for a MessageDestination.
  */
-public class NetworkSettings
-{
+public class NetworkSettings {
     protected String clusterId;
     protected ThrottleSettings throttleSettings;
     protected int subscriptionTimeoutMinutes;
@@ -39,8 +38,7 @@ public class NetworkSettings
      * Constructs a default <code>NetworkSettings</code> instance with
      * default session timeout.
      */
-    public NetworkSettings()
-    {
+    public NetworkSettings() {
         throttleSettings = new ThrottleSettings();
         subscriptionTimeoutMinutes = DEFAULT_TIMEOUT;
     }
@@ -50,8 +48,7 @@ public class NetworkSettings
      *
      * @return The cluster id.
      */
-    public String getClusterId()
-    {
+    public String getClusterId() {
         return clusterId;
     }
 
@@ -60,28 +57,25 @@ public class NetworkSettings
      *
      * @param id The cluster id.
      */
-    public void setClusterId(String id)
-    {
+    public void setClusterId(String id) {
         this.clusterId = id;
     }
-    
+
     /**
      * Returns the <code>reliable</code> setting.
-     * 
+     *
      * @return The <code>reliable</code> setting.
      */
-    public boolean isReliable()
-    {
+    public boolean isReliable() {
         return reliable;
     }
-    
+
     /**
      * Sets the <code>reliable</code> setting.
-     * 
+     *
      * @param value The value to set the <code>reliable</code> setting to.
      */
-    public void setReliable(boolean value)
-    {
+    public void setReliable(boolean value) {
         reliable = value;
     }
 
@@ -90,8 +84,7 @@ public class NetworkSettings
      *
      * @return the <code>subscription-timeout-minutes</code> property.
      */
-    public int getSubscriptionTimeoutMinutes()
-    {
+    public int getSubscriptionTimeoutMinutes() {
         return subscriptionTimeoutMinutes;
     }
 
@@ -103,8 +96,7 @@ public class NetworkSettings
      *
      * @param value The value to set the <code>subscription-timeout-minutes</code> property to.
      */
-    public void setSubscriptionTimeoutMinutes(int value)
-    {
+    public void setSubscriptionTimeoutMinutes(int value) {
         subscriptionTimeoutMinutes = value;
     }
 
@@ -113,8 +105,7 @@ public class NetworkSettings
      *
      * @return the <code>shared-backend</code> property.
      */
-    public boolean isSharedBackend()
-    {
+    public boolean isSharedBackend() {
         return sharedBackend;
     }
 
@@ -123,8 +114,7 @@ public class NetworkSettings
      *
      * @param sharedBackend The value to set the <code>shared-backend</code> property to.
      */
-    public void setSharedBackend(boolean sharedBackend)
-    {
+    public void setSharedBackend(boolean sharedBackend) {
         this.sharedBackend = sharedBackend;
         this.sharedBackendSet = true;
     }
@@ -135,8 +125,7 @@ public class NetworkSettings
      *
      * @return <code>true</code> if the shared backend has been set; <code>false</code> otherwise.
      */
-    public boolean isSharedBackendSet()
-    {
+    public boolean isSharedBackendSet() {
         return sharedBackendSet;
     }
 
@@ -145,8 +134,7 @@ public class NetworkSettings
      *
      * @return the <code>ThrottleSettings</code> property.
      */
-    public ThrottleSettings getThrottleSettings()
-    {
+    public ThrottleSettings getThrottleSettings() {
         return throttleSettings;
     }
 
@@ -155,8 +143,7 @@ public class NetworkSettings
      *
      * @param value The value to set the <code>ThrottleSettings</code> property to.
      */
-    public void setThrottleSettings(ThrottleSettings value)
-    {
+    public void setThrottleSettings(ThrottleSettings value) {
         throttleSettings = value;
     }
 

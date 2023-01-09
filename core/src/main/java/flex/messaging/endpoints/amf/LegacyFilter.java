@@ -55,23 +55,20 @@ import java.lang.reflect.Array;
  * the header value, if required.
  * </p>
  */
-public class LegacyFilter extends AMFFilter
-{
+public class LegacyFilter extends AMFFilter {
     public static final String LEGACY_ENVELOPE_FLAG_KEY = "_flag";
     public static final String LEGACY_ENVELOPE_FLAG_VALUE = "Envelope";
     public static final String LEGACY_SECURITY_HEADER_NAME = "Credentials";
     public static final String LEGACY_SECURITY_PRINCIPAL = "userid";
     public static final String LEGACY_SECURITY_CREDENTIALS = "password";
-    
+
     private BaseHTTPEndpoint endpoint;
 
-    public LegacyFilter(BaseHTTPEndpoint endpoint)
-    {
+    public LegacyFilter(BaseHTTPEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 
-    public void invoke(final ActionContext context) throws IOException
-    {
+    public void invoke(final ActionContext context) throws IOException {
         MessageBody requestBody = context.getRequestMessageBody();
         context.setLegacy(true);
 
@@ -80,16 +77,12 @@ public class LegacyFilter extends AMFFilter
         List newParams = null;
 
         // Check whether we're a new Flex 2.0 Messaging request
-        if (data != null)
-        {
-            if (data.getClass().isArray())
-            {
+        if (data != null) {
+            if (data.getClass().isArray()) {
                 int paramLength = Array.getLength(data);
-                if (paramLength == 1)
-                {
+                if (paramLength == 1) {
                     Object obj = Array.get(data, 0);
-                    if (obj != null && obj instanceof Message)
-                    {
+                    if (obj != null && obj instanceof Message) {
                         context.setLegacy(false);
                         newParams = new ArrayList();
                         newParams.add(obj);
@@ -97,29 +90,20 @@ public class LegacyFilter extends AMFFilter
                 }
 
                 // It was not a Flex 2.0 Message, but we have an array, use its contents as our params
-                if (newParams == null)
-                {
+                if (newParams == null) {
                     newParams = new ArrayList();
-                    for (int i = 0; i < paramLength; i++)
-                    {
-                        try
-                        {
+                    for (int i = 0; i < paramLength; i++) {
+                        try {
                             newParams.add(Array.get(data, i));
-                        }
-                        catch (Throwable t)
-                        {
+                        } catch (Throwable t) {
                         }
                     }
                 }
-            }
-            else if (data instanceof List)
-            {
-                List paramList = (List)data;
-                if (paramList.size() == 1)
-                {
+            } else if (data instanceof List) {
+                List paramList = (List) data;
+                if (paramList.size() == 1) {
                     Object obj = paramList.get(0);
-                    if (obj != null && obj instanceof Message)
-                    {
+                    if (obj != null && obj instanceof Message) {
                         context.setLegacy(false);
                         newParams = new ArrayList();
                         newParams.add(obj);
@@ -127,24 +111,21 @@ public class LegacyFilter extends AMFFilter
                 }
 
                 // It was not a Flex 2.0 Message, but we have a list, so use it as our params
-                if (newParams == null)
-                {
-                    newParams = (List)data;
+                if (newParams == null) {
+                    newParams = (List) data;
                 }
             }
         }
 
         // We still haven't found any lists of params, so create one with
         // whatever data we have.
-        if (newParams == null)
-        {
+        if (newParams == null) {
             newParams = new ArrayList();
             newParams.add(data);
 
         }
 
-        if (context.isLegacy())
-        {
+        if (context.isLegacy()) {
             newParams = legacyRequest(context, newParams);
         }
 
@@ -154,31 +135,26 @@ public class LegacyFilter extends AMFFilter
         next.invoke(context);
 
 
-        if (context.isLegacy())
-        {
+        if (context.isLegacy()) {
             MessageBody responseBody = context.getResponseMessageBody();
             Object response = responseBody.getData();
 
-            if (response instanceof ErrorMessage)
-            {
-                ErrorMessage error = (ErrorMessage)response;
+            if (response instanceof ErrorMessage) {
+                ErrorMessage error = (ErrorMessage) response;
                 ASObject aso = new ASObject();
                 aso.put("message", error.faultString);
                 aso.put("code", error.faultCode);
                 aso.put("details", error.faultDetail);
                 aso.put("rootCause", error.rootCause);
                 response = aso;
-            }
-            else if (response instanceof Message)
-            {
-                response = ((Message)response).getBody();
+            } else if (response instanceof Message) {
+                response = ((Message) response).getBody();
             }
             responseBody.setData(response);
         }
     }
 
-    private List legacyRequest(ActionContext context, List oldParams)
-    {
+    private List legacyRequest(ActionContext context, List oldParams) {
         List newParams = new ArrayList(1);
         Map headerMap = new HashMap();
         Object body = oldParams;
@@ -188,27 +164,23 @@ public class LegacyFilter extends AMFFilter
         // Legacy Packet Security
         List packetHeaders = context.getRequestMessage().getHeaders();
         packetCredentials(packetHeaders, headerMap);
-        
+
 
         // Legacy Body
-        if (oldParams.size() == 1)
-        {
+        if (oldParams.size() == 1) {
             Object obj = oldParams.get(0);
 
-            if (obj != null && obj instanceof ASObject)
-            {
-                ASObject aso = (ASObject)obj;
+            if (obj != null && obj instanceof ASObject) {
+                ASObject aso = (ASObject) obj;
 
                 // Unwrap legacy Flex 1.5 Envelope type
-                if (isEnvelope(aso))
-                {
+                if (isEnvelope(aso)) {
                     body = aso.get("data");
 
                     // Envelope level headers
                     Object h = aso.get("headers");
-                    if (h != null && h instanceof List)
-                    {
-                        readEnvelopeHeaders((List)h, headerMap);
+                    if (h != null && h instanceof List) {
+                        readEnvelopeHeaders((List) h, headerMap);
                         envelopeCredentials(headerMap);
                     }
                 }
@@ -221,15 +193,13 @@ public class LegacyFilter extends AMFFilter
         return newParams;
     }
 
-    private boolean isEnvelope(ASObject aso)
-    {
+    private boolean isEnvelope(ASObject aso) {
         String flag = null;
         Object f = aso.get(LEGACY_ENVELOPE_FLAG_KEY);
         if (f != null && f instanceof String)
-            flag = (String)f;
+            flag = (String) f;
 
-        if (flag != null && flag.equalsIgnoreCase(LEGACY_ENVELOPE_FLAG_VALUE))
-        {
+        if (flag != null && flag.equalsIgnoreCase(LEGACY_ENVELOPE_FLAG_VALUE)) {
             return true;
         }
 
@@ -237,11 +207,10 @@ public class LegacyFilter extends AMFFilter
     }
 
 
-    private RemotingMessage createMessage(MessageBody messageBody, Object body, Map headerMap)
-    {
+    private RemotingMessage createMessage(MessageBody messageBody, Object body, Map headerMap) {
         RemotingMessage remotingMessage = new RemotingMessage();
         // Assigning an empty String, MessageBroker expects non-null messageId.        
-        remotingMessage.setMessageId("");  
+        remotingMessage.setMessageId("");
         remotingMessage.setBody(body);
         remotingMessage.setHeaders(headerMap);
 
@@ -249,14 +218,12 @@ public class LegacyFilter extends AMFFilter
         String targetURI = messageBody.getTargetURI();
 
         int dotIndex = targetURI.lastIndexOf(".");
-        if (dotIndex > 0)
-        {
+        if (dotIndex > 0) {
             String destination = targetURI.substring(0, dotIndex);
             remotingMessage.setDestination(destination);
         }
 
-        if (targetURI.length() > dotIndex)
-        {
+        if (targetURI.length() > dotIndex) {
             String operation = targetURI.substring(dotIndex + 1);
             remotingMessage.setOperation(operation);
         }
@@ -265,18 +232,15 @@ public class LegacyFilter extends AMFFilter
     }
 
 
-    private Map readEnvelopeHeaders(List headers, Map headerMap)
-    {
+    private Map readEnvelopeHeaders(List headers, Map headerMap) {
         int count = headers.size();
 
-        for (int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             Object obj = headers.get(i);
 
             //We currently expect a plain old AS Array
-            if (obj != null && obj instanceof List)
-            {
-                List h = (List)obj;
+            if (obj != null && obj instanceof List) {
+                List h = (List) obj;
 
                 Object name = null;
                 //Object mustUnderstand = null;
@@ -285,12 +249,10 @@ public class LegacyFilter extends AMFFilter
                 int numFields = h.size();
 
                 //The array must have exactly three (3) fields
-                if (numFields == 3)
-                {
+                if (numFields == 3) {
                     name = h.get(0);
 
-                    if (name != null && name instanceof String)
-                    {
+                    if (name != null && name instanceof String) {
                         //mustUnderstand = h.get(1);
                         data = h.get(2);
                         headerMap.put(name, data);
@@ -302,30 +264,24 @@ public class LegacyFilter extends AMFFilter
         return headerMap;
     }
 
-    private void envelopeCredentials(Map headers)
-    {
+    private void envelopeCredentials(Map headers) {
         // Process Legacy Security Credentials
         Object obj = headers.get(LEGACY_SECURITY_HEADER_NAME);
-        if (obj != null && obj instanceof ASObject)
-        {
-            ASObject header = (ASObject)obj;
-            String principal = (String)header.get(LEGACY_SECURITY_PRINCIPAL);
+        if (obj != null && obj instanceof ASObject) {
+            ASObject header = (ASObject) obj;
+            String principal = (String) header.get(LEGACY_SECURITY_PRINCIPAL);
             Object credentials = header.get(LEGACY_SECURITY_CREDENTIALS);
             endpoint.getMessageBroker().getLoginManager().login(principal, credentials.toString());
         }
         headers.remove(LEGACY_SECURITY_HEADER_NAME);
     }
 
-    private void packetCredentials(List packetHeaders, Map headers)
-    {
-        if (packetHeaders.size() > 0)
-        {
-            for (Iterator iter = packetHeaders.iterator(); iter.hasNext();)
-            {
-                MessageHeader header = (MessageHeader)iter.next();
-                if (header.getName().equals(LEGACY_SECURITY_HEADER_NAME))
-                {
-                    Map loginInfo = (Map)header.getData();
+    private void packetCredentials(List packetHeaders, Map headers) {
+        if (packetHeaders.size() > 0) {
+            for (Iterator iter = packetHeaders.iterator(); iter.hasNext(); ) {
+                MessageHeader header = (MessageHeader) iter.next();
+                if (header.getName().equals(LEGACY_SECURITY_HEADER_NAME)) {
+                    Map loginInfo = (Map) header.getData();
                     String principal = loginInfo.get(LEGACY_SECURITY_PRINCIPAL).toString();
                     Object credentials = loginInfo.get(LEGACY_SECURITY_CREDENTIALS);
                     endpoint.getMessageBroker().getLoginManager().login(principal, credentials.toString());

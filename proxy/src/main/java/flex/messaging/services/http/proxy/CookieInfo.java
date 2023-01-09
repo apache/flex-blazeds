@@ -19,8 +19,7 @@ package flex.messaging.services.http.proxy;
 /**
  *
  */
-public class CookieInfo
-{
+public class CookieInfo {
     public String clientName;
     public String domain;
     public String name;
@@ -33,8 +32,7 @@ public class CookieInfo
     public boolean secure;
 
     public CookieInfo(String clientName, String domain, String name, String value, String path,
-                      int maxAge, Object maxAgeObj, boolean secure)
-    {
+                      int maxAge, Object maxAgeObj, boolean secure) {
         this.clientName = clientName;
         this.domain = domain;
         this.name = name;
@@ -45,8 +43,7 @@ public class CookieInfo
         this.secure = secure;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return "domain = '" + domain +
                 "', path = '" + path +
                 "', client name = '" + clientName +

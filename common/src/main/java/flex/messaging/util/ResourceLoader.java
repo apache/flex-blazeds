@@ -21,11 +21,8 @@ import java.util.Map;
 
 /**
  * The root interface for classes that provide access to localized resources.
- *
- *
  */
-public interface ResourceLoader
-{
+public interface ResourceLoader {
     /**
      * Initializes the <code>ResourceLoader</code> using the specified properties.
      *
@@ -67,20 +64,20 @@ public interface ResourceLoader
      * Gets a parameterized string for the given key and substitutes
      * the parameters using the passed array of arguments.
      *
-     * @param key The key for the target string.
+     * @param key       The key for the target string.
      * @param arguments The arguments to substitute into the parameterized string.
      * @return The substituted string for the given key.
-     * @exception IllegalArgumentException If the parameterized string is invalid,
-     *            or if an argument in the <code>arguments</code> array
-     *            is not of the type expected by the format element(s)
-     *            that use it.
+     * @throws IllegalArgumentException If the parameterized string is invalid,
+     *                                  or if an argument in the <code>arguments</code> array
+     *                                  is not of the type expected by the format element(s)
+     *                                  that use it.
      */
     String getString(String key, Object[] arguments);
 
     /**
      * Gets a string for the given key and locale.
      *
-     * @param key The key for the target string.
+     * @param key    The key for the target string.
      * @param locale The target locale for the string.
      * @return The localized string for the given key.
      */
@@ -90,14 +87,14 @@ public interface ResourceLoader
      * Gets a parameterized string for the given key and locale and substitutes the
      * parameters using the passed array of arguments.
      *
-     * @param key The key for the target string.
-     * @param locale The target locale for the string.
+     * @param key       The key for the target string.
+     * @param locale    The target locale for the string.
      * @param arguments The arguments to substitute into the parameterized string.
      * @return The substituted localized string for the given key.
-     * @exception IllegalArgumentException If the parameterized string is invalid,
-     *            or if an argument in the <code>arguments</code> array
-     *            is not of the type expected by the format element(s)
-     *            that use it.
+     * @throws IllegalArgumentException If the parameterized string is invalid,
+     *                                  or if an argument in the <code>arguments</code> array
+     *                                  is not of the type expected by the format element(s)
+     *                                  that use it.
      */
     String getString(String key, Locale locale, Object[] arguments);
 

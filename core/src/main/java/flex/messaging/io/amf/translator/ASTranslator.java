@@ -27,20 +27,17 @@ import flex.messaging.util.Trace;
  * ASTranslator provides the ability to convert between ASObjects used by
  * Flex and Java objects in your application.
  */
-public class ASTranslator implements TypeMarshaller
-{
-    /** {@inheritDoc} */
-    public Object createInstance(Object source, Class desiredClass)
-    {
+public class ASTranslator implements TypeMarshaller {
+    /**
+     * {@inheritDoc}
+     */
+    public Object createInstance(Object source, Class desiredClass) {
         ActionScriptDecoder decoder = DecoderFactory.getDecoderForShell(desiredClass);
 
         Object instance = null;
-        if (decoder.hasShell())
-        {
+        if (decoder.hasShell()) {
             instance = decoder.createShell(source, desiredClass);
-        }
-        else
-        {
+        } else {
             instance = ClassUtil.createDefaultInstance(desiredClass, null);
         }
 
@@ -51,10 +48,8 @@ public class ASTranslator implements TypeMarshaller
      * Translate an object to another object of type class.
      * obj types should be ASObject, Boolean, String, Double, Date, ArrayList
      */
-    public Object convert(Object source, Class desiredClass)
-    {
-        if (source == null && !desiredClass.isPrimitive())
-        {
+    public Object convert(Object source, Class desiredClass) {
+        if (source == null && !desiredClass.isPrimitive()) {
             return null;
         }
 
@@ -66,8 +61,7 @@ public class ASTranslator implements TypeMarshaller
         else
             decoder = DecoderFactory.getDecoder(source, desiredClass);
 
-        if (Trace.remote)
-        {
+        if (Trace.remote) {
             Trace.trace("Decoder for " + (source == null ? "null" : source.getClass().toString()) +
                     " with desired " + desiredClass + " is " + decoder.getClass());
         }

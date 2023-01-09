@@ -20,8 +20,7 @@ package flex.messaging;
  * The interface for a shared server instance that may be associated with a
  * <tt>MessageBroker</tt> and used by endpoints.
  */
-public interface Server extends FlexComponent
-{
+public interface Server extends FlexComponent {
     /**
      * Returns the id for the server.
      * Endpoints can lookup server instances that have been associated with a <tt>MessageBroker</tt> using {@link MessageBroker#getServer(String)}.

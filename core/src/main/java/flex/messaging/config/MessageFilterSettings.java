@@ -18,16 +18,13 @@ package flex.messaging.config;
 
 /**
  * Settings class for message filters.
- * 
- *
  */
-public class MessageFilterSettings extends PropertiesSettings
-{
+public class MessageFilterSettings extends PropertiesSettings {
     /**
      * Filters belong to one of two types; those that filter messages
      * asynchronously and those that filter messages synchronously.
      */
-    public enum FilterType { ASYNC, SYNC }
+    public enum FilterType {ASYNC, SYNC}
 
     private String id;
 
@@ -36,8 +33,7 @@ public class MessageFilterSettings extends PropertiesSettings
      *
      * @return The id.
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
@@ -46,11 +42,10 @@ public class MessageFilterSettings extends PropertiesSettings
      *
      * @param value The id.
      */
-    public void setId(String value)
-    {
+    public void setId(String value) {
         id = value;
-    }    
-    
+    }
+
     private String className;
 
     /**
@@ -58,8 +53,7 @@ public class MessageFilterSettings extends PropertiesSettings
      *
      * @return The class name.
      */
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
@@ -68,32 +62,29 @@ public class MessageFilterSettings extends PropertiesSettings
      *
      * @param value The class name.
      */
-    public void setClassName(String value)
-    {
+    public void setClassName(String value) {
         className = value;
     }
-    
+
     private FilterType filterType;
-    
+
     /**
      * Returns the filter type.
-     * @see FilterType
-     * 
+     *
      * @return The filter type.
+     * @see FilterType
      */
-    public FilterType getFilterType()
-    {
+    public FilterType getFilterType() {
         return filterType;
     }
-    
+
     /**
      * Sets the filter type.
-     * @see FilterType
-     * 
+     *
      * @param value The filter type.
+     * @see FilterType
      */
-    public void setFilterType(FilterType value)
-    {
+    public void setFilterType(FilterType value) {
         filterType = value;
     }
 }

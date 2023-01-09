@@ -25,78 +25,63 @@ import flex.management.BaseControl;
 /**
  *
  */
-public class AdminConsoleDisplayRegistrar extends BaseControl implements AdminConsoleDisplayRegistrarMBean
-{
+public class AdminConsoleDisplayRegistrar extends BaseControl implements AdminConsoleDisplayRegistrarMBean {
     public static final String ID = "AdminConsoleDisplay";
-    
+
     private HashMap registeredExposedObjects;
-    
-    public AdminConsoleDisplayRegistrar(BaseControl parent)
-    {
+
+    public AdminConsoleDisplayRegistrar(BaseControl parent) {
         super(parent);
         registeredExposedObjects = new HashMap();
         register();
     }
 
-    public void registerObject(int type, String beanName, String propertyName)
-    {
+    public void registerObject(int type, String beanName, String propertyName) {
         Object objects = registeredExposedObjects.get(new Integer(type));
-        if (objects != null)
-        {
-            ((ArrayList)objects).add(beanName + ":" + propertyName);
-        }
-        else
-        {
+        if (objects != null) {
+            ((ArrayList) objects).add(beanName + ":" + propertyName);
+        } else {
             if (type < 1)
                 return;
-            
+
             objects = new ArrayList();
-            ((ArrayList)objects).add(beanName + ":" + propertyName);
+            ((ArrayList) objects).add(beanName + ":" + propertyName);
             registeredExposedObjects.put(new Integer(type), objects);
         }
     }
-    
-    public void registerObjects(int type, String beanName, String[] propertyNames)
-    {
-        for (int i = 0; i < propertyNames.length; i++)
-        {
+
+    public void registerObjects(int type, String beanName, String[] propertyNames) {
+        for (int i = 0; i < propertyNames.length; i++) {
             registerObject(type, beanName, propertyNames[i]);
         }
     }
-    
-    public void registerObjects(int[] types, String beanName, String[] propertyNames)
-    {
-        for (int j = 0; j < types.length; j++)
-        {
+
+    public void registerObjects(int[] types, String beanName, String[] propertyNames) {
+        for (int j = 0; j < types.length; j++) {
             registerObjects(types[j], beanName, propertyNames);
         }
     }
-    
-    public Integer[] getSupportedTypes() throws IOException
-    {
+
+    public Integer[] getSupportedTypes() throws IOException {
         Object[] array = registeredExposedObjects.keySet().toArray();
         Integer[] types = new Integer[array.length];
-        for (int i = 0; i < array.length; i++)
-        {
-            types[i] = (Integer)array[i];
+        for (int i = 0; i < array.length; i++) {
+            types[i] = (Integer) array[i];
         }
         return types;
     }
 
-    public String[] listForType(int type) throws IOException
-    {
+    public String[] listForType(int type) throws IOException {
         Object list = registeredExposedObjects.get(new Integer(type));
-        
-        return (list != null) ? (String[]) ((ArrayList)list).toArray(new String[0]) : new String[0];
+
+        return (list != null) ? (String[]) ((ArrayList) list).toArray(new String[0]) : new String[0];
     }
 
-    public String getId()
-    {
+    public String getId() {
         return ID;
     }
 
-    public String getType()
-    {
+    public String getType() {
         return ID;
     }
 

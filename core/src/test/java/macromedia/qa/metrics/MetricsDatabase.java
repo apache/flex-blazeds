@@ -26,8 +26,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class MetricsDatabase extends AbstractDatabase
-{
+public class MetricsDatabase extends AbstractDatabase {
     private Properties properties;
 
     private static final String DEFAULT_HOST = "10.1.144.66";
@@ -36,77 +35,59 @@ public class MetricsDatabase extends AbstractDatabase
     private static final String DEFAULT_URLBASE = "jdbc:odbc:";
     private static final String DEFAULT_DATASOURCE = "master";
 
-    public MetricsDatabase()
-    {
+    public MetricsDatabase() {
         init(null);
     }
 
-    public MetricsDatabase(Properties props)
-    {
+    public MetricsDatabase(Properties props) {
         properties = props;
         init(null);
     }
 
-    public MetricsDatabase(File f)
-    {
+    public MetricsDatabase(File f) {
         init(f);
     }
 
-    private void init(File f)
-    {
+    private void init(File f) {
         if (f != null)
             loadProperties(f);
 
         if (properties == null)
             properties = new Properties();
 
-        try
-        {
+        try {
             Class.forName(getDriver()).newInstance();
             connection = getConnection();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public Connection getConnection() throws SQLException
-    {
+    public Connection getConnection() throws SQLException {
         if (connection == null)
             connection = DriverManager.getConnection(getConnectionURL(), getConnectionProperties());
 
         return connection;
     }
 
-    public void dispose()
-    {
-        try
-        {
+    public void dispose() {
+        try {
             connection.close();
             connection = null;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
         }
     }
 
-    public void loadProperties(File f)
-    {
-        try
-        {
+    public void loadProperties(File f) {
+        try {
             FileInputStream fis = new FileInputStream(f);
             properties = new Properties();
             properties.load(fis);
-        }
-        catch (FileNotFoundException ex)
-        {
+        } catch (FileNotFoundException ex) {
             System.err.println();
             System.err.println("Could not find database properties file " + f.getAbsolutePath());
             System.err.println("\t" + ex.getMessage());
-        }
-        catch (IOException ioe)
-        {
+        } catch (IOException ioe) {
             System.err.println();
             System.err.println("Error reading database properties file " + f.getAbsolutePath());
             System.err.println("\t" + ioe.getMessage());
@@ -114,8 +95,7 @@ public class MetricsDatabase extends AbstractDatabase
 
     }
 
-    String getDriver()
-    {
+    String getDriver() {
         String driver = properties.getProperty("driver");
         if (driver == null)
             driver = DEFAULT_DRIVER;
@@ -125,8 +105,7 @@ public class MetricsDatabase extends AbstractDatabase
         return driver;
     }
 
-    String getHost()
-    {
+    String getHost() {
         String host = properties.getProperty("host");
         if (host == null)
             host = DEFAULT_HOST;
@@ -136,8 +115,7 @@ public class MetricsDatabase extends AbstractDatabase
         return host;
     }
 
-    String getPort()
-    {
+    String getPort() {
         String port = properties.getProperty("port");
         if (port == null)
             port = DEFAULT_PORT;
@@ -147,8 +125,7 @@ public class MetricsDatabase extends AbstractDatabase
         return port;
     }
 
-    String getAccount()
-    {
+    String getAccount() {
         String account = properties.getProperty("account");
         if (account != null)
             account = account.trim();
@@ -156,8 +133,7 @@ public class MetricsDatabase extends AbstractDatabase
         return account;
     }
 
-    String getPassword()
-    {
+    String getPassword() {
         String pass = properties.getProperty("password");
         if (pass != null)
             pass = pass.trim();
@@ -166,8 +142,7 @@ public class MetricsDatabase extends AbstractDatabase
     }
 
 
-    String getDatabase()
-    {
+    String getDatabase() {
         String db = properties.getProperty("database");
         if (db != null)
             db = db.trim();
@@ -175,8 +150,7 @@ public class MetricsDatabase extends AbstractDatabase
         return db;
     }
 
-    String getDatasource()
-    {
+    String getDatasource() {
         String ds = properties.getProperty("datasource");
         if (ds != null)
             ds = ds.trim();
@@ -184,8 +158,7 @@ public class MetricsDatabase extends AbstractDatabase
         return ds;
     }
 
-    String getURLBase()
-    {
+    String getURLBase() {
         String urlb = properties.getProperty("urlbase");
         if (urlb == null)
             urlb = DEFAULT_URLBASE;
@@ -193,13 +166,11 @@ public class MetricsDatabase extends AbstractDatabase
         return urlb;
     }
 
-    String getConnectionURL()
-    {
+    String getConnectionURL() {
         StringBuffer sb = new StringBuffer();
         String urlb = getURLBase();
 
-        if (DEFAULT_URLBASE.equals(urlb))
-        {
+        if (DEFAULT_URLBASE.equals(urlb)) {
             String odbc = getDatasource();
             if (odbc == null)
                 odbc = DEFAULT_DATASOURCE;
@@ -212,17 +183,14 @@ public class MetricsDatabase extends AbstractDatabase
                 sb.append(":");
 
             sb.append(odbc);
-        }
-        else
-        {
+        } else {
             sb.append(urlb).append(getHost()).append(":").append(getPort());
         }
 
         return sb.toString();
     }
 
-    private Properties getConnectionProperties()
-    {
+    private Properties getConnectionProperties() {
         Properties connectionProps = new Properties();
 
         if (getDatabase() != null)

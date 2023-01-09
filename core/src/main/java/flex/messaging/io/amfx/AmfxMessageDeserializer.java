@@ -39,8 +39,7 @@ import java.lang.reflect.Method;
 /**
  * SAX based AMFX Parser.
  */
-public class AmfxMessageDeserializer extends DefaultHandler implements MessageDeserializer
-{
+public class AmfxMessageDeserializer extends DefaultHandler implements MessageDeserializer {
     protected InputStream in;
 
     protected Locator locator;
@@ -56,10 +55,8 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
     /**
      * Constructor.
      * Create a new AmfxMessageDeserializer object
-     *
      */
-    public AmfxMessageDeserializer()
-    {
+    public AmfxMessageDeserializer() {
     }
 
     /**
@@ -68,11 +65,10 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
      * AMFX data should not be made.
      *
      * @param context SerializationContext object
-     * @param in InputStream to process
-     * @param trace AmfTrace object
+     * @param in      InputStream to process
+     * @param trace   AmfTrace object
      */
-    public void initialize(SerializationContext context, InputStream in, AmfTrace trace)
-    {
+    public void initialize(SerializationContext context, InputStream in, AmfTrace trace) {
         amfxIn = new AmfxInput(context);
         this.in = in;
 
@@ -88,20 +84,18 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
      *
      * @param context the SerializationContext object
      */
-    public void setSerializationContext(SerializationContext context)
-    {
+    public void setSerializationContext(SerializationContext context) {
         amfxIn = new AmfxInput(context);
     }
 
     /**
      * Read message from the ActionMessage and ActionContext.
      *
-     * @param m current ActionMessage
+     * @param m       current ActionMessage
      * @param context current ActionContext
      * @throws IOException when the read message process failed
      */
-    public void readMessage(ActionMessage m, ActionContext context) throws IOException
-    {
+    public void readMessage(ActionMessage m, ActionContext context) throws IOException {
         if (isDebug)
             debugTrace.startRequest("Deserializing AMFX/HTTP request");
 
@@ -116,70 +110,54 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
 
     /**
      * Read Object.
+     *
      * @return Object the object read from AmfxInput
      * @throws ClassNotFoundException, IOException when exceptions occurs in reading the object
      */
-    public Object readObject() throws ClassNotFoundException, IOException
-    {
+    public Object readObject() throws ClassNotFoundException, IOException {
         return amfxIn.readObject();
     }
 
-    protected void parse(ActionMessage m)
-    {
-        try
-        {
+    protected void parse(ActionMessage m) {
+        try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(false);
             factory.setNamespaceAware(true);
             SAXParser parser = factory.newSAXParser();
             parser.parse(in, this);
-        }
-        catch (MessageException ex)
-        {
+        } catch (MessageException ex) {
             clientMessageEncodingException(m, ex);
-        }
-        catch (SAXParseException e)
-        {
-            if (e.getException() != null)
-            {
+        } catch (SAXParseException e) {
+            if (e.getException() != null) {
                 clientMessageEncodingException(m, e.getException());
-            }
-            else
-            {
+            } else {
                 clientMessageEncodingException(m, e);
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             clientMessageEncodingException(m, ex);
         }
     }
 
     /**
      * Implement {@link org.xml.sax.EntityResolver#resolveEntity(String, String)}.
-     * 
+     * <p>
      * AMFX does not need or use external entities, so disallow external entities
-     * to prevent external entity injection attacks. 
+     * to prevent external entity injection attacks.
      *
      * @param publicId the public Id
      * @param systemId the system Id
      * @return InputSource the InputSource after entity resolution
      * @throws SAXException, IOException if the process failed
      */
-    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
-    {
+    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
         throw new MessageException("External entities are not allowed");
     }
-     
-    protected void clientMessageEncodingException(ActionMessage m, Throwable t)
-    {
+
+    protected void clientMessageEncodingException(ActionMessage m, Throwable t) {
         MessageException me;
-        if (t instanceof MessageException)
-        {
-            me = (MessageException)t;
-        }
-        else
-        {
+        if (t instanceof MessageException) {
+            me = (MessageException) t;
+        } else {
             me = new MessageException("Error occurred parsing AMFX: " + t.getMessage());
         }
 
@@ -190,41 +168,28 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
     /**
      * Start process of an Element.
      *
-     * @param uri the URI of the element
-     * @param localName the local name of the element
-     * @param qName the qualify name of the element
+     * @param uri        the URI of the element
+     * @param localName  the local name of the element
+     * @param qName      the qualify name of the element
      * @param attributes the Attributes in the element
      * @throws SAXException if the process failed
      */
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
-    {
-        try
-        {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        try {
             String methodName = "start_" + localName;
             Method method = amfxIn.getClass().getMethod(methodName, attribArr);
             method.invoke(amfxIn, new Object[]{attributes});
-        }
-        catch (NoSuchMethodException e)
-        {
+        } catch (NoSuchMethodException e) {
             fatalError(new SAXParseException("Unknown type: " + qName, locator));
-        }
-        catch (IllegalAccessException e)
-        {
+        } catch (IllegalAccessException e) {
             fatalError(new SAXParseException(e.getMessage(), locator, e));
-        }
-        catch (InvocationTargetException e)
-        {
+        } catch (InvocationTargetException e) {
             Throwable t = e.getTargetException();
-            if (t instanceof SAXException)
-            {
-                throw (SAXException)t;
-            }
-            else if (t instanceof Exception)
-            {
-                fatalError(new SAXParseException(t.getMessage(), locator, (Exception)t));
-            }
-            else
-            {
+            if (t instanceof SAXException) {
+                throw (SAXException) t;
+            } else if (t instanceof Exception) {
+                fatalError(new SAXParseException(t.getMessage(), locator, (Exception) t));
+            } else {
                 fatalError(new SAXParseException(e.getMessage(), locator, e));
             }
         }
@@ -233,40 +198,27 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
     /**
      * End process of an Element.
      *
-     * @param uri the URI of the element
+     * @param uri       the URI of the element
      * @param localName the local name of the element
-     * @param qName the qualify name of the element
+     * @param qName     the qualify name of the element
      * @throws SAXException if the process failed
      */
-    public void endElement(String uri, String localName, String qName) throws SAXException
-    {
-        try
-        {
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        try {
             String methodName = "end_" + localName;
             Method method = amfxIn.getClass().getMethod(methodName, new Class[]{});
             method.invoke(amfxIn, new Object[]{});
-        }
-        catch (NoSuchMethodException e)
-        {
+        } catch (NoSuchMethodException e) {
             fatalError(new SAXParseException("Unfinished type: " + qName, locator));
-        }
-        catch (IllegalAccessException e)
-        {
+        } catch (IllegalAccessException e) {
             fatalError(new SAXParseException(e.getMessage(), locator, e));
-        }
-        catch (InvocationTargetException e)
-        {
+        } catch (InvocationTargetException e) {
             Throwable t = e.getTargetException();
-            if (t instanceof SAXException)
-            {
-                throw (SAXException)t;
-            }
-            else if (t instanceof Error)
-            {
-                throw (Error)t;
-            }
-            else
-            {
+            if (t instanceof SAXException) {
+                throw (SAXException) t;
+            } else if (t instanceof Error) {
+                throw (Error) t;
+            } else {
                 fatalError(new SAXParseException(t.getMessage(), locator));
             }
         }
@@ -275,16 +227,14 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
     /**
      * Process a char array.
      *
-     * @param ch the char array
-     * @param start the start position in the char array
+     * @param ch     the char array
+     * @param start  the start position in the char array
      * @param length the length of chars to process
      * @throws SAXException if the process failed
      */
-    public void characters(char ch[], int start, int length) throws SAXException
-    {
+    public void characters(char ch[], int start, int length) throws SAXException {
         String chars = new String(ch, start, length);
-        if (chars.length() > 0)
-        {
+        if (chars.length() > 0) {
             amfxIn.text(chars);
         }
     }
@@ -294,8 +244,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
      *
      * @param l the DocumentLocator object
      */
-    public void setDocumentLocator(Locator l)
-    {
+    public void setDocumentLocator(Locator l) {
         locator = l;
     }
 
@@ -306,8 +255,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
      * @param exception SAXParseException
      * @throws SAXException rethrow the SAXException
      */
-    public void error(SAXParseException exception) throws SAXException
-    {
+    public void error(SAXParseException exception) throws SAXException {
         throw new MessageException(exception.getMessage());
     }
 
@@ -317,10 +265,9 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
      * @param exception SAXParseException
      * @throws SAXException rethrow the SAXException
      */
-    public void fatalError(SAXParseException exception) throws SAXException
-    {
+    public void fatalError(SAXParseException exception) throws SAXException {
         if ((exception.getException() != null) && (exception.getException() instanceof MessageException))
-            throw (MessageException)exception.getException();
+            throw (MessageException) exception.getException();
         throw new MessageException(exception.getMessage());
     }
 
@@ -330,8 +277,7 @@ public class AmfxMessageDeserializer extends DefaultHandler implements MessageDe
      * @param exception SAXParseException
      * @throws SAXException rethrow the SAXException
      */
-    public void warning(SAXParseException exception) throws SAXException
-    {
+    public void warning(SAXParseException exception) throws SAXException {
         throw new MessageException(exception.getMessage());
     }
 

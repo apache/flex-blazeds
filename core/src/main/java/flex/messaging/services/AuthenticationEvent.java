@@ -18,6 +18,7 @@ package flex.messaging.services;
 
 import flex.messaging.FlexSession;
 import flex.messaging.client.FlexClient;
+
 import java.security.Principal;
 import java.util.EventObject;
 
@@ -28,8 +29,7 @@ import java.util.EventObject;
  * and <tt>FlexClient</tt> for the user. Following a logout, these objects may have been invalidated
  * so exercise caution with accessing and using them.
  */
-public class AuthenticationEvent extends EventObject
-{
+public class AuthenticationEvent extends EventObject {
     private static final long serialVersionUID = 6002063582698638736L;
 
     //--------------------------------------------------------------------------
@@ -40,16 +40,15 @@ public class AuthenticationEvent extends EventObject
 
     /**
      * Constructs an <tt>AuthenticationEvent</tt>.
-     * 
-     * @param source The <tt>AuthenticationService</tt> dispatching this event.
-     * @param username The username used to authenticate
+     *
+     * @param source      The <tt>AuthenticationService</tt> dispatching this event.
+     * @param username    The username used to authenticate
      * @param credentials The password or secret used to authenticate.
-     * @param principal The user's <tt>Principal</tt>.
+     * @param principal   The user's <tt>Principal</tt>.
      * @param flexSession The user's <tt>FlexSession</tt>.
-     * @param flexClient The user's <tt>FlexClient</tt>.
+     * @param flexClient  The user's <tt>FlexClient</tt>.
      */
-    public AuthenticationEvent(final AuthenticationService source, final String username, final Object credentials, final Principal principal, final FlexSession flexSession, final FlexClient flexClient)
-    {
+    public AuthenticationEvent(final AuthenticationService source, final String username, final Object credentials, final Principal principal, final FlexSession flexSession, final FlexClient flexClient) {
         super(source);
         this.username = username;
         this.credentials = credentials;
@@ -67,32 +66,30 @@ public class AuthenticationEvent extends EventObject
     //----------------------------------
     //  credentials
     //----------------------------------    
-    
+
     private final Object credentials;
-    
+
     /**
      * Returns the credentials used for authentication, <code>null</code> for logout events.
-     * 
+     *
      * @return The credentials used for authentication, <code>null</code> for logout events.
      */
-    public Object getCredentials()
-    {
+    public Object getCredentials() {
         return credentials;
     }
-    
+
     //----------------------------------
     //  flexClient
     //----------------------------------
 
     private final FlexClient flexClient;
-    
+
     /**
      * Returns the <tt>FlexClient</tt> associated with this event.
-     * 
+     *
      * @return The <tt>FlexClient</tt> associated with this event.
      */
-    public FlexClient getFlexClient()
-    {
+    public FlexClient getFlexClient() {
         return flexClient;
     }
 
@@ -101,55 +98,51 @@ public class AuthenticationEvent extends EventObject
     //----------------------------------
 
     private final FlexSession flexSession;
-    
+
     /**
      * Returns the <tt>FlexSession</tt> associated with this event.
-     * 
+     *
      * @return The <tt>FlexSession</tt> associated with this event.
      */
-    public FlexSession getFlexSession()
-    {
+    public FlexSession getFlexSession() {
         return flexSession;
-    }    
-    
+    }
+
     //----------------------------------
     //  principal
     //----------------------------------
 
     private final Principal principal;
-    
+
     /**
      * Returns the <tt>Principal</tt> associated with this event.
-     * 
+     *
      * @return The <tt>Principal</tt> associated with this event.
      */
-    public Principal getPrincipal()
-    {
+    public Principal getPrincipal() {
         return principal;
     }
-    
+
     //----------------------------------
     //  source
     //----------------------------------
-    
-    public AuthenticationService getSource()
-    {
+
+    public AuthenticationService getSource() {
         return AuthenticationService.class.cast(super.getSource());
     }
-    
+
     //----------------------------------
     //  username
     //----------------------------------
-    
+
     private String username;
-    
+
     /**
      * Returns the username for authentication, <code>null</code> for logout events.
-     * 
+     *
      * @return The username for authentication, <code>null</code> for logout events.
      */
-    public String getUsername()
-    {
+    public String getUsername() {
         return username;
     }
 }

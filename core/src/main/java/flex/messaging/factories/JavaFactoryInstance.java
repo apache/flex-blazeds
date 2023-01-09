@@ -35,8 +35,7 @@ import flex.messaging.util.ClassUtil;
  * @see flex.messaging.factories.JavaFactory
  */
 
-public class JavaFactoryInstance extends FactoryInstance
-{
+public class JavaFactoryInstance extends FactoryInstance {
     Object applicationInstance = null;
     Class javaClass = null;
     String attributeId;
@@ -45,12 +44,11 @@ public class JavaFactoryInstance extends FactoryInstance
      * Constructs a <code>JavaFactoryInstance</code>, assigning its factory, id,
      * and properties.
      *
-     * @param factory The <code>JavaFactory</code> that created this instance.
-     * @param id The id for the <code>JavaFactoryInstance</code>.
+     * @param factory    The <code>JavaFactory</code> that created this instance.
+     * @param id         The id for the <code>JavaFactoryInstance</code>.
      * @param properties The properties for the <code>JavaFactoryInstance</code>.
      */
-    public JavaFactoryInstance(JavaFactory factory, String id, ConfigMap properties)
-    {
+    public JavaFactoryInstance(JavaFactory factory, String id, ConfigMap properties) {
         super(factory, id, properties);
     }
 
@@ -59,8 +57,7 @@ public class JavaFactoryInstance extends FactoryInstance
      *
      * @param attributeId The attribute id for the <code>JavaFactoryInstance</code>.
      */
-    public void setAttributeId(String attributeId)
-    {
+    public void setAttributeId(String attributeId) {
         this.attributeId = attributeId;
     }
 
@@ -69,8 +66,7 @@ public class JavaFactoryInstance extends FactoryInstance
      *
      * @return attributeId The attribute id for the <code>JavaFactoryInstance</code>.
      */
-    public String getAttributeId()
-    {
+    public String getAttributeId() {
         return attributeId;
     }
 
@@ -78,8 +74,8 @@ public class JavaFactoryInstance extends FactoryInstance
      * Sets the instance class to null, in addition to updating the
      * <code>source</code> property.
      */
-    @Override public void setSource(String source)
-    {
+    @Override
+    public void setSource(String source) {
         super.setSource(source);
         if (javaClass != null)
             javaClass = null;
@@ -91,16 +87,13 @@ public class JavaFactoryInstance extends FactoryInstance
      *
      * @return the instance
      */
-    public Object createInstance()
-    {
+    public Object createInstance() {
         Object inst = ClassUtil.createDefaultInstance(getInstanceClass(), null);
 
         MessageBroker mb = FlexContext.getMessageBroker();
-        if (mb != null)
-        {
+        if (mb != null) {
             Destination destination = mb.getRegisteredDestination(getId());
-            if (destination != null && destination.isInitialized())
-            {
+            if (destination != null && destination.isInitialized()) {
                 if (inst instanceof FlexConfigurable)
                     ((FlexConfigurable) inst).initialize(getId(), getProperties());
             }
@@ -112,12 +105,12 @@ public class JavaFactoryInstance extends FactoryInstance
     /**
      * Creates an instance class from specified <code>source</code>.
      */
-    @Override public Class getInstanceClass()
-    {
+    @Override
+    public Class getInstanceClass() {
         if (javaClass == null)
             javaClass = ClassUtil.createClass(getSource(),
-                     FlexContext.getMessageBroker() == null ? this.getClass().getClassLoader() :
-                     FlexContext.getMessageBroker().getClassLoader());
+                    FlexContext.getMessageBroker() == null ? this.getClass().getClassLoader() :
+                            FlexContext.getMessageBroker().getClassLoader());
 
         return javaClass;
     }
@@ -126,21 +119,19 @@ public class JavaFactoryInstance extends FactoryInstance
      * Updates the session so that these values get replicated to other nodes
      * in the cluster.  Possibly we should make this configurable?
      */
-    @Override public void operationComplete(Object instance)
-    {
-        if (getScope().equalsIgnoreCase(FlexFactory.SCOPE_SESSION))
-        {
+    @Override
+    public void operationComplete(Object instance) {
+        if (getScope().equalsIgnoreCase(FlexFactory.SCOPE_SESSION)) {
             FlexSession session = FlexContext.getFlexSession();
-            if (session != null && session.isValid())
-            {
+            if (session != null && session.isValid()) {
                 session.setAttribute(getAttributeId(), instance);
             }
         }
     }
 
 
-    @Override public String toString()
-    {
+    @Override
+    public String toString() {
         return "JavaFactory instance for id=" + getId() + " source=" + getSource() + " scope=" + getScope();
     }
 }

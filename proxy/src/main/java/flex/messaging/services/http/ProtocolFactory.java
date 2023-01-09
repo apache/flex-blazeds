@@ -34,12 +34,11 @@ import flex.messaging.FlexConfigurable;
  * constructor.
  * </p>
  */
-public interface ProtocolFactory extends FlexConfigurable
-{
+public interface ProtocolFactory extends FlexConfigurable {
     /**
      * Returns a custom implementation of Apache Commons
      * HTTPClient's Protocol interface.
-     * 
+     *
      * @return An implementation of org.apache.commons.httpclient.protocol.Protocol.
      */
     Protocol getProtocol();

@@ -31,13 +31,9 @@ import java.util.Map;
  * The method takes values such as GET, POST,
  * HEAD etc.
  * </p>
- *
- *
  */
-public class HTTPMessage extends RPCMessage
-{
-    public HTTPMessage()
-    {
+public class HTTPMessage extends RPCMessage {
+    public HTTPMessage() {
     }
 
     /**
@@ -53,85 +49,67 @@ public class HTTPMessage extends RPCMessage
     protected Map httpHeaders;
     protected boolean recordHeaders;
 
-    public String getContentType()
-    {
+    public String getContentType() {
         return contentType;
     }
 
-    public void setContentType(String type)
-    {
+    public void setContentType(String type) {
         contentType = type;
     }
 
-    public String getMethod()
-    {
+    public String getMethod() {
         return method;
     }
 
-    public void setMethod(String m)
-    {
-        if (m != null)
-        {
+    public void setMethod(String m) {
+        if (m != null) {
             method = m.trim().toUpperCase();
-        }
-        else
-        {
+        } else {
             method = m;
         }
     }
 
-    public Map getHttpHeaders()
-    {
+    public Map getHttpHeaders() {
         return httpHeaders;
     }
 
-    public void setHttpHeaders(Map h)
-    {
+    public void setHttpHeaders(Map h) {
         httpHeaders = h;
     }
 
-    public void setUrl(String s)
-    {
-        try
-        {
+    public void setUrl(String s) {
+        try {
             url = URLDecoder.decode(s, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
+        } catch (UnsupportedEncodingException e) {
             url = s;
         }
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public boolean getRecordHeaders()
-    {
+    public boolean getRecordHeaders() {
         return recordHeaders;
     }
 
-    public void setRecordHeaders(boolean recordHeaders)
-    {
+    public void setRecordHeaders(boolean recordHeaders) {
         this.recordHeaders = recordHeaders;
     }
 
-    protected String toStringFields(int indentLevel)
-    {
+    protected String toStringFields(int indentLevel) {
         String sep = getFieldSeparator(indentLevel);
         StringBuilder sb = new StringBuilder();
         sb.append(sep).append("method = ").append(getMethod()).
-           append(sep).append("url = ").append(getUrl()).
-           append(sep).append("headers = ").append(getHeaders());
+                append(sep).append("url = ").append(getUrl()).
+                append(sep).append("headers = ").append(getHeaders());
         sb.append(super.toStringFields(indentLevel));
         return sb.toString();
     }
 
-    protected String internalBodyToString(Object body, int indentLevel) 
-    {
+    protected String internalBodyToString(Object body, int indentLevel) {
         return body instanceof String ?
-            StringUtils.prettifyString((String) body) :
-            super.internalBodyToString(body, indentLevel);
+                StringUtils.prettifyString((String) body) :
+                super.internalBodyToString(body, indentLevel);
     }
 }

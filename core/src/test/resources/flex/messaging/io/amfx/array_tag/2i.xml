@@ -29,13 +29,13 @@
                     </array>
                 </item>
                 <array length="2">
-                    <true />
-                    <false />
+                    <true/>
+                    <false/>
                 </array>
             </array>
             <array length="2">
-                <null />
-                <ref id="2" />
+                <null/>
+                <ref id="2"/>
             </array>
         </array>
     </body>

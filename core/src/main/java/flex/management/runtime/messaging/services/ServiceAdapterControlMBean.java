@@ -24,8 +24,7 @@ import flex.management.BaseControlMBean;
 /**
  * Defines the runtime monitoring and management interface for service adapters.
  */
-public interface ServiceAdapterControlMBean extends BaseControlMBean
-{
+public interface ServiceAdapterControlMBean extends BaseControlMBean {
     /**
      * Returns <code>true</code> if the <code>ServiceAdapter</code> is running.
      *

@@ -28,10 +28,11 @@ import flex.messaging.services.Service;
 /**
  * A logical reference to a RemotingDestination.
  */
-public class RemotingDestination extends FactoryDestination
-{
+public class RemotingDestination extends FactoryDestination {
     static final long serialVersionUID = -8454338922948146048L;
-    /** Log category for <code>RemotingDestination</code>. */
+    /**
+     * Log category for <code>RemotingDestination</code>.
+     */
     public static final String LOG_CATEGORY = LogCategories.SERVICE_REMOTING;
 
     private static final String REMOTING_SERVICE_CLASS = "flex.messaging.services.RemotingService";
@@ -54,8 +55,7 @@ public class RemotingDestination extends FactoryDestination
     /**
      * Constructs an unmanaged <code>RemotingDestination</code> instance.
      */
-    public RemotingDestination()
-    {
+    public RemotingDestination() {
         this(false);
     }
 
@@ -63,10 +63,9 @@ public class RemotingDestination extends FactoryDestination
      * Constructs a <code>RemotingDestination</code> with the indicated management.
      *
      * @param enableManagement <code>true</code> if the <code>RemotingDestination</code>
-     * is manageable; otherwise <code>false</code>.
+     *                         is manageable; otherwise <code>false</code>.
      */
-    public RemotingDestination(boolean enableManagement)
-    {
+    public RemotingDestination(boolean enableManagement) {
         super(enableManagement);
     }
 
@@ -76,29 +75,25 @@ public class RemotingDestination extends FactoryDestination
      * version of this method to retrieve a DataDestination if you are not in the
      * context of processing a current message when you need the RemotingDestination.
      *
-     * @param serverId the id of the server containing the remoting destination to be retrieved.
+     * @param serverId        the id of the server containing the remoting destination to be retrieved.
      * @param destinationName the name of the remoting destination to be retrieved.
-     *
      * @return remoting destination corresponding to the supplied server id and destination name
      */
-    public static RemotingDestination getRemotingDestination(String serverId, String destinationName)
-    {
+    public static RemotingDestination getRemotingDestination(String serverId, String destinationName) {
         MessageBroker broker = MessageBroker.getMessageBroker(serverId);
 
-        if (broker == null)
-        {
+        if (broker == null) {
             // Unable to locate a MessageBroker initialized with server id ''{0}''
             MessageException me = new MessageException();
-            me.setMessage(NO_MESSAGE_BROKER, new Object[] { serverId });
+            me.setMessage(NO_MESSAGE_BROKER, new Object[]{serverId});
             throw me;
         }
 
         RemotingService rs = (RemotingService) broker.getServiceByType(REMOTING_SERVICE_CLASS);
-        if (rs == null)
-        {
+        if (rs == null) {
             // MessageBroker with server id ''{0}'' does not contain a service with class flex.messaging.remoting.RemotingService
             MessageException me = new MessageException();
-            me.setMessage(NO_REMOTING_SERVICE, new Object[] { serverId });
+            me.setMessage(NO_REMOTING_SERVICE, new Object[]{serverId});
             throw me;
         }
 
@@ -117,8 +112,7 @@ public class RemotingDestination extends FactoryDestination
      *
      * @return The log category of the component.
      */
-    public String getLogCategory()
-    {
+    public String getLogCategory() {
         return LOG_CATEGORY;
     }
 
@@ -128,9 +122,8 @@ public class RemotingDestination extends FactoryDestination
      *
      * @param service the <code>RemotingService</code> to associate with this destination.
      */
-    public void setService(Service service)
-    {
-        RemotingService remotingService = (RemotingService)service;
+    public void setService(Service service) {
+        RemotingService remotingService = (RemotingService) service;
         super.setService(remotingService);
         setMethodMatcher(remotingService.getMethodMatcher());
     }
@@ -140,19 +133,18 @@ public class RemotingDestination extends FactoryDestination
     // Other public APIs
     //
     //--------------------------------------------------------------------------
+
     /**
      *
      */
-    public MethodMatcher getMethodMatcher()
-    {
+    public MethodMatcher getMethodMatcher() {
         return methodMatcher;
     }
 
     /**
      *
      */
-    public void setMethodMatcher(MethodMatcher matcher)
-    {
+    public void setMethodMatcher(MethodMatcher matcher) {
         methodMatcher = matcher;
     }
 
@@ -168,8 +160,7 @@ public class RemotingDestination extends FactoryDestination
      *
      * @param service The <code>Service</code> that manages this <code>RemotingDestination</code>.
      */
-    protected void setupDestinationControl(Service service)
-    {
+    protected void setupDestinationControl(Service service) {
         controller = new RemotingDestinationControl(this, service.getControl());
         controller.register();
         setControl(controller);

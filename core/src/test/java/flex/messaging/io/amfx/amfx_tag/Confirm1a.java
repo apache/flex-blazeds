@@ -20,23 +20,19 @@ import flex.messaging.io.amfx.DeserializationConfirmation;
 import flex.messaging.io.amf.ActionMessage;
 import flex.messaging.MessageException;
 
-public class Confirm1a extends DeserializationConfirmation
-{
+public class Confirm1a extends DeserializationConfirmation {
     private ActionMessage EXPECTED_VALUE;
 
-    public Confirm1a()
-    {
+    public Confirm1a() {
         ActionMessage m = new ActionMessage();
         EXPECTED_VALUE = m;
     }
 
-    public ActionMessage getExpectedMessage()
-    {
+    public ActionMessage getExpectedMessage() {
         return EXPECTED_VALUE;
     }
 
-    public MessageException getExpectedException()
-    {
+    public MessageException getExpectedException() {
         return null;
     }
 }

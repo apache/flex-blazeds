@@ -24,8 +24,7 @@ import flex.messaging.endpoints.AMFEndpoint;
  * for monitoring and managing an <code>AMFEndpoint</code> at runtime.
  */
 public class AMFEndpointControl extends PollingEndpointControl implements
-        AMFEndpointControlMBean
-{
+        AMFEndpointControlMBean {
     private static final String TYPE = "AMFEndpoint";
 
     /**
@@ -33,16 +32,16 @@ public class AMFEndpointControl extends PollingEndpointControl implements
      * endpoint and parent MBean.
      *
      * @param endpoint The <code>AMFEndpoint</code> managed by this MBean.
-     * @param parent The parent MBean in the management hierarchy.
+     * @param parent   The parent MBean in the management hierarchy.
      */
-    public AMFEndpointControl(AMFEndpoint endpoint, BaseControl parent)
-    {
+    public AMFEndpointControl(AMFEndpoint endpoint, BaseControl parent) {
         super(endpoint, parent);
     }
 
-    /** {@inheritDoc} */
-    public String getType()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public String getType() {
         return TYPE;
     }
 }

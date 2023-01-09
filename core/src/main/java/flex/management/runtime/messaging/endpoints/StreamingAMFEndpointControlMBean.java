@@ -17,10 +17,9 @@
 package flex.management.runtime.messaging.endpoints;
 
 /**
- * Defines the runtime monitoring and management interface for managed streaming 
+ * Defines the runtime monitoring and management interface for managed streaming
  * AMF endpoints.
  */
-public interface StreamingAMFEndpointControlMBean extends StreamingEndpointControlMBean
-{
+public interface StreamingAMFEndpointControlMBean extends StreamingEndpointControlMBean {
     // Empty for now
 }

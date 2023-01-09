@@ -28,11 +28,8 @@ import java.lang.reflect.Modifier;
  * Utility class to create instances of Complex Types
  * and handle error conditions consistently across the RemoteObject
  * code base.
- *
- *
  */
-public class ClassUtil
-{
+public class ClassUtil {
     private static final int TYPE_NOT_FOUND = 10008;
     private static final int UNEXPECTED_TYPE = 10009;
     private static final int CANNOT_CREATE_TYPE = 10010;
@@ -41,8 +38,7 @@ public class ClassUtil
 
     private static final String NULL = "null";
 
-    private ClassUtil()
-    {
+    private ClassUtil() {
     }
 
     /**
@@ -52,34 +48,30 @@ public class ClassUtil
      * @param type fully qualified class name
      * @return the class instance
      */
-    public static Class createClass(String type)
-    {
+    public static Class createClass(String type) {
         return createClass(type, null);
     }
 
     /**
      * Create a class of the specified type using the provided class loader.
-     * @param type fully qualified class name
+     *
+     * @param type   fully qualified class name
      * @param loader class loader, if null the class loader that loaded ClassUtil is used
      * @return the class instance
      */
-    public static Class createClass(String type, ClassLoader loader)
-    {
-        try
-        {
+    public static Class createClass(String type, ClassLoader loader) {
+        try {
             if (type != null)
                 type = type.trim();
 
             if (loader == null) // will use the loader for this class
                 return Class.forName(type);
             return Class.forName(type, true, loader);
-        }
-        catch (ClassNotFoundException cnf)
-        {
+        } catch (ClassNotFoundException cnf) {
             // Cannot invoke type '{type}'
             MessageException ex = new MessageException();
-            ex.setMessage(TYPE_NOT_FOUND, new Object[] {type});
-            ex.setDetails(TYPE_NOT_FOUND, "0", new Object[] {type});
+            ex.setMessage(TYPE_NOT_FOUND, new Object[]{type});
+            ex.setDetails(TYPE_NOT_FOUND, "0", new Object[]{type});
             ex.setCode(MessageException.CODE_SERVER_RESOURCE_UNAVAILABLE);
             throw ex;
         }
@@ -89,12 +81,11 @@ public class ClassUtil
      * Creates the default instance of the class and verifies that it matches
      * with the expected class type, if one passed in.
      *
-     * @param cls The class to create.
+     * @param cls              The class to create.
      * @param expectedInstance The expected class type.
      * @return The default instance of the class.
      */
-    public static Object createDefaultInstance(Class cls, Class expectedInstance)
-    {
+    public static Object createDefaultInstance(Class cls, Class expectedInstance) {
         return ClassUtil.createDefaultInstance(cls, expectedInstance, false /*validate*/);
     }
 
@@ -103,35 +94,30 @@ public class ClassUtil
      * with the expected class type, if one passed in. It also validates the creation
      * of the instance with the deserialization validator, if one exists.
      *
-     * @param cls The class to create.
+     * @param cls              The class to create.
      * @param expectedInstance The expected class type.
-     * @param validate Controls whether the creation of the instance is validated
-     * with the deserialization validator.
+     * @param validate         Controls whether the creation of the instance is validated
+     *                         with the deserialization validator.
      * @return The default instance of the class.
      */
-    public static Object createDefaultInstance(Class cls, Class expectedInstance, boolean validate)
-    {
+    public static Object createDefaultInstance(Class cls, Class expectedInstance, boolean validate) {
         if (validate)
             validateCreation(cls);
 
         String type = cls.getName();
-        try
-        {
+        try {
             Object instance = cls.newInstance();
 
-            if (expectedInstance != null && !expectedInstance.isInstance(instance))
-            {
+            if (expectedInstance != null && !expectedInstance.isInstance(instance)) {
                 // Given type '{name}' is not of expected type '{expectedName}'.
                 MessageException ex = new MessageException();
-                ex.setMessage(UNEXPECTED_TYPE, new Object[] {instance.getClass().getName(), expectedInstance.getName()});
+                ex.setMessage(UNEXPECTED_TYPE, new Object[]{instance.getClass().getName(), expectedInstance.getName()});
                 ex.setCode(MessageException.CODE_SERVER_RESOURCE_UNAVAILABLE);
                 throw ex;
             }
 
             return instance;
-        }
-        catch (IllegalAccessException ia)
-        {
+        } catch (IllegalAccessException ia) {
             boolean details = false;
             StringBuffer message = new StringBuffer("Unable to create a new instance of type ");
             message.append(type);
@@ -139,24 +125,20 @@ public class ClassUtil
             //Look for a possible cause...
 
             // Class might not have a suitable constructor?
-            if (!hasValidDefaultConstructor(cls))
-            {
+            if (!hasValidDefaultConstructor(cls)) {
                 details = true;
             }
 
             // Unable to create a new instance of type '{type}'.
             MessageException ex = new MessageException();
-            ex.setMessage(CANNOT_CREATE_TYPE, new Object[] {type});
-            if (details)
-            {
+            ex.setMessage(CANNOT_CREATE_TYPE, new Object[]{type});
+            if (details) {
                 //Types must have a public, no arguments constructor
                 ex.setDetails(CANNOT_CREATE_TYPE, "0");
             }
             ex.setCode(MessageException.CODE_SERVER_RESOURCE_UNAVAILABLE);
             throw ex;
-        }
-        catch (InstantiationException ine)
-        {
+        } catch (InstantiationException ine) {
             String variant = null;
 
             //Look for a possible cause...
@@ -169,73 +151,56 @@ public class ClassUtil
                 variant = "3"; // Types cannot be instantiated without a public, no arguments constructor.
 
             MessageException ex = new MessageException();
-            ex.setMessage(CANNOT_CREATE_TYPE, new Object[] {type});
+            ex.setMessage(CANNOT_CREATE_TYPE, new Object[]{type});
             if (variant != null)
                 ex.setDetails(CANNOT_CREATE_TYPE, variant);
             ex.setCode(MessageException.CODE_SERVER_RESOURCE_UNAVAILABLE);
             throw ex;
-        }
-        catch (SecurityException se)
-        {
+        } catch (SecurityException se) {
             MessageException ex = new MessageException();
-            ex.setMessage(SECURITY_ERROR, new Object[] {type});
+            ex.setMessage(SECURITY_ERROR, new Object[]{type});
             ex.setCode(MessageException.CODE_SERVER_RESOURCE_UNAVAILABLE);
             ex.setRootCause(se);
             throw ex;
-        }
-        catch (MessageException me)
-        {
+        } catch (MessageException me) {
             throw me;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             MessageException ex = new MessageException();
-            ex.setMessage(UNKNOWN_ERROR, new Object[] {type});
+            ex.setMessage(UNKNOWN_ERROR, new Object[]{type});
             ex.setCode(MessageException.CODE_SERVER_RESOURCE_UNAVAILABLE);
             ex.setRootCause(e);
             throw ex;
         }
     }
 
-    public static boolean isAbstract(Class cls)
-    {
-        try
-        {
-            if (cls != null)
-            {
+    public static boolean isAbstract(Class cls) {
+        try {
+            if (cls != null) {
                 int mod = cls.getModifiers();
                 return Modifier.isAbstract(mod);
             }
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             return false;
         }
 
         return false;
     }
 
-    public static boolean hasValidDefaultConstructor(Class cls)
-    {
-        try
-        {
-            if (cls != null)
-            {
+    public static boolean hasValidDefaultConstructor(Class cls) {
+        try {
+            if (cls != null) {
                 Constructor c = cls.getConstructor();
                 int mod = c.getModifiers();
                 return Modifier.isPublic(mod);
             }
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             return false;
         }
 
         return false;
     }
 
-    public static String classLoaderToString(ClassLoader cl)
-    {
+    public static String classLoaderToString(ClassLoader cl) {
         if (cl == null)
             return NULL;
 
@@ -252,34 +217,29 @@ public class ClassUtil
      * against the deserialization validator. If the assignment is not valid,
      * SerializationException is thrown.
      *
-     * @param obj The Array or List instance.
+     * @param obj   The Array or List instance.
      * @param index The index at which the value is being assigned.
      * @param value The value that is assigned to the index.
      */
-    public static void validateAssignment(Object obj, int index, Object value)
-    {
+    public static void validateAssignment(Object obj, int index, Object value) {
         SerializationContext context = SerializationContext.getSerializationContext();
         DeserializationValidator validator = context.getDeserializationValidator();
         if (validator == null)
             return;
 
         boolean valid = true;
-        try
-        {
+        try {
             valid = validator.validateAssignment(obj, index, value);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // Assignment validation of the object with type '{0}' for the index '{1}' failed.
             SerializationException se = new SerializationException();
-            se.setMessage(10313, new Object[]{obj == null? NULL : obj.getClass().getName(), index});
+            se.setMessage(10313, new Object[]{obj == null ? NULL : obj.getClass().getName(), index});
             se.setRootCause(e);
             throw se;
         }
-        if (!valid)
-        {
+        if (!valid) {
             SerializationException se = new SerializationException();
-            se.setMessage(10313, new Object[]{obj == null? NULL : obj.getClass().getName(), index});
+            se.setMessage(10313, new Object[]{obj == null ? NULL : obj.getClass().getName(), index});
             throw se;
         }
     }
@@ -289,34 +249,29 @@ public class ClassUtil
      * against the deserialization validator. If the assignment is not valid,
      * SerializationException is thrown.
      *
-     * @param obj The class instance whose property is being assigned to a value.
+     * @param obj      The class instance whose property is being assigned to a value.
      * @param propName The name of the property that is being assigned.
-     * @param value The value that the property is being assigned to.
+     * @param value    The value that the property is being assigned to.
      */
-    public static void validateAssignment(Object obj, String propName, Object value)
-    {
+    public static void validateAssignment(Object obj, String propName, Object value) {
         SerializationContext context = SerializationContext.getSerializationContext();
         DeserializationValidator validator = context.getDeserializationValidator();
         if (validator == null)
             return;
 
         boolean valid = true;
-        try
-        {
+        try {
             valid = validator.validateAssignment(obj, propName, value);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // Assignment validation of the object with type '{0}' for the property '{1}' failed.
             SerializationException se = new SerializationException();
-            se.setMessage(10312, new Object[]{obj == null? NULL : obj.getClass().getName(), propName});
+            se.setMessage(10312, new Object[]{obj == null ? NULL : obj.getClass().getName(), propName});
             se.setRootCause(e);
             throw se;
         }
-        if (!valid)
-        {
+        if (!valid) {
             SerializationException se = new SerializationException();
-            se.setMessage(10312, new Object[]{obj == null? NULL : obj.getClass().getName(), propName});
+            se.setMessage(10312, new Object[]{obj == null ? NULL : obj.getClass().getName(), propName});
             throw se;
         }
     }
@@ -328,31 +283,26 @@ public class ClassUtil
      *
      * @param cls The class to validate.
      */
-    public static void validateCreation(Class<?> cls)
-    {
+    public static void validateCreation(Class<?> cls) {
         SerializationContext context = SerializationContext.getSerializationContext();
         DeserializationValidator validator = context.getDeserializationValidator();
         if (validator == null)
             return;
 
         boolean valid = true;
-        try
-        {
+        try {
             valid = validator.validateCreation(cls);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // Creation validation for class '{0}' failed.
             SerializationException se = new SerializationException();
-            se.setMessage(10311, new Object[]{cls == null? NULL : cls.getName()});
+            se.setMessage(10311, new Object[]{cls == null ? NULL : cls.getName()});
             se.setRootCause(e);
             throw se;
         }
-        if (!valid)
-        {
+        if (!valid) {
             // Creation validation for class '{0}' failed.
             SerializationException se = new SerializationException();
-            se.setMessage(10311, new Object[]{cls == null? NULL : cls.getName()});
+            se.setMessage(10311, new Object[]{cls == null ? NULL : cls.getName()});
             throw se;
         }
     }

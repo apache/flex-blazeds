@@ -28,8 +28,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 
-public class SerializationProxyTest
-{
+public class SerializationProxyTest {
     /**
      * For clustering, SerializationProxys must be serialized and
      * deserialized.  This is because any message with a SerializationProxy,
@@ -39,8 +38,7 @@ public class SerializationProxyTest
      * Bug: LCDS-910
      */
     @Test
-    public void testRoundTripSerialization() throws Exception
-    {
+    public void testRoundTripSerialization() throws Exception {
         ASObject as = new ASObject();
         as.put("name", "cathy");
         SerializationProxy proxy = new SerializationProxy(as);

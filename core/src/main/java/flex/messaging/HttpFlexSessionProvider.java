@@ -25,8 +25,7 @@ import flex.messaging.log.Log;
  * Provider implementation for <code>HttpFlexSession</code>s.
  * Not intended for public use.
  */
-public class HttpFlexSessionProvider extends AbstractFlexSessionProvider
-{
+public class HttpFlexSessionProvider extends AbstractFlexSessionProvider {
     //--------------------------------------------------------------------------
     //
     // Public Methods
@@ -38,40 +37,33 @@ public class HttpFlexSessionProvider extends AbstractFlexSessionProvider
      * or create and return a new <code>HttpFlexSession</code> if necessary.
      * The <code>HttpFlexSession</code> wraps the underlying J2EE <code>HttpSession</code>.
      * Not intended for public use.
-     * 
+     *
      * @param request The current <tt>HttpServletRequest</tt>.
      * @return A <tt>HttpFlexSession</tt>.
      */
-    public HttpFlexSession getOrCreateSession(HttpServletRequest request)
-    {
+    public HttpFlexSession getOrCreateSession(HttpServletRequest request) {
         HttpFlexSession flexSession;
         HttpSession httpSession = request.getSession(true);
 
-        if (!HttpFlexSession.isHttpSessionListener && !HttpFlexSession.warnedNoEventRedispatch)
-        {
+        if (!HttpFlexSession.isHttpSessionListener && !HttpFlexSession.warnedNoEventRedispatch) {
             HttpFlexSession.warnedNoEventRedispatch = true;
             if (Log.isWarn())
                 Log.getLogger(HttpFlexSession.WARN_LOG_CATEGORY).warn("HttpFlexSession has not been registered as a listener in web.xml for this application so no events will be dispatched to FlexSessionAttributeListeners or FlexSessionBindingListeners. To correct this, register flex.messaging.HttpFlexSession as a listener in web.xml.");
         }
 
         boolean isNew = false;
-        synchronized (httpSession)
-        {
-            flexSession = (HttpFlexSession)httpSession.getAttribute(HttpFlexSession.SESSION_ATTRIBUTE);
-            if (flexSession == null)
-            {
+        synchronized (httpSession) {
+            flexSession = (HttpFlexSession) httpSession.getAttribute(HttpFlexSession.SESSION_ATTRIBUTE);
+            if (flexSession == null) {
                 flexSession = new HttpFlexSession(this);
                 // Correlate this FlexSession to the HttpSession before triggering any listeners.
                 FlexContext.setThreadLocalSession(flexSession);
                 httpSession.setAttribute(HttpFlexSession.SESSION_ATTRIBUTE, flexSession);
                 flexSession.setHttpSession(httpSession);
                 isNew = true;
-            }
-            else
-            {
+            } else {
                 FlexContext.setThreadLocalSession(flexSession);
-                if (flexSession.httpSession == null)
-                {
+                if (flexSession.httpSession == null) {
                     // httpSession is null if the instance is new or is from
                     // serialization.
                     flexSession.setHttpSession(httpSession);
@@ -80,8 +72,7 @@ public class HttpFlexSessionProvider extends AbstractFlexSessionProvider
             }
         }
 
-        if (isNew)
-        {
+        if (isNew) {
             getFlexSessionManager().registerFlexSession(flexSession);
             flexSession.notifyCreated();
 
@@ -91,4 +82,4 @@ public class HttpFlexSessionProvider extends AbstractFlexSessionProvider
 
         return flexSession;
     }
-    }
+}

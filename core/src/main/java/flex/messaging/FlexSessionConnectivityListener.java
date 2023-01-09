@@ -20,18 +20,17 @@ package flex.messaging;
  * The listener interface for receiving FlexSession connectivity events.
  */
 
-public interface FlexSessionConnectivityListener
-{
+public interface FlexSessionConnectivityListener {
     /**
      * Invoked when the session has connected to the remote host.
-     * 
+     *
      * @param event The <tt>FlexSessionConnectivityEvent</tt> for the connect event.
      */
     void sessionConnected(FlexSessionConnectivityEvent event);
-    
+
     /**
      * Invoked when the session has disconnected from or lost connectivity to the remote host.
-     * 
+     *
      * @param event The <tt>FlexSessionConnectivityEvent</tt> for the disconnect event.
      */
     void sessionDisconnected(FlexSessionConnectivityEvent event);

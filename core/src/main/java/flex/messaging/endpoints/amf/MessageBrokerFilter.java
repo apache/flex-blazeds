@@ -43,20 +43,17 @@ import java.lang.reflect.Array;
  * chain returns the message to the MessageBroker, which will then
  * locate the correct service to handle the message.
  */
-public class MessageBrokerFilter extends AMFFilter
-{
+public class MessageBrokerFilter extends AMFFilter {
     private static final int UNHANDLED_ERROR = 10000;
     static final String LOG_CATEGORY = LogCategories.MESSAGE_GENERAL;
 
     protected AbstractEndpoint endpoint;
 
-    public MessageBrokerFilter(AbstractEndpoint endpoint)
-    {
+    public MessageBrokerFilter(AbstractEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 
-    public void invoke(final ActionContext context)
-    {
+    public void invoke(final ActionContext context) {
         MessageBody request = context.getRequestMessageBody();
         MessageBody response = context.getResponseMessageBody();
 
@@ -66,16 +63,14 @@ public class MessageBrokerFilter extends AMFFilter
 
         String replyMethodName = MessageIOConstants.STATUS_METHOD;
 
-        try
-        {
+        try {
             // Lookup or create the correct FlexClient.
             endpoint.setupFlexClient(inMessage);
 
             // Assign a clientId if necessary.
             // We don't need to assign clientIds to general poll requests.
             if (inMessage.getClientId() == null &&
-                (!(inMessage instanceof CommandMessage) || ((CommandMessage)inMessage).getOperation() != CommandMessage.POLL_OPERATION))
-            {
+                    (!(inMessage instanceof CommandMessage) || ((CommandMessage) inMessage).getOperation() != CommandMessage.POLL_OPERATION)) {
                 Object clientId = UUIDUtils.createUUID();
                 inMessage.setClientId(clientId);
             }
@@ -85,9 +80,8 @@ public class MessageBrokerFilter extends AMFFilter
             // or preceeded by other messages in the batch; the request-response loop must complete without waiting.
             // If the poll command is the only message in the batch it's ok to wait.
             // If it isn't ok to wait, tag the poll message with a header that short-circuits any potential poll-wait.
-            if (inMessage instanceof CommandMessage)
-            {
-                CommandMessage command = (CommandMessage)inMessage;
+            if (inMessage instanceof CommandMessage) {
+                CommandMessage command = (CommandMessage) inMessage;
                 if ((command.getOperation() == CommandMessage.POLL_OPERATION) && (context.getRequestMessage().getBodyCount() != 1))
                     command.setHeader(CommandMessage.SUPPRESS_POLL_WAIT_HEADER, Boolean.TRUE);
             }
@@ -101,30 +95,23 @@ public class MessageBrokerFilter extends AMFFilter
             outMessage = endpoint.serviceMessage(inMessage);
 
             // if processing of the message resulted in an error, set up context and reply method accordingly
-            if (outMessage instanceof ErrorMessage)
-            {
+            if (outMessage instanceof ErrorMessage) {
                 context.setStatus(MessageIOConstants.STATUS_ERR);
                 replyMethodName = MessageIOConstants.STATUS_METHOD;
-            }
-            else
-            {
+            } else {
                 replyMethodName = MessageIOConstants.RESULT_METHOD;
             }
-        }
-        catch (MessageException e)
-        {
+        } catch (MessageException e) {
             context.setStatus(MessageIOConstants.STATUS_ERR);
             replyMethodName = MessageIOConstants.STATUS_METHOD;
 
             outMessage = e.createErrorMessage();
-            ((ErrorMessage)outMessage).setCorrelationId(inMessage.getMessageId());
-            ((ErrorMessage)outMessage).setDestination(inMessage.getDestination());
-            ((ErrorMessage)outMessage).setClientId(inMessage.getClientId());
+            ((ErrorMessage) outMessage).setCorrelationId(inMessage.getMessageId());
+            ((ErrorMessage) outMessage).setDestination(inMessage.getDestination());
+            ((ErrorMessage) outMessage).setClientId(inMessage.getClientId());
 
-            e.logAtHingePoint(inMessage, (ErrorMessage)outMessage, null /* Use default message intros */);
-        }
-        catch (Throwable t)
-        {
+            e.logAtHingePoint(inMessage, (ErrorMessage) outMessage, null /* Use default message intros */);
+        } catch (Throwable t) {
             // Handle any uncaught failures. The normal exception path on the server
             // is to throw MessageExceptions which are handled in the catch block above,
             // so if that was skipped we have an overlooked or serious problem.
@@ -136,28 +123,24 @@ public class MessageBrokerFilter extends AMFFilter
                 lmeMessage = t.getClass().getName();
 
             MessageException lme = new MessageException();
-            lme.setMessage(UNHANDLED_ERROR, new Object[] {lmeMessage});
+            lme.setMessage(UNHANDLED_ERROR, new Object[]{lmeMessage});
 
             outMessage = lme.createErrorMessage();
-            ((ErrorMessage)outMessage).setCorrelationId(inMessage.getMessageId());
-            ((ErrorMessage)outMessage).setDestination(inMessage.getDestination());
-            ((ErrorMessage)outMessage).setClientId(inMessage.getClientId());
+            ((ErrorMessage) outMessage).setCorrelationId(inMessage.getMessageId());
+            ((ErrorMessage) outMessage).setDestination(inMessage.getDestination());
+            ((ErrorMessage) outMessage).setClientId(inMessage.getClientId());
 
-            if (Log.isError())
-            {
+            if (Log.isError()) {
                 Log.getLogger(LOG_CATEGORY).error("Unhandled error when processing a message: " +
                         t.toString() + StringUtils.NEWLINE +
                         "  incomingMessage: " + inMessage + StringUtils.NEWLINE +
                         "  errorReply: " + outMessage + StringUtils.NEWLINE +
                         ExceptionUtil.exceptionFollowedByRootCausesToString(t) + StringUtils.NEWLINE);
             }
-        }
-        finally
-        {
+        } finally {
             // If MPI is enabled update the MPI metrics on the object referred to by the context
             // and the messages
-            if (context.isRecordMessageSizes() || context.isRecordMessageTimes())
-            {
+            if (context.isRecordMessageSizes() || context.isRecordMessageTimes()) {
                 MessagePerformanceUtils.updateOutgoingMPI(context, inMessage, outMessage);
             }
 
@@ -168,9 +151,8 @@ public class MessageBrokerFilter extends AMFFilter
             if (session != null && session.useSmallMessages()
                     && !context.isLegacy()
                     && context.getVersion() >= MessageIOConstants.AMF3
-                    && outMessage instanceof Message)
-            {
-                outMessage = endpoint.convertToSmallMessage((Message)outMessage);
+                    && outMessage instanceof Message) {
+                outMessage = endpoint.convertToSmallMessage((Message) outMessage);
             }
 
             response.setReplyMethod(replyMethodName);
