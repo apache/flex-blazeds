@@ -191,20 +191,6 @@ public class ServicesDependencies {
             }
         }
 
-        // Try Sun JRE 1.4 / Apache Xalan Based Implementation
-        if (parser == null) {
-            try {
-                Class.forName("org.apache.xpath.CachedXPathAPI");
-                className = "flex.messaging.config.ApacheXPathClientConfigurationParser";
-                parserClass = Class.forName(className);
-                parser = (ConfigurationParser) parserClass.newInstance();
-            } catch (Throwable t) {
-                if (traceConfig) {
-                    System.out.println("Could not load configuration parser as: " + className);
-                }
-            }
-        }
-
         // Try Sun JRE 1.5 Based Implementation
         if (parser == null) {
             try {

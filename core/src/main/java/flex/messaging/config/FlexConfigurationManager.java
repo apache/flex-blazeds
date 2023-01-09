@@ -102,21 +102,6 @@ public class FlexConfigurationManager implements ConfigurationManager {
             }
         }
 
-        // Always try Sun JRE 1.4 / Apache Xalan Based Implementation first to
-        // avoid performance problems with Sun JRE 1.5 Based Implementation
-        if (parser == null) {
-            try {
-                ClassUtil.createClass("org.apache.xpath.CachedXPathAPI");
-                className = "flex.messaging.config.ApacheXPathServerConfigurationParser";
-                parserClass = ClassUtil.createClass(className);
-                parser = (ConfigurationParser) parserClass.newInstance();
-            } catch (Throwable t) {
-                if (Trace.config) {
-                    Trace.trace("Could not load configuration parser as: " + className);
-                }
-            }
-        }
-
         // Try Sun JRE 1.5 Based Implementation
         if (parser == null) {
             try {

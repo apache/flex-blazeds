@@ -94,7 +94,7 @@ public class ConfigurationParserTest {
 
     private void processRequest(String filename, String testName, String resourcePath) throws IOException {
         MessagingConfiguration config = new MessagingConfiguration();
-        ConfigurationParser parser = new ApacheXPathServerConfigurationParser();
+        ConfigurationParser parser = new XPathServerConfigurationParser();
         try {
             parser.parse(filename, new LocalFileResolver(), config);
 

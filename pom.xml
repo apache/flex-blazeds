@@ -322,12 +322,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>xalan</groupId>
-                <artifactId>xalan</artifactId>
-                <version>2.7.2</version>
-            </dependency>
-
             <!-- TODO: This is the latest version of commons-httpclient, however there are CVEs reported for this, the replacement is org.apache.httpcomponents:httpclient however changing to this requires quite some refactoring of the code -->
             <dependency>
                 <groupId>commons-httpclient</groupId>

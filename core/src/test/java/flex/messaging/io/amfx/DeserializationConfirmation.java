@@ -28,13 +28,17 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
 import java.util.ArrayList;
 import java.lang.reflect.Array;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.apache.xpath.CachedXPathAPI;
 
 /**
  * Verifies that a deserialized ActionMessage
@@ -224,10 +228,10 @@ public abstract class DeserializationConfirmation {
         boolean match = false;
 
         try {
-            CachedXPathAPI xpath1 = new CachedXPathAPI();
-            CachedXPathAPI xpath2 = new CachedXPathAPI();
-            Node root1 = xpath1.selectSingleNode(doc1, "/");
-            Node root2 = xpath2.selectSingleNode(doc2, "/");
+            XPath xpath1 = XPathFactory.newInstance().newXPath();
+            XPath xpath2 = XPathFactory.newInstance().newXPath();
+            Node root1 = (Node) xpath1.evaluate("/", doc1, XPathConstants.NODE);
+            Node root2 = (Node) xpath2.evaluate("/", doc2, XPathConstants.NODE);
 
             if (!nodesMatch(xpath1, root1, xpath2, root2)) {
                 return false;
@@ -242,20 +246,20 @@ public abstract class DeserializationConfirmation {
 
     }
 
-    protected boolean nodesMatch(CachedXPathAPI xpath1, Node node1, CachedXPathAPI xpath2, Node node2) {
+    protected boolean nodesMatch(XPath xpath1, Node node1, XPath xpath2, Node node2) {
         boolean match = false;
 
         try {
-            NodeList list1 = xpath1.selectNodeList(node1, "*");
-            NodeList list2 = xpath2.selectNodeList(node2, "*");
+            NodeList list1 = (NodeList) xpath1.evaluate("*", node1, XPathConstants.NODESET);
+            NodeList list2 = (NodeList) xpath2.evaluate("*", node2, XPathConstants.NODESET);
 
             if (list1.getLength() == list2.getLength()) {
                 for (int i = 0; i < list1.getLength(); i++) {
                     Node n1 = list1.item(i);
                     Node n2 = list2.item(i);
 
-                    NodeList attributes1 = xpath1.selectNodeList(n1, "@*");
-                    NodeList attributes2 = xpath2.selectNodeList(n2, "@*");
+                    NodeList attributes1 = (NodeList) xpath1.evaluate("@*", n1, XPathConstants.NODESET);
+                    NodeList attributes2 = (NodeList) xpath2.evaluate("@*", n2, XPathConstants.NODESET);
 
                     if (!attributesMatch(attributes1, attributes2)) {
                         return false;
