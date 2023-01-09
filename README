@@ -98,27 +98,27 @@ Using the Binary Distribution
 	version of Apache BlazeDS will automatically be downloaded.
 
     <dependency>
-            <groupId>org.apache.flex.blazeds</groupId>
+        <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-common</artifactId>
         <version>4.7.3</version>
     </dependency>
     <dependency>
-            <groupId>org.apache.flex.blazeds</groupId>
+        <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-core</artifactId>
         <version>4.7.3</version>
     </dependency>
     <dependency>
-            <groupId>org.apache.flex.blazeds</groupId>
+        <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-opt</artifactId>
         <version>4.7.3</version>
     </dependency>
     <dependency>
-            <groupId>org.apache.flex.blazeds</groupId>
+        <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-proxy</artifactId>
         <version>4.7.3</version>
     </dependency>
     <dependency>
-            <groupId>org.apache.flex.blazeds</groupId>
+        <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-remoting</artifactId>
         <version>4.7.3</version>
     </dependency>
