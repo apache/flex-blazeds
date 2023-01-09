@@ -35,7 +35,7 @@
                 <exclude>../in/**</exclude>
                 <exclude>../lib/**</exclude>
                 <exclude>**/*.iml</exclude>
-                <exclude>**/.vscode/</exclude>
+                <exclude>**/.vscode/**</exclude>
             </excludes>
         </fileSet>
     </fileSets>
