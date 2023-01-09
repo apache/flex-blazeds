@@ -128,8 +128,9 @@
                 <configuration>
                     <useMavenDefaultExcludes>true</useMavenDefaultExcludes>
                     <excludes>
-                        <!-- Ignore IntelliJ IDEA project files -->
+                        <!-- Ignore IDE project files -->
                         <exclude>**/*.iml</exclude>
+                        <exclude>**/.vscode/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
