@@ -96,6 +96,12 @@
                 <configuration>
                     <useMavenDefaultExcludes>true</useMavenDefaultExcludes>
                     <excludes>
+                        <!--
+                            some modules aren't included in every build.
+                            this ensures that their "target" dir is skipped
+                            when not included.
+                        -->
+                        <exclude>**/target/**</exclude>
                         <!-- Ignore IDE project files -->
                         <exclude>**/*.iml</exclude>
                         <exclude>**/.vscode/**</exclude>
