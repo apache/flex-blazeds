@@ -73,7 +73,6 @@
         <module>archetypes</module>
         <module>common</module>
         <module>core</module>
-        <module>proxy</module>
         <module>remoting</module>
         <module>opt</module>
     </modules>
@@ -346,7 +345,7 @@
     </dependencyManagement>
 
     <profiles>
-        <!-- create source-release and binary-relase archives -->
+        <!-- create source-release and binary-realase archives -->
         <profile>
             <id>with-distribution</id>
             <modules>
