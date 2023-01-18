@@ -123,10 +123,9 @@ Building the Source
         cd <flex-blazeds.dir>
         mvn install
 
-    Notice that you have to enter the modules directory in order to able to
-    execute the Maven build as the rest of the project still contains an
-    outdated and no longer maintained ANT build. This will be removed in
-    future versions.
+    To build a binary distribution, use the with-distribution profile.
+    
+        mvn install -P with-distribution
 
 
 Running Tests
