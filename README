@@ -9,7 +9,7 @@ Apache Flex BlazeDS
     data and push data in real-time to Adobe® Flex® and Adobe AIR™ applications
     for more responsive rich Internet application (RIA) experiences.
 
-    Apache Flex BlazeDS 4.7.3 is an update to the initial release of BlazeDS
+    Apache Flex BlazeDS 4.8.0 is an update to the initial release of BlazeDS
     from the Apache Software Foundation.  Prior to this, releases were provided 
     by Adobe Systems Inc. It is compatible with most code written to target Adobe
     Flex 4.6.
@@ -33,7 +33,7 @@ Getting the latest sources via Git
     For further information visit http://flex.apache.org/download-source.html
 
 
-Building Apache Flex BlazeDS 4.7.3
+Building Apache Flex BlazeDS 4.8.0
 ==================================
 
     Apache Flex BlazeDS is a large project. It requires some build tools which must be
@@ -100,17 +100,17 @@ Using the Binary Distribution
     <dependency>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-common</artifactId>
-        <version>4.7.3</version>
+        <version>4.8.0</version>
     </dependency>
     <dependency>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-core</artifactId>
-        <version>4.7.3</version>
+        <version>4.8.0</version>
     </dependency>
     <dependency>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-remoting</artifactId>
-        <version>4.7.3</version>
+        <version>4.8.0</version>
     </dependency>
 
 
