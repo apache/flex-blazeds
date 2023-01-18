@@ -1,3 +1,19 @@
+Apache Flex BlazeDS 4.8.0
+=======================
+
+Apache Flex BlazeDS 4.8.0 is an update to 4.7.3 to upgrade dependencies and make
+general improvements.
+
+- Version 4.8.0 is the first release of BlazeDS from Apache that includes a
+  binary distribution
+- BlazeDS now requires Java 8 or newer
+- Removed the flex-messaging-proxy and blazeds-spring-boot-starter modules
+- Upgraded dependencies to make BlazeDS more secure
+
+Known Issues
+_____________
+FLEX-34648 Memory Leak occurred in AsyncMessage when sending a lot of messages
+
 Apache Flex BlazeDS 4.7.3
 =======================
 
