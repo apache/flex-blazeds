@@ -1037,18 +1037,25 @@ public class MessageService extends AbstractService implements MessagingConstant
      * @param msg                A test message.
      */
     private void testSelector(String selectorExpression, Message msg) {
+        if (selectorExpression != null && !selectorExpression.equals(""))
+        {
+            ServiceException se = new ServiceException();
+            se.setMessage(BAD_SELECTOR, new Object[]{selectorExpression});
+            se.setRootCause(new RuntimeException("JMSSelector removed"));
+            throw se;
+        }
         /*try
         {
             JMSSelector selector = new JMSSelector(selectorExpression);
             selector.match(msg);
         }
         catch (Exception e)
-        {*/
-        ServiceException se = new ServiceException();
-        se.setMessage(BAD_SELECTOR, new Object[]{selectorExpression});
-        se.setRootCause(new RuntimeException("JMSSelector removed"));
-        throw se;
-        //}
+        {
+            ServiceException se = new ServiceException();
+            se.setMessage(BAD_SELECTOR, new Object[]{selectorExpression});
+            se.setRootCause(e);
+            throw se;
+        }*/
     }
 
     private int processMaxFrequencyHeader(CommandMessage command) {
