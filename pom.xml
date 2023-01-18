@@ -296,18 +296,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- TODO: This is the latest version of commons-httpclient, however there are CVEs reported for this, the replacement is org.apache.httpcomponents:httpclient however changing to this requires quite some refactoring of the code -->
-            <dependency>
-                <groupId>commons-httpclient</groupId>
-                <artifactId>commons-httpclient</artifactId>
-                <version>3.1</version>
-            </dependency>
-            <!--dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.5.13</version>
-            </dependency-->
-
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
@@ -353,6 +341,12 @@
             </modules>
         </profile>
         <profile>
+            <id>with-proxy</id>
+            <modules>
+                <module>proxy</module>
+            </modules>
+        </profile>
+        <profile>
             <id>with-owasp</id>
             <build>
                 <plugins>
@@ -382,8 +376,6 @@
                                 <exclude>org.apache.flex.blazeds:flex-messaging-remoting</exclude>
                                 <exclude>org.apache.flex.blazeds:blazeds-spring-boot-starter</exclude>
                                 <exclude>org.apache.flex.blazeds:flex-messaging-opt-tomcat-base</exclude>
-                                <!-- TODO: Excluding this dependency, for which there's CVEs reported as it requires refactoring quite a bit. However this should be addressed before the next release -->
-                                <exclude>commons-httpclient:commons-httpclient</exclude>
                             </excludes>
                         </configuration>
                     </plugin>

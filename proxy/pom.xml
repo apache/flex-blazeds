@@ -35,11 +35,17 @@ limitations under the License.
             <version>${project.version}</version>
         </dependency>
 
-        <!-- TODO: This should be updated to org.apache.httpcomponents:httpclient -->
+        <!-- TODO: This is the latest version of commons-httpclient, however there are CVEs reported for this, the replacement is org.apache.httpcomponents:httpclient however changing to this requires quite some refactoring of the code -->
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
         </dependency>
+        <!--dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.13</version>
+        </dependency-->
 
         <dependency>
             <groupId>javax.servlet</groupId>

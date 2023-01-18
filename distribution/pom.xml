@@ -91,13 +91,21 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flex.blazeds</groupId>
-			<artifactId>flex-messaging-proxy</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.flex.blazeds</groupId>
 			<artifactId>flex-messaging-remoting</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>with-proxy</id>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.flex.blazeds</groupId>
+						<artifactId>flex-messaging-proxy</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+				</dependencies>
+		</profile>
+	</profiles>
 </project>

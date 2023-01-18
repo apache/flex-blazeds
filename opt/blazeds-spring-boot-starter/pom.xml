@@ -82,11 +82,6 @@ limitations under the License.
         </dependency>
         <dependency>
             <groupId>org.apache.flex.blazeds</groupId>
-            <artifactId>flex-messaging-proxy</artifactId>
-            <version>4.8.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.flex.blazeds</groupId>
             <artifactId>flex-messaging-remoting</artifactId>
             <version>4.8.0-SNAPSHOT</version>
         </dependency>
