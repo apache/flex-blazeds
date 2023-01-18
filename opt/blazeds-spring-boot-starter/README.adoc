@@ -48,7 +48,7 @@ In order to do it's magic, you need to add a depdendency to the the BlazeDS Spri
 
 ...
         <dependency>
-                <groupId>org.apache.flex.blazeds</groupId>
+            <groupId>org.apache.flex.blazeds</groupId>
             <artifactId>blazeds-spring-boot-starter</artifactId>
             <version>4.7.3-SNAPSHOT</version>
         </dependency>
