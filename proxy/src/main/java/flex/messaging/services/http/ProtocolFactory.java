@@ -16,8 +16,6 @@
  */
 package flex.messaging.services.http;
 
-import org.apache.commons.httpclient.protocol.Protocol;
-
 import flex.messaging.FlexConfigurable;
 
 /**
@@ -41,5 +39,5 @@ public interface ProtocolFactory extends FlexConfigurable {
      *
      * @return An implementation of org.apache.commons.httpclient.protocol.Protocol.
      */
-    Protocol getProtocol();
+    Object getProtocol();
 }

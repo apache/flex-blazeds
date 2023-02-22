@@ -73,6 +73,7 @@
         <module>archetypes</module>
         <module>common</module>
         <module>core</module>
+        <module>proxy</module>
         <module>remoting</module>
         <module>opt</module>
     </modules>
@@ -338,12 +339,6 @@
             <id>with-distribution</id>
             <modules>
                 <module>distribution</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>with-proxy</id>
-            <modules>
-                <module>proxy</module>
             </modules>
         </profile>
         <profile>

@@ -16,20 +16,14 @@
  */
 package flex.messaging.services.http;
 
-import flex.management.runtime.messaging.services.http.SOAPProxyAdapterControl;
 import flex.messaging.messages.Message;
-import flex.messaging.messages.SOAPMessage;
-import flex.messaging.messages.HTTPMessage;
-import flex.messaging.services.http.proxy.ProxyContext;
-import flex.messaging.Destination;
-import flex.messaging.MessageException;
+import flex.messaging.services.ServiceException;
 
 /**
  * A Soap specific subclass of HttpProxyAdapter to
  * allow for future web services features.
  */
 public class SOAPProxyAdapter extends HTTPProxyAdapter {
-    private SOAPProxyAdapterControl controller;
 
     //--------------------------------------------------------------------------
     //
@@ -64,42 +58,8 @@ public class SOAPProxyAdapter extends HTTPProxyAdapter {
      * {@inheritDoc}
      */
     public Object invoke(Message msg) {
-        HTTPMessage message = (HTTPMessage) msg;
-        ProxyContext context = new ProxyContext();
-
-        if (message instanceof SOAPMessage) {
-            context.setSoapRequest(true);
-        }
-
-        setupContext(context, message);
-
-        try {
-            filterChain.invoke(context);
-            return context.getResponse();
-        } catch (MessageException ex) {
-            throw ex;
-        } catch (Throwable t) {
-            // this should never happen- ErrorFilter should catch everything
-            t.printStackTrace();
-            throw new MessageException(t.toString());
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    //
-    // Protected/private APIs
-    //             
-    //--------------------------------------------------------------------------
-
-    /**
-     * Invoked automatically to allow the <code>SOAPProxyAdapter</code> to setup its corresponding
-     * MBean control.
-     *
-     * @param broker The <code>Destination</code> that manages this <code>SOAPProxyAdapter</code>.
-     */
-    protected void setupAdapterControl(Destination destination) {
-        controller = new SOAPProxyAdapterControl(this, destination.getControl());
-        controller.register();
-        setControl(controller);
+        ServiceException e = new ServiceException();
+        e.setMessage("flex.messaging.services.http.SOAPProxyAdapter is no longer supported by BlazeDS");
+        throw e;
     }
 }

@@ -18,8 +18,6 @@ package flex.messaging.services.http;
 
 import java.util.List;
 
-import org.apache.commons.httpclient.cookie.CookiePolicy;
-
 /**
  * Establishes the settings used to construct an Apache Commons HTTPClient
  * HttpConnectionManager for the Proxy Service.
@@ -87,7 +85,7 @@ public class HTTPConnectionManagerSettings {
      * Creates a default <code>HTTPConnectionManagerSettings</code> instance.
      */
     public HTTPConnectionManagerSettings() {
-        cookiePolicy = CookiePolicy.DEFAULT;
+        cookiePolicy = "default";
         defaultMaxConnectionsPerHost = DEFAULT_MAX_CONNECTIONS_HOST;
         maxTotalConnections = DEFAULT_MAX_TOTAL_CONNECTIONS;
         linger = -1;

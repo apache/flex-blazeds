@@ -16,7 +16,13 @@
  */
 package flex.messaging.services.http;
 
-import flex.management.runtime.messaging.services.http.HTTPProxyDestinationControl;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import flex.messaging.Destination;
 import flex.messaging.config.ConfigMap;
 import flex.messaging.log.LogCategories;
@@ -24,13 +30,6 @@ import flex.messaging.services.HTTPProxyService;
 import flex.messaging.services.Service;
 import flex.messaging.util.ClassUtil;
 import flex.messaging.util.SettingsReplaceUtil;
-
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * Subclass of Destination which provides HTTP Proxy-specific destination functionality.
@@ -68,8 +67,6 @@ public class HTTPProxyDestination extends Destination {
     protected boolean dynamicParsed;
     protected String parsedDefaultUrl;
     protected List parsedDynamicUrls;
-
-    private HTTPProxyDestinationControl controller;
 
     //--------------------------------------------------------------------------
     //
@@ -442,17 +439,5 @@ public class HTTPProxyDestination extends Destination {
      */
     protected String getLogCategory() {
         return LOG_CATEGORY;
-    }
-
-    /**
-     * Invoked automatically to allow the <code>HTTPProxyDestination</code> to setup its corresponding
-     * MBean control.
-     *
-     * @param service The <code>Service</code> that manages this <code>HTTPProxyDestination</code>.
-     */
-    protected void setupDestinationControl(Service service) {
-        controller = new HTTPProxyDestinationControl(this, service.getControl());
-        controller.register();
-        setControl(controller);
     }
 }
