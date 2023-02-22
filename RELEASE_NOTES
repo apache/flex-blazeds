@@ -7,7 +7,9 @@ general improvements.
 - Version 4.8.0 is the first release of BlazeDS from Apache that includes a
   binary distribution
 - BlazeDS now requires Java 8 or newer
-- Removed the flex-messaging-proxy and blazeds-spring-boot-starter modules
+- Removed the flex-messaging-proxy module
+   - If your services-config.xml or proxy-config.xml file defines a service using the flex.messaging.services.HTTPProxyService class, this service will need to be disabled.
+- Removed the blazeds-spring-boot-starter module
 - Upgraded dependencies to make BlazeDS more secure
 
 Known Issues
