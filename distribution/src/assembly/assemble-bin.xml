@@ -36,6 +36,9 @@
                 <exclude>../lib/**</exclude>
                 <exclude>**/*.iml</exclude>
                 <exclude>**/.vscode/**</exclude>
+                <exclude>**/.git/**</exclude>
+                <exclude>**/.gitignore</exclude>
+                <exclude>**/.DS_Store</exclude>
             </excludes>
         </fileSet>
         <fileSet>
