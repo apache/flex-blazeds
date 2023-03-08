@@ -70,7 +70,6 @@
     </scm>
 
     <modules>
-        <module>archetypes</module>
         <module>common</module>
         <module>core</module>
         <module>proxy</module>
@@ -369,7 +368,6 @@
                                 <exclude>org.apache.flex.blazeds:flex-messaging-core</exclude>
                                 <exclude>org.apache.flex.blazeds:flex-messaging-proxy</exclude>
                                 <exclude>org.apache.flex.blazeds:flex-messaging-remoting</exclude>
-                                <exclude>org.apache.flex.blazeds:blazeds-spring-boot-starter</exclude>
                                 <exclude>org.apache.flex.blazeds:flex-messaging-opt-tomcat-base</exclude>
                             </excludes>
                         </configuration>
