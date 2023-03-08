@@ -17,7 +17,8 @@
   limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -29,7 +30,7 @@
 
     <groupId>org.apache.flex.blazeds</groupId>
     <artifactId>blazeds</artifactId>
-    <version>4.8.0</version>
+    <version>4.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Apache Flex - BlazeDS</name>
@@ -66,8 +67,7 @@
         <connection>scm:git:https://git-wip-us.apache.org/repos/asf/flex-blazeds.git</connection>
         <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/flex-blazeds.git</developerConnection>
         <url>https://git-wip-us.apache.org/repos/asf/flex-blazeds.git</url>
-      <tag>blazeds-4.8.0-rc1</tag>
-  </scm>
+    </scm>
 
     <modules>
         <module>common</module>
