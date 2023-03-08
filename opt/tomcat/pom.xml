@@ -22,7 +22,7 @@ limitations under the License.
     <parent>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-opt</artifactId>
-        <version>4.8.0</version>
+        <version>4.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>flex-messaging-opt-tomcat</artifactId>
@@ -37,9 +37,4 @@ limitations under the License.
         <!-- For tomcat 6 there is no release without known vulnerabilities -->
         <!--module>tomcat-7</module-->
     </modules>
-
-
-  <scm>
-    <tag>blazeds-4.8.0-rc1</tag>
-  </scm>
 </project>
