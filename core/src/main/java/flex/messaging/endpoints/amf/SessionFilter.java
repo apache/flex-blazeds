@@ -23,8 +23,8 @@ import flex.messaging.io.MessageIOConstants;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This filter detects whether a request URL is decorated with a ;jessionid token

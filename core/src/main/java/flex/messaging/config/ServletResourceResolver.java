@@ -18,7 +18,7 @@ package flex.messaging.config;
 
 import flex.messaging.io.ArrayList;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;

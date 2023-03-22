@@ -16,11 +16,11 @@
  */
 package flex.messaging.services.messaging.adapters;
 
-import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSession;
+import jakarta.jms.JMSException;
+import jakarta.jms.Queue;
+import jakarta.jms.QueueConnection;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.QueueSession;
 import javax.naming.NamingException;
 
 import flex.messaging.MessageException;

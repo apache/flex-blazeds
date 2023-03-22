@@ -16,10 +16,10 @@
  */
 package flex.messaging.services.messaging.adapters;
 
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 
 /**
  * A <code>MessageReceiver</code> that receives messages asynchronously from JMS.
@@ -51,7 +51,7 @@ class AsyncMessageReceiver implements MessageReceiver, ExceptionListener, Messag
     }
 
     /**
-     * Implements javax.jms.ExceptionListener.onException.
+     * Implements jakarta.jms.ExceptionListener.onException.
      *
      * @param exception JMS exception received from the JMS server.
      */
@@ -60,7 +60,7 @@ class AsyncMessageReceiver implements MessageReceiver, ExceptionListener, Messag
     }
 
     /**
-     * Implements javax.jms.MessageListener.onMessage.
+     * Implements jakarta.jms.MessageListener.onMessage.
      *
      * @param message JMS message received from the JMS server.
      */

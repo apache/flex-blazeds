@@ -16,7 +16,7 @@
  */
 package flex.messaging.log;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * This is a log target which uses the servlet context in order to log

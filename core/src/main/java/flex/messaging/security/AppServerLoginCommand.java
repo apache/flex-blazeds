@@ -20,8 +20,8 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.http.HttpServletRequest;
 
 import flex.messaging.FlexContext;
 import flex.messaging.io.MessageIOConstants;

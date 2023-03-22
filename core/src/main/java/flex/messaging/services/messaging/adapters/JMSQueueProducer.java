@@ -19,15 +19,15 @@ package flex.messaging.services.messaging.adapters;
 import java.io.Serializable;
 import java.util.Map;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.ObjectMessage;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSender;
-import javax.jms.QueueSession;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.ObjectMessage;
+import jakarta.jms.Queue;
+import jakarta.jms.QueueConnection;
+import jakarta.jms.QueueConnectionFactory;
+import jakarta.jms.QueueSender;
+import jakarta.jms.QueueSession;
+import jakarta.jms.TextMessage;
 import javax.naming.NamingException;
 
 import flex.messaging.MessageException;

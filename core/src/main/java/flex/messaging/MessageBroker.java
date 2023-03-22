@@ -60,7 +60,7 @@ import flex.messaging.util.UUIDUtils;
 import flex.messaging.validators.ClassDeserializationValidator;
 import flex.messaging.validators.DeserializationValidator;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;

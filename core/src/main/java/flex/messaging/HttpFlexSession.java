@@ -19,14 +19,14 @@ package flex.messaging;
 import flex.messaging.log.Log;
 import flex.messaging.log.LogCategories;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionAttributeListener;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionAttributeListener;
+import jakarta.servlet.http.HttpSessionBindingEvent;
+import jakarta.servlet.http.HttpSessionBindingListener;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -49,7 +49,7 @@ public class HttpFlexSession extends FlexSession
 
     /**
      * Not for public use. This constructor is used to create an instance of this class that
-     * will operate as a javax.servlet.http.HttpSessionListener registered in web.xml.
+     * will operate as a jakarta.servlet.http.HttpSessionListener registered in web.xml.
      */
     public HttpFlexSession() {
     }

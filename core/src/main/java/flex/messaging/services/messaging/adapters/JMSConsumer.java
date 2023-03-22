@@ -19,19 +19,19 @@ package flex.messaging.services.messaging.adapters;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.Session;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageListener;
+import jakarta.jms.Session;
 import javax.naming.NamingException;
 
 import flex.messaging.MessageException;
 import flex.messaging.log.Log;
 
 /**
- * A JMSProxy subclass for <code>javax.jms.MessageConsumer</code> instance.
+ * A JMSProxy subclass for <code>jakarta.jms.MessageConsumer</code> instance.
  */
 public abstract class JMSConsumer extends JMSProxy implements ExceptionListener {
     /* JMS related variables */
@@ -207,7 +207,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener 
 
     /**
      * Returns the selector expression used when the underlying
-     * <code>javax.jms.MessageConsumer</code> is created.
+     * <code>jakarta.jms.MessageConsumer</code> is created.
      *
      * @return The selector expression.
      */
@@ -217,7 +217,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener 
 
     /**
      * Sets the selector expression used when the underlying
-     * <code>javax.jms.MessageConsumer</code> is created. This property should
+     * <code>jakarta.jms.MessageConsumer</code> is created. This property should
      * not change after startup.
      *
      * @param selectorExpression The selector expression.
@@ -227,7 +227,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener 
     }
 
     /**
-     * Implementation of javax.jms.ExceptionListener.onException.
+     * Implementation of jakarta.jms.ExceptionListener.onException.
      * Dispatches the JMS exception to registered JMS exception listeners.
      *
      * @param exception The thrown JMS exception.
@@ -347,7 +347,7 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener 
      * and falls back to sync message delivery if it cannot.
      * <p>
      * This method should be called by subclasses once there is an underlying
-     * <code>javax.jms.MessageConsumer</code>.
+     * <code>jakarta.jms.MessageConsumer</code>.
      */
     private void initializeMessageReceiver() {
         // If an AsyncMessageReceiver is manually set, make sure the app server
@@ -357,11 +357,11 @@ public abstract class JMSConsumer extends JMSProxy implements ExceptionListener 
                 String restrictedMethod = null;
                 try {
                     // Test if MessageListener is restricted.
-                    restrictedMethod = "javax.jms.MessageConsumer.setMessageListener";
+                    restrictedMethod = "jakarta.jms.MessageConsumer.setMessageListener";
                     consumer.getMessageListener();
 
                     // Test if ExceptionListener is restricted.
-                    restrictedMethod = "javax.jms.Connection.setExceptionListener";
+                    restrictedMethod = "jakarta.jms.Connection.setExceptionListener";
                     connection.setExceptionListener((AsyncMessageReceiver) messageReceiver);
 
                     if (Log.isInfo())

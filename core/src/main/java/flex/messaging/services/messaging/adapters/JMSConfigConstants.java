@@ -38,13 +38,13 @@ public interface JMSConfigConstants {
     String INITIAL_CONTEXT_ENVIRONMENT = "initial-context-environment";
     String JMS = "jms";
     String MAX_PRODUCERS = "max-producers";
-    String MAP_MESSAGE = "javax.jms.MapMessage";
+    String MAP_MESSAGE = "jakarta.jms.MapMessage";
     String MESSAGE_TYPE = "message-type";
     String MESSAGE_PRIORITY = "message-priority";
     String MODE = "mode";
     String NAME = "name";
     String NON_PERSISTENT = "non_persistent";
-    String OBJECT_MESSAGE = "javax.jms.ObjectMessage";
+    String OBJECT_MESSAGE = "jakarta.jms.ObjectMessage";
     String PASSWORD = "password";
     String PERSISTENT = "persistent";
     String PRESERVE_JMS_HEADERS = "preserve-jms-headers";
@@ -53,7 +53,7 @@ public interface JMSConfigConstants {
     String SYNC_RECEIVE_INTERVAL_MILLIS = "sync-receive-interval-millis";
     String SYNC_RECEIVE_WAIT_MILLIS = "sync-receive-wait-millis";
     String QUEUE = "queue";
-    String TEXT_MESSAGE = "javax.jms.TextMessage";
+    String TEXT_MESSAGE = "jakarta.jms.TextMessage";
     String TOPIC = "topic";
     String TRANSACTION_MODE = "transacted-sessions";
     String USERNAME = "username";

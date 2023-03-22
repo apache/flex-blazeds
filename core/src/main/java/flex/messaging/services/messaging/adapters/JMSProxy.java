@@ -17,11 +17,11 @@
 package flex.messaging.services.messaging.adapters;
 
 import java.util.Hashtable;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Session;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -56,10 +56,10 @@ public abstract class JMSProxy {
 
     /**
      * Creates a new <code>JMSProxy</code> default default acknowledge mode of
-     * <code>javax.jms.Session.AUTO_ACKNOWLEDGE</code>.
+     * <code>jakarta.jms.Session.AUTO_ACKNOWLEDGE</code>.
      */
     public JMSProxy() {
-        acknowledgeMode = javax.jms.Session.AUTO_ACKNOWLEDGE;
+        acknowledgeMode = jakarta.jms.Session.AUTO_ACKNOWLEDGE;
     }
 
     //--------------------------------------------------------------------------
@@ -182,9 +182,9 @@ public abstract class JMSProxy {
 
     /**
      * Sets the acknowledge mode used by the <code>JMSProxy</code>. Valid values
-     * are javax.jms.Session.AUTO_ACKNOWLEDGE, javax.jms.Session.CLIENT_ACKNOWLEDGE,
-     * javax.jms.Session.DUPS_OK_ACNOWLEDGE. This property is optional and
-     * defaults to javax.jms.Session.AUTO_ACKNOWLEDGE.
+     * are jakarta.jms.Session.AUTO_ACKNOWLEDGE, jakarta.jms.Session.CLIENT_ACKNOWLEDGE,
+     * jakarta.jms.Session.DUPS_OK_ACNOWLEDGE. This property is optional and
+     * defaults to jakarta.jms.Session.AUTO_ACKNOWLEDGE.
      *
      * @param acknowledgeMode An int representing the acknowledge mode used.
      */

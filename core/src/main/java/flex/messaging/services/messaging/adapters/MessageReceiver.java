@@ -16,7 +16,7 @@
  */
 package flex.messaging.services.messaging.adapters;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 
 /**
  * An interface used by <code>JMSConsumer</code> to receive messages from JMS.

@@ -32,7 +32,7 @@ import flex.messaging.log.Log;
 import flex.messaging.util.StringUtils;
 import flex.messaging.util.ExceptionUtil;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * This class implements the FlexFactory interface to constructs Flex messaging

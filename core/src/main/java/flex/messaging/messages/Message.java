@@ -26,7 +26,7 @@ import java.util.Map;
  * Endpoints.
  */
 public interface Message
-        extends Serializable, Cloneable, Comparable<Message> //, javax.jms.Message
+        extends Serializable, Cloneable, Comparable<Message> //, jakarta.jms.Message
 {
     // Message header name constants
     /**

@@ -18,15 +18,15 @@ package flex.messaging.services.messaging.adapters;
 
 import flex.messaging.MessageException;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.ObjectMessage;
-import javax.jms.TextMessage;
-import javax.jms.Topic;
-import javax.jms.TopicConnection;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.TopicPublisher;
-import javax.jms.TopicSession;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.ObjectMessage;
+import jakarta.jms.TextMessage;
+import jakarta.jms.Topic;
+import jakarta.jms.TopicConnection;
+import jakarta.jms.TopicConnectionFactory;
+import jakarta.jms.TopicPublisher;
+import jakarta.jms.TopicSession;
 import javax.naming.NamingException;
 import java.io.Serializable;
 import java.util.Map;

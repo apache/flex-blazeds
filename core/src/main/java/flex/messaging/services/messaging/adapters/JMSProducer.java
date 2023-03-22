@@ -21,8 +21,8 @@ import flex.messaging.config.ConfigurationException;
 import flex.messaging.log.Log;
 import flex.messaging.messages.MessagePerformanceUtils;
 
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageProducer;
 import javax.naming.NamingException;
 
 import java.io.Serializable;
@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * A JMSProxy subclass for <code>javax.jms.MessageProducer</code> instances.
+ * A JMSProxy subclass for <code>jakarta.jms.MessageProducer</code> instances.
  */
 public abstract class JMSProducer extends JMSProxy {
     /* JMS related variables */
@@ -48,13 +48,13 @@ public abstract class JMSProducer extends JMSProxy {
     //--------------------------------------------------------------------------
 
     /**
-     * Create a new JMSProducer with default delivery mode of <code>javax.jms.Message.DEFAULT_DELIVERY_MODE</code>
-     * and default message priority of <code>javax.jms.Message.DEFAULT_PRIORITY</code>.
+     * Create a new JMSProducer with default delivery mode of <code>jakarta.jms.Message.DEFAULT_DELIVERY_MODE</code>
+     * and default message priority of <code>jakarta.jms.Message.DEFAULT_PRIORITY</code>.
      */
     public JMSProducer() {
         super();
-        deliveryMode = javax.jms.Message.DEFAULT_DELIVERY_MODE;
-        messagePriority = javax.jms.Message.DEFAULT_PRIORITY;
+        deliveryMode = jakarta.jms.Message.DEFAULT_DELIVERY_MODE;
+        messagePriority = jakarta.jms.Message.DEFAULT_PRIORITY;
     }
 
     //--------------------------------------------------------------------------
@@ -73,11 +73,11 @@ public abstract class JMSProducer extends JMSProxy {
 
         String deliveryString = settings.getDeliveryMode();
         if (deliveryString.equals(JMSConfigConstants.DEFAULT_DELIVERY_MODE))
-            deliveryMode = javax.jms.Message.DEFAULT_DELIVERY_MODE;
+            deliveryMode = jakarta.jms.Message.DEFAULT_DELIVERY_MODE;
         else if (deliveryString.equals(JMSConfigConstants.PERSISTENT))
-            deliveryMode = javax.jms.DeliveryMode.PERSISTENT;
+            deliveryMode = jakarta.jms.DeliveryMode.PERSISTENT;
         else if (deliveryString.equals(JMSConfigConstants.NON_PERSISTENT))
-            deliveryMode = javax.jms.DeliveryMode.NON_PERSISTENT;
+            deliveryMode = jakarta.jms.DeliveryMode.NON_PERSISTENT;
 
         messagePriority = settings.getMessagePriority();
         messageType = settings.getMessageType();
@@ -94,7 +94,7 @@ public abstract class JMSProducer extends JMSProxy {
         if (messageType == null || !(messageType.equals(JMSConfigConstants.TEXT_MESSAGE)
                 || messageType.equals(JMSConfigConstants.OBJECT_MESSAGE)
                 || messageType.equals(JMSConfigConstants.MAP_MESSAGE))) {
-            // Unsupported JMS Message Type ''{0}''. Valid values are javax.jms.TextMessage, javax.jms.ObjectMessage, javax.jms.MapMessage.
+            // Unsupported JMS Message Type ''{0}''. Valid values are jakarta.jms.TextMessage, jakarta.jms.ObjectMessage, jakarta.jms.MapMessage.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(JMSConfigConstants.INVALID_JMS_MESSAGE_TYPE, new Object[]{messageType});
             throw ce;
@@ -152,15 +152,15 @@ public abstract class JMSProducer extends JMSProxy {
 
     /**
      * Sets the delivery mode used by the <code>JMSProducer</code>. Valid values
-     * javax.jms.DeliveryMode.PERSISTENT and javax.jms.DeliveryMode.NON_PERSISTENT.
-     * This propery is optional and defaults to javax.jms.Message.DEFAULT_DELIVERY_MODE.
+     * jakarta.jms.DeliveryMode.PERSISTENT and jakarta.jms.DeliveryMode.NON_PERSISTENT.
+     * This propery is optional and defaults to jakarta.jms.Message.DEFAULT_DELIVERY_MODE.
      *
      * @param deliveryMode
      */
     public void setDeliveryMode(int deliveryMode) {
-        if (deliveryMode == javax.jms.Message.DEFAULT_DELIVERY_MODE
-                || deliveryMode == javax.jms.DeliveryMode.NON_PERSISTENT
-                || deliveryMode == javax.jms.DeliveryMode.PERSISTENT)
+        if (deliveryMode == jakarta.jms.Message.DEFAULT_DELIVERY_MODE
+                || deliveryMode == jakarta.jms.DeliveryMode.NON_PERSISTENT
+                || deliveryMode == jakarta.jms.DeliveryMode.PERSISTENT)
             this.deliveryMode = deliveryMode;
     }
 
@@ -175,7 +175,7 @@ public abstract class JMSProducer extends JMSProxy {
 
     /**
      * Sets the message priority used by the <code>JMSProducer</code>.
-     * This property is optional and defaults to <code>javax.jms.Message.DEFAULT_PRIORITY</code>.
+     * This property is optional and defaults to <code>jakarta.jms.Message.DEFAULT_PRIORITY</code>.
      *
      * @param messagePriority an int specifying the message priority.
      */
@@ -194,7 +194,7 @@ public abstract class JMSProducer extends JMSProxy {
 
     /**
      * Sets the message type used by the <code>JMSProducer</code>. Supported
-     * types are <code>javax.jms.TextMessage</code> and <code>javax.jms.ObjectMessage</code>.
+     * types are <code>jakarta.jms.TextMessage</code> and <code>jakarta.jms.ObjectMessage</code>.
      * This property is mandatory.
      *
      * @param messageType String representing the message type used.
@@ -209,7 +209,7 @@ public abstract class JMSProducer extends JMSProxy {
     //
     //--------------------------------------------------------------------------
 
-    protected void copyHeadersToProperties(Map properties, javax.jms.Message message) throws JMSException {
+    protected void copyHeadersToProperties(Map properties, jakarta.jms.Message message) throws JMSException {
         // Generic Flex headers become JMS properties, named Flex headers become JMS headers
         for (Iterator iter = properties.keySet().iterator(); iter.hasNext(); ) {
             String propName = (String) iter.next();

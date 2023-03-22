@@ -17,9 +17,10 @@
 
 package flex.messaging.log;
 
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -161,6 +162,22 @@ public class LoggingHttpServletRequestWrapper extends HttpServletRequestWrapper 
 
         public int available() throws IOException {
             return this._inputStream.available();
+        }
+
+        public boolean isReady() {
+            return true;
+        }
+
+        public boolean isFinished() {
+            try {
+                return this._inputStream.available() == 0;
+            } catch (IOException e) {
+                return true;
+            }
+        }
+
+        public void setReadListener(ReadListener readListener) {
+            throw new UnsupportedOperationException();
         }
         // --------------------------------
         // This is the end of the modification.

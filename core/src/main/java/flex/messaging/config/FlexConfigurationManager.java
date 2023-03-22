@@ -20,7 +20,7 @@ import flex.messaging.LocalizedException;
 import flex.messaging.util.ClassUtil;
 import flex.messaging.util.Trace;
 
-import javax.servlet.ServletConfig;
+import jakarta.servlet.ServletConfig;
 import java.io.File;
 
 /**

@@ -17,7 +17,7 @@
 package flex.messaging.services.messaging.adapters;
 
 import java.util.EventObject;
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 
 /**
  * Event dispatched to the JMSExceptionListener when a JMS exception is encountered

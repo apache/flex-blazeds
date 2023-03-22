@@ -17,7 +17,7 @@
 package flex.messaging.services.messaging.adapters;
 
 import java.util.EventObject;
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 /**
  * Event dispatched to the JMSMessageListener when a JMS message is received
@@ -34,7 +34,7 @@ public class JMSMessageEvent extends EventObject {
      * @param source       The source of the message.
      * @param jmsException The actual JMS message.
      */
-    JMSMessageEvent(JMSConsumer source, javax.jms.Message message) {
+    JMSMessageEvent(JMSConsumer source, jakarta.jms.Message message) {
         super(source);
         this.message = message;
     }

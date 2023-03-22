@@ -16,8 +16,8 @@
  */
 package flex.messaging.services.messaging.adapters;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 import flex.messaging.log.Log;
 
@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * A <code>MessageReceiver</code> that receives messages from JMS using
- * synchronous <code>javax.jms.MessageConsumer.receive</code> call.
+ * synchronous <code>jakarta.jms.MessageConsumer.receive</code> call.
  */
 class SyncMessageReceiver implements MessageReceiver {
     private ScheduledExecutorService messageReceiverService;
@@ -162,7 +162,7 @@ class SyncMessageReceiver implements MessageReceiver {
     }
 
     /**
-     * Message receive threads that perform sync javax.jms.MessageConsumer.receive
+     * Message receive threads that perform sync jakarta.jms.MessageConsumer.receive
      * calls.
      */
     class MessageReceiveThread implements Runnable {

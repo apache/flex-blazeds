@@ -51,7 +51,7 @@ public class JMSSettings {
         destinationType = JMSConfigConstants.TOPIC;
         deliverySettings = new DeliverySettings();
         maxProducers = JMSConfigConstants.defaultMaxProducers;
-        messagePriority = javax.jms.Message.DEFAULT_PRIORITY;
+        messagePriority = jakarta.jms.Message.DEFAULT_PRIORITY;
         preserveJMSHeaders = JMSConfigConstants.defaultPreserveJMSHeaders;
     }
 
@@ -368,7 +368,7 @@ public class JMSSettings {
     /**
      * Sets the <code>message-priority</code> property which is the JMS priority
      * for messages sent by Flex producers. This property is optional and
-     * defaults to <code>javax.jms.Message.DEFAULT_PRIORITY</code>.
+     * defaults to <code>jakarta.jms.Message.DEFAULT_PRIORITY</code>.
      *
      * @param priority an int specifying the <code>message-priority</code>.
      */
@@ -387,18 +387,18 @@ public class JMSSettings {
 
     /**
      * Sets the <code>message-type</code> property which is the
-     * <code>javax.jms.Message</code> type which the adapter should use for the
+     * <code>jakarta.jms.Message</code> type which the adapter should use for the
      * destination.
      *
      * @param type The <code>message-type</code> property. Supported types are
-     *             <code>javax.jms.TextMessage</code>, <code>javax.jms.ObjectMessage</code>,
-     *             and <code>javax.jms.MapMessage</code>.
+     *             <code>jakarta.jms.TextMessage</code>, <code>jakarta.jms.ObjectMessage</code>,
+     *             and <code>jakarta.jms.MapMessage</code>.
      */
     public void setMessageType(String type) {
         if (type == null || !(type.equals(JMSConfigConstants.TEXT_MESSAGE)
                 || type.equals(JMSConfigConstants.OBJECT_MESSAGE)
                 || type.equals(JMSConfigConstants.MAP_MESSAGE))) {
-            // Unsupported JMS Message Type ''{0}''. Valid values are javax.jms.TextMessage and javax.jms.ObjectMessage.
+            // Unsupported JMS Message Type ''{0}''. Valid values are jakarta.jms.TextMessage and jakarta.jms.ObjectMessage.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(JMSConfigConstants.INVALID_JMS_MESSAGE_TYPE, new Object[]{type});
             throw ce;

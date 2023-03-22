@@ -16,7 +16,7 @@
  */
 package flex.messaging.config;
 
-import javax.servlet.ServletConfig;
+import jakarta.servlet.ServletConfig;
 
 import flex.messaging.log.LogCategories;
 

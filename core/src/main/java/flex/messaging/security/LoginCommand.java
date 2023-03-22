@@ -16,7 +16,7 @@
  */
 package flex.messaging.security;
 
-import javax.servlet.ServletConfig;
+import jakarta.servlet.ServletConfig;
 
 import java.security.Principal;
 import java.util.List;

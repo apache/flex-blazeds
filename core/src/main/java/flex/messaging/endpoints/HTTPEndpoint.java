@@ -16,8 +16,8 @@
  */
 package flex.messaging.endpoints;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import flex.management.runtime.messaging.endpoints.HTTPEndpointControl;
 import flex.messaging.MessageBroker;

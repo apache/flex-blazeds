@@ -19,7 +19,7 @@ package flex.messaging.security;
 import java.security.Principal;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Interface to code in the Tomcat valve. This is needed because Tomcat has a classloader system

@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 import javax.naming.Context;
 
 import flex.management.runtime.messaging.services.messaging.adapters.JMSAdapterControl;
@@ -149,7 +149,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
         }
 
         if (settings.getMessageType() == null) {
-            // Unsupported JMS Message Type ''{0}''. Valid values are javax.jms.TextMessage, javax.jms.ObjectMessage, and javax.jms.MapMessage.
+            // Unsupported JMS Message Type ''{0}''. Valid values are jakarta.jms.TextMessage, jakarta.jms.ObjectMessage, and jakarta.jms.MapMessage.
             ConfigurationException ce = new ConfigurationException();
             ce.setMessage(INVALID_JMS_MESSAGE_TYPE, new Object[]{null});
             throw ce;
@@ -541,7 +541,7 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
      */
     public void messageReceived(JMSMessageEvent evt) {
         JMSConsumer consumer = (JMSConsumer) evt.getSource();
-        javax.jms.Message jmsMessage = evt.getJMSMessage();
+        jakarta.jms.Message jmsMessage = evt.getJMSMessage();
 
         flex.messaging.messages.AsyncMessage flexMessage = convertToFlexMessage(jmsMessage, consumer);
         if (flexMessage != null) {
@@ -681,11 +681,11 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
     }
 
     /**
-     * Convert from a <code>javax.jms.Message</code> type to the <code>flex.messaging.messages.AsyncMessage</code> type.
-     * Supported types are <code>javax.jms.TextMessage</code>, <code>javax.jms.ObjectMessage</code>,
-     * and <code>javax.jms.MapMessage</code>.
+     * Convert from a <code>jakarta.jms.Message</code> type to the <code>flex.messaging.messages.AsyncMessage</code> type.
+     * Supported types are <code>jakarta.jms.TextMessage</code>, <code>jakarta.jms.ObjectMessage</code>,
+     * and <code>jakarta.jms.MapMessage</code>.
      */
-    private flex.messaging.messages.AsyncMessage convertToFlexMessage(javax.jms.Message jmsMessage, JMSConsumer consumer) {
+    private flex.messaging.messages.AsyncMessage convertToFlexMessage(jakarta.jms.Message jmsMessage, JMSConsumer consumer) {
         flex.messaging.messages.AsyncMessage flexMessage = null;
         flexMessage = new flex.messaging.messages.AsyncMessage();
 
@@ -779,14 +779,14 @@ public class JMSAdapter extends MessagingAdapter implements JMSConfigConstants, 
 
         // Finally, set the JMS message body of the Flex message body.
         try {
-            if (jmsMessage instanceof javax.jms.TextMessage) {
-                javax.jms.TextMessage textMessage = (javax.jms.TextMessage) jmsMessage;
+            if (jmsMessage instanceof jakarta.jms.TextMessage) {
+                jakarta.jms.TextMessage textMessage = (jakarta.jms.TextMessage) jmsMessage;
                 flexMessage.setBody(textMessage.getText());
-            } else if (jmsMessage instanceof javax.jms.ObjectMessage) {
-                javax.jms.ObjectMessage objMessage = (javax.jms.ObjectMessage) jmsMessage;
+            } else if (jmsMessage instanceof jakarta.jms.ObjectMessage) {
+                jakarta.jms.ObjectMessage objMessage = (jakarta.jms.ObjectMessage) jmsMessage;
                 flexMessage.setBody(objMessage.getObject());
-            } else if (jmsMessage instanceof javax.jms.MapMessage) {
-                javax.jms.MapMessage mapMessage = (javax.jms.MapMessage) jmsMessage;
+            } else if (jmsMessage instanceof jakarta.jms.MapMessage) {
+                jakarta.jms.MapMessage mapMessage = (jakarta.jms.MapMessage) jmsMessage;
                 @SuppressWarnings("unchecked")
                 Enumeration names = mapMessage.getMapNames();
                 Map<String, Object> body = new HashMap<String, Object>();

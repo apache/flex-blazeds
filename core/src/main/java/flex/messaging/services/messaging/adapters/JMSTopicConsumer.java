@@ -16,11 +16,11 @@
  */
 package flex.messaging.services.messaging.adapters;
 
-import javax.jms.JMSException;
-import javax.jms.Topic;
-import javax.jms.TopicConnection;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.TopicSession;
+import jakarta.jms.JMSException;
+import jakarta.jms.Topic;
+import jakarta.jms.TopicConnection;
+import jakarta.jms.TopicConnectionFactory;
+import jakarta.jms.TopicSession;
 import javax.naming.NamingException;
 
 import flex.messaging.MessageException;
@@ -131,7 +131,7 @@ public class JMSTopicConsumer extends JMSConsumer {
                                 + "on the topic connection because it was interrupted: "
                                 + ie.toString());
                 } catch (ExecutionException ee) {
-                    // JMS topic consumer for JMS destination ''{0}'' is configured to use durable subscriptions but the application server does not permit javax.jms.Connection.setClientID method needed to support durable subscribers. Set durable property to false.
+                    // JMS topic consumer for JMS destination ''{0}'' is configured to use durable subscriptions but the application server does not permit jakarta.jms.Connection.setClientID method needed to support durable subscribers. Set durable property to false.
                     MessageException me = new MessageException();
                     me.setMessage(JMSConfigConstants.DURABLE_SUBSCRIBER_NOT_SUPPORTED, new Object[]{destinationJndiName});
                     throw me;
