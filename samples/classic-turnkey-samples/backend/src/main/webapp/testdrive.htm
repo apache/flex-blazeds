@@ -1,0 +1,251 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>BlazeDS Test Drive</title>
+<link href="main.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<h1>BlazeDS Test Drive</h1>
+<p>In this test drive, you  run a series of short sample applications that demonstrate the key features of BlazeDS. We walk you through the source code of each application to highlight the key points of  its implementation. The source code for the Test Drive applications is available in the [installdir]/samples/classic-turnkey-samples/frontend folder.
+  </p>
+
+<div class="item">
+  <h3>Sample  1: Accessing data using HTTPService</h3>
+
+  <h4>Run the sample:</h4>
+  <ol>
+  <li>Click <a href="testdrive-httpservice/index.html">here</a> to run the application    </li>
+    <li>Click &quot;Get Data&quot;: The DataGrid is populated with XML data returned by catalog.jsp </li>
+    <li>Also notice some of the built-in DataGrid  features:</li>
+    <ul>
+      <li>Sortable columns  (click on a column header) </li>
+      <li>Moveable columns (click on a column header and, with the mouse button pressed, move the column to a new position) </li>
+    </ul>
+  </ol>
+  <h4>Code walkthrough:</h4>
+<p>Open main.mxml in the testdrive-httpservice/src directory  to look at the source code of the application.</p>
+<p>Using HTTPService, you can  send   HTTP requests to a server, and consume the response. Although the  HTTPService can be used to consume different types of responses, it is  typically used to consume XML. You can use the HTTPService with any kind of  server-side technology: JSP, Servlet, ASP, Ruby on Rails, PHP, etc. You specify  the target service in the <strong>url</strong> property of HTTPService.</p>
+<p>Flex and Royale provide sophisticated data binding capabilities. You can bind the value of a property to the  value of another property, or to an expression in general. In this example, the  dataProvider property of the DataGrid is bound (using the curly braces notation) to the  lastResult property of the HTTPService. </p>
+<p>HTTPService calls are asynchronous. The <strong>result</strong> event is triggered on the HTTPService  when the data becomes available to the client application. The <strong>fault</strong> event is triggered if an error occurs at the server-side, or if the network becomes unavailable. </p>
+<p>By default, the XML document retrieved from the server is  deserialized into an object graph. This allows you to navigate through the  result using the dot notation. You can also get the result as an XML document by specifying resultFormat=&quot;e4x&quot; on the  HTTPService. In that case, you can parse the document using <a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-357/">E4X</a> (ECMAScript for XML). </p>
+<p>The BlazeDS server is not required to use the HTTPService: By default, the application tries to connect  directly to the domain specified in the HTTPService url attribute. This  will work if one of the two conditions below is satisfied:</p>
+<ol>
+  <li>The domain specified in the HTTPService url attribute is the domain from where your application was downloaded. </li>
+  <li>A crossdomain.xml file granting access to your application's originating domain is available on the domain specified in the HTTPService url attribute.   More information on crossdomain.xml is available <a href="http://kb.adobe.com/selfservice/viewContent.do?externalId=tn_14213&sliceId=2">here</a>.</li>
+  </ol>
+<p>If you want your application to access services available on another domain without deploying a crossdomain.xml file on that  domain (for example,  because you may not own the target domain), you can set the <strong>useProxy</strong> attribute of the HTTPService to &quot;<strong>true</strong>&quot; like in this example. In this case, the request is sent to the BlazeDS proxy  which  makes the request to the target domain on the client application's behalf. This configuration also provides more control over the access to the service. For example, you may configure the proxy to require authentication before accessing a  service, log access to the service, etc. </p>
+<p>When using the proxy, you can specify a logical name in the HTTPService <strong>destination</strong> attribute instead of specifying a hardcoded value in the url attribute. You   then map this  logical name to an actual URL in WEB-INF/flex/proxy-config.xml. Open WEB-INF/flex/proxy-config.xml to see how the catalog destination is configured.</p>
+<h4>More info:</h4>
+<ul>
+  <li>Both HTTP and HTTPS are supported</li>
+</ul>
+</div>
+<br />
+<div class="item">
+  <h3>Sample 2: Accessing data using Web Services</h3>
+  <p><strong>Warning:</strong> The MXNA 2.0 web service that was previously hosted at feeds.adobe.com no longer exists. This sample is currently unavailable.</p>
+  <s>
+  <h4>Run the sample:</h4>
+<ol>
+  <li>Click <a href="testdrive-webservice/index.html">here</a> to run the application
+    <p>NOTE: Since this application accesses a live web service, you must have a connection to the internet to run it.</p></li>
+  <li>Click &quot;Get Data&quot;: The DataGrid is populated with  data returned by the MXNA 2.0 web service hosted on feeds.adobe.com. </li>
+  </ol>
+<h4>Code walkthrough:</h4>
+<p>Open main.mxml in the testdrive-webservice/src directory  to look at the source code of the application.</p><p>Access the wsdl file for the web service used in this example: </p>
+<ul>
+  <li>http://feeds.adobe.com/webservices/mxna2.cfc?wsdl</li>
+
+</ul>
+<p>Using the WebService tag, you can  invoke SOAP-based web services deployed  in your application server or  on the internet. Objects returned by a web service are automatically deserialized into ActionScript objects. Similarly ActionScript objects passed as arguments to a web service operation are serialized according the  wsdl description.</p>
+<p>Notice that we also added DataGrid column definitions (using DataGridColumn) in this example.</p>
+<p>The BlazeDS server is not required to use the WebService: By default, the application tries to connect  directly to the domain specified in the WebService wsdl attribute. This  will work if one of the two conditions below is satisfied:</p>
+<ol>
+  <li>The domain specified in the WebService wsdl attribute is the domain from where your application was downloaded. </li>
+  <li>A crossdomain.xml file granting access to your application's originating domain is available on the domain specified in the WebService wsdl attribute.   More information on crossdomain.xml is available <a href="http://kb.adobe.com/selfservice/viewContent.do?externalId=tn_14213&amp;sliceId=2">here</a>.</li>
+</ol>
+<p>If you want your application to access services available on another domain without deploying a crossdomain.xml file on that  domain (for example,  because you may not own the target domain), you can set the <strong>useProxy</strong> attribute of the WebService to &quot;<strong>true</strong>&quot; like in this example. In this case, the request is sent to the BlazeDS proxy  which  makes the request to the target domain on the client application's behalf. This configuration also provides more control over the access to the service. For example, you may configure the proxy to require authentication before accessing a  service, log access to the service, etc. </p>
+<p>When using the proxy, you can specify a logical name in the WebService <strong>destination</strong> attribute instead of specifying a hardcoded value in the wsdl attribute. You   then map this  logical name to an actual URL in WEB-INF/flex/proxy-config.xml. Open WEB-INF/flex/proxy-config.xml to see how the ws-catalog destination is configured.</p>
+<h4>More Info:</h4>
+<ul>
+  <li>Flex and Royale support both RPC-encoded and document-literal web services</li>
+  <li>Like HTTPService, WebService calls are asynchronous: You can code <strong>result</strong> and <strong>fault</strong> event handlers<br />
+  </li>
+  </ul>
+</s>
+</div>
+<br />
+
+<div class="item">
+  <h3>Sample  3: Accessing data using Remoting </h3>
+  <h4>Run the sample:</h4>
+<ol>
+
+  <li>Click <a href="testdrive-remoteobject/index.html">here</a> to run the application</li>
+  <li>Click &quot;Get Data&quot;:  The DataGrid is populated with  data returned by the getProducts() method of the ProductService Java class. </li>
+  </ol>
+<h4>Code walkthrough:</h4>
+<p>Open main.mxml in the testdrive-remoteobject/src directory  to look at the source code of the application.</p>
+<p>Open the following files in a text editor to look at the source code for the server side  of the application: </p>
+<ul>
+  <li>{context-root}/WEB-INF/src/flex/samples/product/ProductService.java</li>
+
+  <li>{context-root}/WEB-INF/flex/remoting-config.xml</li>
+</ul>
+<p>Using RemoteObject, you can directly invoke methods of Java objects  deployed in your application server, and consume the return value. The return value can be a value of a primitive data type, an object, a  collection of objects, an object graph, etc.</p>
+<p>The value of the destination property of RemoteObject is a  logical name that is mapped to a fully qualified java class  in  remoting-config.xml.</p>
+<p>Java objects returned by server-side methods are deserialized into  either dynamic or typed ActionScript objects. In this example, we don't have an explicit ActionScript version of the Product Java class. Product objects are therefore deserialized into dynamic objects. In sample 5, we work with an explicit Product class in ActionScript. </p>
+<h4><strong>More info:</strong></h4>
+<ul>
+  <li>Like HTTPService and WebService, RemoteObject calls are asynchronous. You use the <strong>result</strong> and <strong>fault</strong> events of the RemoteObject to handle results and errors. &nbsp;<br />
+
+  </li>
+  </ul>
+
+</div>
+<br />
+
+<div class="item">
+  <h3>Sample  4: Flex/Royale Programming Model 101 </h3>
+  <h4>Run the sample:</h4>
+<ol>
+  <li>Click <a href="testdrive-101/index.html">here</a> to run the application</li>
+
+  <li>Click a phone in the list: the details for the selected phone appear in the right panel  </li>
+  </ol>
+<h4>Code walkthrough:</h4>
+<p>Open the following files in the testdrive-101/src directory to look at the source code of the application:</p>
+<ul>
+  <li>main.mxml</li>
+  <li>Thumb.mxml</li>
+  <li>ProductView.mxml</li>
+</ul>
+<p>Like in any other object-oriented programming language, a Flex or Royale application is made of a collection of classes. Using Flex/Royale, you can create classes using MXML or ActionScript. You typically create view classes in MXML, and Model and Controller classes in ActionScript. </p>
+<p>When you create an mxml file, you are actually creating a class. The root node of the mxml document indicates the class you extend. For example, creating a file named MasterDetail.mxml with an &lt;Application&gt; root node is equivalent to creating an ActionScript  class with the following signature:</p>
+<div class="code">
+<pre>public class MasterDetail extends Application {
+}</pre>
+</div>
+
+<p>Similarly,   creating a file named ProductView.mxml with a &lt;Panel&gt; root node is similar to creating a class with the following signature:</p>
+<div class="code">
+<pre>public class ProductView extends Panel {
+}</pre>
+</div>
+<p>Once you have defined a class, you can use it programatically or declaratively (as a tag in MXML) without the need for an additional descriptor file. Public properties are automatically available as tag attributes. For example, in MasterDetail.mxml, we define the &lt;ProductView&gt; tag and bind its product attribute to the selected item in the product list. </p>
+
+<p>Also notice the support for CSS style sheets. </p>
+
+</div>
+<br />
+
+<div class="item">
+  <h3>Sample 5: Updating Data</h3>
+  <h4>Run the sample: </h4>
+  <ol>
+  <li>Click <a href="testdrive-update/index.html">here</a> to run the application</li>
+
+  <li>Select a phone </li>
+  <li>Modify some data in the right panel. For example, the price. </li>
+  <li>Click Update: changes are sent to the back-end and persisted in the database by the ProductService class. </li>
+</ol>
+<h4>Code walkthrough:</h4>
+<p>Open the following files in the testdrive-update/src directory to look at the source code of the application:</p>
+<ul>
+  <li>main.mxml</li>
+  <li>ProductForm.mxml</li>
+  <li>Product.as</li>
+</ul>
+<p>Open the following files in a text editor to look at the source code for the server-side  of the application: </p>
+<ul>
+  <li>WEB-INF/src/flex/samples/product/ProductService.java</li>
+  <li>WEB-INF/flex/remoting-config.xml</li>
+</ul>
+<p>In Product.as we use the <code>[RemoteClass(alias=&quot;flex.samples.product.Product&quot;)]</code> annotation to map the ActionScript version of the Product class (Product.as) to the Java version (Product.java). As a result, Product objects returned by the getProducts() method of ProductService are deserialized into instances of the ActionScript Product class. Similarly, the instance of the ActionScript Product class  passed as an argument to the update method of the RemoteObject  is deserialized into an instance of the java version of the Product class at the server-side. </p>
+
+</div>
+<br />
+
+
+<div class="item">
+  <h3>Sample 6: Publish/Subscribe Messaging (Data Push Use Case)</h3>
+  <h4>Run the sample:</h4>
+  <p> In this example, a Java component publishes simulated real time values to a message queue. The Royale client subscribes to that queue and displays the values in real time. </p>
+  <ol>
+
+  <li>To start the feed component at the server-side, access:   <a href="testdrive-datapush/startfeed.jsp">testdrive-datapush/startfeed.jsp</a></li>
+  <li>Click <a href="testdrive-datapush/index.html">here</a> to run the application</li>
+  <li>Click the &quot;Subscribe to 'feed' destination&quot; button: Pushed values appear in the text field</li>
+  <li>To stop the feed when you are done experimenting with the application, access: <a href="testdrive-datapush/stopfeed.jsp">testdrive-datapush/stopfeed.jsp</a></li>
+  </ol>
+  <h4>Code walkthrough:</h4>
+<p>Open FeedClient.mxml in the testdrive-datapush/src directory  to look at the source code of the application.</p>
+  <p>Open the following files in a text editor to look at the source code for the server-side  of the application: </p>
+  <ul>
+    <li>WEB-INF/src/flex/samples/feed/Feed.Java</li>
+    <li>WEB-INF/flex/messaging-config.xml</li>
+  </ul>
+  <p>Flex and Royale support publish/subscribe messaging through the BlazeDS Message Service. The Message Service manages a set of destinations that Flex/Royale clients can  publish and subsribe to. Both Flex and Royale provide two components, Producer and Consumer, that you use to respectively publish and subscribe to a destination. To subscribe to a destination, you use the subscribe() method of the Consumer class. When a message is published to a destination you subscribed to, the <strong>message</strong> event is triggered on the Consumer. </p>
+<p>In Feed.java, the BlazeDS Java API (MessageBroker, AsyncMessage) is used to publish messages to the destination. Another option to exchange messages between Flex/Royale and Java applications is to map destinations to JMS topics, essentially allowing a Flex/Royale client to publish and subscribe to JMS topics. In addition to JMS, the Message Service adapter architecture allows you to integrate with any kind of messaging system. </p>
+<p>Messaging destinations are configured in messaging-config.xml.  A key element of a destination configuration is the channel used to exchange data between the client and the server. Using BlazeDS, a messaging destination typically uses a streaming or a polling channel. </p>
+<ul>
+  <li>Using a streaming channel, the server response is left open until the channel connection is closed, allowing the   server to send down incremental chunks of data to the client. HTTP connections are not duplex. This means that a single streaming AMF or   HTTP channel actually requires two browser HTTP connections in order to send   data in both directions. One for the streamed response from the server to the   client that the channel hangs on to, and a second transient connection, drawn   from the browser pool only when data needs to be sent to the server. This   second transient connection is  immediately released back to the browser&rsquo;s   connection pool.</li>
+  <li>A polling channel can be configured with a simple interval or with a sever wait if data is not immediately   available (long polling). In either case,  each poll response completes the   request. Browser HTTP 1.1   connections are persistent by default, so the browser   will likely recycle existing HTTP connections to send subsequent poll requests   which lowers the overhead for polling.</li>
+</ul>
+<p>The streaming channel is the best option when near real time communication is required.</p>
+
+<p><strong>Difference between IE and FireFox:</strong></p>
+<p>Browsers have a limited number of connections that they can maintain per session. The maximum number of connections allowed, as well as the way sessions are handled are browser specific.</p>
+<p>In IE, the maximum number of connections per session is two, but if you start multiple IE instances from an operating system menu or shortcut, each instance is started in a different process and maintains its own session. However, if you start a new IE window using CTRL+N in an existing IE instance, that new window shares the same session as the IE instance that created it. In other words, you can have an unlimited number of applications using HTTP streaming to get data from the server as long as these applications are started in different IE processes. If you start multiple IE windows using CTRL+N, you are limited to the maximum number of connections per session (2). </p>
+<p>In Firefox, the maximum number of connections per session is eight. If you start multiple Firefox instances from an operating system menu or shortcut, all the instances are started in the same process and share a single session. Since the browser will typically need one connection for traditional HTTP requests, you can theoretically have a maximum of seven HTTP streaming connections with the server across all your browser instances. </p>
+<p>In either case, if the limit of connections per session is reached, the next attempt to connect to the server using a streaming channel will fail. BlazeDS provides an elegant fall back mechanism to handle such situations: The client always tries to connect using the first channel in the list of channles defined for the destination in messaging-config.xml. If that connection fails, the client automatically falls back to the next channel in the list. In this example, we defined the following default channelset for all the messaging destinations:</p>
+<pre>&lt;default-channels&gt;
+    &lt;channel ref=&quot;my-streaming-amf&quot;/&gt;
+    &lt;channel ref=&quot;my-polling-amf&quot;/&gt;
+&lt;/default-channels&gt;
+</pre>
+<p>In other words, the client application will try to connect using a streaming channel first and will fall back to a polling channel if the streaming connection fails.</p>
+</div>
+<br />
+
+<div class="item">
+  <h3>Sample 7: Publish/Subscribe Messaging (Collaboration Use Case) </h3>
+  <h4>Run the sample:</h4>
+  <ol>
+
+  <li>Click <a href="testdrive-chat/index.html">here</a> to run the application</li>
+  <li>Open the same URL in another browser session to open a second instance of the chat application </li>
+  <li>Type a message in one of the chat clients and click &quot;Send&quot;: the message appears in the two chat clients </li>
+  </ol>
+<h4>Code walkthrough:</h4>
+<p>Open Chat.mxml in the testdrive-chat/src directory  to look at the source code of the application.</p>
+
+<p>Open the following files in a text editor to look at the source code for the server-side  of the application: </p>
+<ul>
+  <li>WEB-INF/flex/messaging-config.xml</li>
+</ul>
+<p> This sample builds on the concepts and APIs introduced in the previous example. To publish a message from a client, you use the send() method of the Producer class. </p>
+<p>The messaging and real time infrastructure available in BlazeDS enables  collaboration and data push applications to be built in a scalable and  reliable manner while preserving the lightweight web deployment model.</p>
+
+</div>
+
+</body>
+</html>

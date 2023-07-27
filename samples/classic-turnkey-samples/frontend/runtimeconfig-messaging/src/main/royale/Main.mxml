@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<j:Application
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:js="library://ns.apache.org/royale/basic"
+	xmlns:mx="library://ns.apache.org/royale/mx"
+	xmlns:j="library://ns.apache.org/royale/jewel"
+	xmlns:html="library://ns.apache.org/royale/html"
+	xmlns="*"
+	initialize="onInitialize(event)"
+	applicationComplete="onCreate(event)">
+
+	<fx:Script>
+		<![CDATA[
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+
+			import org.apache.royale.collections.ArrayList;
+			import org.apache.royale.events.Event;
+			import org.apache.royale.events.MouseEvent;
+			import org.apache.royale.jewel.Alert;
+			import org.apache.royale.reflection.registerClassAlias;
+	
+
+			[Bindable]
+			private var rooms:ArrayList;
+
+            private function onInitialize(event:Event):void{
+                // treat ArrayCollection locally as Royale ArrayList
+                registerClassAlias("flex.messaging.io.ArrayCollection", ArrayList);
+            }
+
+			private function onCreate(event:Event):void
+			{
+				srv.getRoomList();
+			}
+
+			private function onResult(event:ResultEvent):void
+			{
+				rooms = event.result as ArrayList;
+			}
+			
+			private function onFault(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString, "Fault");
+			}
+
+			private function createNewRoom():void
+			{
+				var roomName:String = room.text;
+				if (roomName.length == 0)
+				{
+					return;
+				}
+				room.text = "";
+				srv.createRoom(roomName);
+			}
+			
+		]]>
+	</fx:Script>
+
+	<fx:Style>
+		.jewel.item.datagrid {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	</fx:Style>
+
+	<fx:Declarations>
+		<mx:RemoteObject id="srv" endpoint="/samples/messagebroker/amf" destination="chat-room-service">
+			<mx:method name="getRoomList" result="onResult(event)" fault="onFault(event)"/>
+			<mx:method name="createRoom" result="srv.getRoomList()"/>
+		</mx:RemoteObject>
+	</fx:Declarations>
+
+    <j:beads>
+        <js:ClassAliasBead/>
+		<js:ApplicationDataBinding/>
+    </j:beads>
+    
+    <j:valuesImpl>
+        <js:SimpleCSSValuesImpl/>
+    </j:valuesImpl>
+
+	<j:initialView>
+		<j:ResponsiveView id="rootView">
+			<j:HGroup width="100%">
+				<j:Card width="50%" height="100%">
+					<j:CardHeader>
+						<html:H3 text="Room List" className="primary-normal"/>
+					</j:CardHeader>
+					<j:CardPrimaryContent>
+						<j:List id="list" dataProvider="{rooms}" width="100%" height="100%">
+							<j:beads>
+								<j:RemoveAllItemRendererForArrayListData/>
+								<js:CollectionChangeUpdateForArrayListData/>
+							</j:beads>
+						</j:List>
+					</j:CardPrimaryContent>
+					<j:CardActions>
+						<j:TextInput id="room" enter="createNewRoom()"/>
+						<j:Button text="Create" click="createNewRoom()"/>
+						<j:Spacer width="100%"/>
+						<j:Button text="Refresh" click="srv.getRoomList()"/>
+					</j:CardActions>
+				</j:Card>
+				<ChatPanel width="50%" height="100%" room="{list.selectedItem}"/>
+			</j:HGroup>
+		</j:ResponsiveView>
+	</j:initialView>
+</j:Application>

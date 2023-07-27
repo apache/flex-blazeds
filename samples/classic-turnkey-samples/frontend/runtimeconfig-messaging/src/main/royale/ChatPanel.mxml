@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<j:Card xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:js="library://ns.apache.org/royale/basic"
+	xmlns:mx="library://ns.apache.org/royale/mx"
+	xmlns:j="library://ns.apache.org/royale/jewel"
+	xmlns:html="library://ns.apache.org/royale/html"
+	initComplete="initComp()">
+
+	<fx:Script>
+		<![CDATA[
+			import mx.messaging.events.MessageEvent;
+			import mx.messaging.messages.AsyncMessage;
+			import mx.messaging.messages.IMessage;
+			import org.apache.royale.jewel.Alert;
+			import mx.messaging.ChannelSet;
+			import mx.messaging.channels.SecureAMFChannel;
+			import mx.messaging.channels.AMFChannel;
+			import mx.messaging.Channel;
+			import mx.rpc.events.FaultEvent;
+			import mx.messaging.events.MessageFaultEvent;
+
+			private function initComp():void
+			{
+				var rootUrl:String = window.document.location.origin;
+				// var myStreamingAMF:AMFChannel = new StreamingAMFChannel("my-streaming-amf", rootUrl + "/messagebroker/streamingamf");
+				var myPollingAMF:AMFChannel = new AMFChannel("my-polling-amf", rootUrl + "/samples/messagebroker/amfpolling");
+				myPollingAMF.pollingEnabled = true;
+				myPollingAMF.pollingInterval = 2000;
+				var channelSet:ChannelSet = new ChannelSet();
+				// channelSet.addChannel(myStreamingAMF);
+				channelSet.addChannel(myPollingAMF);
+				consumer.channelSet = channelSet;				
+				producer.channelSet = channelSet;
+			}
+
+			private function createChannelSet(endpoint:String):ChannelSet
+			{
+				var chan:Channel;
+				if (endpoint.indexOf("https") == 0)
+				{
+					chan = new SecureAMFChannel(null, endpoint);
+				}
+				else
+				{
+					chan = new AMFChannel(null, endpoint);
+				}
+
+				var channelSet:ChannelSet = new ChannelSet();
+				channelSet.addChannel(chan);
+				return channelSet;
+			}
+
+			public function set room(name:String):void
+			{
+				if (consumer && consumer.subscribed) 
+				{
+					log.text += "Leaving room " + consumer.destination + "\n";	
+					consumer.unsubscribe();
+				}
+				if (!name)
+				{
+					return;
+				}
+				consumer.destination = name;
+				producer.destination = name;
+				consumer.subscribe();
+				log.text += "Entering room " + name + "\n";	
+			}
+			
+			private function send():void
+			{
+				if (!consumer || !consumer.subscribed)
+				{
+					Alert.show("Select a room before sending a message");
+					return;
+				}
+				var message:IMessage = new AsyncMessage();
+				message.body = msg.text;
+				producer.send(message);
+				msg.text = "";
+			}
+							
+			private function onMessage(event:MessageEvent):void
+			{
+				log.text += event.message.body + "\n";	
+			}
+							
+			private function onFault(event:MessageFaultEvent):void
+			{
+				Alert.show(event.faultString, "Fault");
+			}
+		]]>
+	</fx:Script>
+
+	<fx:Declarations>
+		<mx:Producer id="producer"/>
+		<mx:Consumer id="consumer" message="onMessage(event)" fault="onFault(event)"/>
+	</fx:Declarations>
+
+	<j:beads>
+		<js:ContainerDataBinding/>
+	</j:beads>
+
+	<j:CardHeader>
+		<html:H3 text="Chat" className="primary-normal"/>
+	</j:CardHeader>
+	
+	<j:CardPrimaryContent>
+		<j:TextArea id="log" width="100%" height="100%"/>
+	</j:CardPrimaryContent>
+
+	<j:CardActions>
+		<j:TextInput id="msg" width="100%" enter="send()"/>
+		<j:Button text="Send" click="send()"/>
+	</j:CardActions>
+			
+</j:Card>

@@ -75,6 +75,7 @@
         <module>proxy</module>
         <module>remoting</module>
         <module>opt</module>
+        <module>samples</module>
     </modules>
 
     <build>

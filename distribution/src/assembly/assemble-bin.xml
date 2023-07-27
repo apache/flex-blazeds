@@ -39,14 +39,42 @@
                 <exclude>**/.git/**</exclude>
                 <exclude>**/.gitignore</exclude>
                 <exclude>**/.DS_Store</exclude>
+                <exclude>**/*.jar</exclude>
+                <exclude>**/*.war</exclude>
+                <exclude>**/*.sh</exclude>
             </excludes>
         </fileSet>
         <fileSet>
-            <directory>${project.build.directory}/blazeds-binaries-and-dependencies</directory>
-            <outputDirectory>/lib</outputDirectory>
+            <directory>../</directory>
+            <outputDirectory>/</outputDirectory>
+            <!-- needs execute file permission -->
+            <fileMode>0755</fileMode>
             <includes>
-                <include>*.jar</include>
+                <include>**/*.sh</include>
             </includes>
         </fileSet>
     </fileSets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <includes>
+                <include>org.apache.flex.blazeds:flex-messaging-*</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/samples/classic-turnkey-samples/sampledb</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <includes>
+                <include>org.hsqldb:hsqldb</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/webapps</outputDirectory>
+            <outputFileNameMapping>samples.war</outputFileNameMapping>
+            <includes>
+                <include>org.apache.flex.blazeds.samples.turnkey:blazeds-classic-turnkey-samples-backend</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
 </assembly>
