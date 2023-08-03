@@ -41,7 +41,9 @@
                 <exclude>**/.DS_Store</exclude>
                 <exclude>**/*.jar</exclude>
                 <exclude>**/*.war</exclude>
+                <!-- shell scripts and batch files will be handled separately -->
                 <exclude>**/*.sh</exclude>
+                <exclude>**/*.bat</exclude>
             </excludes>
         </fileSet>
         <fileSet>
@@ -49,8 +51,17 @@
             <outputDirectory>/</outputDirectory>
             <!-- needs execute file permission -->
             <fileMode>0755</fileMode>
+            <lineEnding>unix</lineEnding>
             <includes>
                 <include>**/*.sh</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>../</directory>
+            <outputDirectory>/</outputDirectory>
+            <lineEnding>windows</lineEnding>
+            <includes>
+                <include>**/*.bat</include>
             </includes>
         </fileSet>
     </fileSets>
