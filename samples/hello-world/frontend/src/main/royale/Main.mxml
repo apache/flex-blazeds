@@ -50,13 +50,6 @@
 		]]>
 	</fx:Script>
 
-	<fx:Style>
-		.jewel.item.datagrid {
-			white-space: nowrap;
-			text-overflow: ellipsis;
-		}
-	</fx:Style>
-
 	<fx:Declarations>
 		<mx:RemoteObject id="srv" endpoint="/hello-world/messagebroker/amf" destination="product">
 			<mx:method name="sayHello" result="onResult(event)" fault="onFault(event)"/>
