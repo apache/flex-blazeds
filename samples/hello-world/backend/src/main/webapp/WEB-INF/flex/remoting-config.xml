@@ -17,24 +17,21 @@
   limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<service id="remoting-service"
+    class="flex.messaging.services.RemotingService">
 
-  <parent>
-    <groupId>org.apache.flex.blazeds</groupId>
-    <artifactId>blazeds</artifactId>
-    <version>4.9.0-SNAPSHOT</version>
-  </parent>
+    <adapters>
+        <adapter-definition id="java-object" class="flex.messaging.services.remoting.adapters.JavaAdapter" default="true"/>
+    </adapters>
 
-  <groupId>org.apache.flex.blazeds.samples</groupId>
-  <artifactId>blazeds-samples</artifactId>
-  <version>4.9.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
+    <default-channels>
+        <channel ref="my-amf"/>
+    </default-channels>
 
-  <name>Apache Flex BlazeDS: Samples</name>
-
-  <modules>
-    <module>hello-world</module>
-    <module>classic-turnkey-samples</module>
-  </modules>
-</project>
+    <destination id="product">
+        <properties>
+            <source>org.apache.flex.blazeds.samples.hello.HelloWorldService</source>
+        </properties>
+    </destination>
+    
+  </service>

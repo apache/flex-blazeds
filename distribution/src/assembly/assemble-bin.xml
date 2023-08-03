@@ -76,5 +76,12 @@
                 <include>org.apache.flex.blazeds.samples.turnkey:blazeds-classic-turnkey-samples-backend</include>
             </includes>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>/webapps</outputDirectory>
+            <outputFileNameMapping>hello-world.war</outputFileNameMapping>
+            <includes>
+                <include>org.apache.flex.blazeds.samples.hello:blazeds-hello-world-backend</include>
+            </includes>
+        </dependencySet>
     </dependencySets>
 </assembly>
