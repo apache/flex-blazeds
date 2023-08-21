@@ -370,6 +370,7 @@
                                 <exclude>org.apache.flex.blazeds:flex-messaging-proxy</exclude>
                                 <exclude>org.apache.flex.blazeds:flex-messaging-remoting</exclude>
                                 <exclude>org.apache.flex.blazeds:flex-messaging-opt-tomcat-base</exclude>
+                                <exclude>org.apache.flex.blazeds.samples.*:*</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
