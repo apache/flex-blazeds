@@ -94,5 +94,12 @@
                 <include>org.apache.flex.blazeds.samples.hello:blazeds-hello-world-backend</include>
             </includes>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>/webapps</outputDirectory>
+            <outputFileNameMapping>typed-object.war</outputFileNameMapping>
+            <includes>
+                <include>org.apache.flex.blazeds.samples.typed-object:blazeds-typed-object-backend</include>
+            </includes>
+        </dependencySet>
     </dependencySets>
 </assembly>

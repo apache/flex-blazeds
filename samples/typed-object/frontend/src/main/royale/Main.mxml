@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<j:Application
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:js="library://ns.apache.org/royale/basic"
+	xmlns:mx="library://ns.apache.org/royale/mx"
+	xmlns:j="library://ns.apache.org/royale/jewel"
+	xmlns:html="library://ns.apache.org/royale/html"
+	xmlns:sample="org.apache.flex.blazeds.samples.typed.*"
+	applicationComplete="onInit()">
+
+	<fx:Script>
+		<![CDATA[
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+
+			import org.apache.flex.blazeds.samples.typed.TypedObject;
+			import org.apache.royale.jewel.Alert;
+
+			[Bindable]
+			public var typedObject:TypedObject;
+
+			private function onInit():void
+			{
+				srv.getTypedObject();
+			}
+
+			private function onSaveButtonClick():void
+			{
+				typedObject.string = stringInput.text;
+				typedObject.number = numberInput.value;
+				typedObject.boolean = booleanInput.selected;
+				srv.setTypedObject(typedObject);
+			}
+
+			private function onGetTypedObjectResult(event:ResultEvent):void
+			{
+				typedObject = event.result as TypedObject;
+			}
+
+			private function onSetTypedObjectResult(event:ResultEvent):void
+			{
+				Alert.show("The typed object has been saved", "Success");
+			}
+			
+			private function onFault(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString, "Fault");
+			}
+			
+		]]>
+	</fx:Script>
+
+	<fx:Declarations>
+		<mx:RemoteObject id="srv" endpoint="/typed-object/messagebroker/amf" destination="typed-object">
+			<mx:method name="getTypedObject" result="onGetTypedObjectResult(event)" fault="onFault(event)"/>
+			<mx:method name="setTypedObject" result="onSetTypedObjectResult(event)" fault="onFault(event)"/>
+		</mx:RemoteObject>
+	</fx:Declarations>
+
+    <j:beads>
+		<js:ApplicationDataBinding/>
+        <js:ClassAliasBead/>
+    </j:beads>
+    
+    <j:valuesImpl>
+        <js:SimpleCSSValuesImpl/>
+    </j:valuesImpl>
+
+	<j:initialView>
+		<j:ResponsiveView id="rootView">
+			<j:Card width="100%" height="100%">
+				<j:CardHeader>
+					<html:H3 text="TypedObject" className="primary-normal"/>
+				</j:CardHeader>
+				<j:CardPrimaryContent>
+					<j:Form>
+						<j:FormItem label="String">
+							<j:TextInput id="stringInput" text="{typedObject.string}"/>
+						</j:FormItem>
+						<j:FormItem label="Number">
+							<j:NumericStepper id="numberInput" value="{typedObject.number}"/>
+						</j:FormItem>
+						<j:FormItem label="Boolean">
+							<j:CheckBox id="booleanInput" selected="{typedObject.boolean}"/>
+						</j:FormItem>
+					</j:Form>
+				</j:CardPrimaryContent>
+				<j:CardActions>
+					<j:Button text="Save" click="onSaveButtonClick()"/>
+				</j:CardActions>
+			</j:Card>
+		</j:ResponsiveView>
+	</j:initialView>
+</j:Application>

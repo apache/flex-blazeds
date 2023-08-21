@@ -21,21 +21,20 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.flex.blazeds</groupId>
-    <artifactId>blazeds</artifactId>
+    <groupId>org.apache.flex.blazeds.samples</groupId>
+    <artifactId>blazeds-samples</artifactId>
     <version>4.9.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.apache.flex.blazeds.samples</groupId>
-  <artifactId>blazeds-samples</artifactId>
+  <groupId>org.apache.flex.blazeds.samples.typed-object</groupId>
+  <artifactId>blazeds-typed-object-sample</artifactId>
   <version>4.9.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Apache Flex BlazeDS: Samples</name>
+  <name>Apache Flex BlazeDS: Typed Object Sample</name>
 
   <modules>
-    <module>hello-world</module>
-    <module>typed-object</module>
-    <module>classic-turnkey-samples</module>
+    <module>frontend</module>
+    <module>backend</module>
   </modules>
 </project>
