@@ -33,22 +33,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-				<execution>
-					<phase>package</phase>
-					<goals>
-						<goal>copy-dependencies</goal>
-					</goals>
-					<configuration>
-						<!-- copy all .jar files and dependencies for binary release assembly -->
-						<outputDirectory>${project.build.directory}/blazeds-binaries-and-dependencies</outputDirectory>
-						<includeScope>compile</includeScope>
-					</configuration>
-				</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.3.0</version>
@@ -97,6 +81,23 @@
 			<groupId>org.apache.flex.blazeds</groupId>
 			<artifactId>flex-messaging-remoting</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>1.8.0.10</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
+			<artifactId>blazeds-classic-turnkey-samples-backend</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.flex.blazeds.samples.hello</groupId>
+			<artifactId>blazeds-hello-world-backend</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
 		</dependency>
 	</dependencies>
 </project>
