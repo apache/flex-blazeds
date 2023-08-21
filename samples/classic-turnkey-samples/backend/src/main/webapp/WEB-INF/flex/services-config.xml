@@ -113,6 +113,21 @@
 
     </channels>
 
+    <validators>
+        <validator class="flex.messaging.validators.ClassDeserializationValidator">
+            <properties>
+                <allow-classes>
+                <class name="flex.samples.dcd.product.Product"/>
+                <class name="flex.samples.product.Product"/>
+                <class name="flex.samples.marketdata.Stock"/>
+                <class name="flex.messaging.messages.*"/>
+                <class name="flex.messaging.io.*"/>
+                <class name="flex.messaging.io.amf.*"/>
+                </allow-classes>
+            </properties>
+        </validator>
+    </validators>
+
     <logging>
         <!-- You may also use flex.messaging.log.ServletLogTarget -->
         <target class="flex.messaging.log.ConsoleTarget" level="Error">
