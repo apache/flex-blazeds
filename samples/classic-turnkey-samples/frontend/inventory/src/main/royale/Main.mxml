@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<j:Application
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:js="library://ns.apache.org/royale/basic"
+	xmlns:mx="library://ns.apache.org/royale/mx"
+	xmlns:j="library://ns.apache.org/royale/jewel"
+	xmlns:html="library://ns.apache.org/royale/html"
+	xmlns="*"
+	applicationComplete="initApp()">
+
+	<fx:Script>
+		<![CDATA[
+			import org.apache.royale.collections.ArrayList;
+			import org.apache.royale.jewel.SectionContent;
+			import org.apache.royale.reflection.registerClassAlias;
+			import org.apache.royale.core.WrappedHTMLElement;
+			import org.apache.royale.utils.UIUtils;
+
+			[Bindable]
+			public var tabs:ArrayList = new ArrayList();
+
+			private function initApp():void
+			{
+                // treat ArrayCollection locally as Royale ArrayList
+                registerClassAlias("flex.messaging.io.ArrayCollection", ArrayList);
+				searchStr.addEventListener(KeyboardEvent.KEY_DOWN, searchKeyDownHandler);
+			}
+			
+			private function addItem():void
+			{
+				openTab(new Product());
+			}
+			
+			public function openTab(product:Product):void
+			{
+				closeSearchPopup();
+
+				if (product.productId > 0)
+				{
+					// Check if product is already opened in an existing tab
+					for (var i:int = 0; i < tabBarContent.numElements; i++)
+					{
+						var child:SectionContent = tabBarContent.getElementAt(i) as SectionContent;
+						var form:ProductForm = child.getElementAt(0) as ProductForm;
+						if (form.product.productId == product.productId) {
+							tabBar.selectedIndex = i;
+							return;
+						}
+					}
+				}
+
+				var tabLabel:String = product.productId > 0 ? product.name : 'New Product';
+
+				var sectionContent:SectionContent = new SectionContent();
+				sectionContent.name = tabLabel;
+				form = new ProductForm();
+				form.addEventListener(Event.CLOSE, productFormCloseHandler);
+				form.product = product;
+				sectionContent.addElement(form);
+				tabBarContent.addElement(sectionContent);
+
+				tabs.addItem({label: tabLabel});
+				tabBar.selectedIndex = tabs.length - 1;
+				// scroll to end, if necessary
+				var element:WrappedHTMLElement = tabBarContainer.element;
+				element.scrollLeft = element.scrollWidth - element.clientWidth;
+
+				if (tabs.length > 0)
+				{
+					instructions.positioner.style.display = "none";
+				}
+			}
+			
+			private function search():void
+			{
+				if (!searchPopup.parent)
+				{
+					UIUtils.addPopUp(searchPopup, searchStr);
+				}
+				searchPopup.width = searchStr.width;
+				searchPopup.x = searchStr.x;
+				searchPopup.y = searchStr.y + searchStr.height;
+				searchPopup.search(searchStr.text);
+			}
+
+			protected function productFormCloseHandler(event:Event):void
+			{
+				var form:ProductForm = event.currentTarget as ProductForm;
+				var sectionContent:SectionContent = form.parent as SectionContent;
+				var childIndex:int = tabBarContent.getElementIndex(sectionContent);
+				if (childIndex == -1)
+				{
+					return;
+				}
+				tabBarContent.removeElement(sectionContent);
+				tabs.removeItemAt(childIndex);
+				tabBar.selectedIndex = Math.min(tabs.length - 1, childIndex);
+
+				if (tabs.length == 0)
+				{
+					instructions.positioner.style.display = "block";
+				}
+			}
+	
+			// Handles keys pressed in the search TextInput field
+			protected function searchKeyDownHandler(event:KeyboardEvent):void
+			{
+				if (!searchPopup.parent && event.key != "ArrowDown")
+				{
+					return;
+				}
+
+				switch (event.key) 
+				{
+					case "ArrowDown":
+						if (!searchPopup.parent) search();
+						searchPopup.selectNext();
+						break;
+					case "ArrowUp":
+						searchPopup.selectPrevious();
+						var htmlInput:HTMLInputElement = searchStr.positioner as HTMLInputElement;
+						htmlInput.setSelectionRange(searchStr.text.length, searchStr.text.length);
+						break;
+					case "Enter":
+						searchPopup.openSelectedItem();
+						break;
+					case "Escape":
+						closeSearchPopup();
+						break;
+				}
+			}
+
+			protected function closeSearchPopup():void
+			{
+				if (!searchPopup.parent)
+				{
+					return;
+				}
+				UIUtils.removePopUp(searchPopup);
+			}
+			
+		]]>
+	</fx:Script>
+
+	<fx:Declarations>
+		<!-- added as a popup positioned near the search TextInput -->
+		<SearchPopup id="searchPopup"
+			maxHeight="200"
+			select="openTab(searchPopup.selectedItem)"
+			close="closeSearchPopup()"/>
+	</fx:Declarations>
+
+	<fx:Style>
+		#searchPopup {
+			position: fixed;
+		}
+	</fx:Style>
+
+    <j:beads>
+        <js:ClassAliasBead/>
+		<js:ApplicationDataBinding/>
+    </j:beads>
+    
+    <j:valuesImpl>
+        <js:SimpleCSSValuesImpl/>
+    </j:valuesImpl>
+
+	<j:initialView>
+		<j:ResponsiveView id="rootView">
+			<j:Card width="100%" height="100%">
+				<j:CardHeader>
+					<html:H3 text="Inventory Management" className="primary-normal"/>
+					<j:Spacer width="50"/>
+					<j:Button text="+" click="addItem()"/>
+					<j:TextInput id="searchStr" change="search()">
+						<j:beads>
+							<j:TextPrompt prompt="Search"/>
+						</j:beads>
+					</j:TextInput>
+				</j:CardHeader>
+				<j:CardPrimaryContent>
+					<j:VGroup id="tabBarAndContentContainer" width="100%" height="100%">
+						<j:VContainer id="tabBarContainer" width="100%">
+							<j:beads>
+								<j:ScrollingViewport/>
+							</j:beads>
+							<j:TabBar id="tabBar" dataProvider="{tabs}" change="trace(tabBar.selectedItem ? tabBar.selectedItem.label : null)"/>
+						</j:VContainer>
+						<html:P id="instructions" width="100%">
+							Type a few characters in the Search box in the upper right corner to search for products. 
+							For example type "no". You can also click the + button to add a new product.
+						</html:P>
+						<j:TabBarContent id="tabBarContent"
+							width="100%" height="100%"
+							selectedContent="{tabBar.selectedItem ? tabBar.selectedItem.label : null}"/>
+					</j:VGroup>
+				</j:CardPrimaryContent>
+			</j:Card>
+		</j:ResponsiveView>
+	</j:initialView>
+</j:Application>
