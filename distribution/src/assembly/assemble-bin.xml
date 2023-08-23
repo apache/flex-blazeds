@@ -39,6 +39,9 @@
                 <exclude>**/.git/**</exclude>
                 <exclude>**/.gitignore</exclude>
                 <exclude>**/.DS_Store</exclude>
+                <exclude>**/Thumbs.db</exclude>
+                <exclude>**/env.properties</exclude>
+                <exclude>**/local.properties</exclude>
                 <exclude>**/*.jar</exclude>
                 <exclude>**/*.war</exclude>
                 <!-- shell scripts and batch files will be handled separately -->
