@@ -29,9 +29,9 @@
 	<fx:Script>
 		<![CDATA[
 			import org.apache.royale.collections.ArrayList;
-			import org.apache.royale.jewel.SectionContent;
-			import org.apache.royale.reflection.registerClassAlias;
 			import org.apache.royale.core.WrappedHTMLElement;
+			import org.apache.royale.jewel.ScrollableSectionContent;
+			import org.apache.royale.reflection.registerClassAlias;
 			import org.apache.royale.utils.UIUtils;
 
 			[Bindable]
@@ -58,7 +58,7 @@
 					// Check if product is already opened in an existing tab
 					for (var i:int = 0; i < tabBarContent.numElements; i++)
 					{
-						var child:SectionContent = tabBarContent.getElementAt(i) as SectionContent;
+						var child:ScrollableSectionContent = tabBarContent.getElementAt(i) as ScrollableSectionContent;
 						var form:ProductForm = child.getElementAt(0) as ProductForm;
 						if (form.product.productId == product.productId) {
 							tabBar.selectedIndex = i;
@@ -69,7 +69,7 @@
 
 				var tabLabel:String = product.productId > 0 ? product.name : 'New Product';
 
-				var sectionContent:SectionContent = new SectionContent();
+				var sectionContent:ScrollableSectionContent = new ScrollableSectionContent();
 				sectionContent.name = tabLabel;
 				form = new ProductForm();
 				form.addEventListener(Event.CLOSE, productFormCloseHandler);
@@ -104,7 +104,7 @@
 			protected function productFormCloseHandler(event:Event):void
 			{
 				var form:ProductForm = event.currentTarget as ProductForm;
-				var sectionContent:SectionContent = form.parent as SectionContent;
+				var sectionContent:ScrollableSectionContent = form.parent as ScrollableSectionContent;
 				var childIndex:int = tabBarContent.getElementIndex(sectionContent);
 				if (childIndex == -1)
 				{
