@@ -31,6 +31,7 @@
             <outputDirectory>/</outputDirectory>
             <useDefaultExcludes>false</useDefaultExcludes>
             <excludes>
+                <exclude>ApproveBlazeDS.xml</exclude>
                 <exclude>**/target/**</exclude>
                 <exclude>../in/**</exclude>
                 <exclude>../lib/**</exclude>
