@@ -337,6 +337,7 @@
         <profile>
             <id>with-distribution</id>
             <modules>
+                <module>samples</module>
                 <module>distribution</module>
             </modules>
         </profile>
