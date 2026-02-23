@@ -39,6 +39,9 @@
                 <exclude>**/.git/**</exclude>
                 <exclude>**/.gitignore</exclude>
                 <exclude>**/.DS_Store</exclude>
+                <exclude>**/Thumbs.db</exclude>
+                <exclude>**/env.properties</exclude>
+                <exclude>**/local.properties</exclude>
                 <exclude>**/*.jar</exclude>
                 <exclude>**/*.war</exclude>
                 <!-- shell scripts and batch files will be handled separately -->
@@ -68,7 +71,7 @@
     <dependencySets>
         <dependencySet>
             <outputDirectory>/lib</outputDirectory>
-            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <outputFileNameMapping>${artifact.artifactId}-${artifact.version}.${artifact.extension}</outputFileNameMapping>
             <includes>
                 <include>org.apache.flex.blazeds:flex-messaging-*</include>
             </includes>
@@ -92,6 +95,13 @@
             <outputFileNameMapping>hello-world.war</outputFileNameMapping>
             <includes>
                 <include>org.apache.flex.blazeds.samples.hello:blazeds-hello-world-backend</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/webapps</outputDirectory>
+            <outputFileNameMapping>typed-object.war</outputFileNameMapping>
+            <includes>
+                <include>org.apache.flex.blazeds.samples.typed-object:blazeds-typed-object-backend</include>
             </includes>
         </dependencySet>
     </dependencySets>

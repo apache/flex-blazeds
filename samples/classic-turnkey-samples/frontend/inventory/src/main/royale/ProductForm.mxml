@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<j:Card xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:js="library://ns.apache.org/royale/basic"
+	xmlns:mx="library://ns.apache.org/royale/mx"
+	xmlns:j="library://ns.apache.org/royale/jewel"
+	xmlns:html="library://ns.apache.org/royale/html" xmlns="*">
+
+	<fx:Metadata>
+		[Event(name="close")]
+	</fx:Metadata>
+
+	<fx:Script>
+		<![CDATA[
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+
+			import org.apache.royale.jewel.Alert;
+			import mx.events.ValidationResultEvent;
+			
+			[Bindable]
+			public var product:Product;
+			
+			private function save():void
+			{
+				if (nameValidator.validate().type == ValidationResultEvent.INVALID)
+				{
+					return;
+				}
+				product.name = productName.text;
+				product.category = category.text;
+				product.price = Number(price.text);
+				product.qtyInStock = parseInt(qtyInStock.text);
+				product.image = image.text;
+				product.description = description.text;
+				if (product.productId > 0)
+				{
+					srv.update(product);
+				}
+				else
+				{
+					srv.create(product);
+				}
+			}
+			
+			private function createResult(event:ResultEvent):void
+			{
+				product = event.result as Product;
+			}
+
+			private function removeResult(event:ResultEvent):void
+			{
+				dispatchEvent(new Event(Event.CLOSE));
+			}
+			
+			private function onFault(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString, "Fault");
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<mx:RemoteObject localId="srv" endpoint="/samples/messagebroker/amf" destination="product">
+			<mx:method name="create" result="createResult(event)" fault="onFault(event)"/>
+			<mx:method name="remove" result="removeResult(event)" fault="onFault(event)"/>
+		</mx:RemoteObject>
+		<mx:StringValidator id="nameValidator" source="{productName}" property="text" minLength="1"/>
+	</fx:Declarations>
+
+	<j:beads>
+		<js:ContainerDataBinding/>
+	</j:beads>
+	
+	<j:CardPrimaryContent>
+		<j:Image src="../images/{product.image}" visible="{product.image != null &amp;&amp; product.image.length > 0}"/>
+		<j:Form>
+			<j:FormItem label="Id">
+				<j:TextInput id="productId" text="{product.productId}">
+					<j:beads>
+						<j:Disabled/>
+					</j:beads>
+				</j:TextInput>
+			</j:FormItem>
+			<j:FormItem label="Name" required="true">
+				<j:TextInput id="productName" text="{product.name}"/>
+			</j:FormItem>
+			<j:FormItem label="Category">
+				<j:TextInput id="category" text="{product.category}"/>
+			</j:FormItem>
+			<j:FormItem label="Image">
+				<j:TextInput id="image" text="{product.image}"/>
+			</j:FormItem>
+			<j:FormItem label="Price">
+				<j:TextInput id="price" text="{product.price}"/>
+			</j:FormItem>
+			<j:FormItem label="In Stock">
+				<j:TextInput id="qtyInStock" text="{product.qtyInStock}"/>
+			</j:FormItem>
+			<j:FormItem label="Description">
+				<j:TextArea id="description" text="{product.description}"/>
+			</j:FormItem>
+		</j:Form>
+	</j:CardPrimaryContent>
+
+	<j:CardActions>
+		<j:Button text="Save" click="save()"/>
+		<j:Button text="Delete" click="srv.remove(product)"/>
+		<j:Spacer width="100%"/>
+		<j:Button text="Close Tab" click="dispatchEvent(new Event(Event.CLOSE))"/>
+	</j:CardActions>
+			
+</j:Card>

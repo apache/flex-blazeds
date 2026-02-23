@@ -34,6 +34,7 @@
   <name>Apache Flex BlazeDS: Classic Turnkey Samples: Frontend</name>
 
   <modules>
+    <module>inventory</module>
     <module>runtimeconfig-messaging</module>
     <module>runtimeconfig-remoting</module>
     <module>testdrive-101</module>

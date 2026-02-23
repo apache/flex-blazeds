@@ -75,7 +75,6 @@
         <module>proxy</module>
         <module>remoting</module>
         <module>opt</module>
-        <module>samples</module>
     </modules>
 
     <build>
@@ -342,6 +341,12 @@
             </modules>
         </profile>
         <profile>
+            <id>with-samples</id>
+            <modules>
+                <module>samples</module>
+            </modules>
+        </profile>
+        <profile>
             <id>with-owasp</id>
             <build>
                 <plugins>
@@ -370,6 +375,7 @@
                                 <exclude>org.apache.flex.blazeds:flex-messaging-proxy</exclude>
                                 <exclude>org.apache.flex.blazeds:flex-messaging-remoting</exclude>
                                 <exclude>org.apache.flex.blazeds:flex-messaging-opt-tomcat-base</exclude>
+                                <exclude>org.apache.flex.blazeds.samples.*:*</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
