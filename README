@@ -30,7 +30,7 @@ Getting the latest sources via Git
 	 cd blazeds
 	 git checkout develop
 
-    For further information visit http://flex.apache.org/download-source.html
+    For further information visit https://flex.apache.org/download-blazeds.html
 
 
 Building Apache Flex BlazeDS 5.0.0
