@@ -143,6 +143,7 @@
             resource="org/apache/rat/anttasks/antlib.xml">
             <classpath>
                 <pathelement location="${env.ANT_HOME}/lib/${apache.rat.jar}"/>
+                <pathelement location="${env.ANT_HOME}/lib/${apache.rat.tasks.jar}"/>
             </classpath>
         </taskdef>
     </target>
