@@ -160,7 +160,7 @@
 
     <target name="main-no-download"
             depends="write-out-jars-list,install-rat,uncompress,rat-check,binary-rat,check-notices,examine-jars,build,approve"
-            description="Perform required release approval steps">
+            description="Perform required release approval steps without downloading BlazeDS distributions (src and bin archives must already exist in same directory)">
     </target>
 
     <target name="display-text">
