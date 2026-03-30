@@ -30,7 +30,7 @@
   <version>5.0.0-SNAPSHOT</version>
   <packaging>swf</packaging>
 
-  <name>Apache Flex BlazeDS: Samples: Runtime Config Remoting</name>
+  <name>Apache Flex BlazeDS: Classic Turnkey Samples: Runtime Config Remoting</name>
 
   <build>
     <sourceDirectory>src/main/royale</sourceDirectory>

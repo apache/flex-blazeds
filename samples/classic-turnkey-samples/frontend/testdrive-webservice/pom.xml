@@ -30,7 +30,7 @@
   <version>5.0.0-SNAPSHOT</version>
   <packaging>swf</packaging>
 
-  <name>Apache Flex BlazeDS: Samples: Test Drive Web Service</name>
+  <name>Apache Flex BlazeDS: Classic Turnkey Samples: Test Drive Web Service</name>
 
   <build>
     <sourceDirectory>src/main/royale</sourceDirectory>
