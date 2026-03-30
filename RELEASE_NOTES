@@ -4,6 +4,9 @@ Apache Flex BlazeDS 5.0.0
 Apache Flex BlazeDS 5.0.0 is a major update that migrates from Java EE to
 Jakarta EE.
 
+- Version 5.0.0 is the first release of BlazeDS from Apache that includes sample projects
+- BlazeDS now requires Java 11 or newer
+
 Apache Flex BlazeDS 4.8.0
 =======================
 
