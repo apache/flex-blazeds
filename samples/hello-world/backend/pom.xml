@@ -22,12 +22,12 @@
   <parent>
     <groupId>org.apache.flex.blazeds.samples.hello</groupId>
     <artifactId>blazeds-hello-world-sample</artifactId>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>5.0.0</version>
   </parent>
 
   <groupId>org.apache.flex.blazeds.samples.hello</groupId>
   <artifactId>blazeds-hello-world-backend</artifactId>
-  <version>5.0.0-SNAPSHOT</version>
+  <version>5.0.0</version>
   <packaging>war</packaging>
 
   <name>Apache Flex BlazeDS: Hello World Sample: Backend</name>
@@ -68,28 +68,32 @@
     <dependency>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-common</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.0</version>
     </dependency>
     <dependency>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-core</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.0</version>
     </dependency>
     <dependency>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-proxy</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.0</version>
     </dependency>
     <dependency>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-remoting</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.flex.blazeds.samples.hello</groupId>
       <artifactId>blazeds-hello-world-frontend</artifactId>
-      <version>5.0.0-SNAPSHOT</version>
+      <version>5.0.0</version>
       <type>war</type>
     </dependency>
   </dependencies>
+
+  <scm>
+    <tag>blazeds-5.0.0</tag>
+  </scm>
 </project>

@@ -23,12 +23,12 @@
   <parent>
     <groupId>org.apache.flex.blazeds</groupId>
     <artifactId>blazeds</artifactId>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>5.0.0</version>
   </parent>
 
   <groupId>org.apache.flex.blazeds.samples</groupId>
   <artifactId>blazeds-samples</artifactId>
-  <version>5.0.0-SNAPSHOT</version>
+  <version>5.0.0</version>
   <packaging>pom</packaging>
 
   <name>Apache Flex BlazeDS: Samples</name>

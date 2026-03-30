@@ -23,12 +23,12 @@
   <parent>
     <groupId>org.apache.flex.blazeds.samples</groupId>
     <artifactId>blazeds-samples</artifactId>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>5.0.0</version>
   </parent>
 
   <groupId>org.apache.flex.blazeds.samples.typed-object</groupId>
   <artifactId>blazeds-typed-object-sample</artifactId>
-  <version>5.0.0-SNAPSHOT</version>
+  <version>5.0.0</version>
   <packaging>pom</packaging>
 
   <name>Apache Flex BlazeDS: Typed Object Sample</name>
@@ -37,4 +37,8 @@
     <module>frontend</module>
     <module>backend</module>
   </modules>
+
+  <scm>
+    <tag>blazeds-5.0.0</tag>
+  </scm>
 </project>
