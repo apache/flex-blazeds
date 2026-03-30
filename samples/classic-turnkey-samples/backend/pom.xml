@@ -22,12 +22,12 @@
   <parent>
     <groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
     <artifactId>blazeds-classic-turnkey-samples</artifactId>
-    <version>5.0.0</version>
+    <version>5.1.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
   <artifactId>blazeds-classic-turnkey-samples-backend</artifactId>
-  <version>5.0.0</version>
+  <version>5.1.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <name>Apache Flex BlazeDS: Classic Turn Key Samples: Backend</name>
@@ -114,27 +114,27 @@
     <dependency>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-common</artifactId>
-        <version>5.0.0</version>
+        <version>5.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-core</artifactId>
-        <version>5.0.0</version>
+        <version>5.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-proxy</artifactId>
-        <version>5.0.0</version>
+        <version>5.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-remoting</artifactId>
-        <version>5.0.0</version>
+        <version>5.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>org.apache.flex.blazeds</groupId>
         <artifactId>flex-messaging-opt-tomcat-base</artifactId>
-        <version>5.0.0</version>
+        <version>5.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.hsqldb</groupId>
@@ -144,61 +144,61 @@
     <dependency>
       <groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
       <artifactId>inventory</artifactId>
-      <version>5.0.0</version>
+      <version>5.1.0-SNAPSHOT</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
       <artifactId>runtimeconfig-messaging</artifactId>
-      <version>5.0.0</version>
+      <version>5.1.0-SNAPSHOT</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
       <artifactId>runtimeconfig-remoting</artifactId>
-      <version>5.0.0</version>
+      <version>5.1.0-SNAPSHOT</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
       <artifactId>testdrive-101</artifactId>
-      <version>5.0.0</version>
+      <version>5.1.0-SNAPSHOT</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
       <artifactId>testdrive-chat</artifactId>
-      <version>5.0.0</version>
+      <version>5.1.0-SNAPSHOT</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
       <artifactId>testdrive-datapush</artifactId>
-      <version>5.0.0</version>
+      <version>5.1.0-SNAPSHOT</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
       <artifactId>testdrive-httpservice</artifactId>
-      <version>5.0.0</version>
+      <version>5.1.0-SNAPSHOT</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
       <artifactId>testdrive-remoteobject</artifactId>
-      <version>5.0.0</version>
+      <version>5.1.0-SNAPSHOT</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
       <artifactId>testdrive-update</artifactId>
-      <version>5.0.0</version>
+      <version>5.1.0-SNAPSHOT</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.apache.flex.blazeds.samples.turnkey</groupId>
       <artifactId>testdrive-webservice</artifactId>
-      <version>5.0.0</version>
+      <version>5.1.0-SNAPSHOT</version>
       <type>war</type>
     </dependency>
   </dependencies>
