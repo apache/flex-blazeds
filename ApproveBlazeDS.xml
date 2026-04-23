@@ -252,8 +252,7 @@
         <replaceregexp file="${basedir}/jarexcludes.txt" match="," flags="g" replace="${line.separator}" />
     </target>
 
-    <!-- how to do tar and sort on Windows? -->
-    <target name="examine-jars" if="isMac">
+    <target name="examine-jars">
         <!-- comma delimited list, no spaces, not one file per line -->
         <copy file="jars.txt" tofile="loop.txt"/>
         <ant antfile="ApproveBlazeDS.xml" target="loopOnce" inheritAll="false"/>
@@ -291,15 +290,17 @@
         <delete dir="${basedir}/jar" failonerror="false" />
         <mkdir dir="${basedir}/jar" />
         <unjar src="${basedir}/${bin.package.url.name}/blazeds-${release.version}/${thisFile}" dest="${basedir}/jar" />
-        <exec executable="tar" output="${basedir}/jarclasses.txt">
+        <exec executable="${java.home}/bin/jar" output="${basedir}/jarclasses.txt">
             <arg value="tf" />
             <arg value="${basedir}/${bin.package.url.name}/blazeds-${release.version}/${thisFile}" />
         </exec>
         <replaceregexp file="${basedir}/jarclasses.txt" match="(.*)/(.*)" replace="\1" flags="m" byline="true"/>
-        <exec executable="sort" output="${basedir}/jarpaths.txt">
-            <arg value="-u" />
-            <arg value="${basedir}/jarclasses.txt" />
-        </exec>
+        <copy file="${basedir}/jarclasses.txt" tofile="${basedir}/jarpaths.txt">
+            <filterchain>
+                <sortfilter/>
+                <uniqfilter/>
+            </filterchain>
+        </copy>
         <antcall target="display-text" >
             <param name="file" value="${basedir}/jarpaths.txt" />
         </antcall>
